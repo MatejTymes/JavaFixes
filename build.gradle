@@ -1,0 +1,17 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'org.apache.thrift:libthrift:0.7.0'
+    compile 'javassist:javassist:3.12.1.GA'
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-all:1.3'
+}
