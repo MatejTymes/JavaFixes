@@ -18,7 +18,7 @@ public class LongUtil {
 
         long multiplier = powersOf10[lastIndex];
         for (int i = lastIndex; i < scale; i++) {
-            multiplier *= 10;
+            multiplier = multiplyExact(multiplier, 10);
         }
         return multiplier;
     }

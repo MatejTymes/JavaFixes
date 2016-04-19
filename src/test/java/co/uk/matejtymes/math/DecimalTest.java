@@ -48,6 +48,13 @@ public class DecimalTest {
     }
 
     @Test
+    public void shouldConvertToString() {
+        assertThat(decimal("16.456").toString(), equalTo("16.456"));
+        assertThat(decimal("-150.003050").toString(), equalTo("-150.003050"));
+        assertThat(decimal("+73000").toString(), equalTo("73000"));
+    }
+
+    @Test
     public void shouldFindIfValuesAreIdentical() {
         assertThat(decimal("-1.2").isIdenticalTo(decimal("-1.2")), is(true));
         assertThat(decimal("-1.2").isIdenticalTo(decimal("-001.2")), is(true));

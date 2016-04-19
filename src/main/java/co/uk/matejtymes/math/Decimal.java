@@ -127,26 +127,7 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     @Override
     public int compareTo(Decimal other) {
-        int minScale = min(scale, other.scale);
-
-        long thisScaler = pow10(scale - minScale);
-        long otherScaler = pow10(other.scale - minScale);
-
-        // by doing division instead of multiplication we prevent overflow
-        Long thisScaledDownValue = unscaledValue / thisScaler;
-        Long otherScaledDownValue = other.unscaledValue / otherScaler;
-
-        int comparison = thisScaledDownValue.compareTo(otherScaledDownValue);
-        if (comparison == 0) {
-//            Long thisRemainder = unscaledValue - (thisScaledDownValue * thisScaler);
-            Long thisRemainder = subtractExact(unscaledValue, multiplyExact(thisScaledDownValue, thisScaler));
-//            Long otherRemainder = other.unscaledValue - (otherScaledDownValue * otherScaler);
-            Long otherRemainder = subtractExact(other.unscaledValue, multiplyExact(otherScaledDownValue, otherScaler));
-
-            return thisRemainder.compareTo(otherRemainder);
-        } else {
-            return comparison;
-        }
+        return compare(this, other);
     }
 
     public boolean isIdenticalTo(Decimal other) {
@@ -190,13 +171,10 @@ public class Decimal extends Number implements Comparable<Decimal> {
         int scaleB = value.getScale();
         int maxScale = max(scaleA, scaleB);
 
-//        long maxScaledValueA = unscaledValue * pow10(maxScale - scaleA);
         long maxScaledValueA = multiplyExact(unscaledValue, pow10(maxScale - scaleA));
-//        long maxScaledValueB = value.unscaledValue * pow10(maxScale - scaleB);
         long maxScaledValueB = multiplyExact(value.unscaledValue, pow10(maxScale - scaleB));
 
         return new Decimal(
-//                maxScaledValueA + maxScaledValueB,
                 addExact(maxScaledValueA, maxScaledValueB),
                 maxScale
         ).rescaleTo(scaleToUse, roundingMode);
@@ -213,13 +191,10 @@ public class Decimal extends Number implements Comparable<Decimal> {
         int scaleB = value.getScale();
         int maxScale = max(scaleA, scaleB);
 
-//        long maxScaledValueA = unscaledValue * pow10(maxScale - scaleA);
         long maxScaledValueA = multiplyExact(unscaledValue, pow10(maxScale - scaleA));
-//        long maxScaledValueB = value.unscaledValue * pow10(maxScale - scaleB);
         long maxScaledValueB = multiplyExact(value.unscaledValue, pow10(maxScale - scaleB));
 
         return new Decimal(
-//                maxScaledValueA - maxScaledValueB,
                 subtractExact(maxScaledValueA, maxScaledValueB),
                 maxScale
         ).rescaleTo(scaleToUse, roundingMode);
@@ -236,8 +211,7 @@ public class Decimal extends Number implements Comparable<Decimal> {
         Decimal valueStripped = value.stripTrailingZeros();
 
         return new Decimal(
-                // todo: fix this - this is prone to overflow
-//                thisStripped.unscaledValue * valueStripped.unscaledValue,
+                // todo: fix this - this is mostly prone to overflow
                 multiplyExact(thisStripped.unscaledValue, valueStripped.unscaledValue),
                 thisStripped.scale + valueStripped.scale
         ).rescaleTo(scaleToUse, roundingMode);
@@ -297,14 +271,12 @@ public class Decimal extends Number implements Comparable<Decimal> {
             return this;
         } else if (scaleToUse > scale) {
             long scaler = pow10(scaleToUse - scale);
-//            long rescaledValue = this.unscaledValue * scaler;
             long rescaledValue = multiplyExact(this.unscaledValue, scaler);
             return new Decimal(rescaledValue, scaleToUse);
         }
 
         long scaler = pow10(scale - scaleToUse);
         long rescaledValue = this.unscaledValue / scaler;
-//        long remainder = this.unscaledValue - (rescaledValue * scaler);
         long remainder = subtractExact(this.unscaledValue, multiplyExact(rescaledValue, scaler));
         long remainingDigit = remainder / (scaler / 10);
 
@@ -359,4 +331,28 @@ public class Decimal extends Number implements Comparable<Decimal> {
         return sb.reverse().toString();
     }
 
+    public static int compare(Decimal x, Decimal y) {
+        if (x.scale == y.scale) {
+            return Long.compare(x.unscaledValue, y.unscaledValue);
+        }
+
+        int minScale = min(x.scale, y.scale);
+
+        long xScaler = pow10(x.scale - minScale);
+        long yScaler = pow10(y.scale - minScale);
+
+        // by doing division instead of multiplication we prevent overflow
+        long xScaledDownValue = x.unscaledValue / xScaler;
+        long yScaledDownValue = y.unscaledValue / yScaler;
+
+        int comparison = Long.compare(xScaledDownValue, yScaledDownValue);
+        if (comparison != 0) {
+            return comparison;
+        } else {
+            long xRemainder = subtractExact(x.unscaledValue, multiplyExact(xScaledDownValue, xScaler));
+            long yRemainder = subtractExact(y.unscaledValue, multiplyExact(yScaledDownValue, yScaler));
+
+            return Long.compare(xRemainder, yRemainder);
+        }
+    }
 }
