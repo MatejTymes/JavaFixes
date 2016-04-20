@@ -14,9 +14,7 @@ import static java.lang.String.format;
 import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UNNECESSARY;
 
-// todo: add formating
 // todo: check scale on every calculation method
-// todo: add serialization
 public class Decimal extends Number implements Comparable<Decimal> {
 
     public static final Decimal TEN = new Decimal(10L, 0);
@@ -77,6 +75,9 @@ public class Decimal extends Number implements Comparable<Decimal> {
                     throw new IllegalArgumentException("Illegal value. Too many decimal points");
                 }
                 foundDecimalPoint = true;
+            } else if (c == '_') {
+                // todo: check it is used only between numbers
+                // ignore
             } else {
                 throw new IllegalArgumentException("Decimal contains invalid character: " + c);
             }
@@ -309,7 +310,6 @@ public class Decimal extends Number implements Comparable<Decimal> {
     public Decimal stripTrailingZeros() {
         return stripTrailingZerosWithScaleAtLeast(0);
     }
-
 
     @Override
     public String toString() {

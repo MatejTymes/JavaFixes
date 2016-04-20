@@ -254,7 +254,4 @@ public class DecimalTest {
                 decimal("1").div(decimal("3")), equalTo(decimal("0.33333333")));
     }
 
-    @Test
-    public void shouldMultiplyTwoValues() {
-    }
 }
