@@ -3,6 +3,7 @@ package co.uk.matejtymes.tdp;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import static co.uk.matejtymes.tdp.DecimalCalculator.*;
 import static co.uk.matejtymes.tdp.LongUtil.*;
 import static co.uk.matejtymes.tdp.LongUtil.addExact;
 import static co.uk.matejtymes.tdp.LongUtil.multiplyExact;
@@ -20,6 +21,8 @@ public class Decimal extends Number implements Comparable<Decimal> {
     public static final Decimal TEN = decimal(10L, 0);
     public static final Decimal ONE = decimal(1L, 0);
     public static final Decimal ZERO = decimal(0, 0);
+
+    private static final RoundingMode DEFAULT_ROUNDING_MODE = HALF_UP;
 
     private transient final long unscaledValue;
     private transient final int scale;
@@ -171,17 +174,12 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public Decimal plus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        int scaleA = getScale();
-        int scaleB = value.getScale();
-        int maxScale = max(scaleA, scaleB);
+        return add(this, value, scaleToUse, roundingMode);
+    }
 
-        long maxScaledValueA = multiplyExact(unscaledValue, pow10(maxScale - scaleA));
-        long maxScaledValueB = multiplyExact(value.unscaledValue, pow10(maxScale - scaleB));
-
-        return new Decimal(
-                addExact(maxScaledValueA, maxScaledValueB),
-                maxScale
-        ).rescaleTo(scaleToUse, roundingMode);
+    // todo: test
+    public Decimal plus(Decimal value, int scaleToUse) {
+        return plus(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
 
     // todo: test
@@ -191,17 +189,12 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public Decimal minus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        int scaleA = getScale();
-        int scaleB = value.getScale();
-        int maxScale = max(scaleA, scaleB);
+        return subtract(this, value, scaleToUse, roundingMode);
+    }
 
-        long maxScaledValueA = multiplyExact(unscaledValue, pow10(maxScale - scaleA));
-        long maxScaledValueB = multiplyExact(value.unscaledValue, pow10(maxScale - scaleB));
-
-        return new Decimal(
-                subtractExact(maxScaledValueA, maxScaledValueB),
-                maxScale
-        ).rescaleTo(scaleToUse, roundingMode);
+    // todo: test
+    public Decimal minus(Decimal value, int scaleToUse) {
+        return minus(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
 
     // todo: test
@@ -211,61 +204,33 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public Decimal times(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        Decimal thisStripped = this.stripTrailingZeros();
-        Decimal valueStripped = value.stripTrailingZeros();
+        return multiply(this, value, scaleToUse, roundingMode);
+    }
 
-        return new Decimal(
-                // todo: fix this - this is mostly prone to overflow
-                multiplyExact(thisStripped.unscaledValue, valueStripped.unscaledValue),
-                thisStripped.scale + valueStripped.scale
-        ).rescaleTo(scaleToUse, roundingMode);
+    // todo: test
+    public Decimal times(Decimal value, int scaleToUse) {
+        return times(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
 
     // todo: test
     public Decimal times(Decimal value) {
-        return times(value, min(8, this.scale + value.scale), HALF_UP)
+        return times(value, min(8, this.scale + value.scale), DEFAULT_ROUNDING_MODE)
                 .stripTrailingZerosWithScaleAtLeast(min(this.scale, value.scale));
     }
 
     // todo: test
     public Decimal div(Decimal value, int scaleToUse, RoundingMode roundingMode) {
+        return divide(this, value, scaleToUse, roundingMode);
+    }
 
-        boolean positive = (unscaledValue < 0 && value.unscaledValue < 0) ||
-                (unscaledValue >= 0 && value.unscaledValue >= 0);
-
-        long remainder = absExact(this.unscaledValue);
-        long divisor = absExact(value.unscaledValue);
-
-        long result = remainder / divisor;
-        remainder = multiplyExact((remainder % divisor), 10);
-        int newScale = this.scale - value.scale;
-
-        if (newScale > scaleToUse) {
-            // todo: test this
-            return new Decimal(result, newScale)
-                    .rescaleTo(scaleToUse, roundingMode);
-        } else {
-            while (newScale < scaleToUse) {
-                result = addExact(multiplyExact(result, 10), (remainder / divisor));
-                remainder = multiplyExact((remainder % divisor), 10);
-                newScale++;
-            }
-            long remainingDigit = remainder / divisor;
-            if (!positive) {
-                result = negateExact(result);
-                remainingDigit = -remainingDigit;
-            }
-            result = roundBasedOnRemainder(result, remainingDigit, roundingMode);
-
-
-            return new Decimal(result, newScale)
-                    .rescaleTo(scaleToUse, roundingMode);
-        }
+    // todo: test
+    public Decimal div(Decimal value, int scaleToUse) {
+        return div(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
 
     // todo: test
     public Decimal div(Decimal value) {
-        return div(value, max(8, max(this.scale, value.scale)), HALF_UP)
+        return div(value, max(8, max(this.scale, value.scale)), DEFAULT_ROUNDING_MODE)
                 .stripTrailingZerosWithScaleAtLeast(min(this.scale, value.scale));
     }
 
