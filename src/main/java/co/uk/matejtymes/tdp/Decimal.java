@@ -1,14 +1,14 @@
-package co.uk.matejtymes.math;
+package co.uk.matejtymes.tdp;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static co.uk.matejtymes.math.LongUtil.*;
-import static co.uk.matejtymes.math.LongUtil.addExact;
-import static co.uk.matejtymes.math.LongUtil.multiplyExact;
-import static co.uk.matejtymes.math.LongUtil.negateExact;
-import static co.uk.matejtymes.math.LongUtil.subtractExact;
-import static co.uk.matejtymes.math.RoundUtil.roundBasedOnRemainder;
+import static co.uk.matejtymes.tdp.LongUtil.*;
+import static co.uk.matejtymes.tdp.LongUtil.addExact;
+import static co.uk.matejtymes.tdp.LongUtil.multiplyExact;
+import static co.uk.matejtymes.tdp.LongUtil.negateExact;
+import static co.uk.matejtymes.tdp.LongUtil.subtractExact;
+import static co.uk.matejtymes.tdp.RoundUtil.roundBasedOnRemainder;
 import static java.lang.Math.*;
 import static java.lang.String.format;
 import static java.math.RoundingMode.HALF_UP;
@@ -17,14 +17,17 @@ import static java.math.RoundingMode.UNNECESSARY;
 // todo: check scale on every calculation method
 public class Decimal extends Number implements Comparable<Decimal> {
 
-    public static final Decimal TEN = new Decimal(10L, 0);
-    public static final Decimal ONE = new Decimal(1L, 0);
-    public static final Decimal ZERO = new Decimal(0, 0);
+    public static final Decimal TEN = decimal(10L, 0);
+    public static final Decimal ONE = decimal(1L, 0);
+    public static final Decimal ZERO = decimal(0, 0);
 
     private transient final long unscaledValue;
     private transient final int scale;
 
-    public Decimal(long unscaledValue, int scale) {
+    // we should keep the constructor private
+    // this people will depend on factory methods and we can actualy introduce more classes
+    // like: SmallDecimal, LargeDecimal, InfiniteDecimal, NaNDecimal
+    private Decimal(long unscaledValue, int scale) {
         if (scale < 0) {
             throw new IllegalArgumentException(format("Scale (%d) is lower than 0", scale));
         }

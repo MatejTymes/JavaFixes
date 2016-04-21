@@ -1,4 +1,4 @@
-package co.uk.matejtymes.math;
+package co.uk.matejtymes.tdp;
 
 // contains mostly methods from guava and java 8
 public class LongUtil {

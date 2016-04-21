@@ -1,9 +1,9 @@
-package co.uk.matejtymes.math;
+package co.uk.matejtymes.tdp;
 
 import java.math.RoundingMode;
 
-import static co.uk.matejtymes.math.LongUtil.decrementExact;
-import static co.uk.matejtymes.math.LongUtil.incrementExact;
+import static co.uk.matejtymes.tdp.LongUtil.decrementExact;
+import static co.uk.matejtymes.tdp.LongUtil.incrementExact;
 import static java.lang.String.format;
 
 public class RoundUtil {
