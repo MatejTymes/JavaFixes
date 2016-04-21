@@ -191,7 +191,8 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public Decimal times(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        return multiply(this, value, scaleToUse, roundingMode);
+        return multiply(this, value, scaleToUse, roundingMode)
+                .stripTrailingZeros();
     }
 
     // todo: test
@@ -201,13 +202,13 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public Decimal times(Decimal value) {
-        return times(value, min(8, this.scale + value.scale), DEFAULT_ROUNDING_MODE)
-                .stripTrailingZerosWithScaleAtLeast(min(this.scale, value.scale));
+        return times(value, min(8, this.scale + value.scale), DEFAULT_ROUNDING_MODE);
     }
 
     // todo: test
     public Decimal div(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        return divide(this, value, scaleToUse, roundingMode);
+        return divide(this, value, scaleToUse, roundingMode)
+                .stripTrailingZeros();
     }
 
     // todo: test
@@ -217,8 +218,7 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public Decimal div(Decimal value) {
-        return div(value, max(8, max(this.scale, value.scale)), DEFAULT_ROUNDING_MODE)
-                .stripTrailingZerosWithScaleAtLeast(min(this.scale, value.scale));
+        return div(value, max(8, max(this.scale, value.scale)), DEFAULT_ROUNDING_MODE);
     }
 
 

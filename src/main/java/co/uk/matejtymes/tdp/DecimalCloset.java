@@ -50,9 +50,12 @@ public class DecimalCloset {
         Decimal strippedX = x.stripTrailingZeros();
         Decimal strippedY = y.stripTrailingZeros();
 
+        // todo: extremely simplistic algorithm - please improve
+        // todo: - this is extremely prone to overflow
+
+        // todo: use BigInteger in case of overflow
+
         return decimal(
-                // todo: extremely simplistic algorithm - please improve
-                // todo: - this is extremely prone to overflow
                 multiplyExact(strippedX.getUnscaledValue(), strippedY.getUnscaledValue()),
                 strippedX.getScale() + strippedY.getScale()
         ).rescaleTo(scaleToUse, roundingMode);
@@ -68,7 +71,9 @@ public class DecimalCloset {
         boolean positive = (unscaledX < 0 && unscaledY < 0) ||
                 (unscaledX >= 0 && unscaledY >= 0);
 
+        // todo: this fails once unscaledX is Long.MIN_VALUE
         long remainder = absExact(unscaledX);
+        // todo: this fails once unscaledY is Long.MIN_VALUE
         long divisor = absExact(unscaledY);
 
         long result = remainder / divisor;
