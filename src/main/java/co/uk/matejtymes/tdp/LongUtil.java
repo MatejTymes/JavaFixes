@@ -14,10 +14,13 @@ public class LongUtil {
             return powersOf10[scale];
         }
 
+        // todo: this part won't work
+
         int lastIndex = powersOf10.length - 1;
 
         long multiplier = powersOf10[lastIndex];
         for (int i = lastIndex; i < scale; i++) {
+            // todo: we would get an immediate buffer overflow here
             multiplier = multiplyExact(multiplier, 10);
         }
         return multiplier;

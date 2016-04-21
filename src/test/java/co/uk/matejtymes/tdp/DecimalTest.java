@@ -1,4 +1,4 @@
-package co.uk.matejtymes.math.tdp;
+package co.uk.matejtymes.tdp;
 
 import org.junit.Test;
 

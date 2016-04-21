@@ -3,13 +3,12 @@ package co.uk.matejtymes.tdp;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static co.uk.matejtymes.tdp.DecimalCalculator.*;
+import static co.uk.matejtymes.tdp.DecimalCloset.*;
 import static co.uk.matejtymes.tdp.LongUtil.*;
 import static co.uk.matejtymes.tdp.LongUtil.addExact;
 import static co.uk.matejtymes.tdp.LongUtil.multiplyExact;
 import static co.uk.matejtymes.tdp.LongUtil.negateExact;
 import static co.uk.matejtymes.tdp.LongUtil.subtractExact;
-import static co.uk.matejtymes.tdp.RoundUtil.roundBasedOnRemainder;
 import static java.lang.Math.*;
 import static java.lang.String.format;
 import static java.math.RoundingMode.HALF_UP;
@@ -100,11 +99,11 @@ public class Decimal extends Number implements Comparable<Decimal> {
         return decimal(value.toPlainString());
     }
 
-    public long getUnscaledValue() {
+    long getUnscaledValue() {
         return unscaledValue;
     }
 
-    public int getScale() {
+    int getScale() {
         return scale;
     }
 
