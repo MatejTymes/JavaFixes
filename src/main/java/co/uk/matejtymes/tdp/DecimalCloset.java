@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import static co.uk.matejtymes.tdp.Decimal.decimal;
 import static co.uk.matejtymes.tdp.LongUtil.*;
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.String.format;
 
 // todo: test this
@@ -101,7 +102,52 @@ public class DecimalCloset {
     }
 
     // todo: move rescaleTo in here
-    // todo: move compare and hashCode in here
+    // todo: move hashCode in here
+
+    static int compare(Decimal x, Decimal y) {
+        int scaleX = x.getScale();
+        int scaleY = y.getScale();
+
+        long unscaledX = x.getUnscaledValue();
+        long unscaledY = y.getUnscaledValue();
+
+        if (scaleX == scaleY) {
+            return Long.compare(unscaledX, unscaledY);
+        }
+
+        int minScale = min(scaleX, scaleY);
+
+        long scalerX = pow10(scaleX - minScale);
+        long scalerY = pow10(scaleY - minScale);
+
+        // by doing division instead of multiplication we prevent overflow
+        long xScaledDownValue = unscaledX / scalerX;
+        long yScaledDownValue = unscaledY / scalerY;
+
+        int comparison = Long.compare(xScaledDownValue, yScaledDownValue);
+        if (comparison != 0) {
+            return comparison;
+        } else {
+            long xRemainder = subtractExact(unscaledX, multiplyExact(xScaledDownValue, scalerX));
+            long yRemainder = subtractExact(unscaledY, multiplyExact(yScaledDownValue, scalerY));
+
+            return Long.compare(xRemainder, yRemainder);
+        }
+    }
+
+    static int hashCode(Decimal d) {
+        // its important that this starts as zero - this way will ignore trailing zeros
+        int hashCode = 0;
+
+        long remainder = d.getUnscaledValue();
+        while (remainder > 0) {
+            hashCode = (hashCode * 5) + (int) (remainder % 10);
+            remainder /= 10;
+        }
+
+        return hashCode;
+    }
+
 
     static long roundBasedOnRemainder(long valueBeforeRounding, long remainingDigit, RoundingMode roundingMode) {
         if (remainingDigit < -9 || remainingDigit > 9) {

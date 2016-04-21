@@ -4,10 +4,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import static co.uk.matejtymes.tdp.DecimalCloset.*;
-import static co.uk.matejtymes.tdp.LongUtil.*;
 import static co.uk.matejtymes.tdp.LongUtil.addExact;
 import static co.uk.matejtymes.tdp.LongUtil.multiplyExact;
 import static co.uk.matejtymes.tdp.LongUtil.negateExact;
+import static co.uk.matejtymes.tdp.LongUtil.*;
 import static co.uk.matejtymes.tdp.LongUtil.subtractExact;
 import static java.lang.Math.*;
 import static java.lang.String.format;
@@ -156,19 +156,7 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     @Override
     public int hashCode() {
-        // its important that this starts as zero - this way will ignore trailing zeros
-        int hashCode = 0;
-
-        long remainder = absExact(unscaledValue);
-        while (remainder > 0) {
-            hashCode = (hashCode * 5) + (int) (remainder % 10);
-            remainder /= 10;
-        }
-        if (unscaledValue < 0) {
-            hashCode *= -1;
-        }
-
-        return hashCode;
+        return DecimalCloset.hashCode(this);
     }
 
     // todo: test
@@ -299,27 +287,6 @@ public class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public static int compare(Decimal x, Decimal y) {
-        if (x.scale == y.scale) {
-            return Long.compare(x.unscaledValue, y.unscaledValue);
-        }
-
-        int minScale = min(x.scale, y.scale);
-
-        long xScaler = pow10(x.scale - minScale);
-        long yScaler = pow10(y.scale - minScale);
-
-        // by doing division instead of multiplication we prevent overflow
-        long xScaledDownValue = x.unscaledValue / xScaler;
-        long yScaledDownValue = y.unscaledValue / yScaler;
-
-        int comparison = Long.compare(xScaledDownValue, yScaledDownValue);
-        if (comparison != 0) {
-            return comparison;
-        } else {
-            long xRemainder = subtractExact(x.unscaledValue, multiplyExact(xScaledDownValue, xScaler));
-            long yRemainder = subtractExact(y.unscaledValue, multiplyExact(yScaledDownValue, yScaler));
-
-            return Long.compare(xRemainder, yRemainder);
-        }
+        return DecimalCloset.compare(x, y);
     }
 }

@@ -24,6 +24,8 @@ public class DecimalTest {
         assertThat(decimal("16.456").longValue(), equalTo(16L));
         assertThat(decimal("-150.003050").longValue(), equalTo(-150L));
         assertThat(decimal("+73000").longValue(), equalTo(73000L));
+        assertThat(decimal(Long.MAX_VALUE).longValue(), equalTo(Long.MAX_VALUE));
+        assertThat(decimal(Long.MIN_VALUE).longValue(), equalTo(Long.MIN_VALUE));
     }
 
     @Test
@@ -45,6 +47,8 @@ public class DecimalTest {
         assertThat(decimal("16.456").bigDecimalValue(), equalTo(new BigDecimal("16.456")));
         assertThat(decimal("-150.003050").bigDecimalValue(), equalTo(new BigDecimal("-150.003050")));
         assertThat(decimal("+73000").bigDecimalValue(), equalTo(new BigDecimal("73000")));
+        assertThat(decimal(Long.MAX_VALUE).bigDecimalValue(), equalTo(new BigDecimal(Long.MAX_VALUE)));
+        assertThat(decimal(Long.MIN_VALUE).bigDecimalValue(), equalTo(new BigDecimal(Long.MIN_VALUE)));
     }
 
     @Test
@@ -52,6 +56,8 @@ public class DecimalTest {
         assertThat(decimal("16.456").toString(), equalTo("16.456"));
         assertThat(decimal("-150.003050").toString(), equalTo("-150.003050"));
         assertThat(decimal("+73000").toString(), equalTo("73000"));
+        assertThat(decimal(Long.MAX_VALUE, 8).toString(), equalTo("92233720368.54775807"));
+        assertThat(decimal(Long.MIN_VALUE, 8).toString(), equalTo("-92233720368.54775808"));
     }
 
     @Test
@@ -98,6 +104,13 @@ public class DecimalTest {
         assertThat(decimal("-1.2").hashCode(), not(equalTo(decimal("1.2").hashCode())));
         assertThat(decimal("-1.2").hashCode(), not(equalTo(decimal("2.3").hashCode())));
     }
+
+    @Test
+    public void shouldBeAbleToGenerateHashCodeForLimitValues() {
+        decimal(Long.MAX_VALUE).hashCode();
+        decimal(Long.MIN_VALUE).hashCode();
+    }
+
 
     @Test
     public void shouldRescaleProperlyWhenNoRoundingIsNeeded() {
