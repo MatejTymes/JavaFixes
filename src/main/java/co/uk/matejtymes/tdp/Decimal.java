@@ -202,6 +202,8 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public Decimal times(Decimal value) {
+        // todo: define DefaultContext with multiplication settings:
+        // todo: Optional<Integer> scaleToUse(int scaleA, int scaleB)
         return times(value, min(8, this.scale + value.scale), DEFAULT_ROUNDING_MODE);
     }
 
@@ -218,6 +220,8 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public Decimal div(Decimal value) {
+        // todo: define DefaultContext with division settings:
+        // todo: Optional<Integer> scaleToUse(int scaleA, int scaleB)
         return div(value, max(8, max(this.scale, value.scale)), DEFAULT_ROUNDING_MODE);
     }
 
