@@ -6,11 +6,9 @@ import java.math.RoundingMode;
 import static co.uk.matejtymes.tdp.DecimalCloset.*;
 import static co.uk.matejtymes.tdp.LongUtil.pow10;
 import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UNNECESSARY;
 
-// todo: check scale on every calculation method
 public class Decimal extends Number implements Comparable<Decimal> {
 
     public static final Decimal TEN = decimal(10L, 0);
@@ -54,6 +52,10 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     public static Decimal decimal(String stringValue) {
         return stringToDecimal(stringValue);
+    }
+
+    public static Decimal d(String stringValue) {
+        return decimal(stringValue);
     }
 
     long getUnscaledValue() {
@@ -150,14 +152,19 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public Decimal times(Decimal value, int scaleToUse) {
+        // todo: add a flag to not be able to use this without a calculator
+
         return times(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
 
     // todo: test
     public Decimal times(Decimal value) {
+        // todo: add a flag to not be able to use this without a calculator
+
         // todo: define DefaultContext with multiplication settings:
         // todo: Optional<Integer> scaleToUse(int scaleA, int scaleB)
-        return times(value, min(8, this.scale + value.scale), DEFAULT_ROUNDING_MODE);
+//        return times(value, min(8, this.scale + value.scale), DEFAULT_ROUNDING_MODE);
+        return times(value, this.scale + value.scale, DEFAULT_ROUNDING_MODE);
     }
 
     // todo: test
@@ -168,11 +175,15 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public Decimal div(Decimal value, int scaleToUse) {
+        // todo: add a flag to not be able to use this without a calculator
+
         return div(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
 
     // todo: test
     public Decimal div(Decimal value) {
+        // todo: add a flag to not be able to use this without a calculator
+
         // todo: define DefaultContext with division settings:
         // todo: Optional<Integer> scaleToUse(int scaleA, int scaleB)
         return div(value, max(8, max(this.scale, value.scale)), DEFAULT_ROUNDING_MODE);

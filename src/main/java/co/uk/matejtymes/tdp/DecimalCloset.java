@@ -104,9 +104,13 @@ public class DecimalCloset {
         // todo: - this is extremely prone to overflow
 
         // todo: use BigInteger in case of overflow
+        long unscaledValue = multiplyExact(strippedX.getUnscaledValue(), strippedY.getUnscaledValue());
+//        long unscaledValue = BigInteger.valueOf(strippedX.getUnscaledValue())
+//                .multiply(BigInteger.valueOf(strippedY.getUnscaledValue()))
+//                .longValueExact();
 
         return decimal(
-                multiplyExact(strippedX.getUnscaledValue(), strippedY.getUnscaledValue()),
+                unscaledValue,
                 strippedX.getScale() + strippedY.getScale()
         ).rescaleTo(scaleToUse, roundingMode);
     }
