@@ -4,13 +4,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import static co.uk.matejtymes.tdp.DecimalCloset.*;
-import static co.uk.matejtymes.tdp.LongUtil.addExact;
-import static co.uk.matejtymes.tdp.LongUtil.multiplyExact;
-import static co.uk.matejtymes.tdp.LongUtil.negateExact;
-import static co.uk.matejtymes.tdp.LongUtil.*;
-import static co.uk.matejtymes.tdp.LongUtil.subtractExact;
-import static java.lang.Math.*;
-import static java.lang.String.format;
+import static co.uk.matejtymes.tdp.LongUtil.pow10;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UNNECESSARY;
 
@@ -30,9 +26,8 @@ public class Decimal extends Number implements Comparable<Decimal> {
     // this people will depend on factory methods and we can actualy introduce more classes
     // like: SmallDecimal, LargeDecimal, InfiniteDecimal, NaNDecimal
     private Decimal(long unscaledValue, int scale) {
-        if (scale < 0) {
-            throw new IllegalArgumentException(format("Scale (%d) is lower than 0", scale));
-        }
+        checkScale(scale);
+
         this.unscaledValue = unscaledValue;
         this.scale = scale;
     }
@@ -52,51 +47,13 @@ public class Decimal extends Number implements Comparable<Decimal> {
         return new Decimal(unscaledValue, scale);
     }
 
-    public static Decimal decimal(String stringValue) {
-        char chars[] = stringValue.toCharArray();
-        int startIndex = 0;
-        boolean positive = true;
-        if (chars[0] == '+') {
-            startIndex++;
-        } else if (chars[0] == '-') {
-            positive = false;
-            startIndex++;
-        }
-
-        long unscaledValue = 0;
-        int scale = 0;
-
-        boolean foundDecimalPoint = false;
-        for (int i = startIndex; i < chars.length; i++) {
-            char c = chars[i];
-            if (c >= '0' && c <= '9') {
-//                unscaledValue = unscaledValue * 10 + (c - '0');
-                unscaledValue = addExact(multiplyExact(unscaledValue, 10), (c - '0'));
-                if (foundDecimalPoint) {
-                    ++scale;
-                }
-            } else if (c == '.') {
-                if (foundDecimalPoint) {
-                    throw new IllegalArgumentException("Illegal value. Too many decimal points");
-                }
-                foundDecimalPoint = true;
-            } else if (c == '_') {
-                // todo: check it is used only between numbers
-                // ignore
-            } else {
-                throw new IllegalArgumentException("Decimal contains invalid character: " + c);
-            }
-        }
-        if (!positive) {
-            unscaledValue = negateExact(unscaledValue);
-        }
-
-        return new Decimal(unscaledValue, scale);
-    }
-
     // todo: test this
     public static Decimal decimal(BigDecimal value) {
         return decimal(value.toPlainString());
+    }
+
+    public static Decimal decimal(String stringValue) {
+        return stringToDecimal(stringValue);
     }
 
     long getUnscaledValue() {
@@ -137,21 +94,17 @@ public class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public boolean isIdenticalTo(Decimal other) {
-        if (this == other) {
-            return true;
-        }
-        return unscaledValue == other.unscaledValue &&
-                scale == other.scale;
+        return areIdentical(this, other);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        //  its important to only check its instance of Decimal and not check concrete class\
+        //  this will allow us to add subclassing
+        if (o == null || !(o instanceof Decimal)) return false;
 
-        Decimal other = (Decimal) o;
-
-        return this.compareTo(other) == 0;
+        return areEqual(this, (Decimal) o);
     }
 
     @Override
@@ -227,43 +180,12 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
 
     public Decimal rescaleTo(int scaleToUse, RoundingMode roundingMode) {
-        if (scaleToUse == scale) {
-            return this;
-        } else if (scaleToUse > scale) {
-            long scaler = pow10(scaleToUse - scale);
-            long rescaledValue = multiplyExact(this.unscaledValue, scaler);
-            return new Decimal(rescaledValue, scaleToUse);
-        }
-
-        long scaler = pow10(scale - scaleToUse);
-        long rescaledValue = this.unscaledValue / scaler;
-        long remainder = subtractExact(this.unscaledValue, multiplyExact(rescaledValue, scaler));
-        long remainingDigit = remainder / (scaler / 10);
-
-        rescaledValue = roundBasedOnRemainder(rescaledValue, remainingDigit, roundingMode);
-
-        return new Decimal(rescaledValue, scaleToUse);
+        return DecimalCloset.rescaleTo(this, scaleToUse, roundingMode);
     }
 
+    // todo: will anybody ever use this ???
     public Decimal stripTrailingZerosWithScaleAtLeast(int minScaleToKeep) {
-        if (minScaleToKeep < 0) {
-            throw new IllegalArgumentException(format("Minimal scale to keep (%d), must be at least 0", minScaleToKeep));
-        }
-        if (scale < minScaleToKeep) {
-            return rescaleTo(minScaleToKeep, RoundingMode.UNNECESSARY);
-        } else if (scale == minScaleToKeep || unscaledValue % 10 != 0) {
-            return this;
-        }
-
-        long newUnscaledValue = unscaledValue;
-        int newScale = scale;
-
-        while (newUnscaledValue % 10 == 0 && newScale > minScaleToKeep) {
-            newUnscaledValue /= 10;
-            newScale--;
-        }
-
-        return new Decimal(newUnscaledValue, newScale);
+        return DecimalCloset.stripTrailingZerosWithScaleAtLeast(this, minScaleToKeep);
     }
 
     public Decimal stripTrailingZeros() {
@@ -272,22 +194,7 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: should we add scientific notation as well ???
     public String toPlainString() {
-        StringBuilder sb = new StringBuilder();
-
-        int charsToDecimalPoint = scale;
-        long remainder = unscaledValue;
-        do {
-            sb.append(abs(remainder % 10));
-            if (--charsToDecimalPoint == 0) {
-                sb.append('.');
-            }
-            remainder /= 10;
-        } while (remainder != 0 || charsToDecimalPoint >= 0);
-        if (unscaledValue < 0) {
-            sb.append('-');
-        }
-
-        return sb.reverse().toString();
+        return DecimalCloset.toPlainString(this);
     }
 
     @Override
