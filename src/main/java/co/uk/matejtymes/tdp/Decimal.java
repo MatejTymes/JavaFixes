@@ -64,19 +64,6 @@ public class Decimal extends Number implements Comparable<Decimal> {
         return decimal(stringValue);
     }
 
-    long unscaledValue() {
-        return unscaledValue;
-    }
-
-    int scale() {
-        return scale;
-    }
-
-    int scaleWithoutTrailingZeros() {
-        // todo: make this more optimized - move into DecimalCloset
-        return stripTrailingZeros().scale();
-    }
-
     @Override
     public int intValue() {
         return (int) doubleValue();
@@ -101,28 +88,22 @@ public class Decimal extends Number implements Comparable<Decimal> {
         return new BigDecimal(toString());
     }
 
-    @Override
-    public int compareTo(Decimal other) {
-        return compare(this, other);
+    long unscaledValue() {
+        return unscaledValue;
     }
 
-    public boolean isIdenticalTo(Decimal other) {
-        return areIdentical(this, other);
+    int scale() {
+        return scale;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        //  its important to only check its instance of Decimal and not check concrete class\
-        //  this will allow us to add subclassing
-        if (o == null || !(o instanceof Decimal)) return false;
-
-        return areEqual(this, (Decimal) o);
+    int scaleWithoutTrailingZeros() {
+        // todo: make this more optimized - move into DecimalCloset
+        return stripTrailingZeros().scale();
     }
 
-    @Override
-    public int hashCode() {
-        return DecimalCloset.hashCode(this);
+    // todo: test this
+    public Decimal negate() {
+        return DecimalCloset.negate(this);
     }
 
     // todo: test
@@ -216,6 +197,30 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     public Decimal stripTrailingZeros() {
         return stripTrailingZerosWithScaleAtLeast(0);
+    }
+
+    @Override
+    public int compareTo(Decimal other) {
+        return compare(this, other);
+    }
+
+    public boolean isIdenticalTo(Decimal other) {
+        return areIdentical(this, other);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        //  its important to only check its instance of Decimal and not check concrete class\
+        //  this will allow us to add subclassing
+        if (o == null || !(o instanceof Decimal)) return false;
+
+        return areEqual(this, (Decimal) o);
+    }
+
+    @Override
+    public int hashCode() {
+        return DecimalCloset.hashCode(this);
     }
 
     // todo: should we add scientific notation as well ???

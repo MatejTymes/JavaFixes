@@ -58,6 +58,11 @@ public class DecimalCloset {
         return decimal(unscaledValue, scale);
     }
 
+    // todo: start using this
+    static Decimal negate(Decimal d) {
+        return decimal(negateExact(d.unscaledValue()), d.scale());
+    }
+
     static Decimal add(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
         checkScale(scaleToUse);
 
@@ -77,21 +82,7 @@ public class DecimalCloset {
     }
 
     static Decimal subtract(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
-        checkScale(scaleToUse);
-
-        int scaleX = x.scale();
-        int scaleY = y.scale();
-        // todo: this is easy to read, but maybe
-        // todo: use rather min(scaleToUse, scaleX, scaleY) to actually prevent unnecessary overflow
-        int maxScale = max(scaleX, scaleY);
-
-        long maxScaledValueX = multiplyExact(x.unscaledValue(), pow10(maxScale - scaleX));
-        long maxScaledValueY = multiplyExact(y.unscaledValue(), pow10(maxScale - scaleY));
-
-        return decimal(
-                subtractExact(maxScaledValueX, maxScaledValueY),
-                maxScale
-        ).rescaleTo(scaleToUse, roundingMode);
+        return add(x, negate(y), scaleToUse, roundingMode);
     }
 
     static Decimal multiply(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {

@@ -12,6 +12,8 @@ import static org.junit.Assert.fail;
 
 public class DecimalTest {
 
+    // todo: add negate test
+
     @Test
     public void shouldConvertToInt() {
         assertThat(decimal("16.456").intValue(), equalTo(16));
