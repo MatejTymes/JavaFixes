@@ -3,12 +3,12 @@ package co.uk.matejtymes.tdp;
 import java.math.RoundingMode;
 
 import static co.uk.matejtymes.tdp.Decimal.decimal;
-import static co.uk.matejtymes.tdp.LongUtil.*;
 import static co.uk.matejtymes.tdp.LongUtil.addExact;
 import static co.uk.matejtymes.tdp.LongUtil.decrementExact;
 import static co.uk.matejtymes.tdp.LongUtil.incrementExact;
 import static co.uk.matejtymes.tdp.LongUtil.multiplyExact;
 import static co.uk.matejtymes.tdp.LongUtil.negateExact;
+import static co.uk.matejtymes.tdp.LongUtil.*;
 import static co.uk.matejtymes.tdp.LongUtil.subtractExact;
 import static java.lang.Math.*;
 import static java.lang.String.format;
@@ -119,26 +119,14 @@ public class DecimalCloset {
     static Decimal divide(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
         checkScale(scaleToUse);
 
-        long unscaledX = x.getUnscaledValue();
-        long unscaledY = y.getUnscaledValue();
-
-        boolean positive = (unscaledX < 0 && unscaledY < 0) ||
-                (unscaledX >= 0 && unscaledY >= 0);
-
-        // todo: this fails once unscaledX is Long.MIN_VALUE
-        long remainder = absExact(unscaledX);
-        // todo: this fails once unscaledY is Long.MIN_VALUE
-        long divisor = absExact(unscaledY);
+        long remainder = x.getUnscaledValue();
+        long divisor = y.getUnscaledValue();
 
         long result = remainder / divisor;
         remainder = multiplyExact((remainder % divisor), 10);
         int newScale = x.getScale() - y.getScale();
 
         if (newScale > scaleToUse) {
-            // todo: test this
-            if (!positive) {
-                result = negateExact(result);
-            }
             return decimal(result, newScale)
                     .rescaleTo(scaleToUse, roundingMode);
         } else {
@@ -148,10 +136,6 @@ public class DecimalCloset {
                 newScale++;
             }
             long remainingDigit = remainder / divisor;
-            if (!positive) {
-                result = negateExact(result);
-                remainingDigit = -remainingDigit;
-            }
             result = roundBasedOnRemainder(result, remainingDigit, roundingMode);
 
 
