@@ -52,12 +52,12 @@ public class DecimalTest {
     }
 
     @Test
-    public void shouldConvertToString() {
-        assertThat(decimal("16.456").toString(), equalTo("16.456"));
-        assertThat(decimal("-150.003050").toString(), equalTo("-150.003050"));
-        assertThat(decimal("+73000").toString(), equalTo("73000"));
-        assertThat(decimal(Long.MAX_VALUE, 8).toString(), equalTo("92233720368.54775807"));
-        assertThat(decimal(Long.MIN_VALUE, 8).toString(), equalTo("-92233720368.54775808"));
+    public void shouldConvertToPlainString() {
+        assertThat(decimal("16.456").toPlainString(), equalTo("16.456"));
+        assertThat(decimal("-150.003050").toPlainString(), equalTo("-150.003050"));
+        assertThat(decimal("+73000").toPlainString(), equalTo("73000"));
+        assertThat(decimal(Long.MAX_VALUE, 8).toPlainString(), equalTo("92233720368.54775807"));
+        assertThat(decimal(Long.MIN_VALUE, 8).toPlainString(), equalTo("-92233720368.54775808"));
     }
 
     @Test

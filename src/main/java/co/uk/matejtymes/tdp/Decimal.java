@@ -266,8 +266,8 @@ public class Decimal extends Number implements Comparable<Decimal> {
         return stripTrailingZerosWithScaleAtLeast(0);
     }
 
-    @Override
-    public String toString() {
+    // todo: should we add scientific notation as well ???
+    public String toPlainString() {
         StringBuilder sb = new StringBuilder();
 
         int charsToDecimalPoint = scale;
@@ -284,6 +284,11 @@ public class Decimal extends Number implements Comparable<Decimal> {
         }
 
         return sb.reverse().toString();
+    }
+
+    @Override
+    public String toString() {
+        return toPlainString();
     }
 
     public static int compare(Decimal x, Decimal y) {
