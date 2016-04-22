@@ -9,6 +9,12 @@ import static java.lang.Math.max;
 import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UNNECESSARY;
 
+// nice things this class has:
+// - fixed equals
+// - hash code for values that are comparable is the same
+// - sensible rounding defaults
+// - string construction can use '_' symbol
+// - faster creation than BigDecimal
 public class Decimal extends Number implements Comparable<Decimal> {
 
     public static final Decimal TEN = decimal(10L, 0);
