@@ -113,7 +113,6 @@ public class DecimalTest {
         decimal(Long.MIN_VALUE).hashCode();
     }
 
-
     @Test
     public void shouldRescaleProperlyWhenNoRoundingIsNeeded() {
 
@@ -125,6 +124,15 @@ public class DecimalTest {
         assertThat(decimal("1.2").rescaleTo(5, RoundingMode.HALF_DOWN).isIdenticalTo(decimal("1.20000")), equalTo(true));
         assertThat(decimal("1.2").rescaleTo(5, RoundingMode.HALF_EVEN).isIdenticalTo(decimal("1.20000")), equalTo(true));
         assertThat(decimal("1.2").rescaleTo(5, RoundingMode.UNNECESSARY).isIdenticalTo(decimal("1.20000")), equalTo(true));
+
+        assertThat(decimal("1.200").rescaleTo(2, RoundingMode.UP).isIdenticalTo(decimal("1.20")), equalTo(true));
+        assertThat(decimal("1.200").rescaleTo(2, RoundingMode.DOWN).isIdenticalTo(decimal("1.20")), equalTo(true));
+        assertThat(decimal("1.200").rescaleTo(2, RoundingMode.CEILING).isIdenticalTo(decimal("1.20")), equalTo(true));
+        assertThat(decimal("1.200").rescaleTo(2, RoundingMode.FLOOR).isIdenticalTo(decimal("1.20")), equalTo(true));
+        assertThat(decimal("1.200").rescaleTo(2, RoundingMode.HALF_UP).isIdenticalTo(decimal("1.20")), equalTo(true));
+        assertThat(decimal("1.200").rescaleTo(2, RoundingMode.HALF_DOWN).isIdenticalTo(decimal("1.20")), equalTo(true));
+        assertThat(decimal("1.200").rescaleTo(2, RoundingMode.HALF_EVEN).isIdenticalTo(decimal("1.20")), equalTo(true));
+        assertThat(decimal("1.200").rescaleTo(2, RoundingMode.UNNECESSARY).isIdenticalTo(decimal("1.20")), equalTo(true));
     }
 
     @Test

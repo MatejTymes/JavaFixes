@@ -97,7 +97,7 @@ public class Decimal extends Number implements Comparable<Decimal> {
     }
 
     int scaleWithoutTrailingZeros() {
-        // todo: make this more optimized - move into DecimalCloset
+        // todo: make this more optimized + move into DecimalCloset
         return stripTrailingZeros().scale();
     }
 

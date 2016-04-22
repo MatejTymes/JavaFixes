@@ -58,7 +58,6 @@ public class DecimalCloset {
         return decimal(unscaledValue, scale);
     }
 
-    // todo: start using this
     static Decimal negate(Decimal d) {
         return decimal(negateExact(d.unscaledValue()), d.scale());
     }
