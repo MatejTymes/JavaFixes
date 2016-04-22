@@ -61,14 +61,14 @@ public class DecimalCloset {
     static Decimal add(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
         checkScale(scaleToUse);
 
-        int scaleX = x.getScale();
-        int scaleY = y.getScale();
+        int scaleX = x.scale();
+        int scaleY = y.scale();
         // todo: this is easy to read, but maybe
         // todo: use rather min(scaleToUse, scaleX, scaleY) to actually prevent unnecessary overflow
         int maxScale = max(scaleX, scaleY);
 
-        long maxScaledValueX = multiplyExact(x.getUnscaledValue(), pow10(maxScale - scaleX));
-        long maxScaledValueY = multiplyExact(y.getUnscaledValue(), pow10(maxScale - scaleY));
+        long maxScaledValueX = multiplyExact(x.unscaledValue(), pow10(maxScale - scaleX));
+        long maxScaledValueY = multiplyExact(y.unscaledValue(), pow10(maxScale - scaleY));
 
         return decimal(
                 addExact(maxScaledValueX, maxScaledValueY),
@@ -79,14 +79,14 @@ public class DecimalCloset {
     static Decimal subtract(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
         checkScale(scaleToUse);
 
-        int scaleX = x.getScale();
-        int scaleY = y.getScale();
+        int scaleX = x.scale();
+        int scaleY = y.scale();
         // todo: this is easy to read, but maybe
         // todo: use rather min(scaleToUse, scaleX, scaleY) to actually prevent unnecessary overflow
         int maxScale = max(scaleX, scaleY);
 
-        long maxScaledValueX = multiplyExact(x.getUnscaledValue(), pow10(maxScale - scaleX));
-        long maxScaledValueY = multiplyExact(y.getUnscaledValue(), pow10(maxScale - scaleY));
+        long maxScaledValueX = multiplyExact(x.unscaledValue(), pow10(maxScale - scaleX));
+        long maxScaledValueY = multiplyExact(y.unscaledValue(), pow10(maxScale - scaleY));
 
         return decimal(
                 subtractExact(maxScaledValueX, maxScaledValueY),
@@ -104,14 +104,14 @@ public class DecimalCloset {
         // todo: - this is extremely prone to overflow
 
         // todo: use BigInteger in case of overflow
-        long unscaledValue = multiplyExact(strippedX.getUnscaledValue(), strippedY.getUnscaledValue());
-//        long unscaledValue = BigInteger.valueOf(strippedX.getUnscaledValue())
-//                .multiply(BigInteger.valueOf(strippedY.getUnscaledValue()))
+        long unscaledValue = multiplyExact(strippedX.unscaledValue(), strippedY.unscaledValue());
+//        long unscaledValue = BigInteger.valueOf(strippedX.unscaledValue())
+//                .multiply(BigInteger.valueOf(strippedY.unscaledValue()))
 //                .longValueExact();
 
         return decimal(
                 unscaledValue,
-                strippedX.getScale() + strippedY.getScale()
+                strippedX.scale() + strippedY.scale()
         ).rescaleTo(scaleToUse, roundingMode);
     }
 
@@ -119,12 +119,12 @@ public class DecimalCloset {
     static Decimal divide(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
         checkScale(scaleToUse);
 
-        long remainder = x.getUnscaledValue();
-        long divisor = y.getUnscaledValue();
+        long remainder = x.unscaledValue();
+        long divisor = y.unscaledValue();
 
         long result = remainder / divisor;
         remainder = multiplyExact((remainder % divisor), 10);
-        int newScale = x.getScale() - y.getScale();
+        int newScale = x.scale() - y.scale();
 
         if (newScale > scaleToUse) {
             return decimal(result, newScale)
@@ -147,8 +147,8 @@ public class DecimalCloset {
     static Decimal rescaleTo(Decimal d, int scaleToUse, RoundingMode roundingMode) {
         checkScale(scaleToUse);
 
-        int scale = d.getScale();
-        long unscaledValue = d.getUnscaledValue();
+        int scale = d.scale();
+        long unscaledValue = d.unscaledValue();
 
         if (scaleToUse == scale) {
             return d;
@@ -171,8 +171,8 @@ public class DecimalCloset {
     static Decimal stripTrailingZerosWithScaleAtLeast(Decimal d, int minScaleToKeep) {
         checkScale(minScaleToKeep);
 
-        int scale = d.getScale();
-        long unscaledValue = d.getUnscaledValue();
+        int scale = d.scale();
+        long unscaledValue = d.unscaledValue();
 
         if (scale < minScaleToKeep) {
             return rescaleTo(d, minScaleToKeep, RoundingMode.UNNECESSARY);
@@ -192,11 +192,11 @@ public class DecimalCloset {
     }
 
     static int compare(Decimal x, Decimal y) {
-        int scaleX = x.getScale();
-        int scaleY = y.getScale();
+        int scaleX = x.scale();
+        int scaleY = y.scale();
 
-        long unscaledX = x.getUnscaledValue();
-        long unscaledY = y.getUnscaledValue();
+        long unscaledX = x.unscaledValue();
+        long unscaledY = y.unscaledValue();
 
         if (scaleX == scaleY) {
             return Long.compare(unscaledX, unscaledY);
@@ -226,8 +226,8 @@ public class DecimalCloset {
         if (x == y) {
             return true;
         }
-        return x.getUnscaledValue() == y.getUnscaledValue() &&
-                x.getScale() == y.getScale();
+        return x.unscaledValue() == y.unscaledValue() &&
+                x.scale() == y.scale();
     }
 
     static boolean areEqual(Decimal x, Decimal y) {
@@ -238,7 +238,7 @@ public class DecimalCloset {
         // its important that this starts as zero - this way will ignore trailing zeros
         int hashCode = 0;
 
-        long remainder = d.getUnscaledValue();
+        long remainder = d.unscaledValue();
         while (remainder > 0) {
             hashCode = (hashCode * 5) + (int) (remainder % 10);
             remainder /= 10;
@@ -250,9 +250,9 @@ public class DecimalCloset {
     static String toPlainString(Decimal d) {
         StringBuilder sb = new StringBuilder();
 
-        long unscaledValue = d.getUnscaledValue();
+        long unscaledValue = d.unscaledValue();
 
-        int charsToDecimalPoint = d.getScale();
+        int charsToDecimalPoint = d.scale();
         long remainder = unscaledValue;
         do {
             sb.append(abs(remainder % 10));

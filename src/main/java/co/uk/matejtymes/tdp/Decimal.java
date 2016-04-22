@@ -64,12 +64,17 @@ public class Decimal extends Number implements Comparable<Decimal> {
         return decimal(stringValue);
     }
 
-    long getUnscaledValue() {
+    long unscaledValue() {
         return unscaledValue;
     }
 
-    int getScale() {
+    int scale() {
         return scale;
+    }
+
+    int scaleWithoutTrailingZeros() {
+        // todo: make this more optimized - move into DecimalCloset
+        return stripTrailingZeros().scale();
     }
 
     @Override
@@ -192,7 +197,11 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
         // todo: define DefaultContext with division settings:
         // todo: Optional<Integer> scaleToUse(int scaleA, int scaleB)
-        return div(value, max(8, max(this.scale, value.scale)), DEFAULT_ROUNDING_MODE);
+        return div(
+                value,
+                max(8, max(this.scaleWithoutTrailingZeros(), value.scaleWithoutTrailingZeros())),
+                DEFAULT_ROUNDING_MODE
+        );
     }
 
 
