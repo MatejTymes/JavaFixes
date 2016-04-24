@@ -24,6 +24,7 @@ public class Decimal extends Number implements Comparable<Decimal> {
     private static final RoundingMode DEFAULT_ROUNDING_MODE = HALF_UP;
 
     private transient final long unscaledValue;
+    // todo: this is bull dung - change to exponent and ignore scale
     private transient final int scale;
 
     // we should keep the constructor private

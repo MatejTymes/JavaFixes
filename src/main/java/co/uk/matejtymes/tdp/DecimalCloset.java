@@ -105,7 +105,7 @@ public class DecimalCloset {
         ).rescaleTo(scaleToUse, roundingMode);
     }
 
-    // todo: handle null divisor exception
+    // todo: handle zero divisor exception
     static Decimal divide(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
         checkScale(scaleToUse);
 
@@ -225,7 +225,7 @@ public class DecimalCloset {
     }
 
     static int hashCode(Decimal d) {
-        // its important that this starts as zero - this way will ignore trailing zeros
+        // its important that this starts as zero - this way we'll ignore trailing zeros
         int hashCode = 0;
 
         long remainder = d.unscaledValue();
