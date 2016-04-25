@@ -2,7 +2,6 @@ package co.uk.matejtymes.tdp;
 
 import java.math.RoundingMode;
 
-import static co.uk.matejtymes.tdp.Decimal.decimal;
 import static co.uk.matejtymes.tdp.LongUtil.addExact;
 import static co.uk.matejtymes.tdp.LongUtil.decrementExact;
 import static co.uk.matejtymes.tdp.LongUtil.incrementExact;
@@ -16,7 +15,17 @@ import static java.lang.String.format;
 // todo: test this
 public class DecimalCloset {
 
-    static Decimal stringToDecimal(String stringValue) {
+    static Decimal toDecimal(long unscaledValue, int scale) {
+        while (unscaledValue != 0 && unscaledValue % 10 == 0) {
+            unscaledValue /= 10;
+            scale--;
+        }
+
+        return new Decimal(unscaledValue, scale);
+    }
+
+    // todo: too slow - make it faster
+    static Decimal toDecimal(String stringValue) {
         char chars[] = stringValue.toCharArray();
         int startIndex = 0;
         boolean positive = true;
@@ -55,15 +64,14 @@ public class DecimalCloset {
             unscaledValue = negateExact(unscaledValue);
         }
 
-        return decimal(unscaledValue, scale);
+        return toDecimal(unscaledValue, scale);
     }
 
     static Decimal negate(Decimal d) {
-        return decimal(negateExact(d.unscaledValue()), d.scale());
+        return toDecimal(negateExact(d.unscaledValue()), d.scale());
     }
 
     static Decimal add(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
-        checkScale(scaleToUse);
 
         int scaleX = x.scale();
         int scaleY = y.scale();
@@ -74,7 +82,7 @@ public class DecimalCloset {
         long maxScaledValueX = multiplyExact(x.unscaledValue(), pow10(maxScale - scaleX));
         long maxScaledValueY = multiplyExact(y.unscaledValue(), pow10(maxScale - scaleY));
 
-        return decimal(
+        return toDecimal(
                 addExact(maxScaledValueX, maxScaledValueY),
                 maxScale
         ).rescaleTo(scaleToUse, roundingMode);
@@ -85,29 +93,24 @@ public class DecimalCloset {
     }
 
     static Decimal multiply(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
-        checkScale(scaleToUse);
-
-        Decimal strippedX = x.stripTrailingZeros();
-        Decimal strippedY = y.stripTrailingZeros();
 
         // todo: extremely simplistic algorithm - please improve
         // todo: - this is extremely prone to overflow
 
         // todo: use BigInteger in case of overflow
-        long unscaledValue = multiplyExact(strippedX.unscaledValue(), strippedY.unscaledValue());
+        long unscaledValue = multiplyExact(x.unscaledValue(), y.unscaledValue());
 //        long unscaledValue = BigInteger.valueOf(strippedX.unscaledValue())
 //                .multiply(BigInteger.valueOf(strippedY.unscaledValue()))
 //                .longValueExact();
 
-        return decimal(
+        return toDecimal(
                 unscaledValue,
-                strippedX.scale() + strippedY.scale()
+                x.scale() + y.scale()
         ).rescaleTo(scaleToUse, roundingMode);
     }
 
     // todo: handle zero divisor exception
     static Decimal divide(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
-        checkScale(scaleToUse);
 
         long remainder = x.unscaledValue();
         long divisor = y.unscaledValue();
@@ -117,7 +120,7 @@ public class DecimalCloset {
         int newScale = x.scale() - y.scale();
 
         if (newScale > scaleToUse) {
-            return decimal(result, newScale)
+            return toDecimal(result, newScale)
                     .rescaleTo(scaleToUse, roundingMode);
         } else {
             while (newScale < scaleToUse) {
@@ -129,13 +132,12 @@ public class DecimalCloset {
             result = roundBasedOnRemainder(result, remainingDigit, roundingMode);
 
 
-            return decimal(result, newScale)
+            return toDecimal(result, newScale)
                     .rescaleTo(scaleToUse, roundingMode);
         }
     }
 
     static Decimal rescaleTo(Decimal d, int scaleToUse, RoundingMode roundingMode) {
-        checkScale(scaleToUse);
 
         int scale = d.scale();
         long unscaledValue = d.unscaledValue();
@@ -145,7 +147,7 @@ public class DecimalCloset {
         } else if (scaleToUse > scale) {
             long scaler = pow10(scaleToUse - scale);
             long rescaledValue = multiplyExact(unscaledValue, scaler);
-            return decimal(rescaledValue, scaleToUse);
+            return toDecimal(rescaledValue, scaleToUse);
         }
 
         long scaler = pow10(scale - scaleToUse);
@@ -155,30 +157,7 @@ public class DecimalCloset {
 
         rescaledValue = roundBasedOnRemainder(rescaledValue, remainingDigit, roundingMode);
 
-        return decimal(rescaledValue, scaleToUse);
-    }
-
-    static Decimal stripTrailingZerosWithScaleAtLeast(Decimal d, int minScaleToKeep) {
-        checkScale(minScaleToKeep);
-
-        int scale = d.scale();
-        long unscaledValue = d.unscaledValue();
-
-        if (scale < minScaleToKeep) {
-            return rescaleTo(d, minScaleToKeep, RoundingMode.UNNECESSARY);
-        } else if (scale == minScaleToKeep || unscaledValue % 10 != 0) {
-            return d;
-        }
-
-        long newUnscaledValue = unscaledValue;
-        int newScale = scale;
-
-        while (newUnscaledValue % 10 == 0 && newScale > minScaleToKeep) {
-            newUnscaledValue /= 10;
-            newScale--;
-        }
-
-        return decimal(newUnscaledValue, newScale);
+        return toDecimal(rescaledValue, scaleToUse);
     }
 
     static int compare(Decimal x, Decimal y) {
@@ -212,14 +191,6 @@ public class DecimalCloset {
         }
     }
 
-    static boolean areIdentical(Decimal x, Decimal y) {
-        if (x == y) {
-            return true;
-        }
-        return x.unscaledValue() == y.unscaledValue() &&
-                x.scale() == y.scale();
-    }
-
     static boolean areEqual(Decimal x, Decimal y) {
         return x.compareTo(y) == 0;
     }
@@ -237,21 +208,28 @@ public class DecimalCloset {
         return hashCode;
     }
 
-    static String toPlainString(Decimal d) {
+    static String toPlainString(Decimal d, int minScaleToUse) {
         StringBuilder sb = new StringBuilder();
 
-        long unscaledValue = d.unscaledValue();
-
-        int charsToDecimalPoint = d.scale();
-        long remainder = unscaledValue;
+        long remainder = d.unscaledValue();
+        boolean negative = remainder < 0;
+        int remainderScale = d.scale();
+        int currentScale = max(max(minScaleToUse, remainderScale), 0);
         do {
-            sb.append(abs(remainder % 10));
-            if (--charsToDecimalPoint == 0) {
+            if (currentScale > remainderScale) {
+                sb.append('0');
+            } else {
+                sb.append(abs(remainder % 10));
+                remainder /= 10;
+                remainderScale--;
+            }
+
+            if (--currentScale == 0) {
                 sb.append('.');
             }
-            remainder /= 10;
-        } while (remainder != 0 || charsToDecimalPoint >= 0);
-        if (unscaledValue < 0) {
+        } while (remainder != 0 || currentScale >= 0);
+
+        if (negative) {
             sb.append('-');
         }
 
@@ -315,11 +293,5 @@ public class DecimalCloset {
         }
 
         return valueAfterRounding;
-    }
-
-    static void checkScale(int scale) {
-        if (scale < 0) {
-            throw new IllegalArgumentException(format("The minimum Scale value (%d) must be at least 0", scale));
-        }
     }
 }

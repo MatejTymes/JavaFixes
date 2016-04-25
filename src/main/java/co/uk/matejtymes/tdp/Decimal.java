@@ -24,41 +24,39 @@ public class Decimal extends Number implements Comparable<Decimal> {
     private static final RoundingMode DEFAULT_ROUNDING_MODE = HALF_UP;
 
     private transient final long unscaledValue;
-    // todo: this is bull dung - change to exponent and ignore scale
     private transient final int scale;
 
     // we should keep the constructor private
     // this people will depend on factory methods and we can actualy introduce more classes
     // like: SmallDecimal, LargeDecimal, InfiniteDecimal, NaNDecimal
-    private Decimal(long unscaledValue, int scale) {
-        checkScale(scale);
-
+    Decimal(long unscaledValue, int scale) {
         this.unscaledValue = unscaledValue;
         this.scale = scale;
     }
 
+
     // todo: test this
     public static Decimal decimal(int value) {
-        return new Decimal((long) value, 0);
+        return toDecimal((long) value, 0);
     }
 
     // todo: test this
     public static Decimal decimal(long value) {
-        return new Decimal(value, 0);
+        return toDecimal(value, 0);
     }
 
     // todo: test this
     public static Decimal decimal(long unscaledValue, int scale) {
-        return new Decimal(unscaledValue, scale);
+        return toDecimal(unscaledValue, scale);
     }
 
     // todo: test this
     public static Decimal decimal(BigDecimal value) {
-        return decimal(value.toPlainString());
+        return toDecimal(value.toPlainString());
     }
 
     public static Decimal decimal(String stringValue) {
-        return stringToDecimal(stringValue);
+        return toDecimal(stringValue);
     }
 
     public static Decimal d(String stringValue) {
@@ -82,7 +80,11 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     @Override
     public double doubleValue() {
-        return ((double) unscaledValue) / (double) pow10(scale);
+        if (scale < 0) {
+            return ((double) unscaledValue) * (double) pow10(-scale);
+        } else {
+            return ((double) unscaledValue) / (double) pow10(scale);
+        }
     }
 
     public BigDecimal bigDecimalValue() {
@@ -95,11 +97,6 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     int scale() {
         return scale;
-    }
-
-    int scaleWithoutTrailingZeros() {
-        // todo: make this more optimized + move into DecimalCloset
-        return stripTrailingZeros().scale();
     }
 
     // todo: test this
@@ -139,8 +136,7 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public Decimal times(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        return multiply(this, value, scaleToUse, roundingMode)
-                .stripTrailingZeros();
+        return multiply(this, value, scaleToUse, roundingMode);
     }
 
     // todo: test
@@ -162,8 +158,7 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public Decimal div(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        return divide(this, value, scaleToUse, roundingMode)
-                .stripTrailingZeros();
+        return divide(this, value, scaleToUse, roundingMode);
     }
 
     // todo: test
@@ -181,7 +176,7 @@ public class Decimal extends Number implements Comparable<Decimal> {
         // todo: Optional<Integer> scaleToUse(int scaleA, int scaleB)
         return div(
                 value,
-                max(8, max(this.scaleWithoutTrailingZeros(), value.scaleWithoutTrailingZeros())),
+                max(8, max(this.scale(), value.scale())),
                 DEFAULT_ROUNDING_MODE
         );
     }
@@ -191,22 +186,9 @@ public class Decimal extends Number implements Comparable<Decimal> {
         return DecimalCloset.rescaleTo(this, scaleToUse, roundingMode);
     }
 
-    // todo: will anybody ever use this ???
-    public Decimal stripTrailingZerosWithScaleAtLeast(int minScaleToKeep) {
-        return DecimalCloset.stripTrailingZerosWithScaleAtLeast(this, minScaleToKeep);
-    }
-
-    public Decimal stripTrailingZeros() {
-        return stripTrailingZerosWithScaleAtLeast(0);
-    }
-
     @Override
     public int compareTo(Decimal other) {
         return compare(this, other);
-    }
-
-    public boolean isIdenticalTo(Decimal other) {
-        return areIdentical(this, other);
     }
 
     @Override
@@ -224,9 +206,13 @@ public class Decimal extends Number implements Comparable<Decimal> {
         return DecimalCloset.hashCode(this);
     }
 
+    public String toPlainString(int minScaleToUse) {
+        return DecimalCloset.toPlainString(this, minScaleToUse);
+    }
+
     // todo: should we add scientific notation as well ???
     public String toPlainString() {
-        return DecimalCloset.toPlainString(this);
+        return toPlainString(0);
     }
 
     @Override
