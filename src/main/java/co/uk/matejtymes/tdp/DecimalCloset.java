@@ -13,6 +13,7 @@ import static java.lang.Math.*;
 import static java.lang.String.format;
 
 // todo: test this
+// todo: speed up multiply by ten
 public class DecimalCloset {
 
     static Decimal toDecimal(long unscaledValue, int scale) {
@@ -24,7 +25,6 @@ public class DecimalCloset {
         return new Decimal(unscaledValue, scale);
     }
 
-    // todo: too slow - make it faster
     static Decimal toDecimal(String stringValue) {
         char chars[] = stringValue.toCharArray();
         int startIndex = 0;
@@ -43,8 +43,7 @@ public class DecimalCloset {
         for (int i = startIndex; i < chars.length; i++) {
             char c = chars[i];
             if (c >= '0' && c <= '9') {
-//                unscaledValue = unscaledValue * 10 + (c - '0');
-                unscaledValue = addExact(multiplyExact(unscaledValue, 10), (c - '0'));
+                unscaledValue = addValue(multiplyBy10Exact(unscaledValue), (c - '0'));
                 if (foundDecimalPoint) {
                     ++scale;
                 }
@@ -116,7 +115,7 @@ public class DecimalCloset {
         long divisor = y.unscaledValue();
 
         long result = remainder / divisor;
-        remainder = multiplyExact((remainder % divisor), 10);
+        remainder = multiplyBy10Exact(remainder % divisor);
         int newScale = x.scale() - y.scale();
 
         if (newScale > scaleToUse) {
@@ -124,8 +123,8 @@ public class DecimalCloset {
                     .rescaleTo(scaleToUse, roundingMode);
         } else {
             while (newScale < scaleToUse) {
-                result = addExact(multiplyExact(result, 10), (remainder / divisor));
-                remainder = multiplyExact((remainder % divisor), 10);
+                result = addExact(multiplyBy10Exact(result), (remainder / divisor));
+                remainder = multiplyBy10Exact(remainder % divisor);
                 newScale++;
             }
             long remainingDigit = remainder / divisor;
@@ -293,5 +292,27 @@ public class DecimalCloset {
         }
 
         return valueAfterRounding;
+    }
+
+    private static long TEN_MULTIPLICATION_UPPER_BOUND = Long.MAX_VALUE / 10;
+    private static long TEN_MULTIPLICATION_LOWER_BOUND = Long.MIN_VALUE / 10;
+
+    private static long SINGLE_DIGIT_ADDITION_UPPER_BOUND = Long.MAX_VALUE - 9;
+
+
+    private static long multiplyBy10Exact(long value) {
+        if (value <= TEN_MULTIPLICATION_UPPER_BOUND && value >= TEN_MULTIPLICATION_LOWER_BOUND) {
+            return value * 10;
+        } else {
+            return multiplyExact(value, 10L);
+        }
+    }
+
+    private static long addValue(long value, int addition) {
+        if (value <= SINGLE_DIGIT_ADDITION_UPPER_BOUND) {
+            return value + addition;
+        } else {
+            return addExact(value, addition);
+        }
     }
 }
