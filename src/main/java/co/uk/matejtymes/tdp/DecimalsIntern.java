@@ -22,7 +22,7 @@ class DecimalsIntern {
             scale--;
         }
 
-        return new Decimal(unscaledValue, scale);
+        return new Decimal.LongDecimal(unscaledValue, scale);
     }
 
     static Decimal toDecimal(String stringValue) {

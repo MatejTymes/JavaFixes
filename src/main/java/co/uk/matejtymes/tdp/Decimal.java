@@ -15,7 +15,7 @@ import static java.math.RoundingMode.UNNECESSARY;
 // - sensible rounding defaults
 // - string construction can use '_' symbol
 // - faster creation than BigDecimal
-public class Decimal extends Number implements Comparable<Decimal> {
+public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     public static final Decimal TEN = decimal(10L, 0);
     public static final Decimal ONE = decimal(1L, 0);
@@ -23,17 +23,39 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     private static final RoundingMode DEFAULT_ROUNDING_MODE = HALF_UP;
 
-    private transient final long unscaledValue;
-    private transient final int scale;
+    // todo: add others like: HugeDecimal, InfiniteDecimal, NaNDecimal
+    static class LongDecimal extends Decimal {
 
-    // we should keep the constructor private
-    // this people will depend on factory methods and we can actualy introduce more classes
-    // like: SmallDecimal, LargeDecimal, InfiniteDecimal, NaNDecimal
-    Decimal(long unscaledValue, int scale) {
-        this.unscaledValue = unscaledValue;
-        this.scale = scale;
+        private transient final long unscaledValue;
+        private transient final int scale;
+
+        LongDecimal(long unscaledValue, int scale) {
+            this.unscaledValue = unscaledValue;
+            this.scale = scale;
+        }
+
+        @Override
+        public double doubleValue() {
+            if (scale() < 0) {
+                return ((double) unscaledValue()) * (double) pow10(-scale());
+            } else {
+                return ((double) unscaledValue()) / (double) pow10(scale());
+            }
+        }
+
+        @Override
+        long unscaledValue() {
+            return unscaledValue;
+        }
+
+        @Override
+        int scale() {
+            return scale;
+        }
     }
 
+    private Decimal() {
+    }
 
     // todo: test this
     public static Decimal decimal(int value) {
@@ -78,26 +100,13 @@ public class Decimal extends Number implements Comparable<Decimal> {
         return (float) doubleValue();
     }
 
-    @Override
-    public double doubleValue() {
-        if (scale < 0) {
-            return ((double) unscaledValue) * (double) pow10(-scale);
-        } else {
-            return ((double) unscaledValue) / (double) pow10(scale);
-        }
-    }
-
     public BigDecimal bigDecimalValue() {
         return new BigDecimal(toString());
     }
 
-    long unscaledValue() {
-        return unscaledValue;
-    }
+    abstract long unscaledValue();
 
-    int scale() {
-        return scale;
-    }
+    abstract int scale();
 
     // todo: test this
     public Decimal negate() {
@@ -116,7 +125,7 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public Decimal plus(Decimal value) {
-        return plus(value, max(this.scale, value.scale), UNNECESSARY);
+        return plus(value, max(this.scale(), value.scale()), UNNECESSARY);
     }
 
     // todo: test
@@ -131,7 +140,7 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public Decimal minus(Decimal value) {
-        return minus(value, max(this.scale, value.scale), UNNECESSARY);
+        return minus(value, max(this.scale(), value.scale()), UNNECESSARY);
     }
 
     // todo: test
@@ -153,7 +162,7 @@ public class Decimal extends Number implements Comparable<Decimal> {
         // todo: define DefaultContext with multiplication settings:
         // todo: Optional<Integer> scaleToUse(int scaleA, int scaleB)
 //        return times(value, min(8, this.scale + value.scale), DEFAULT_ROUNDING_MODE);
-        return times(value, this.scale + value.scale, DEFAULT_ROUNDING_MODE);
+        return times(value, this.scale() + value.scale(), DEFAULT_ROUNDING_MODE);
     }
 
     // todo: test
