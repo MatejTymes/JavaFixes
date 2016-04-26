@@ -3,7 +3,7 @@ package co.uk.matejtymes.tdp;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static co.uk.matejtymes.tdp.DecimalCloset.*;
+import static co.uk.matejtymes.tdp.DecimalsIntern.*;
 import static co.uk.matejtymes.tdp.LongUtil.pow10;
 import static java.lang.Math.max;
 import static java.math.RoundingMode.HALF_UP;
@@ -101,7 +101,7 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test this
     public Decimal negate() {
-        return DecimalCloset.negate(this);
+        return DecimalsIntern.negate(this);
     }
 
     // todo: test
@@ -183,7 +183,7 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
 
     public Decimal rescaleTo(int scaleToUse, RoundingMode roundingMode) {
-        return DecimalCloset.rescaleTo(this, scaleToUse, roundingMode);
+        return DecimalsIntern.rescaleTo(this, scaleToUse, roundingMode);
     }
 
     @Override
@@ -203,11 +203,11 @@ public class Decimal extends Number implements Comparable<Decimal> {
 
     @Override
     public int hashCode() {
-        return DecimalCloset.hashCode(this);
+        return DecimalsIntern.hashCode(this);
     }
 
     public String toPlainString(int minScaleToUse) {
-        return DecimalCloset.toPlainString(this, minScaleToUse);
+        return DecimalsIntern.toPlainString(this, minScaleToUse);
     }
 
     // todo: should we add scientific notation as well ???
@@ -221,6 +221,6 @@ public class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public static int compare(Decimal x, Decimal y) {
-        return DecimalCloset.compare(x, y);
+        return DecimalsIntern.compare(x, y);
     }
 }

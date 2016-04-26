@@ -14,7 +14,7 @@ import static java.lang.String.format;
 
 // todo: test this
 // todo: speed up multiply by ten
-public class DecimalCloset {
+class DecimalsIntern {
 
     static Decimal toDecimal(long unscaledValue, int scale) {
         while (unscaledValue != 0 && unscaledValue % 10 == 0) {
