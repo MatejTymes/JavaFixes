@@ -22,28 +22,52 @@ public class Runner {
         return new Runner(threadCount);
     }
 
-    public <T> Future<T> run(Callable<T> task) {
-        return submit(asMonitoredCallable(task));
+    public <T> Future<T> run(Callable<T> callable) {
+        return submit(asMonitoredCallable(callable));
     }
 
-    public Future<Void> run(Runnable task) {
-        return submit(asMonitoredCallable(task));
+    public Future<Void> run(Runnable runnable) {
+        return submit(asMonitoredCallable(runnable));
     }
 
     public Future<Void> run(Task task) {
         return submit(asMonitoredCallable(task));
     }
 
-    public <T> ScheduledFuture<T> runIn(long delay, TimeUnit unit, Callable<T> task) {
-        return schedule(delay, unit, asMonitoredCallable(task));
+    public <T> ScheduledFuture<T> runIn(long delay, TimeUnit unit, Callable<T> callable) {
+        return schedule(delay, unit, asMonitoredCallable(callable));
     }
 
-    public ScheduledFuture<Void> runIn(long delay, TimeUnit unit, Runnable task) {
-        return schedule(delay, unit, asMonitoredCallable(task));
+    public ScheduledFuture<Void> runIn(long delay, TimeUnit unit, Runnable runnable) {
+        return schedule(delay, unit, asMonitoredCallable(runnable));
     }
 
     public ScheduledFuture<Void> runIn(long delay, TimeUnit unit, Task task) {
         return schedule(delay, unit, asMonitoredCallable(task));
+    }
+
+    public <T> Future<T> runCallable(Callable<T> callable) {
+        return run(callable);
+    }
+
+    public Future<Void> runRunnable(Runnable runnable) {
+        return run(runnable);
+    }
+
+    public Future<Void> runTask(Task task) {
+        return run(task);
+    }
+
+    public <T> ScheduledFuture<T> runCallableIn(long delay, TimeUnit unit, Callable<T> callable) {
+        return runIn(delay, unit, callable);
+    }
+
+    public ScheduledFuture<Void> runRunnableIn(long delay, TimeUnit unit, Runnable runnable) {
+        return runIn(delay, unit, runnable);
+    }
+
+    public ScheduledFuture<Void> runTaskIn(long delay, TimeUnit unit, Task task) {
+        return runIn(delay, unit, task);
     }
 
     public void waitTillDone() {
