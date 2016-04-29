@@ -127,49 +127,58 @@ public class Runner {
     /* =========================== */
 
     private <T> Callable<T> asMonitoredCallable(Callable<T> task) {
-        return () -> {
-            try {
-                T result = task.call();
-                taskFinished();
-                return result;
-            } catch (Exception e) {
-                taskFailed();
-                throw e;
-            } catch (Throwable t) {
-                taskFailed();
-                throw new RuntimeException(t);
+        return new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                try {
+                    T result = task.call();
+                    taskFinished();
+                    return result;
+                } catch (Exception e) {
+                    taskFailed();
+                    throw e;
+                } catch (Throwable t) {
+                    taskFailed();
+                    throw new RuntimeException(t);
+                }
             }
         };
     }
 
     private Callable<Void> asMonitoredCallable(Task task) {
-        return () -> {
-            try {
-                task.run();
-                taskFinished();
-                return null;
-            } catch (Exception e) {
-                taskFailed();
-                throw e;
-            } catch (Throwable t) {
-                taskFailed();
-                throw new RuntimeException(t);
+        return new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                try {
+                    task.run();
+                    taskFinished();
+                    return null;
+                } catch (Exception e) {
+                    taskFailed();
+                    throw e;
+                } catch (Throwable t) {
+                    taskFailed();
+                    throw new RuntimeException(t);
+                }
             }
         };
     }
 
     private Callable<Void> asMonitoredCallable(Runnable task) {
-        return () -> {
-            try {
-                task.run();
-                taskFinished();
-                return null;
-            } catch (Exception e) {
-                taskFailed();
-                throw e;
-            } catch (Throwable t) {
-                taskFailed();
-                throw new RuntimeException(t);
+        return new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                try {
+                    task.run();
+                    taskFinished();
+                    return null;
+                } catch (Exception e) {
+                    taskFailed();
+                    throw e;
+                } catch (Throwable t) {
+                    taskFailed();
+                    throw new RuntimeException(t);
+                }
             }
         };
     }
