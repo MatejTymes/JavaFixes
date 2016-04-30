@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
+import static co.uk.matejtymes.tdp.DecimalCreator.toDecimal;
 import static co.uk.matejtymes.tdp.DecimalsIntern.*;
 import static co.uk.matejtymes.tdp.LongUtil.pow10;
 import static java.lang.Math.max;
@@ -107,11 +108,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test this
     public static Decimal decimal(BigDecimal value) {
-        return DecimalCreator.toDecimal(value.toPlainString());
+        return toDecimal(value.toPlainString());
     }
 
     public static Decimal decimal(String stringValue) {
-        return DecimalCreator.toDecimal(stringValue);
+        return toDecimal(stringValue);
     }
 
     public static Decimal d(String stringValue) {

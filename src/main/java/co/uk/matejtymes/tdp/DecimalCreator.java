@@ -1,29 +1,72 @@
 package co.uk.matejtymes.tdp;
 
-import static co.uk.matejtymes.tdp.LongUtil.*;
+import java.math.BigInteger;
 
-// todo: move other toDecimal(...) methods
+import static java.math.BigInteger.TEN;
+
+// todo: test it
 class DecimalCreator {
 
-    // todo: add support for HugeDecimal
+    static Decimal toDecimal(long unscaledValue, int scale) {
+        // todo: strip trailing zeros in better way
+        while (unscaledValue != 0 && unscaledValue % 10 == 0) {
+            unscaledValue /= 10;
+            scale--;
+        }
+
+        return new Decimal.LongDecimal(unscaledValue, scale);
+    }
+
+    static Decimal toDecimal(BigInteger unscaledValue, int scale) {
+        // todo: strip trailing zeros in better way
+        while (!unscaledValue.equals(BigInteger.ZERO) && BigInteger.ZERO.equals(unscaledValue.mod(TEN))) {
+            unscaledValue = unscaledValue.divide(TEN);
+            scale--;
+        }
+        //todo: return LongDecimal if BigInteger can be transformed into Long
+        return new Decimal.HugeDecimal(unscaledValue, scale);
+    }
+
+    // todo: improve for number XYZ000000000000000000000 - currently not great/fast for them
     static Decimal toDecimal(String stringValue) {
+
+        int scale = 0;
+        long unscaledValueL = 0;
+        BigInteger unscaledValueB = null;
+
         int startIndex = 0;
-        boolean positive = true;
+        boolean negate = false;
+        boolean foundDecimalPoint = false;
+
         if (stringValue.charAt(0) == '+') {
             startIndex++;
         } else if (stringValue.charAt(0) == '-') {
-            positive = false;
+            negate = true;
             startIndex++;
         }
 
-        long unscaledValue = 0;
-        int scale = 0;
-
-        boolean foundDecimalPoint = false;
         for (int i = startIndex; i < stringValue.length(); i++) {
             char c = stringValue.charAt(i);
             if (c >= '0' && c <= '9') {
-                unscaledValue = addValue(multiplyBy10Exact(unscaledValue), (c - '0'));
+                byte digitToAdd = (byte) (c - '0');
+                if (unscaledValueB == null) {
+                    if (unscaledValueL <= SAFE_TO_ADD_DIGIT_BOUND) {
+                        unscaledValueL = unscaledValueL * 10 + digitToAdd;
+                    } else {
+                        if (unscaledValueL <= SAFE_TO_MULTIPLY_BY_10_BOUND) {
+                            unscaledValueL *= 10;
+                            if (unscaledValueL <= Long.MAX_VALUE - digitToAdd) {
+                                unscaledValueL += digitToAdd;
+                            } else {
+                                unscaledValueB = BigInteger.valueOf(unscaledValueL).add(BigInteger.valueOf(digitToAdd));
+                            }
+                        } else {
+                            unscaledValueB = BigInteger.valueOf(unscaledValueL).multiply(TEN).add(BigInteger.valueOf(digitToAdd));
+                        }
+                    }
+                } else {
+                    unscaledValueB = unscaledValueB.multiply(TEN).add(BigInteger.valueOf(digitToAdd));
+                }
                 if (foundDecimalPoint) {
                     ++scale;
                 }
@@ -38,33 +81,17 @@ class DecimalCreator {
                 throw new NumberFormatException("Decimal contains invalid character: " + c);
             }
         }
-        if (!positive) {
-            unscaledValue = negateExact(unscaledValue);
-        }
 
-        return DecimalsIntern.toDecimal(unscaledValue, scale);
+        return unscaledValueB == null
+                ? toDecimal(negate ? -unscaledValueL : unscaledValueL, scale)
+                : toDecimal(negate, unscaledValueB, scale);
     }
 
-    private static long TEN_MULTIPLICATION_UPPER_BOUND = Long.MAX_VALUE / 10;
-    private static long TEN_MULTIPLICATION_LOWER_BOUND = Long.MIN_VALUE / 10;
+    private static long SAFE_TO_MULTIPLY_BY_10_BOUND = Long.MAX_VALUE / 10;
+    private static long SAFE_TO_ADD_DIGIT_BOUND = (Long.MAX_VALUE - 9) / 10;
 
-    // todo: add support for HugeDecimal
-    private static long multiplyBy10Exact(long value) {
-        if (value <= TEN_MULTIPLICATION_UPPER_BOUND && value >= TEN_MULTIPLICATION_LOWER_BOUND) {
-            return value * 10;
-        } else {
-            return multiplyExact(value, 10L);
-        }
-    }
-
-    private static long SINGLE_DIGIT_ADDITION_UPPER_BOUND = Long.MAX_VALUE - 9;
-
-    // todo: add support for HugeDecimal
-    private static long addValue(long value, int addition) {
-        if (value <= SINGLE_DIGIT_ADDITION_UPPER_BOUND) {
-            return value + addition;
-        } else {
-            return addExact(value, addition);
-        }
+    // added to speed up the code
+    private static Decimal toDecimal(boolean negate, BigInteger unscaledValue, int scale) {
+        return toDecimal(negate ? unscaledValue.negate() : unscaledValue, scale);
     }
 }

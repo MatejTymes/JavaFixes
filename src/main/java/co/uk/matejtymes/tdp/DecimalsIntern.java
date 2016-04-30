@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Arrays;
 
+import static co.uk.matejtymes.tdp.DecimalCreator.toDecimal;
 import static co.uk.matejtymes.tdp.LongUtil.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -16,25 +17,6 @@ import static java.lang.String.format;
 // todo: test this
 // todo: speed up multiply by ten
 class DecimalsIntern {
-
-    static Decimal toDecimal(long unscaledValue, int scale) {
-        while (unscaledValue != 0 && unscaledValue % 10 == 0) {
-            unscaledValue /= 10;
-            scale--;
-        }
-
-        return new LongDecimal(unscaledValue, scale);
-    }
-
-    static Decimal toDecimal(BigInteger unscaledValue, int scale) {
-        // todo: strip trailing zeros in better way
-        while (!unscaledValue.equals(BigInteger.ZERO) && BigInteger.ZERO.equals(unscaledValue.mod(BigInteger.TEN))) {
-            unscaledValue = unscaledValue.divide(BigInteger.TEN);
-            scale--;
-        }
-        //todo: return LongDecimal if BigInteger can be transformed into Long
-        return new HugeDecimal(unscaledValue, scale);
-    }
 
     static Decimal negate(Decimal d) {
         if (d instanceof HugeDecimal) {
