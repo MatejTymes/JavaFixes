@@ -2,6 +2,7 @@ package co.uk.matejtymes.tdp;
 
 import java.math.BigInteger;
 
+import static co.uk.matejtymes.tdp.BigIntegerUtil.canConvertToLong;
 import static java.math.BigInteger.TEN;
 
 // todo: test it
@@ -23,8 +24,12 @@ class DecimalCreator {
             unscaledValue = unscaledValue.divide(TEN);
             scale--;
         }
-        //todo: return LongDecimal if BigInteger can be transformed into Long
-        return new Decimal.HugeDecimal(unscaledValue, scale);
+
+        if (canConvertToLong(unscaledValue)) {
+            return new Decimal.LongDecimal(unscaledValue.longValue(), scale);
+        } else {
+            return new Decimal.HugeDecimal(unscaledValue, scale);
+        }
     }
 
     // todo: improve for number XYZ000000000000000000000 - currently not great/fast for them
