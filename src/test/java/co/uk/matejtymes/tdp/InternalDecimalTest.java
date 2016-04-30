@@ -29,6 +29,14 @@ public class InternalDecimalTest {
 
         assertThat(d("-0038.00").unscaledValue(), equalTo(-38L));
         assertThat(d("-0038.00").scale(), equalTo(0));
+
+        // todo: speed up this scenario
+        assertThat(d("-3800000000000000000000000000.0").unscaledValue(), equalTo(-38L));
+        assertThat(d("-3800000000000000000000000000.0").scale(), equalTo(-26L));
+
+        // todo: implement this
+//        assertThat(d("-3800000000000000000000000100.0").unscaledValue(), equalTo(new BigInteger("38000000000000000000000001")));
+//        assertThat(d("-3800000000000000000000000100.0").scale(), equalTo(-2L));
     }
 
     @Test

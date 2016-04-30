@@ -107,11 +107,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test this
     public static Decimal decimal(BigDecimal value) {
-        return toDecimal(value.toPlainString());
+        return DecimalCreator.toDecimal(value.toPlainString());
     }
 
     public static Decimal decimal(String stringValue) {
-        return toDecimal(stringValue);
+        return DecimalCreator.toDecimal(stringValue);
     }
 
     public static Decimal d(String stringValue) {
