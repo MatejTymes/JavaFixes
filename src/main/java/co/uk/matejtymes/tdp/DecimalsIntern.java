@@ -18,21 +18,6 @@ import static java.lang.String.format;
 // todo: speed up multiply by ten
 class DecimalsIntern {
 
-    static Decimal negate(Decimal d) {
-        if (d instanceof HugeDecimal) {
-            return toDecimal(((HugeDecimal) d).unscaledValue.negate(), d.scale());
-        } else if (d instanceof LongDecimal) {
-            long unscaledValue = ((LongDecimal) d).unscaledValue;
-            if (unscaledValue == Long.MIN_VALUE) {
-                return toDecimal(BigInteger.valueOf(unscaledValue).negate(), d.scale());
-            } else {
-                return toDecimal(-unscaledValue, d.scale());
-            }
-        } else {
-            throw badDecimalTypeException(d);
-        }
-    }
-
     // todo: add support for HugeDecimal
     static Decimal add(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
 
@@ -53,7 +38,7 @@ class DecimalsIntern {
 
     // todo: add support for HugeDecimal
     static Decimal subtract(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
-        return add(x, negate(y), scaleToUse, roundingMode);
+        return add(x, DecimalNegator.negate(y), scaleToUse, roundingMode);
     }
 
     // todo: add support for HugeDecimal
@@ -190,7 +175,7 @@ class DecimalsIntern {
             isNegative = unscaledValue.signum() < 0;
             sb.append(unscaledValue.toString());
         } else {
-            throw badDecimalTypeException(d);
+            throw new UnsupportedDecimalTypeException(d);
         }
 
         int currentScale = d.scale();
@@ -290,9 +275,5 @@ class DecimalsIntern {
         char[] zeros = new char[size];
         Arrays.fill(zeros, '0');
         return zeros;
-    }
-
-    private static IllegalArgumentException badDecimalTypeException(Decimal d) {
-        return new IllegalArgumentException("unknown Decimal type: " + d.getClass().getSimpleName());
     }
 }

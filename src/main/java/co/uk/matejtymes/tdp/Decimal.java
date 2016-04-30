@@ -146,7 +146,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test this
     public Decimal negate() {
-        return DecimalsIntern.negate(this);
+        return DecimalNegator.negate(this);
     }
 
     // todo: test
