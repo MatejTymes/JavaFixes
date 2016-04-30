@@ -60,14 +60,13 @@ class DecimalsIntern {
                 }
             } else if (c == '.') {
                 if (foundDecimalPoint) {
-                    throw new IllegalArgumentException("Illegal value. Too many decimal points");
+                    // todo: test this
+                    throw new NumberFormatException("Illegal value. Too many decimal points");
                 }
                 foundDecimalPoint = true;
-            } else if (c == '_') {
-                // todo: check it is used only between numbers
-                // ignore
-            } else {
-                throw new IllegalArgumentException("Decimal contains invalid character: " + c);
+            } else if (c != '_') {
+                // todo: test this
+                throw new NumberFormatException("Decimal contains invalid character: " + c);
             }
         }
         if (!positive) {
