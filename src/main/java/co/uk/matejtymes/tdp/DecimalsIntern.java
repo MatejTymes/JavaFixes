@@ -1,17 +1,18 @@
 package co.uk.matejtymes.tdp;
 
-import java.math.RoundingMode;
+import co.uk.matejtymes.tdp.Decimal.HugeDecimal;
+import co.uk.matejtymes.tdp.Decimal.LongDecimal;
 
-import static co.uk.matejtymes.tdp.LongUtil.addExact;
-import static co.uk.matejtymes.tdp.LongUtil.decrementExact;
-import static co.uk.matejtymes.tdp.LongUtil.incrementExact;
-import static co.uk.matejtymes.tdp.LongUtil.multiplyExact;
-import static co.uk.matejtymes.tdp.LongUtil.negateExact;
+import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.util.Arrays;
+
 import static co.uk.matejtymes.tdp.LongUtil.*;
-import static co.uk.matejtymes.tdp.LongUtil.subtractExact;
-import static java.lang.Math.*;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.String.format;
 
+// todo: handle scale overflow and underflow
 // todo: test this
 // todo: speed up multiply by ten
 class DecimalsIntern {
@@ -22,9 +23,20 @@ class DecimalsIntern {
             scale--;
         }
 
-        return new Decimal.LongDecimal(unscaledValue, scale);
+        return new LongDecimal(unscaledValue, scale);
     }
 
+    static Decimal toDecimal(BigInteger unscaledValue, int scale) {
+        // todo: strip trailing zeros in better way
+        while (!unscaledValue.equals(BigInteger.ZERO) && BigInteger.ZERO.equals(unscaledValue.mod(BigInteger.TEN))) {
+            unscaledValue = unscaledValue.divide(BigInteger.TEN);
+            scale--;
+        }
+        //todo: return LongDecimal if BigInteger can be transformed into Long
+        return new HugeDecimal(unscaledValue, scale);
+    }
+
+    // todo: add support for HugeDecimal
     static Decimal toDecimal(String stringValue) {
         char chars[] = stringValue.toCharArray();
         int startIndex = 0;
@@ -67,9 +79,21 @@ class DecimalsIntern {
     }
 
     static Decimal negate(Decimal d) {
-        return toDecimal(negateExact(d.unscaledValue()), d.scale());
+        if (d instanceof HugeDecimal) {
+            return toDecimal(((HugeDecimal) d).unscaledValue.negate(), d.scale());
+        } else if (d instanceof LongDecimal) {
+            long unscaledValue = ((LongDecimal) d).unscaledValue;
+            if (unscaledValue == Long.MIN_VALUE) {
+                return toDecimal(BigInteger.valueOf(unscaledValue).negate(), d.scale());
+            } else {
+                return toDecimal(-unscaledValue, d.scale());
+            }
+        } else {
+            throw badDecimalTypeException(d);
+        }
     }
 
+    // todo: add support for HugeDecimal
     static Decimal add(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
 
         int scaleX = x.scale();
@@ -87,10 +111,12 @@ class DecimalsIntern {
         ).rescaleTo(scaleToUse, roundingMode);
     }
 
+    // todo: add support for HugeDecimal
     static Decimal subtract(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
         return add(x, negate(y), scaleToUse, roundingMode);
     }
 
+    // todo: add support for HugeDecimal
     static Decimal multiply(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
 
         // todo: extremely simplistic algorithm - please improve
@@ -136,6 +162,7 @@ class DecimalsIntern {
         }
     }
 
+    // todo: add support for HugeDecimal
     static Decimal rescaleTo(Decimal d, int scaleToUse, RoundingMode roundingMode) {
 
         int scale = d.scale();
@@ -159,6 +186,7 @@ class DecimalsIntern {
         return toDecimal(rescaledValue, scaleToUse);
     }
 
+    // todo: add support for HugeDecimal
     static int compare(Decimal x, Decimal y) {
         int scaleX = x.scale();
         int scaleY = y.scale();
@@ -194,6 +222,7 @@ class DecimalsIntern {
         return x.compareTo(y) == 0;
     }
 
+    // todo: add support for HugeDecimal
     static int hashCode(Decimal d) {
         // its important that this starts as zero - this way we'll ignore trailing zeros
         int hashCode = 0;
@@ -207,34 +236,43 @@ class DecimalsIntern {
         return hashCode;
     }
 
+    // todo: add support for HugeDecimal
     static String toPlainString(Decimal d, int minScaleToUse) {
         StringBuilder sb = new StringBuilder();
 
-        long remainder = d.unscaledValue();
-        boolean negative = remainder < 0;
-        int remainderScale = d.scale();
-        int currentScale = max(max(minScaleToUse, remainderScale), 0);
-        do {
-            if (currentScale > remainderScale) {
-                sb.append('0');
-            } else {
-                sb.append(abs(remainder % 10));
-                remainder /= 10;
-                remainderScale--;
-            }
-
-            if (--currentScale == 0) {
-                sb.append('.');
-            }
-        } while (remainder != 0 || currentScale >= 0);
-
-        if (negative) {
-            sb.append('-');
+        boolean isNegative;
+        if (d instanceof LongDecimal) {
+            long unscaledValue = ((LongDecimal) d).unscaledValue;
+            isNegative = unscaledValue < 0;
+            sb.append(Long.toString(unscaledValue));
+        } else if (d instanceof HugeDecimal) {
+            BigInteger unscaledValue = ((HugeDecimal) d).unscaledValue;
+            isNegative = unscaledValue.signum() < 0;
+            sb.append(unscaledValue.toString());
+        } else {
+            throw badDecimalTypeException(d);
         }
 
-        return sb.reverse().toString();
+        int currentScale = d.scale();
+        int scaleToUse = max(currentScale, max(minScaleToUse, 0));
+        if (currentScale < scaleToUse) {
+            sb.append(arrayOfZeroChars(scaleToUse - currentScale));
+        }
+
+        if (scaleToUse > 0) {
+            int prefixZerosOffset = isNegative ? 1 : 0;
+            int firstDigitScale = scaleToUse - (sb.length() - prefixZerosOffset) + 1;
+            if (firstDigitScale > 0) {
+                sb.insert(prefixZerosOffset, arrayOfZeroChars(firstDigitScale));
+            }
+            int index = sb.length() - scaleToUse;
+            sb.insert(index, '.');
+        }
+
+        return sb.toString();
     }
 
+    // todo: add support for HugeDecimal
     // todo: in the future make sure the digit is only from 0 to 9 (currently the sign of the digit makes it a little bit awkward)
     private static long roundBasedOnRemainder(long valueBeforeRounding, long remainingDigit, RoundingMode roundingMode) {
         if (remainingDigit < -9 || remainingDigit > 9) {
@@ -300,6 +338,7 @@ class DecimalsIntern {
     private static long SINGLE_DIGIT_ADDITION_UPPER_BOUND = Long.MAX_VALUE - 9;
 
 
+    // todo: add support for HugeDecimal
     private static long multiplyBy10Exact(long value) {
         if (value <= TEN_MULTIPLICATION_UPPER_BOUND && value >= TEN_MULTIPLICATION_LOWER_BOUND) {
             return value * 10;
@@ -308,11 +347,22 @@ class DecimalsIntern {
         }
     }
 
+    // todo: add support for HugeDecimal
     private static long addValue(long value, int addition) {
         if (value <= SINGLE_DIGIT_ADDITION_UPPER_BOUND) {
             return value + addition;
         } else {
             return addExact(value, addition);
         }
+    }
+
+    private static char[] arrayOfZeroChars(int size) {
+        char[] zeros = new char[size];
+        Arrays.fill(zeros, '0');
+        return zeros;
+    }
+
+    private static IllegalArgumentException badDecimalTypeException(Decimal d) {
+        return new IllegalArgumentException("unknown Decimal type: " + d.getClass().getSimpleName());
     }
 }

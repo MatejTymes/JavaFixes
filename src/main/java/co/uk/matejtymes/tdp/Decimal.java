@@ -1,6 +1,7 @@
 package co.uk.matejtymes.tdp;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import static co.uk.matejtymes.tdp.DecimalsIntern.*;
@@ -24,10 +25,10 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     private static final RoundingMode DEFAULT_ROUNDING_MODE = HALF_UP;
 
     // todo: add others like: HugeDecimal, InfiniteDecimal, NaNDecimal
-    static class LongDecimal extends Decimal {
+    static final class LongDecimal extends Decimal {
 
-        private transient final long unscaledValue;
-        private transient final int scale;
+        transient final long unscaledValue;
+        transient final int scale;
 
         LongDecimal(long unscaledValue, int scale) {
             this.unscaledValue = unscaledValue;
@@ -54,6 +55,33 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
     }
 
+    // todo: start using this
+    static final class HugeDecimal extends Decimal {
+
+        transient final BigInteger unscaledValue;
+        transient final int scale;
+
+        HugeDecimal(BigInteger unscaledValue, int scale) {
+            this.unscaledValue = unscaledValue;
+            this.scale = scale;
+        }
+
+        @Override
+        long unscaledValue() {
+            throw new IllegalStateException("Can't transform into unscaled value of primitive type - the value is too big");
+        }
+
+        @Override
+        int scale() {
+            return scale;
+        }
+
+        @Override
+        public double doubleValue() {
+            throw new IllegalStateException("Can't transform into primitive type - the value is too big");
+        }
+    }
+
     private Decimal() {
     }
 
@@ -69,6 +97,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test this
     public static Decimal decimal(long unscaledValue, int scale) {
+        return toDecimal(unscaledValue, scale);
+    }
+
+    // todo: test this
+    public static Decimal decimal(BigInteger unscaledValue, int scale) {
         return toDecimal(unscaledValue, scale);
     }
 
@@ -104,8 +137,10 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return new BigDecimal(toString());
     }
 
-    abstract long unscaledValue();
+    // todo: remove this method
+    abstract long unscaledValue();// todo: return this as a Number
 
+    // todo: start handling scale overflow and underflow
     abstract int scale();
 
     // todo: test this

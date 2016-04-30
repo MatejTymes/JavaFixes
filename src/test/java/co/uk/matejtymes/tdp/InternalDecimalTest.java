@@ -1,11 +1,16 @@
 package co.uk.matejtymes.tdp;
 
+import co.uk.matejtymes.tdp.Decimal.HugeDecimal;
+import co.uk.matejtymes.tdp.Decimal.LongDecimal;
 import org.junit.Test;
 
 import static co.uk.matejtymes.tdp.Decimal.d;
+import static co.uk.matejtymes.tdp.Decimal.decimal;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
+// todo: add BigDecimal comparison test - check all operations
 public class InternalDecimalTest {
 
     @Test
@@ -25,4 +30,26 @@ public class InternalDecimalTest {
         assertThat(d("-0038.00").unscaledValue(), equalTo(-38L));
         assertThat(d("-0038.00").scale(), equalTo(0));
     }
+
+    @Test
+    public void shouldTransitionFromLongIntoHugeDecimal() {
+        Decimal longDecimal = decimal(Long.MIN_VALUE, 0);
+        assertThat(longDecimal, instanceOf(LongDecimal.class));
+        assertThat(longDecimal.toPlainString(), equalTo("-9223372036854775808"));
+
+        Decimal hugeDecimal = longDecimal.negate();
+        assertThat(hugeDecimal, instanceOf(HugeDecimal.class));
+        assertThat(hugeDecimal.toPlainString(), equalTo("9223372036854775808"));
+    }
+
+    @Test
+    public void shouldTransitionFromHugeIntoLongDecimal() {
+        Decimal hugeDecimal = Decimal.decimal("9223372036854775808");
+        assertThat(hugeDecimal, instanceOf(HugeDecimal.class));
+
+        Decimal longDecimal = hugeDecimal.negate();
+        assertThat(longDecimal, instanceOf(LongDecimal.class));
+        assertThat(longDecimal, equalTo(decimal(Long.MIN_VALUE, 0)));
+    }
+
 }

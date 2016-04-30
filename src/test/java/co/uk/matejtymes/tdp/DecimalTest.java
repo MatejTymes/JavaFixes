@@ -65,23 +65,31 @@ public class DecimalTest {
 
     @Test
     public void shouldConvertToPlainString() {
+        assertThat(decimal("0").toPlainString(), equalTo("0"));
         assertThat(decimal("16.456").toPlainString(), equalTo("16.456"));
         assertThat(decimal("-150.0030500").toPlainString(), equalTo("-150.00305"));
         assertThat(decimal("+73000").toPlainString(), equalTo("73000"));
         assertThat(decimal(Long.MAX_VALUE, 8).toPlainString(), equalTo("92233720368.54775807"));
         assertThat(decimal(Long.MIN_VALUE, 8).toPlainString(), equalTo("-92233720368.54775808"));
         assertThat(decimal("0.0035").toPlainString(), equalTo("0.0035"));
+        assertThat(decimal("0.120").toPlainString(), equalTo("0.12"));
+        assertThat(decimal("-0.120").toPlainString(), equalTo("-0.12"));
+        assertThat(decimal("-0.00005903200").toPlainString(), equalTo("-0.000059032"));
         assertThat(decimal("13800000.00").toPlainString(), equalTo("13800000"));
     }
 
     @Test
     public void shouldConvertToPlainStringUsingMinimalScale() {
+        assertThat(decimal("0").toPlainString(4), equalTo("0.0000"));
         assertThat(decimal("16.456").toPlainString(4), equalTo("16.4560"));
         assertThat(decimal("-150.0030500").toPlainString(4), equalTo("-150.00305"));
         assertThat(decimal("+73000").toPlainString(4), equalTo("73000.0000"));
         assertThat(decimal(Long.MAX_VALUE, 8).toPlainString(4), equalTo("92233720368.54775807"));
         assertThat(decimal(Long.MIN_VALUE, 8).toPlainString(4), equalTo("-92233720368.54775808"));
         assertThat(decimal("0.0035").toPlainString(4), equalTo("0.0035"));
+        assertThat(decimal("0.120").toPlainString(4), equalTo("0.1200"));
+        assertThat(decimal("-0.120").toPlainString(4), equalTo("-0.1200"));
+        assertThat(decimal("-0.00005903200").toPlainString(), equalTo("-0.000059032"));
         assertThat(decimal("13800000.00").toPlainString(4), equalTo("13800000.0000"));
     }
 
