@@ -38,12 +38,11 @@ class DecimalsIntern {
 
     // todo: add support for HugeDecimal
     static Decimal toDecimal(String stringValue) {
-        char chars[] = stringValue.toCharArray();
         int startIndex = 0;
         boolean positive = true;
-        if (chars[0] == '+') {
+        if (stringValue.charAt(0) == '+') {
             startIndex++;
-        } else if (chars[0] == '-') {
+        } else if (stringValue.charAt(0) == '-') {
             positive = false;
             startIndex++;
         }
@@ -52,8 +51,8 @@ class DecimalsIntern {
         int scale = 0;
 
         boolean foundDecimalPoint = false;
-        for (int i = startIndex; i < chars.length; i++) {
-            char c = chars[i];
+        for (int i = startIndex; i < stringValue.length(); i++) {
+            char c = stringValue.charAt(i);
             if (c >= '0' && c <= '9') {
                 unscaledValue = addValue(multiplyBy10Exact(unscaledValue), (c - '0'));
                 if (foundDecimalPoint) {
