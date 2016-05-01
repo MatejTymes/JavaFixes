@@ -112,6 +112,9 @@ public class DecimalTest {
         assertThat(decimal(Long.MAX_VALUE, -100).compareTo(decimal(9999L, 100)), equalTo(-1));
         assertThat(decimal(9999L, 100).compareTo(decimal(Long.MAX_VALUE, -100)), equalTo(1));
 
+        assertThat(decimal(Long.MIN_VALUE, 500).compareTo(decimal(Long.MIN_VALUE, -200)), equalTo(-1));
+        assertThat(decimal(Long.MIN_VALUE, -200).compareTo(decimal(Long.MIN_VALUE, 500)), equalTo(1));
+
     }
 
     @Test
