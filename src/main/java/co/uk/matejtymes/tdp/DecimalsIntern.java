@@ -7,7 +7,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Arrays;
 
-import static co.uk.matejtymes.tdp.DecimalCreator.toDecimal;
+import static co.uk.matejtymes.tdp.DecimalCreator.createDecimal;
 import static co.uk.matejtymes.tdp.LongUtil.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -30,7 +30,7 @@ class DecimalsIntern {
         long maxScaledValueX = multiplyExact(x.unscaledValue(), pow10(maxScale - scaleX));
         long maxScaledValueY = multiplyExact(y.unscaledValue(), pow10(maxScale - scaleY));
 
-        return toDecimal(
+        return createDecimal(
                 addExact(maxScaledValueX, maxScaledValueY),
                 maxScale
         ).rescaleTo(scaleToUse, roundingMode);
@@ -53,7 +53,7 @@ class DecimalsIntern {
 //                .multiply(BigInteger.valueOf(strippedY.unscaledValue()))
 //                .longValueExact();
 
-        return toDecimal(
+        return createDecimal(
                 unscaledValue,
                 x.scale() + y.scale()
         ).rescaleTo(scaleToUse, roundingMode);
@@ -70,7 +70,7 @@ class DecimalsIntern {
         int newScale = x.scale() - y.scale();
 
         if (newScale > scaleToUse) {
-            return toDecimal(result, newScale)
+            return createDecimal(result, newScale)
                     .rescaleTo(scaleToUse, roundingMode);
         } else {
             while (newScale < scaleToUse) {
@@ -82,7 +82,7 @@ class DecimalsIntern {
             result = roundBasedOnRemainder(result, remainingDigit, roundingMode);
 
 
-            return toDecimal(result, newScale)
+            return createDecimal(result, newScale)
                     .rescaleTo(scaleToUse, roundingMode);
         }
     }
@@ -98,7 +98,7 @@ class DecimalsIntern {
         } else if (scaleToUse > scale) {
             long scaler = pow10(scaleToUse - scale);
             long rescaledValue = multiplyExact(unscaledValue, scaler);
-            return toDecimal(rescaledValue, scaleToUse);
+            return createDecimal(rescaledValue, scaleToUse);
         }
 
         long scaler = pow10(scale - scaleToUse);
@@ -108,7 +108,7 @@ class DecimalsIntern {
 
         rescaledValue = roundBasedOnRemainder(rescaledValue, remainingDigit, roundingMode);
 
-        return toDecimal(rescaledValue, scaleToUse);
+        return createDecimal(rescaledValue, scaleToUse);
     }
 
     // todo: add support for HugeDecimal

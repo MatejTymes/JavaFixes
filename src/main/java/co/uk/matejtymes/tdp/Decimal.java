@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import static co.uk.matejtymes.tdp.DecimalCreator.toDecimal;
 import static co.uk.matejtymes.tdp.DecimalsIntern.*;
 import static co.uk.matejtymes.tdp.LongUtil.pow10;
 import static java.lang.Math.max;
@@ -88,31 +87,31 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test this
     public static Decimal decimal(int value) {
-        return toDecimal((long) value, 0);
+        return DecimalCreator.createDecimal((long) value, 0);
     }
 
     // todo: test this
     public static Decimal decimal(long value) {
-        return toDecimal(value, 0);
+        return DecimalCreator.createDecimal(value, 0);
     }
 
     // todo: test this
     public static Decimal decimal(long unscaledValue, int scale) {
-        return toDecimal(unscaledValue, scale);
+        return DecimalCreator.createDecimal(unscaledValue, scale);
     }
 
     // todo: test this
     public static Decimal decimal(BigInteger unscaledValue, int scale) {
-        return toDecimal(unscaledValue, scale);
+        return DecimalCreator.createDecimal(unscaledValue, scale);
     }
 
     // todo: test this
     public static Decimal decimal(BigDecimal value) {
-        return toDecimal(value.toPlainString());
+        return DecimalParser.parseString(value.toPlainString());
     }
 
     public static Decimal decimal(String stringValue) {
-        return toDecimal(stringValue);
+        return DecimalParser.parseString(stringValue);
     }
 
     public static Decimal d(String stringValue) {
@@ -221,6 +220,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         // todo: Optional<Integer> scaleToUse(int scaleA, int scaleB)
         return div(
                 value,
+                // todo: change from 8 -> 28 ???
                 max(8, max(this.scale(), value.scale())),
                 DEFAULT_ROUNDING_MODE
         );

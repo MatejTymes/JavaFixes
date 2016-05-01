@@ -32,11 +32,11 @@ public class InternalDecimalTest {
 
         // todo: speed up this scenario
         assertThat(d("-3800000000000000000000000000.0").unscaledValue(), equalTo(-38L));
-        assertThat(d("-3800000000000000000000000000.0").scale(), equalTo(-26L));
+        assertThat(d("-3800000000000000000000000000.0").scale(), equalTo(-26));
 
         // todo: implement this
 //        assertThat(d("-3800000000000000000000000100.0").unscaledValue(), equalTo(new BigInteger("38000000000000000000000001")));
-//        assertThat(d("-3800000000000000000000000100.0").scale(), equalTo(-2L));
+//        assertThat(d("-3800000000000000000000000100.0").scale(), equalTo(-2));
     }
 
     @Test
