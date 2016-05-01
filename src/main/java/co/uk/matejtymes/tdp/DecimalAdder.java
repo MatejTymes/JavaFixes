@@ -9,6 +9,11 @@ import static java.lang.Math.max;
 // todo: test it
 class DecimalAdder {
 
+    // todo: IMPLEMENT PROPERLY
+    // todo: IMPLEMENT PROPERLY
+    // todo: IMPLEMENT PROPERLY
+    // todo: IMPLEMENT PROPERLY
+    // todo: IMPLEMENT PROPERLY
     // todo: HUGEDECIMAL
 
     // todo: add support for HugeDecimal

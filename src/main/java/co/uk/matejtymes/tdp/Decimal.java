@@ -252,10 +252,9 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public String toPlainString(int minScaleToUse) {
-        return DecimalsIntern.toPlainString(this, minScaleToUse);
+        return DecimalPrinter.toPlainString(this, minScaleToUse);
     }
 
-    // todo: should we add scientific notation as well ???
     public String toPlainString() {
         return toPlainString(0);
     }
@@ -266,6 +265,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public static int compare(Decimal x, Decimal y) {
-        return DecimalsIntern.compare(x, y);
+        return DecimalEqualizer.compare(x, y);
     }
 }

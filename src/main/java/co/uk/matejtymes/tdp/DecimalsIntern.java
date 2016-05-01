@@ -1,16 +1,9 @@
 package co.uk.matejtymes.tdp;
 
-import co.uk.matejtymes.tdp.Decimal.HugeDecimal;
-import co.uk.matejtymes.tdp.Decimal.LongDecimal;
-
-import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.util.Arrays;
 
 import static co.uk.matejtymes.tdp.DecimalCreator.createDecimal;
 import static co.uk.matejtymes.tdp.LongUtil.*;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static java.lang.String.format;
 
 // todo: handle scale overflow and underflow
@@ -69,38 +62,6 @@ class DecimalsIntern {
         }
     }
 
-    // todo: add support for HugeDecimal
-    static int compare(Decimal x, Decimal y) {
-        int scaleX = x.scale();
-        int scaleY = y.scale();
-
-        long unscaledX = x.unscaledValue();
-        long unscaledY = y.unscaledValue();
-
-        if (scaleX == scaleY) {
-            return Long.compare(unscaledX, unscaledY);
-        }
-
-        int minScale = min(scaleX, scaleY);
-
-        long scalerX = pow10(scaleX - minScale);
-        long scalerY = pow10(scaleY - minScale);
-
-        // by doing division instead of multiplication we prevent overflow
-        long xScaledDownValue = unscaledX / scalerX;
-        long yScaledDownValue = unscaledY / scalerY;
-
-        int comparison = Long.compare(xScaledDownValue, yScaledDownValue);
-        if (comparison != 0) {
-            return comparison;
-        } else {
-            long xRemainder = subtractExact(unscaledX, multiplyExact(xScaledDownValue, scalerX));
-            long yRemainder = subtractExact(unscaledY, multiplyExact(yScaledDownValue, scalerY));
-
-            return Long.compare(xRemainder, yRemainder);
-        }
-    }
-
     static boolean areEqual(Decimal x, Decimal y) {
         return x.compareTo(y) == 0;
     }
@@ -117,42 +78,6 @@ class DecimalsIntern {
         }
 
         return hashCode;
-    }
-
-    // todo: add support for HugeDecimal
-    static String toPlainString(Decimal d, int minScaleToUse) {
-        StringBuilder sb = new StringBuilder();
-
-        boolean isNegative;
-        if (d instanceof LongDecimal) {
-            long unscaledValue = ((LongDecimal) d).unscaledValue;
-            isNegative = unscaledValue < 0;
-            sb.append(Long.toString(unscaledValue));
-        } else if (d instanceof HugeDecimal) {
-            BigInteger unscaledValue = ((HugeDecimal) d).unscaledValue;
-            isNegative = unscaledValue.signum() < 0;
-            sb.append(unscaledValue.toString());
-        } else {
-            throw new UnsupportedDecimalTypeException(d);
-        }
-
-        int currentScale = d.scale();
-        int scaleToUse = max(currentScale, max(minScaleToUse, 0));
-        if (currentScale < scaleToUse) {
-            sb.append(arrayOfZeroChars(scaleToUse - currentScale));
-        }
-
-        if (scaleToUse > 0) {
-            int prefixZerosOffset = isNegative ? 1 : 0;
-            int firstDigitScale = scaleToUse - (sb.length() - prefixZerosOffset) + 1;
-            if (firstDigitScale > 0) {
-                sb.insert(prefixZerosOffset, arrayOfZeroChars(firstDigitScale));
-            }
-            int index = sb.length() - scaleToUse;
-            sb.insert(index, '.');
-        }
-
-        return sb.toString();
     }
 
     // todo: in the future make sure the digit is only from 0 to 9 (currently the sign of the digit makes it a little bit awkward)
@@ -227,9 +152,4 @@ class DecimalsIntern {
         }
     }
 
-    private static char[] arrayOfZeroChars(int size) {
-        char[] zeros = new char[size];
-        Arrays.fill(zeros, '0');
-        return zeros;
-    }
 }
