@@ -62,24 +62,6 @@ class DecimalsIntern {
         }
     }
 
-    static boolean areEqual(Decimal x, Decimal y) {
-        return x.compareTo(y) == 0;
-    }
-
-    // todo: add support for HugeDecimal
-    static int hashCode(Decimal d) {
-        // its important that this starts as zero - this way we'll ignore trailing zeros
-        int hashCode = 0;
-
-        long remainder = d.unscaledValue();
-        while (remainder > 0) {
-            hashCode = (hashCode * 5) + (int) (remainder % 10);
-            remainder /= 10;
-        }
-
-        return hashCode;
-    }
-
     // todo: in the future make sure the digit is only from 0 to 9 (currently the sign of the digit makes it a little bit awkward)
     // todo: turn remainingDigit into byte
     static long roundBasedOnRemainder(long valueBeforeRounding, long remainingDigit, RoundingMode roundingMode) {

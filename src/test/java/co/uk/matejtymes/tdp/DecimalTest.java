@@ -136,9 +136,13 @@ public class DecimalTest {
         assertThat(decimal("-1.2").hashCode(), equalTo(decimal("-1.2").hashCode()));
         assertThat(decimal("-1.2").hashCode(), equalTo(decimal("-001.2").hashCode()));
         assertThat(decimal("-1.2").hashCode(), equalTo(decimal("-1.200").hashCode()));
+        assertThat(decimal("1234567890123456.7890123456789012345678900000000").hashCode(), equalTo(decimal("1234567890123456.78901234567890123456789000").hashCode()));
+        assertThat(decimal("-1.23456789012345678901234567890123456789").hashCode(), equalTo(decimal("-1.23456789012345678901234567890123456789000000").hashCode()));
 
         assertThat(decimal("-1.2").hashCode(), not(equalTo(decimal("1.2").hashCode())));
         assertThat(decimal("-1.2").hashCode(), not(equalTo(decimal("2.3").hashCode())));
+        assertThat(decimal("1234567890123456.7890123456789012345678900000001").hashCode(), not(equalTo(decimal("1234567890123456.78901234567890123456789000").hashCode())));
+        assertThat(decimal("-1.23456789012345678901234567890123456789").hashCode(), not(equalTo(decimal("-1.23456789012345678901234567890123456789001000").hashCode())));
     }
 
     @Test

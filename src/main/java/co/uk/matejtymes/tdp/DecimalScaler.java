@@ -58,8 +58,8 @@ public class DecimalScaler {
                 return Decimal.ZERO;
             }
 
-            BigInteger rescaledValue = unscaledValue.divide(BigInteger.TEN);
-            byte remainingDigit = unscaledValue.mod(BigInteger.TEN).byteValue();
+            BigInteger rescaledValue = unscaledValue.divide(BIG_TEN);
+            byte remainingDigit = unscaledValue.mod(BIG_TEN).byteValue();
             if (unscaledValue.signum() < 0) {
                 remainingDigit -= 10;
             }
@@ -135,17 +135,13 @@ public class DecimalScaler {
         return roundingCorrection;
     }
 
-    private static final BigInteger TWO_BIG = BigInteger.valueOf(2L);
-    private static final BigInteger BIG_ONE = BigInteger.ONE;
-    private static final BigInteger BIG_MINUS_ONE = BigInteger.ONE.negate();
-
     // todo: in the future make sure the digit is only from 0 to 9 (currently the sign of the digit makes it a little bit awkward)
     private static BigInteger roundingCorrection(BigInteger valueBeforeRounding, byte remainingDigit, RoundingMode roundingMode) {
         if (remainingDigit < -9 || remainingDigit > 9) {
             throw new IllegalArgumentException(format("Invalid remaining digit (%d). Should be only -9 to 9", remainingDigit));
         }
 
-        BigInteger roundingCorrection = BigInteger.ZERO;
+        BigInteger roundingCorrection = BIG_ZERO;
 
         if (remainingDigit != 0) {
             if (roundingMode == RoundingMode.UP) {
@@ -182,11 +178,11 @@ public class DecimalScaler {
                 }
             } else if (roundingMode == RoundingMode.HALF_EVEN) {
                 if (valueBeforeRounding.signum() >= 0) {
-                    if (remainingDigit > 5 || (remainingDigit == 5 && valueBeforeRounding.mod(TWO_BIG).signum() != 0)) {
+                    if (remainingDigit > 5 || (remainingDigit == 5 && valueBeforeRounding.mod(BIG_TWO).signum() != 0)) {
                         roundingCorrection = BIG_ONE;
                     }
                 } else {
-                    if (remainingDigit < -5 || (remainingDigit == -5 && valueBeforeRounding.mod(TWO_BIG).signum() != 0)) {
+                    if (remainingDigit < -5 || (remainingDigit == -5 && valueBeforeRounding.mod(BIG_TWO).signum() != 0)) {
                         roundingCorrection = BIG_MINUS_ONE;
                     }
                 }

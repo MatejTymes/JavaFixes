@@ -3,7 +3,7 @@ package co.uk.matejtymes.tdp;
 import java.math.BigInteger;
 
 import static co.uk.matejtymes.tdp.BigIntegerUtil.canConvertToLong;
-import static java.math.BigInteger.TEN;
+import static co.uk.matejtymes.tdp.DecimalMath.BIG_TEN;
 
 // todo: test it
 class DecimalCreator {
@@ -20,8 +20,8 @@ class DecimalCreator {
 
     static Decimal createDecimal(BigInteger unscaledValue, int scale) {
         // todo: strip trailing zeros in better way
-        while (unscaledValue.signum() != 0 && unscaledValue.mod(TEN).signum() == 0) {
-            unscaledValue = unscaledValue.divide(TEN);
+        while (unscaledValue.signum() != 0 && unscaledValue.mod(BIG_TEN).signum() == 0) {
+            unscaledValue = unscaledValue.divide(BIG_TEN);
             scale--;
         }
 

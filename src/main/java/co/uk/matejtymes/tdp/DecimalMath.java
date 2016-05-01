@@ -5,6 +5,12 @@ import java.math.BigInteger;
 // todo: test it
 public class DecimalMath {
 
+    public static final BigInteger BIG_ZERO = BigInteger.ZERO;
+    public static final BigInteger BIG_ONE = BigInteger.ONE;
+    public static final BigInteger BIG_MINUS_ONE = BigInteger.ONE.negate();
+    public static final BigInteger BIG_TWO = BigInteger.valueOf(2L);
+    public static final BigInteger BIG_TEN = BigInteger.TEN;
+
     private static final long[] powersOf10L = {
             1L,                  // 10 ^ 0
             10L,                 // 10 ^ 1

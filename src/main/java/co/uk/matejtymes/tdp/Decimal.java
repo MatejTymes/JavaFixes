@@ -256,12 +256,12 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         //  this will allow us to add subclassing
         if (o == null || !(o instanceof Decimal)) return false;
 
-        return areEqual(this, (Decimal) o);
+        return DecimalEqualizer.areEqual(this, (Decimal) o);
     }
 
     @Override
     public int hashCode() {
-        return DecimalsIntern.hashCode(this);
+        return DecimalEqualizer.hashCode(this);
     }
 
     public String toPlainString(int minScaleToUse) {

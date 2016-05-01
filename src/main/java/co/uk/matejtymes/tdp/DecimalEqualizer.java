@@ -68,6 +68,33 @@ public class DecimalEqualizer {
         }
     }
 
+    static boolean areEqual(Decimal x, Decimal y) {
+        return x.compareTo(y) == 0;
+    }
+
+    static int hashCode(Decimal d) {
+        // its important that this starts as zero - this way we'll ignore trailing zeros
+        int hashCode = 0;
+
+        if (d instanceof LongDecimal) {
+            long remainder = ((LongDecimal) d).unscaledValue;
+            while (remainder != 0) {
+                hashCode = (hashCode * 5) + (int) (remainder % 10);
+                remainder /= 10;
+            }
+        } else if (d instanceof HugeDecimal) {
+            BigInteger remainder = ((HugeDecimal) d).unscaledValue;
+            while (remainder.signum() != 0) {
+                hashCode = (hashCode * 5) + remainder.mod(BIG_TEN).intValue();
+                remainder = remainder.divide(BIG_TEN);
+            }
+        } else {
+            throw new UnsupportedDecimalTypeException(d);
+        }
+
+        return hashCode;
+    }
+
     private static long descaleValue(long value, int fromScale, int toScale) {
         long rescaledValue = value;
         int newScale = fromScale;
