@@ -117,29 +117,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return decimal(stringValue);
     }
 
-    @Override
-    public int intValue() {
-        return (int) doubleValue();
+
+    public static int compare(Decimal x, Decimal y) {
+        return DecimalEqualizer.compare(x, y);
     }
 
-    @Override
-    public long longValue() {
-        return (long) doubleValue();
-    }
-
-    @Override
-    public float floatValue() {
-        return (float) doubleValue();
-    }
-
-    @Override
-    public double doubleValue() {
-        return Double.parseDouble(toPlainString());
-    }
-
-    public BigDecimal bigDecimalValue() {
-        return new BigDecimal(toString());
-    }
 
     // todo: test
     abstract int signum();
@@ -150,128 +132,132 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     // todo: start handling scale overflow and underflow
     abstract int scale();
 
-    // todo: test this
-    public Decimal negate() {
+
+    // todo: fail if too big
+    @Override
+    public final int intValue() {
+        return (int) doubleValue();
+    }
+
+    // todo: fail if too big
+    @Override
+    public final long longValue() {
+        return (long) doubleValue();
+    }
+
+    @Override
+    public final float floatValue() {
+        return (float) doubleValue();
+    }
+
+    @Override
+    public double doubleValue() {
+        return Double.parseDouble(toPlainString());
+    }
+
+    public final BigDecimal bigDecimalValue() {
+        return new BigDecimal(toString());
+    }
+
+    public final Decimal negate() {
         return DecimalNegator.negate(this);
     }
 
-    // todo: test
-    public Decimal plus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
+    public final Decimal plus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
         return DecimalAdder.add(this, value, scaleToUse, roundingMode);
     }
 
     // todo: test
-    public Decimal plus(Decimal value, int scaleToUse) {
+    public final Decimal plus(Decimal value, int scaleToUse) {
         return plus(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
 
     // todo: test
-    public Decimal plus(Decimal value) {
+    public final Decimal plus(Decimal value) {
         return plus(value, max(this.scale(), value.scale()), UNNECESSARY);
     }
 
-    // todo: test
-    public Decimal minus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
+    public final Decimal minus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
         return subtract(this, value, scaleToUse, roundingMode);
     }
 
     // todo: test
-    public Decimal minus(Decimal value, int scaleToUse) {
+    public final Decimal minus(Decimal value, int scaleToUse) {
         return minus(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
 
     // todo: test
-    public Decimal minus(Decimal value) {
+    public final Decimal minus(Decimal value) {
         return minus(value, max(this.scale(), value.scale()), UNNECESSARY);
     }
 
-    // todo: test
-    public Decimal times(Decimal value, int scaleToUse, RoundingMode roundingMode) {
+    public final Decimal times(Decimal value, int scaleToUse, RoundingMode roundingMode) {
         return multiply(this, value, scaleToUse, roundingMode);
     }
 
     // todo: test
-    public Decimal times(Decimal value, int scaleToUse) {
-        // todo: add a flag to not be able to use this without a calculator
-
+    public final Decimal times(Decimal value, int scaleToUse) {
         return times(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
 
     // todo: test
-    public Decimal times(Decimal value) {
-        // todo: add a flag to not be able to use this without a calculator
-
-        // todo: define DefaultContext with multiplication settings:
-        // todo: Optional<Integer> scaleToUse(int scaleA, int scaleB)
-//        return times(value, min(8, this.scale + value.scale), DEFAULT_ROUNDING_MODE);
+    public final Decimal times(Decimal value) {
         return times(value, this.scale() + value.scale(), DEFAULT_ROUNDING_MODE);
     }
 
-    // todo: test
-    public Decimal div(Decimal value, int scaleToUse, RoundingMode roundingMode) {
+    public final Decimal div(Decimal value, int scaleToUse, RoundingMode roundingMode) {
         return divide(this, value, scaleToUse, roundingMode);
     }
 
     // todo: test
-    public Decimal div(Decimal value, int scaleToUse) {
-        // todo: add a flag to not be able to use this without a calculator
-
+    public final Decimal div(Decimal value, int scaleToUse) {
         return div(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
 
     // todo: test
-    public Decimal div(Decimal value) {
-        // todo: add a flag to not be able to use this without a calculator
-
-        // todo: define DefaultContext with division settings:
-        // todo: Optional<Integer> scaleToUse(int scaleA, int scaleB)
+    public final Decimal div(Decimal value) {
         return div(
                 value,
-                // todo: change from 8 -> 28 ???
+                // todo: change from 8 -> 28
                 max(8, max(this.scale(), value.scale())),
                 DEFAULT_ROUNDING_MODE
         );
     }
 
-
-    public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) {
+    public final Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) {
         return DecimalScaler.descaleTo(this, scaleToUse, roundingMode);
     }
 
     @Override
-    public int compareTo(Decimal other) {
-        return compare(this, other);
+    public final int compareTo(Decimal other) {
+        return DecimalEqualizer.compare(this, other);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        //  its important to only check its instance of Decimal and not check concrete class\
-        //  this will allow us to add subclassing
-        if (o == null || !(o instanceof Decimal)) return false;
+    public final boolean equals(Object other) {
+        if (this == other) return true;
+        //  we only check "other" is instance of Decimal and not check concrete class
+        //  as this allows us to have subclassing
+        if (other == null || !(other instanceof Decimal)) return false;
 
-        return DecimalEqualizer.areEqual(this, (Decimal) o);
+        return DecimalEqualizer.areEqual(this, (Decimal) other);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return DecimalEqualizer.hashCode(this);
     }
 
-    public String toPlainString(int minScaleToUse) {
+    public final String toPlainString(int minScaleToUse) {
         return DecimalPrinter.toPlainString(this, minScaleToUse);
     }
 
-    public String toPlainString() {
+    public final String toPlainString() {
         return toPlainString(0);
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return toPlainString();
-    }
-
-    public static int compare(Decimal x, Decimal y) {
-        return DecimalEqualizer.compare(x, y);
     }
 }

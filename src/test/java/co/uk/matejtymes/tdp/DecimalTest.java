@@ -21,6 +21,8 @@ public class DecimalTest {
         assertThat(decimal("+73000").intValue(), equalTo(73000));
         assertThat(decimal("0.0035").intValue(), equalTo(0));
         assertThat(decimal("13800000.00").intValue(), equalTo(13800000));
+        // todo: fix this
+//        assertThat(decimal("123456789012345679012345678901234567890").intValue(), equalTo(1.2345679E38f));
     }
 
     @Test
@@ -32,6 +34,8 @@ public class DecimalTest {
         assertThat(decimal("13800000.00").longValue(), equalTo(13800000L));
         assertThat(decimal(Long.MAX_VALUE).longValue(), equalTo(Long.MAX_VALUE));
         assertThat(decimal(Long.MIN_VALUE).longValue(), equalTo(Long.MIN_VALUE));
+        // todo: fix this
+//        assertThat(decimal("123456789012345679012345678901234567890").longValue(), equalTo(1.2345679E38f));
     }
 
     @Test
@@ -41,6 +45,7 @@ public class DecimalTest {
         assertThat(decimal("+73000").floatValue(), equalTo(73000f));
         assertThat(decimal("0.0035").floatValue(), equalTo(0.0035f));
         assertThat(decimal("13800000.00").floatValue(), equalTo(13800000f));
+        assertThat(decimal("123456789012345679012345678901234567890").floatValue(), equalTo(1.2345679E38f));
     }
 
     @Test
@@ -50,6 +55,7 @@ public class DecimalTest {
         assertThat(decimal("+73000").doubleValue(), equalTo(73000d));
         assertThat(decimal("0.0035").doubleValue(), equalTo(0.0035d));
         assertThat(decimal("13800000.00").doubleValue(), equalTo(13800000d));
+        assertThat(decimal("123456789012345679012345678901234567890").doubleValue(), equalTo(1.2345678901234568E38d));
     }
 
     @Test
