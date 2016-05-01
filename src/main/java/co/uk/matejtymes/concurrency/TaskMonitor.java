@@ -10,17 +10,17 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * @author mtymes
  * @since 10/22/14 10:41 PM
  */
-public class Runner {
+public class TaskMonitor {
 
     private final Sync sync = new Sync(0);
     private final ScheduledExecutorService executor;
 
-    public Runner(int threadCount) {
+    public TaskMonitor(int threadCount) {
         executor = newScheduledThreadPool(threadCount);
     }
 
-    public static Runner runner(int threadCount) {
-        return new Runner(threadCount);
+    public static TaskMonitor runner(int threadCount) {
+        return new TaskMonitor(threadCount);
     }
 
     public <T> Future<T> run(Callable<T> callable) {
@@ -87,17 +87,17 @@ public class Runner {
         }
     }
 
-    public Runner shutdown() {
+    public TaskMonitor shutdown() {
         executor.shutdown();
         return this;
     }
 
-    public Runner shutdownNow() {
+    public TaskMonitor shutdownNow() {
         executor.shutdownNow();
         return this;
     }
 
-    public Runner awaitTermination(long timeout, TimeUnit unit) {
+    public TaskMonitor awaitTermination(long timeout, TimeUnit unit) {
         try {
             executor.awaitTermination(timeout, unit);
         } catch (InterruptedException e) {
@@ -106,19 +106,19 @@ public class Runner {
         return this;
     }
 
-    public Runner shutdownAndAwaitTermination(long timeout, TimeUnit unit) {
+    public TaskMonitor shutdownAndAwaitTermination(long timeout, TimeUnit unit) {
         return shutdown().awaitTermination(timeout, unit);
     }
 
-    public Runner shutdownAndAwaitTermination() {
+    public TaskMonitor shutdownAndAwaitTermination() {
         return shutdownAndAwaitTermination(5, SECONDS);
     }
 
-    public Runner shutdownNowAndAwaitTermination(long timeout, TimeUnit unit) {
+    public TaskMonitor shutdownNowAndAwaitTermination(long timeout, TimeUnit unit) {
         return shutdownNow().awaitTermination(timeout, unit);
     }
 
-    public Runner shutdownNowAndAwaitTermination() {
+    public TaskMonitor shutdownNowAndAwaitTermination() {
         return shutdownNowAndAwaitTermination(5, SECONDS);
     }
 
