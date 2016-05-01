@@ -18,9 +18,9 @@ import static java.math.RoundingMode.UNNECESSARY;
 // - faster creation than BigDecimal
 public abstract class Decimal extends Number implements Comparable<Decimal> {
 
-    public static final Decimal TEN = decimal(10L, 0);
-    public static final Decimal ONE = decimal(1L, 0);
     public static final Decimal ZERO = decimal(0, 0);
+    public static final Decimal ONE = decimal(1L, 0);
+    public static final Decimal TEN = decimal(10L, 0);
 
     private static final RoundingMode DEFAULT_ROUNDING_MODE = HALF_UP;
 
@@ -49,6 +49,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
             return Long.signum(unscaledValue);
         }
 
+        @Deprecated // todo: remove
         @Override
         long unscaledValue() {
             return unscaledValue;
@@ -76,6 +77,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
             return unscaledValue.signum();
         }
 
+        @Deprecated // todo: remove
         @Override
         long unscaledValue() {
             throw new IllegalStateException("Can't transform into unscaled value of primitive type - the value is too big");
@@ -150,8 +152,8 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     // todo: test
     abstract int signum();
 
-    // todo: remove this method
-    abstract long unscaledValue();// todo: return this as a Number
+    @Deprecated // todo: remove or return this as a Number
+    abstract long unscaledValue();
 
     // todo: start handling scale overflow and underflow
     abstract int scale();
