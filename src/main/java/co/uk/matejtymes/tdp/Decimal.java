@@ -45,6 +45,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
 
         @Override
+        int signum() {
+            return Long.signum(unscaledValue);
+        }
+
+        @Override
         long unscaledValue() {
             return unscaledValue;
         }
@@ -64,6 +69,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         HugeDecimal(BigInteger unscaledValue, int scale) {
             this.unscaledValue = unscaledValue;
             this.scale = scale;
+        }
+
+        @Override
+        int signum() {
+            return unscaledValue.signum();
         }
 
         @Override
@@ -136,6 +146,9 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     public BigDecimal bigDecimalValue() {
         return new BigDecimal(toString());
     }
+
+    // todo: test
+    abstract int signum();
 
     // todo: remove this method
     abstract long unscaledValue();// todo: return this as a Number
