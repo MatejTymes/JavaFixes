@@ -72,6 +72,8 @@ public class DecimalTest {
     @Test
     public void shouldConvertToPlainString() {
         assertThat(decimal("0").toPlainString(), equalTo("0"));
+        assertThat(decimal("1").toPlainString(), equalTo("1"));
+        assertThat(decimal("-5").toPlainString(), equalTo("-5"));
         assertThat(decimal("16.456").toPlainString(), equalTo("16.456"));
         assertThat(decimal("-150.0030500").toPlainString(), equalTo("-150.00305"));
         assertThat(decimal("+73000").toPlainString(), equalTo("73000"));
@@ -82,11 +84,15 @@ public class DecimalTest {
         assertThat(decimal("-0.120").toPlainString(), equalTo("-0.12"));
         assertThat(decimal("-0.00005903200").toPlainString(), equalTo("-0.000059032"));
         assertThat(decimal("13800000.00").toPlainString(), equalTo("13800000"));
+        assertThat(decimal("12783418431290438190831940123400.00").toPlainString(), equalTo("12783418431290438190831940123400"));
+        assertThat(decimal("-0.00210327400284000920491734320939000").toPlainString(), equalTo("-0.00210327400284000920491734320939"));
     }
 
     @Test
     public void shouldConvertToPlainStringUsingMinimalScale() {
         assertThat(decimal("0").toPlainString(4), equalTo("0.0000"));
+        assertThat(decimal("1").toPlainString(4), equalTo("1.0000"));
+        assertThat(decimal("-5").toPlainString(4), equalTo("-5.0000"));
         assertThat(decimal("16.456").toPlainString(4), equalTo("16.4560"));
         assertThat(decimal("-150.0030500").toPlainString(4), equalTo("-150.00305"));
         assertThat(decimal("+73000").toPlainString(4), equalTo("73000.0000"));
@@ -97,6 +103,27 @@ public class DecimalTest {
         assertThat(decimal("-0.120").toPlainString(4), equalTo("-0.1200"));
         assertThat(decimal("-0.00005903200").toPlainString(), equalTo("-0.000059032"));
         assertThat(decimal("13800000.00").toPlainString(4), equalTo("13800000.0000"));
+    }
+
+    @Test
+    public void shouldConvertToScientificNotation() {
+        assertThat(decimal("0").toScientificNotation(), equalTo("0e0"));
+        assertThat(decimal("1").toScientificNotation(), equalTo("1e0"));
+        assertThat(decimal("-5").toScientificNotation(), equalTo("-5e0"));
+        assertThat(decimal("0.1").toScientificNotation(), equalTo("1e-1"));
+        assertThat(decimal("-0.05").toScientificNotation(), equalTo("-5e-2"));
+        assertThat(decimal("16.456").toScientificNotation(), equalTo("1.6456e1"));
+        assertThat(decimal("-150.0030500").toScientificNotation(), equalTo("-1.5000305e2"));
+        assertThat(decimal("+73000").toScientificNotation(), equalTo("7.3e4"));
+        assertThat(decimal(Long.MAX_VALUE, 8).toScientificNotation(), equalTo("9.223372036854775807e10"));
+        assertThat(decimal(Long.MIN_VALUE, 8).toScientificNotation(), equalTo("-9.223372036854775808e10"));
+        assertThat(decimal("0.0035").toScientificNotation(), equalTo("3.5e-3"));
+        assertThat(decimal("0.120").toScientificNotation(), equalTo("1.2e-1"));
+        assertThat(decimal("-0.120").toScientificNotation(), equalTo("-1.2e-1"));
+        assertThat(decimal("-0.00005903200").toScientificNotation(), equalTo("-5.9032e-5"));
+        assertThat(decimal("13800000.00").toScientificNotation(), equalTo("1.38e7"));
+        assertThat(decimal("12783418431290438190831940123400.00").toScientificNotation(), equalTo("1.27834184312904381908319401234e31"));
+        assertThat(decimal("-0.00210327400284000920491734320939000").toScientificNotation(), equalTo("-2.10327400284000920491734320939e-3"));
     }
 
     @Test

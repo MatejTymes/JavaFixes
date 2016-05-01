@@ -256,6 +256,10 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return toPlainString(0);
     }
 
+    public final String toScientificNotation() {
+        return DecimalPrinter.toScientificNotation(this);
+    }
+
     @Override
     public final String toString() {
         return toPlainString();

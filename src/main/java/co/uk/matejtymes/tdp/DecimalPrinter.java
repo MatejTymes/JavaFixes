@@ -3,7 +3,6 @@ package co.uk.matejtymes.tdp;
 import co.uk.matejtymes.tdp.Decimal.HugeDecimal;
 import co.uk.matejtymes.tdp.Decimal.LongDecimal;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 
 import static java.lang.Math.max;
@@ -11,20 +10,17 @@ import static java.lang.Math.max;
 // todo: test it
 class DecimalPrinter {
 
-    // todo: maybe add scientific notation as well
-
     static String toPlainString(Decimal d, int minScaleToUse) {
         StringBuilder sb = new StringBuilder();
 
-        boolean isNegative;
         if (d instanceof LongDecimal) {
-            long unscaledValue = ((LongDecimal) d).unscaledValue;
-            isNegative = unscaledValue < 0;
-            sb.append(Long.toString(unscaledValue));
+            sb.append(
+                    Long.toString(((LongDecimal) d).unscaledValue)
+            );
         } else if (d instanceof HugeDecimal) {
-            BigInteger unscaledValue = ((HugeDecimal) d).unscaledValue;
-            isNegative = unscaledValue.signum() < 0;
-            sb.append(unscaledValue.toString());
+            sb.append(
+                    ((HugeDecimal) d).unscaledValue.toString()
+            );
         } else {
             throw new UnsupportedDecimalTypeException(d);
         }
@@ -36,6 +32,7 @@ class DecimalPrinter {
         }
 
         if (scaleToUse > 0) {
+            boolean isNegative = d.signum() < 0;
             int prefixZerosOffset = isNegative ? 1 : 0;
             int firstDigitScale = scaleToUse - (sb.length() - prefixZerosOffset) + 1;
             if (firstDigitScale > 0) {
@@ -44,6 +41,32 @@ class DecimalPrinter {
             int index = sb.length() - scaleToUse;
             sb.insert(index, '.');
         }
+
+        return sb.toString();
+    }
+
+    static String toScientificNotation(Decimal d) {
+        StringBuilder sb = new StringBuilder();
+
+        if (d instanceof LongDecimal) {
+            sb.append(
+                    Long.toString(((LongDecimal) d).unscaledValue)
+            );
+        } else if (d instanceof HugeDecimal) {
+            sb.append(
+                    ((HugeDecimal) d).unscaledValue.toString()
+            );
+        } else {
+            throw new UnsupportedDecimalTypeException(d);
+        }
+
+        int signOffset = (d.signum() < 0) ? 1 : 0;
+        int exponent = (sb.length() - signOffset) - d.scale() - 1;
+
+        if (sb.length() > 1 + signOffset) {
+            sb.insert(1 + signOffset, '.');
+        }
+        sb.append("e").append(exponent);
 
         return sb.toString();
     }
