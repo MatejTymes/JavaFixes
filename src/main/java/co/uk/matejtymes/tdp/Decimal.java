@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import static co.uk.matejtymes.tdp.DecimalsIntern.*;
-import static co.uk.matejtymes.tdp.LongUtil.pow10;
 import static java.lang.Math.max;
 import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UNNECESSARY;
@@ -16,6 +15,7 @@ import static java.math.RoundingMode.UNNECESSARY;
 // - sensible rounding defaults
 // - string construction can use '_' symbol
 // - faster creation than BigDecimal
+// - extendible - could introduce classes like InfiniteDecimal and NANDecimal in the future
 public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     public static final Decimal ZERO = decimal(0, 0);
@@ -24,7 +24,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     private static final RoundingMode DEFAULT_ROUNDING_MODE = HALF_UP;
 
-    // todo: add others like: HugeDecimal, InfiniteDecimal, NaNDecimal
     static final class LongDecimal extends Decimal {
 
         transient final long unscaledValue;
@@ -35,14 +34,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
             this.scale = scale;
         }
 
-        @Override
-        public double doubleValue() {
-            if (scale() < 0) {
-                return ((double) unscaledValue()) * (double) pow10(-scale());
-            } else {
-                return ((double) unscaledValue()) / (double) pow10(scale());
-            }
-        }
+        // todo: implement faster doubleValue() as in this case it could be much faster
 
         @Override
         int signum() {
@@ -86,11 +78,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         @Override
         int scale() {
             return scale;
-        }
-
-        @Override
-        public double doubleValue() {
-            throw new IllegalStateException("Can't transform into primitive type - the value is too big");
         }
     }
 
@@ -143,6 +130,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     @Override
     public float floatValue() {
         return (float) doubleValue();
+    }
+
+    @Override
+    public double doubleValue() {
+        return Double.parseDouble(toPlainString());
     }
 
     public BigDecimal bigDecimalValue() {
