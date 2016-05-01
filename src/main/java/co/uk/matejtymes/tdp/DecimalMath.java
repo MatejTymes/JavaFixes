@@ -26,7 +26,7 @@ public class DecimalMath {
             100000000000000000L, // 10 ^ 17
             1000000000000000000L // 10 ^ 18
     };
-    static final BigInteger[] powersOf10B = {
+    private static final BigInteger[] powersOf10B = {
             BigInteger.ONE,                          // 10 ^ 0
             BigInteger.TEN,                          // 10 ^ 1
             BigInteger.valueOf(100L),                // 10 ^ 2
@@ -56,11 +56,11 @@ public class DecimalMath {
         return powersOf10B.length - 1;
     }
 
-    public static long powerOf10L(int n) {
+    public static long powerOf10Long(int n) {
         return powersOf10L[n];
     }
 
-    public static BigInteger powerOf10B(int n) {
+    public static BigInteger powerOf10Big(int n) {
         return powersOf10B[n];
     }
 }

@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import static co.uk.matejtymes.tdp.DecimalCreator.createDecimal;
+import static co.uk.matejtymes.tdp.DecimalMath.*;
 import static java.lang.Math.min;
 import static java.lang.String.format;
 
@@ -28,8 +29,8 @@ public class DecimalScaler {
             long unscaledValue = ((LongDecimal) d).unscaledValue;
 
             while (scaleDiff > 1 && unscaledValue != 0) {
-                int descalePower = min(DecimalMath.maxLongPowerOf10(), scaleDiff - 1);
-                unscaledValue /= DecimalMath.powerOf10L(descalePower);
+                int descalePower = min(maxLongPowerOf10(), scaleDiff - 1);
+                unscaledValue /= powerOf10Long(descalePower);
                 scaleDiff -= descalePower;
             }
 
@@ -48,8 +49,8 @@ public class DecimalScaler {
             BigInteger unscaledValue = ((HugeDecimal) d).unscaledValue;
 
             while (scaleDiff > 1 && unscaledValue.signum() != 0) {
-                int descalePower = min(DecimalMath.maxBigPowerOf10(), scaleDiff - 1);
-                unscaledValue = unscaledValue.divide(DecimalMath.powersOf10B[descalePower]);
+                int descalePower = min(maxBigPowerOf10(), scaleDiff - 1);
+                unscaledValue = unscaledValue.divide(powerOf10Big(descalePower));
                 scaleDiff -= descalePower;
             }
 
@@ -59,6 +60,9 @@ public class DecimalScaler {
 
             BigInteger rescaledValue = unscaledValue.divide(BigInteger.TEN);
             byte remainingDigit = unscaledValue.mod(BigInteger.TEN).byteValue();
+            if (unscaledValue.signum() < 0) {
+                remainingDigit -= 10;
+            }
 
             BigInteger roundingCorrection = roundingCorrection(rescaledValue, remainingDigit, roundingMode);
             rescaledValue = rescaledValue.add(roundingCorrection);
@@ -178,11 +182,11 @@ public class DecimalScaler {
                 }
             } else if (roundingMode == RoundingMode.HALF_EVEN) {
                 if (valueBeforeRounding.signum() >= 0) {
-                    if (remainingDigit > 5 || (remainingDigit == 5 && valueBeforeRounding.mod(TWO_BIG).intValue() != 0)) {
+                    if (remainingDigit > 5 || (remainingDigit == 5 && valueBeforeRounding.mod(TWO_BIG).signum() != 0)) {
                         roundingCorrection = BIG_ONE;
                     }
                 } else {
-                    if (remainingDigit < -5 || (remainingDigit == -5 && valueBeforeRounding.mod(TWO_BIG).intValue() != 0)) {
+                    if (remainingDigit < -5 || (remainingDigit == -5 && valueBeforeRounding.mod(TWO_BIG).signum() != 0)) {
                         roundingCorrection = BIG_MINUS_ONE;
                     }
                 }

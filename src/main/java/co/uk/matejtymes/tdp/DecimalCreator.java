@@ -20,7 +20,7 @@ class DecimalCreator {
 
     static Decimal createDecimal(BigInteger unscaledValue, int scale) {
         // todo: strip trailing zeros in better way
-        while (!unscaledValue.equals(BigInteger.ZERO) && BigInteger.ZERO.equals(unscaledValue.mod(TEN))) {
+        while (unscaledValue.signum() != 0 && unscaledValue.mod(TEN).signum() == 0) {
             unscaledValue = unscaledValue.divide(TEN);
             scale--;
         }
