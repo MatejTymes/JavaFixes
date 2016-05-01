@@ -7,12 +7,12 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  * @author mtymes
  * @since 10/22/14 10:41 PM
  */
-public class TaskMonitor {
+public class MonitoringTaskSubmitter {
 
     private final Sync sync = new Sync(0);
     protected final ScheduledExecutorService executor;
 
-    public TaskMonitor(ScheduledExecutorService executor) {
+    public MonitoringTaskSubmitter(ScheduledExecutorService executor) {
         this.executor = executor;
     }
 
