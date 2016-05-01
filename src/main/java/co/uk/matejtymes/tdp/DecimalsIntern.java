@@ -155,8 +155,8 @@ class DecimalsIntern {
         return sb.toString();
     }
 
-    // todo: add support for HugeDecimal
     // todo: in the future make sure the digit is only from 0 to 9 (currently the sign of the digit makes it a little bit awkward)
+    // todo: turn remainingDigit into byte
     static long roundBasedOnRemainder(long valueBeforeRounding, long remainingDigit, RoundingMode roundingMode) {
         if (remainingDigit < -9 || remainingDigit > 9) {
             throw new IllegalArgumentException(format("Invalid remaining digit (%d). Should be only -9 to 9", remainingDigit));
@@ -215,10 +215,8 @@ class DecimalsIntern {
         return valueAfterRounding;
     }
 
-    private static long TEN_MULTIPLICATION_UPPER_BOUND = Long.MAX_VALUE / 10;
-    private static long TEN_MULTIPLICATION_LOWER_BOUND = Long.MIN_VALUE / 10;
-
-
+    private static final long TEN_MULTIPLICATION_UPPER_BOUND = Long.MAX_VALUE / 10;
+    private static final long TEN_MULTIPLICATION_LOWER_BOUND = Long.MIN_VALUE / 10;
 
     // todo: add support for HugeDecimal
     private static long multiplyBy10Exact(long value) {

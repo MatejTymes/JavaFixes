@@ -3,8 +3,10 @@ package co.uk.matejtymes.tdp;
 // contains mostly methods from guava and java 8
 public class LongUtil {
 
+    @Deprecated // todo: use the code in DecimalMath instead
     private static final long[] powersOf10 = {1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L, 100000000L, 1000000000L, 10000000000L, 100000000000L, 1000000000000L, 10000000000000L, 100000000000000L, 1000000000000000L, 10000000000000000L, 100000000000000000L, 1000000000000000000L};
 
+    @Deprecated // todo: use the code in DecimalMath instead
     public static long pow10(int scale) {
         if (scale < 0) {
             throw new IllegalArgumentException("Can calculate only non-negative scales");

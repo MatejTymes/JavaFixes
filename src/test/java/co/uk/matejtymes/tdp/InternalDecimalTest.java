@@ -41,23 +41,23 @@ public class InternalDecimalTest {
 
     @Test
     public void shouldTransitionFromLongIntoHugeDecimal() {
-        Decimal longDecimal = decimal(Long.MIN_VALUE, 0);
+        Decimal longDecimal = decimal(Long.MIN_VALUE, 1);
         assertThat(longDecimal, instanceOf(LongDecimal.class));
-        assertThat(longDecimal.toPlainString(), equalTo("-9223372036854775808"));
+        assertThat(longDecimal.toPlainString(), equalTo("-922337203685477580.8"));
 
         Decimal hugeDecimal = longDecimal.negate();
         assertThat(hugeDecimal, instanceOf(HugeDecimal.class));
-        assertThat(hugeDecimal.toPlainString(), equalTo("9223372036854775808"));
+        assertThat(hugeDecimal.toPlainString(), equalTo("922337203685477580.8"));
     }
 
     @Test
     public void shouldTransitionFromHugeIntoLongDecimal() {
-        Decimal hugeDecimal = Decimal.decimal("9223372036854775808");
+        Decimal hugeDecimal = Decimal.decimal("922337203685477580.8");
         assertThat(hugeDecimal, instanceOf(HugeDecimal.class));
 
         Decimal longDecimal = hugeDecimal.negate();
         assertThat(longDecimal, instanceOf(LongDecimal.class));
-        assertThat(longDecimal, equalTo(decimal(Long.MIN_VALUE, 0)));
+        assertThat(longDecimal, equalTo(decimal(Long.MIN_VALUE, 1)));
     }
 
 }
