@@ -152,7 +152,9 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     @Override
     public double doubleValue() {
-        return Double.parseDouble(toPlainString());
+        // todo: find out which one is faster
+//        return Double.parseDouble(toPlainString());
+        return Double.parseDouble(toScientificNotation());
     }
 
     public final BigDecimal bigDecimalValue() {
