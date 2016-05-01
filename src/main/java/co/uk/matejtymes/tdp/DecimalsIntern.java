@@ -19,26 +19,8 @@ import static java.lang.String.format;
 class DecimalsIntern {
 
     // todo: add support for HugeDecimal
-    static Decimal add(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
-
-        int scaleX = x.scale();
-        int scaleY = y.scale();
-        // todo: this is easy to read, but maybe
-        // todo: use rather min(scaleToUse, scaleX, scaleY) to actually prevent unnecessary overflow
-        int maxScale = max(scaleX, scaleY);
-
-        long maxScaledValueX = multiplyExact(x.unscaledValue(), pow10(maxScale - scaleX));
-        long maxScaledValueY = multiplyExact(y.unscaledValue(), pow10(maxScale - scaleY));
-
-        return createDecimal(
-                addExact(maxScaledValueX, maxScaledValueY),
-                maxScale
-        ).rescaleTo(scaleToUse, roundingMode);
-    }
-
-    // todo: add support for HugeDecimal
     static Decimal subtract(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
-        return add(x, DecimalNegator.negate(y), scaleToUse, roundingMode);
+        return DecimalAdder.add(x, DecimalNegator.negate(y), scaleToUse, roundingMode);
     }
 
     // todo: add support for HugeDecimal
@@ -56,7 +38,7 @@ class DecimalsIntern {
         return createDecimal(
                 unscaledValue,
                 x.scale() + y.scale()
-        ).rescaleTo(scaleToUse, roundingMode);
+        ).descaleTo(scaleToUse, roundingMode);
     }
 
     // todo: handle zero divisor exception
@@ -71,7 +53,7 @@ class DecimalsIntern {
 
         if (newScale > scaleToUse) {
             return createDecimal(result, newScale)
-                    .rescaleTo(scaleToUse, roundingMode);
+                    .descaleTo(scaleToUse, roundingMode);
         } else {
             while (newScale < scaleToUse) {
                 result = addExact(multiplyBy10Exact(result), (remainder / divisor));
@@ -83,32 +65,8 @@ class DecimalsIntern {
 
 
             return createDecimal(result, newScale)
-                    .rescaleTo(scaleToUse, roundingMode);
+                    .descaleTo(scaleToUse, roundingMode);
         }
-    }
-
-    // todo: add support for HugeDecimal
-    static Decimal rescaleTo(Decimal d, int scaleToUse, RoundingMode roundingMode) {
-
-        int scale = d.scale();
-        long unscaledValue = d.unscaledValue();
-
-        if (scaleToUse == scale) {
-            return d;
-        } else if (scaleToUse > scale) {
-            long scaler = pow10(scaleToUse - scale);
-            long rescaledValue = multiplyExact(unscaledValue, scaler);
-            return createDecimal(rescaledValue, scaleToUse);
-        }
-
-        long scaler = pow10(scale - scaleToUse);
-        long rescaledValue = unscaledValue / scaler;
-        long remainder = subtractExact(unscaledValue, multiplyExact(rescaledValue, scaler));
-        long remainingDigit = remainder / (scaler / 10);
-
-        rescaledValue = roundBasedOnRemainder(rescaledValue, remainingDigit, roundingMode);
-
-        return createDecimal(rescaledValue, scaleToUse);
     }
 
     // todo: add support for HugeDecimal
@@ -199,7 +157,7 @@ class DecimalsIntern {
 
     // todo: add support for HugeDecimal
     // todo: in the future make sure the digit is only from 0 to 9 (currently the sign of the digit makes it a little bit awkward)
-    private static long roundBasedOnRemainder(long valueBeforeRounding, long remainingDigit, RoundingMode roundingMode) {
+    static long roundBasedOnRemainder(long valueBeforeRounding, long remainingDigit, RoundingMode roundingMode) {
         if (remainingDigit < -9 || remainingDigit > 9) {
             throw new IllegalArgumentException(format("Invalid remaining digit (%d). Should be only -9 to 9", remainingDigit));
         }

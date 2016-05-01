@@ -134,95 +134,95 @@ public class DecimalTest {
     }
 
     @Test
-    public void shouldRescaleAndRoundValueProperly() {
+    public void shouldDescaleAndRoundValueProperly() {
 
-        assertThat(decimal("5.5").rescaleTo(0, RoundingMode.UP), equalTo(decimal("6")));
-        assertThat(decimal("2.5").rescaleTo(0, RoundingMode.UP), equalTo(decimal("3")));
-        assertThat(decimal("1.6").rescaleTo(0, RoundingMode.UP), equalTo(decimal("2")));
-        assertThat(decimal("1.1").rescaleTo(0, RoundingMode.UP), equalTo(decimal("2")));
-        assertThat(decimal("1.0").rescaleTo(0, RoundingMode.UP), equalTo(decimal("1")));
-        assertThat(decimal("-1.0").rescaleTo(0, RoundingMode.UP), equalTo(decimal("-1")));
-        assertThat(decimal("-1.1").rescaleTo(0, RoundingMode.UP), equalTo(decimal("-2")));
-        assertThat(decimal("-1.6").rescaleTo(0, RoundingMode.UP), equalTo(decimal("-2")));
-        assertThat(decimal("-2.5").rescaleTo(0, RoundingMode.UP), equalTo(decimal("-3")));
-        assertThat(decimal("-5.5").rescaleTo(0, RoundingMode.UP), equalTo(decimal("-6")));
+        assertThat(decimal("5.5").descaleTo(0, RoundingMode.UP), equalTo(decimal("6")));
+        assertThat(decimal("2.5").descaleTo(0, RoundingMode.UP), equalTo(decimal("3")));
+        assertThat(decimal("1.6").descaleTo(0, RoundingMode.UP), equalTo(decimal("2")));
+        assertThat(decimal("1.1").descaleTo(0, RoundingMode.UP), equalTo(decimal("2")));
+        assertThat(decimal("1.0").descaleTo(0, RoundingMode.UP), equalTo(decimal("1")));
+        assertThat(decimal("-1.0").descaleTo(0, RoundingMode.UP), equalTo(decimal("-1")));
+        assertThat(decimal("-1.1").descaleTo(0, RoundingMode.UP), equalTo(decimal("-2")));
+        assertThat(decimal("-1.6").descaleTo(0, RoundingMode.UP), equalTo(decimal("-2")));
+        assertThat(decimal("-2.5").descaleTo(0, RoundingMode.UP), equalTo(decimal("-3")));
+        assertThat(decimal("-5.5").descaleTo(0, RoundingMode.UP), equalTo(decimal("-6")));
 
-        assertThat(decimal("5.5").rescaleTo(0, RoundingMode.DOWN), equalTo(decimal("5")));
-        assertThat(decimal("2.5").rescaleTo(0, RoundingMode.DOWN), equalTo(decimal("2")));
-        assertThat(decimal("1.6").rescaleTo(0, RoundingMode.DOWN), equalTo(decimal("1")));
-        assertThat(decimal("1.1").rescaleTo(0, RoundingMode.DOWN), equalTo(decimal("1")));
-        assertThat(decimal("1.0").rescaleTo(0, RoundingMode.DOWN), equalTo(decimal("1")));
-        assertThat(decimal("-1.0").rescaleTo(0, RoundingMode.DOWN), equalTo(decimal("-1")));
-        assertThat(decimal("-1.1").rescaleTo(0, RoundingMode.DOWN), equalTo(decimal("-1")));
-        assertThat(decimal("-1.6").rescaleTo(0, RoundingMode.DOWN), equalTo(decimal("-1")));
-        assertThat(decimal("-2.5").rescaleTo(0, RoundingMode.DOWN), equalTo(decimal("-2")));
-        assertThat(decimal("-5.5").rescaleTo(0, RoundingMode.DOWN), equalTo(decimal("-5")));
+        assertThat(decimal("5.5").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("5")));
+        assertThat(decimal("2.5").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("2")));
+        assertThat(decimal("1.6").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("1")));
+        assertThat(decimal("1.1").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("1")));
+        assertThat(decimal("1.0").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("1")));
+        assertThat(decimal("-1.0").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("-1")));
+        assertThat(decimal("-1.1").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("-1")));
+        assertThat(decimal("-1.6").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("-1")));
+        assertThat(decimal("-2.5").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("-2")));
+        assertThat(decimal("-5.5").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("-5")));
 
-        assertThat(decimal("5.5").rescaleTo(0, RoundingMode.CEILING), equalTo(decimal("6")));
-        assertThat(decimal("2.5").rescaleTo(0, RoundingMode.CEILING), equalTo(decimal("3")));
-        assertThat(decimal("1.6").rescaleTo(0, RoundingMode.CEILING), equalTo(decimal("2")));
-        assertThat(decimal("1.1").rescaleTo(0, RoundingMode.CEILING), equalTo(decimal("2")));
-        assertThat(decimal("1.0").rescaleTo(0, RoundingMode.CEILING), equalTo(decimal("1")));
-        assertThat(decimal("-1.0").rescaleTo(0, RoundingMode.CEILING), equalTo(decimal("-1")));
-        assertThat(decimal("-1.1").rescaleTo(0, RoundingMode.CEILING), equalTo(decimal("-1")));
-        assertThat(decimal("-1.6").rescaleTo(0, RoundingMode.CEILING), equalTo(decimal("-1")));
-        assertThat(decimal("-2.5").rescaleTo(0, RoundingMode.CEILING), equalTo(decimal("-2")));
-        assertThat(decimal("-5.5").rescaleTo(0, RoundingMode.CEILING), equalTo(decimal("-5")));
+        assertThat(decimal("5.5").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("6")));
+        assertThat(decimal("2.5").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("3")));
+        assertThat(decimal("1.6").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("2")));
+        assertThat(decimal("1.1").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("2")));
+        assertThat(decimal("1.0").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("1")));
+        assertThat(decimal("-1.0").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("-1")));
+        assertThat(decimal("-1.1").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("-1")));
+        assertThat(decimal("-1.6").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("-1")));
+        assertThat(decimal("-2.5").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("-2")));
+        assertThat(decimal("-5.5").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("-5")));
 
-        assertThat(decimal("5.5").rescaleTo(0, RoundingMode.FLOOR), equalTo(decimal("5")));
-        assertThat(decimal("2.5").rescaleTo(0, RoundingMode.FLOOR), equalTo(decimal("2")));
-        assertThat(decimal("1.6").rescaleTo(0, RoundingMode.FLOOR), equalTo(decimal("1")));
-        assertThat(decimal("1.1").rescaleTo(0, RoundingMode.FLOOR), equalTo(decimal("1")));
-        assertThat(decimal("1.0").rescaleTo(0, RoundingMode.FLOOR), equalTo(decimal("1")));
-        assertThat(decimal("-1.0").rescaleTo(0, RoundingMode.FLOOR), equalTo(decimal("-1")));
-        assertThat(decimal("-1.1").rescaleTo(0, RoundingMode.FLOOR), equalTo(decimal("-2")));
-        assertThat(decimal("-1.6").rescaleTo(0, RoundingMode.FLOOR), equalTo(decimal("-2")));
-        assertThat(decimal("-2.5").rescaleTo(0, RoundingMode.FLOOR), equalTo(decimal("-3")));
-        assertThat(decimal("-5.5").rescaleTo(0, RoundingMode.FLOOR), equalTo(decimal("-6")));
+        assertThat(decimal("5.5").descaleTo(0, RoundingMode.FLOOR), equalTo(decimal("5")));
+        assertThat(decimal("2.5").descaleTo(0, RoundingMode.FLOOR), equalTo(decimal("2")));
+        assertThat(decimal("1.6").descaleTo(0, RoundingMode.FLOOR), equalTo(decimal("1")));
+        assertThat(decimal("1.1").descaleTo(0, RoundingMode.FLOOR), equalTo(decimal("1")));
+        assertThat(decimal("1.0").descaleTo(0, RoundingMode.FLOOR), equalTo(decimal("1")));
+        assertThat(decimal("-1.0").descaleTo(0, RoundingMode.FLOOR), equalTo(decimal("-1")));
+        assertThat(decimal("-1.1").descaleTo(0, RoundingMode.FLOOR), equalTo(decimal("-2")));
+        assertThat(decimal("-1.6").descaleTo(0, RoundingMode.FLOOR), equalTo(decimal("-2")));
+        assertThat(decimal("-2.5").descaleTo(0, RoundingMode.FLOOR), equalTo(decimal("-3")));
+        assertThat(decimal("-5.5").descaleTo(0, RoundingMode.FLOOR), equalTo(decimal("-6")));
 
-        assertThat(decimal("5.5").rescaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("6")));
-        assertThat(decimal("2.5").rescaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("3")));
-        assertThat(decimal("1.6").rescaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("2")));
-        assertThat(decimal("1.1").rescaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("1")));
-        assertThat(decimal("1.0").rescaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("1")));
-        assertThat(decimal("-1.0").rescaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("-1")));
-        assertThat(decimal("-1.1").rescaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("-1")));
-        assertThat(decimal("-1.6").rescaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("-2")));
-        assertThat(decimal("-2.5").rescaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("-3")));
-        assertThat(decimal("-5.5").rescaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("-6")));
+        assertThat(decimal("5.5").descaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("6")));
+        assertThat(decimal("2.5").descaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("3")));
+        assertThat(decimal("1.6").descaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("2")));
+        assertThat(decimal("1.1").descaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("1")));
+        assertThat(decimal("1.0").descaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("1")));
+        assertThat(decimal("-1.0").descaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("-1")));
+        assertThat(decimal("-1.1").descaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("-1")));
+        assertThat(decimal("-1.6").descaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("-2")));
+        assertThat(decimal("-2.5").descaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("-3")));
+        assertThat(decimal("-5.5").descaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("-6")));
 
-        assertThat(decimal("5.5").rescaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("5")));
-        assertThat(decimal("2.5").rescaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("2")));
-        assertThat(decimal("1.6").rescaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("2")));
-        assertThat(decimal("1.1").rescaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("1")));
-        assertThat(decimal("1.0").rescaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("1")));
-        assertThat(decimal("-1.0").rescaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("-1")));
-        assertThat(decimal("-1.1").rescaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("-1")));
-        assertThat(decimal("-1.6").rescaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("-2")));
-        assertThat(decimal("-2.5").rescaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("-2")));
-        assertThat(decimal("-5.5").rescaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("-5")));
+        assertThat(decimal("5.5").descaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("5")));
+        assertThat(decimal("2.5").descaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("2")));
+        assertThat(decimal("1.6").descaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("2")));
+        assertThat(decimal("1.1").descaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("1")));
+        assertThat(decimal("1.0").descaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("1")));
+        assertThat(decimal("-1.0").descaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("-1")));
+        assertThat(decimal("-1.1").descaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("-1")));
+        assertThat(decimal("-1.6").descaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("-2")));
+        assertThat(decimal("-2.5").descaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("-2")));
+        assertThat(decimal("-5.5").descaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("-5")));
 
-        assertThat(decimal("5.5").rescaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("6")));
-        assertThat(decimal("2.5").rescaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("2")));
-        assertThat(decimal("1.6").rescaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("2")));
-        assertThat(decimal("1.1").rescaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("1")));
-        assertThat(decimal("1.0").rescaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("1")));
-        assertThat(decimal("-1.0").rescaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-1")));
-        assertThat(decimal("-1.1").rescaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-1")));
-        assertThat(decimal("-1.6").rescaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-2")));
-        assertThat(decimal("-2.5").rescaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-2")));
-        assertThat(decimal("-5.5").rescaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-6")));
+        assertThat(decimal("5.5").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("6")));
+        assertThat(decimal("2.5").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("2")));
+        assertThat(decimal("1.6").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("2")));
+        assertThat(decimal("1.1").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("1")));
+        assertThat(decimal("1.0").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("1")));
+        assertThat(decimal("-1.0").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-1")));
+        assertThat(decimal("-1.1").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-1")));
+        assertThat(decimal("-1.6").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-2")));
+        assertThat(decimal("-2.5").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-2")));
+        assertThat(decimal("-5.5").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-6")));
 
-        try { decimal("5.5").rescaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("2.5").rescaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("1.6").rescaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("1.1").rescaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        assertThat(decimal("1.0").rescaleTo(0, RoundingMode.UNNECESSARY), equalTo(decimal("1")));
-        assertThat(decimal("-1.0").rescaleTo(0, RoundingMode.UNNECESSARY), equalTo(decimal("-1")));
-        try { decimal("-1.1").rescaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-1.6").rescaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-2.5").rescaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-5.5").rescaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("5.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("2.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("1.6").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("1.1").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        assertThat(decimal("1.0").descaleTo(0, RoundingMode.UNNECESSARY), equalTo(decimal("1")));
+        assertThat(decimal("-1.0").descaleTo(0, RoundingMode.UNNECESSARY), equalTo(decimal("-1")));
+        try { decimal("-1.1").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("-1.6").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("-2.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("-5.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
     }
 
     // todo: properly test arithmetic operations
