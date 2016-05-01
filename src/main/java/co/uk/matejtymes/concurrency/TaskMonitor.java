@@ -3,9 +3,6 @@ package co.uk.matejtymes.concurrency;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
-import static java.util.concurrent.Executors.newScheduledThreadPool;
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 /**
  * @author mtymes
  * @since 10/22/14 10:41 PM
@@ -13,14 +10,10 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class TaskMonitor {
 
     private final Sync sync = new Sync(0);
-    private final ScheduledExecutorService executor;
+    protected final ScheduledExecutorService executor;
 
-    public TaskMonitor(int threadCount) {
-        executor = newScheduledThreadPool(threadCount);
-    }
-
-    public static TaskMonitor runner(int threadCount) {
-        return new TaskMonitor(threadCount);
+    public TaskMonitor(ScheduledExecutorService executor) {
+        this.executor = executor;
     }
 
     public <T> Future<T> run(Callable<T> callable) {
@@ -85,41 +78,6 @@ public class TaskMonitor {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public TaskMonitor shutdown() {
-        executor.shutdown();
-        return this;
-    }
-
-    public TaskMonitor shutdownNow() {
-        executor.shutdownNow();
-        return this;
-    }
-
-    public TaskMonitor awaitTermination(long timeout, TimeUnit unit) {
-        try {
-            executor.awaitTermination(timeout, unit);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        return this;
-    }
-
-    public TaskMonitor shutdownAndAwaitTermination(long timeout, TimeUnit unit) {
-        return shutdown().awaitTermination(timeout, unit);
-    }
-
-    public TaskMonitor shutdownAndAwaitTermination() {
-        return shutdownAndAwaitTermination(5, SECONDS);
-    }
-
-    public TaskMonitor shutdownNowAndAwaitTermination(long timeout, TimeUnit unit) {
-        return shutdownNow().awaitTermination(timeout, unit);
-    }
-
-    public TaskMonitor shutdownNowAndAwaitTermination() {
-        return shutdownNowAndAwaitTermination(5, SECONDS);
     }
 
     /* =========================== */

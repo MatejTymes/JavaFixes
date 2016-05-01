@@ -16,7 +16,7 @@ public class RunnerTest {
         Callable<Integer> callable = () -> 5;
 
 
-        TaskMonitor runner = TaskMonitor.runner(10);
+        Runner runner = Runner.runner(10);
 
         runner.runIn(2, SECONDS, runnable);
         runner.run(runnable);
@@ -48,7 +48,7 @@ public class RunnerTest {
 
         // create runner with 10 threads
 
-        TaskMonitor runner = TaskMonitor.runner(10);
+        Runner runner = Runner.runner(10);
 
 
         // submit tasks - Runnable, Callable or Task (custom Runnable that can throw Exceptions) - each call will return you a Future
