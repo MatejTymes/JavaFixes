@@ -5,9 +5,7 @@ import co.uk.matejtymes.tdp.Decimal.LongDecimal;
 
 import java.math.BigInteger;
 
-import static co.uk.matejtymes.tdp.DecimalMath.maxBigPowerOf10;
-import static co.uk.matejtymes.tdp.DecimalMath.powerOf10Big;
-import static co.uk.matejtymes.tdp.LongUtil.*;
+import static co.uk.matejtymes.tdp.DecimalMath.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -34,26 +32,19 @@ public class DecimalEqualizer {
                 return Long.compare(unscaledX, unscaledY);
             }
 
-            // todo: what if the difference is massive
+            int scaleToGet = min(scaleX, scaleY);
 
-            // todo: reimplement this - might get an overflow
-            int minScale = min(scaleX, scaleY);
+            long rescaledX = descaleValue(unscaledX, scaleX, scaleToGet);
+            long rescaledY = descaleValue(unscaledY, scaleY, scaleToGet);
 
-            long scalerX = pow10(scaleX - minScale);
-            long scalerY = pow10(scaleY - minScale);
-
-            // by doing division instead of multiplication we prevent overflow
-            long xScaledDownValue = unscaledX / scalerX;
-            long yScaledDownValue = unscaledY / scalerY;
-
-            int comparison = Long.compare(xScaledDownValue, yScaledDownValue);
-            if (comparison != 0) {
-                return comparison;
+            int topComparison = Long.compare(rescaledX, rescaledY);
+            if (topComparison != 0) {
+                return topComparison;
             } else {
-                long xRemainder = subtractExact(unscaledX, multiplyExact(xScaledDownValue, scalerX));
-                long yRemainder = subtractExact(unscaledY, multiplyExact(yScaledDownValue, scalerY));
+                long remainderX = unscaledX - upScaleValue(rescaledX, scaleToGet, scaleX);
+                long remainderY = unscaledY - upScaleValue(rescaledY, scaleToGet, scaleY);
 
-                return Long.compare(xRemainder, yRemainder);
+                return Long.compare(remainderX, remainderY);
             }
         } else {
             BigInteger unscaledX = bigUnscaledValue(x);
@@ -61,13 +52,13 @@ public class DecimalEqualizer {
 
             int maxScale = max(scaleX, scaleY);
 
-            while(scaleX < maxScale) {
+            while (scaleX < maxScale) {
                 int upscalePower = min(maxBigPowerOf10(), maxScale - scaleX);
                 unscaledX = unscaledX.multiply(powerOf10Big(upscalePower));
                 scaleX += upscalePower;
             }
 
-            while(scaleY < maxScale) {
+            while (scaleY < maxScale) {
                 int upscalePower = min(maxBigPowerOf10(), maxScale - scaleY);
                 unscaledY = unscaledY.multiply(powerOf10Big(upscalePower));
                 scaleY += upscalePower;
@@ -75,6 +66,34 @@ public class DecimalEqualizer {
 
             return unscaledX.compareTo(unscaledY);
         }
+    }
+
+    private static long descaleValue(long value, int fromScale, int toScale) {
+        long rescaledValue = value;
+        int newScale = fromScale;
+
+        while (rescaledValue != 0 && toScale < newScale) {
+            int scale = min(maxLongPowerOf10(), newScale - toScale);
+            long scaler = powerOf10Long(scale);
+            rescaledValue /= scaler;
+            newScale -= scale;
+        }
+
+        return rescaledValue;
+    }
+
+    private static long upScaleValue(long value, int fromScale, int toScale) {
+        long rescaledValue = value;
+        int newScale = fromScale;
+
+        while (rescaledValue != 0 && toScale > newScale) {
+            int scale = min(maxLongPowerOf10(), toScale - newScale);
+            long scaler = powerOf10Long(scale);
+            rescaledValue *= scaler;
+            newScale += scale;
+        }
+
+        return rescaledValue;
     }
 
     private static BigInteger bigUnscaledValue(Decimal d) {

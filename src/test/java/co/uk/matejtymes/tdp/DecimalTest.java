@@ -104,17 +104,19 @@ public class DecimalTest {
         assertThat(decimal("4.123").compareTo(decimal("4.122")), equalTo(1));
         assertThat(decimal("123").compareTo(decimal("-123")), equalTo(1));
 
+        assertThat(decimal("123450").compareTo(decimal("123459")), equalTo(-1));
+        assertThat(decimal("123459").compareTo(decimal("123450")), equalTo(1));
+
         assertThat(decimal("12300000000000000000").compareTo(decimal("0.999999999")), equalTo(1));
         assertThat(decimal("0.999999999").compareTo(decimal("12300000000000000000")), equalTo(-1));
 
         assertThat(decimal(Long.MAX_VALUE, 100).compareTo(decimal(9999L, -100)), equalTo(-1));
         assertThat(decimal(9999L, -100).compareTo(decimal(Long.MAX_VALUE, 100)), equalTo(1));
-        assertThat(decimal(Long.MAX_VALUE, -100).compareTo(decimal(9999L, 100)), equalTo(-1));
-        assertThat(decimal(9999L, 100).compareTo(decimal(Long.MAX_VALUE, -100)), equalTo(1));
+        assertThat(decimal(Long.MAX_VALUE, -100).compareTo(decimal(9999L, 100)), equalTo(1));
+        assertThat(decimal(9999L, 100).compareTo(decimal(Long.MAX_VALUE, -100)), equalTo(-1));
 
-        assertThat(decimal(Long.MIN_VALUE, 500).compareTo(decimal(Long.MIN_VALUE, -200)), equalTo(-1));
-        assertThat(decimal(Long.MIN_VALUE, -200).compareTo(decimal(Long.MIN_VALUE, 500)), equalTo(1));
-
+        assertThat(decimal(Long.MIN_VALUE, 500).compareTo(decimal(Long.MIN_VALUE, -200)), equalTo(1));
+        assertThat(decimal(Long.MIN_VALUE, -200).compareTo(decimal(Long.MIN_VALUE, 500)), equalTo(-1));
     }
 
     @Test
