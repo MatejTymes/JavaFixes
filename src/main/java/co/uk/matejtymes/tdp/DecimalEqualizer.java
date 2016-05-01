@@ -10,6 +10,12 @@ public class DecimalEqualizer {
 
     // todo: add support for HugeDecimal
     static int compare(Decimal x, Decimal y) {
+
+        int signComparison = Integer.compare(x.signum(), y.signum());
+        if (signComparison != 0) {
+            return signComparison;
+        }
+
         int scaleX = x.scale();
         int scaleY = y.scale();
 
