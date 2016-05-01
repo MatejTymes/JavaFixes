@@ -6,9 +6,7 @@ import static co.uk.matejtymes.tdp.DecimalCreator.createDecimal;
 import static co.uk.matejtymes.tdp.LongUtil.*;
 import static java.lang.String.format;
 
-// todo: handle scale overflow and underflow
 // todo: test this
-// todo: speed up multiply by ten
 class DecimalsIntern {
 
     // todo: add support for HugeDecimal

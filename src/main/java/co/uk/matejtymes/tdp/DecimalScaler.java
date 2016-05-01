@@ -14,8 +14,6 @@ import static java.lang.String.format;
 // todo: test it
 public class DecimalScaler {
 
-    // todo: refactor to make it more readable
-
     static Decimal descaleTo(Decimal d, int scaleToUse, RoundingMode roundingMode) {
 
         int scale = d.scale();

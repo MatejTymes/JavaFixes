@@ -10,9 +10,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 // todo: test it
-public class DecimalEqualizer {
-
-    // todo: move equals and hashCode methods as well
+class DecimalEqualizer {
 
     static int compare(Decimal x, Decimal y) {
 

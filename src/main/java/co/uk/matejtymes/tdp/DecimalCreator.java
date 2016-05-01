@@ -9,7 +9,7 @@ import static co.uk.matejtymes.tdp.DecimalMath.BIG_TEN;
 class DecimalCreator {
 
     static Decimal createDecimal(long unscaledValue, int scale) {
-        // todo: strip trailing zeros in better way
+        // todo: strip trailing zeros in better/faster way
         while (unscaledValue != 0 && unscaledValue % 10 == 0) {
             unscaledValue /= 10;
             scale--;
@@ -19,7 +19,7 @@ class DecimalCreator {
     }
 
     static Decimal createDecimal(BigInteger unscaledValue, int scale) {
-        // todo: strip trailing zeros in better way
+        // todo: strip trailing zeros in better/faster way
         while (unscaledValue.signum() != 0 && unscaledValue.mod(BIG_TEN).signum() == 0) {
             unscaledValue = unscaledValue.divide(BIG_TEN);
             scale--;
