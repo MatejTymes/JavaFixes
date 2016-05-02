@@ -159,7 +159,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return Double.parseDouble(toScientificNotation());
     }
 
-    // todo: test this
     public final BigDecimal bigDecimalValue() {
         return new BigDecimal(toPlainString());
     }

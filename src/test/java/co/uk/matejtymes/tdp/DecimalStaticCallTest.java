@@ -21,7 +21,8 @@ import static org.powermock.api.mockito.PowerMockito.*;
 @PrepareForTest({
         DecimalCreator.class,
         DecimalParser.class,
-        DecimalEqualizer.class
+        DecimalEqualizer.class,
+        DecimalPrinter.class
 })
 public class DecimalStaticCallTest {
 
@@ -245,7 +246,43 @@ public class DecimalStaticCallTest {
         assertThat(new HugeDecimal(randomBigInteger(), scale).scale(), equalTo(scale));
     }
 
+    @Test
+    public void shouldConvertLongDecimalToBigDecimal() {
+        LongDecimal longDecimal = new LongDecimal(randomLong(), randomInt());
 
+        BigDecimal expectedBigDecimal = randomBigDecimal();
+        mockStaticCalls(() -> {
+            when(DecimalPrinter.toPlainString(longDecimal, 0)).thenReturn(expectedBigDecimal.toPlainString());
+        });
+
+        // When
+        BigDecimal actualBigDecimal = longDecimal.bigDecimalValue();
+
+        // Then
+        assertThat(actualBigDecimal, equalTo(expectedBigDecimal));
+        verifyStaticCalls(() -> {
+            DecimalPrinter.toPlainString(longDecimal, 0);
+        });
+    }
+
+    @Test
+    public void shouldConvertHugeDecimalToBigDecimal() {
+        HugeDecimal hugeDecimal = new HugeDecimal(randomBigInteger(), randomInt());
+
+        BigDecimal expectedBigDecimal = randomBigDecimal();
+        mockStaticCalls(() -> {
+            when(DecimalPrinter.toPlainString(hugeDecimal, 0)).thenReturn(expectedBigDecimal.toPlainString());
+        });
+
+        // When
+        BigDecimal actualBigDecimal = hugeDecimal.bigDecimalValue();
+
+        // Then
+        assertThat(actualBigDecimal, equalTo(expectedBigDecimal));
+        verifyStaticCalls(() -> {
+            DecimalPrinter.toPlainString(hugeDecimal, 0);
+        });
+    }
 
 
 
@@ -254,7 +291,8 @@ public class DecimalStaticCallTest {
         mockStatic(
                 DecimalCreator.class,
                 DecimalParser.class,
-                DecimalEqualizer.class
+                DecimalEqualizer.class,
+                DecimalPrinter.class
         );
 
         try {
@@ -276,7 +314,8 @@ public class DecimalStaticCallTest {
         verifyNoMoreInteractions(
                 DecimalCreator.class,
                 DecimalParser.class,
-                DecimalEqualizer.class
+                DecimalEqualizer.class,
+                DecimalPrinter.class
         );
     }
 }
