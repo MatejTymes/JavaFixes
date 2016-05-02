@@ -1,6 +1,8 @@
 package co.uk.matejtymes.tdp;
 
 import co.uk.matejtymes.concurrency.Task;
+import co.uk.matejtymes.tdp.Decimal.HugeDecimal;
+import co.uk.matejtymes.tdp.Decimal.LongDecimal;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -223,6 +225,27 @@ public class DecimalStaticCallTest {
             DecimalEqualizer.compare(decimal1, decimal2);
         });
     }
+
+    @Test
+    public void shouldProvideProperSign() {
+        assertThat(new LongDecimal(randomLong(Long.MIN_VALUE, -1), randomInt()).signum(), equalTo(-1));
+        assertThat(new LongDecimal(0, randomInt()).signum(), equalTo(0));
+        assertThat(new LongDecimal(randomLong(1, Long.MAX_VALUE), randomInt()).signum(), equalTo(1));
+
+        assertThat(new HugeDecimal(randomBigInteger("-9999999999999999999999999999999", "-1"), randomInt()).signum(), equalTo(-1));
+        assertThat(new HugeDecimal(BigInteger.ZERO, randomInt()).signum(), equalTo(0));
+        assertThat(new HugeDecimal(randomBigInteger("1", "9999999999999999999999999999999"), randomInt()).signum(), equalTo(1));
+    }
+
+    @Test
+    public void shouldProvideProperScale() {
+        int scale = randomInt();
+
+        assertThat(new LongDecimal(randomLong(), scale).scale(), equalTo(scale));
+        assertThat(new HugeDecimal(randomBigInteger(), scale).scale(), equalTo(scale));
+    }
+
+
 
 
 

@@ -122,7 +122,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
 
-    // todo: test
     abstract int signum();
 
     @Deprecated // todo: remove or return this as a Number
@@ -132,23 +131,27 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     abstract int scale();
 
 
+    // todo: test this
     // todo: fail if too big
     @Override
     public final int intValue() {
         return (int) doubleValue();
     }
 
+    // todo: test this
     // todo: fail if too big
     @Override
     public final long longValue() {
         return (long) doubleValue();
     }
 
+    // todo: test this
     @Override
     public final float floatValue() {
         return (float) doubleValue();
     }
 
+    // todo: test this
     @Override
     public double doubleValue() {
         // todo: find out which one is faster
@@ -156,14 +159,17 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return Double.parseDouble(toScientificNotation());
     }
 
+    // todo: test this
     public final BigDecimal bigDecimalValue() {
-        return new BigDecimal(toString());
+        return new BigDecimal(toPlainString());
     }
 
+    // todo: test this
     public final Decimal negate() {
         return DecimalNegator.negate(this);
     }
 
+    // todo: test this
     public final Decimal plus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
         return DecimalAdder.add(this, value, scaleToUse, roundingMode);
     }
