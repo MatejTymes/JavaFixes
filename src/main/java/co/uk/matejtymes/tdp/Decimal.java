@@ -96,12 +96,10 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return DecimalCreator.createDecimal(unscaledValue, scale);
     }
 
-    // todo: test this
     public static Decimal decimal(BigInteger unscaledValue) {
         return DecimalCreator.createDecimal(unscaledValue, 0);
     }
 
-    // todo: test this
     public static Decimal decimal(BigInteger unscaledValue, int scale) {
         return DecimalCreator.createDecimal(unscaledValue, scale);
     }
