@@ -84,19 +84,21 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     private Decimal() {
     }
 
-    // todo: test this
     public static Decimal decimal(int value) {
         return DecimalCreator.createDecimal((long) value, 0);
     }
 
-    // todo: test this
     public static Decimal decimal(long value) {
         return DecimalCreator.createDecimal(value, 0);
     }
 
-    // todo: test this
     public static Decimal decimal(long unscaledValue, int scale) {
         return DecimalCreator.createDecimal(unscaledValue, scale);
+    }
+
+    // todo: test this
+    public static Decimal decimal(BigInteger unscaledValue) {
+        return DecimalCreator.createDecimal(unscaledValue, 0);
     }
 
     // todo: test this
@@ -109,15 +111,18 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return DecimalParser.parseString(value.toPlainString());
     }
 
+    // todo: test this
     public static Decimal decimal(String stringValue) {
         return DecimalParser.parseString(stringValue);
     }
 
+    // todo: test this
     public static Decimal d(String stringValue) {
         return decimal(stringValue);
     }
 
 
+    // todo: test this
     public static int compare(Decimal x, Decimal y) {
         return DecimalEqualizer.compare(x, y);
     }

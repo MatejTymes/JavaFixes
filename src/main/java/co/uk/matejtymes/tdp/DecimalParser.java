@@ -68,8 +68,8 @@ class DecimalParser {
                 : toDecimal(negate, unscaledValueB, scale);
     }
 
-    private static long SAFE_TO_MULTIPLY_BY_10_BOUND = Long.MAX_VALUE / 10;
-    private static long SAFE_TO_ADD_DIGIT_BOUND = (Long.MAX_VALUE - 9) / 10;
+    private static final long SAFE_TO_MULTIPLY_BY_10_BOUND = Long.MAX_VALUE / 10;
+    private static final long SAFE_TO_ADD_DIGIT_BOUND = (Long.MAX_VALUE - 9) / 10;
 
     // added to speed up the code
     private static Decimal toDecimal(boolean negate, BigInteger unscaledValue, int scale) {
