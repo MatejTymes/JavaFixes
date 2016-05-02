@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import static co.uk.matejtymes.test.Random.*;
@@ -24,9 +25,9 @@ public class DecimalStaticCallTest {
 
     @Test
     public void shouldCreateDecimalFromInt() {
-        int value = randomInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
-        Decimal expectedDecimal = mock(Decimal.class);
+        int value = randomInt();
 
+        Decimal expectedDecimal = mock(Decimal.class);
         mockStaticCalls(() -> {
             when(DecimalCreator.createDecimal((long) value, 0)).thenReturn(expectedDecimal);
         });
@@ -45,7 +46,7 @@ public class DecimalStaticCallTest {
     // todo: nicer but i'm not able to make it work
 //    @Test
 //    public void shouldCreateDecimalFromInt_EasyMock() {
-//        int value = randomInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
+//        int value = randomInt();
 //        Decimal expectedDecimal = mock(Decimal.class);
 //
 //        mockStatic(DecimalCreator.class);
@@ -62,9 +63,9 @@ public class DecimalStaticCallTest {
 
     @Test
     public void shouldCreateDecimalFromLong() {
-        long value = randomLong(Long.MIN_VALUE, Long.MAX_VALUE);
-        Decimal expectedDecimal = mock(Decimal.class);
+        long value = randomLong();
 
+        Decimal expectedDecimal = mock(Decimal.class);
         mockStaticCalls(() -> {
             when(DecimalCreator.createDecimal(value, 0)).thenReturn(expectedDecimal);
         });
@@ -82,10 +83,10 @@ public class DecimalStaticCallTest {
 
     @Test
     public void shouldCreateDecimalFromLongAndScale() {
-        long unscaledValue = randomLong(Long.MIN_VALUE, Long.MAX_VALUE);
-        int scale = randomInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
-        Decimal expectedDecimal = mock(Decimal.class);
+        long unscaledValue = randomLong();
+        int scale = randomInt();
 
+        Decimal expectedDecimal = mock(Decimal.class);
         mockStaticCalls(() -> {
             when(DecimalCreator.createDecimal(unscaledValue, scale)).thenReturn(expectedDecimal);
         });
@@ -103,9 +104,9 @@ public class DecimalStaticCallTest {
 
     @Test
     public void shouldCreateDecimalFromBigInteger() {
-        BigInteger value = randomBigInteger("-9999999999999999999", "9999999999999999999");
-        Decimal expectedDecimal = mock(Decimal.class);
+        BigInteger value = randomBigInteger();
 
+        Decimal expectedDecimal = mock(Decimal.class);
         mockStaticCalls(() -> {
             when(DecimalCreator.createDecimal(value, 0)).thenReturn(expectedDecimal);
         });
@@ -123,10 +124,10 @@ public class DecimalStaticCallTest {
 
     @Test
     public void shouldCreateDecimalFromBigIntegerAndScale() {
-        BigInteger unscaledValue = randomBigInteger("-9999999999999999999", "9999999999999999999");
-        int scale = randomInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
-        Decimal expectedDecimal = mock(Decimal.class);
+        BigInteger unscaledValue = randomBigInteger();
+        int scale = randomInt();
 
+        Decimal expectedDecimal = mock(Decimal.class);
         mockStaticCalls(() -> {
             when(DecimalCreator.createDecimal(unscaledValue, scale)).thenReturn(expectedDecimal);
         });
@@ -141,6 +142,90 @@ public class DecimalStaticCallTest {
             DecimalCreator.createDecimal(unscaledValue, scale);
         });
     }
+
+    @Test
+    public void shouldCreateDecimalFromBigDecimal() {
+        BigDecimal value = randomBigDecimal();
+
+        Decimal expectedDecimal = mock(Decimal.class);
+        mockStaticCalls(() -> {
+            when(DecimalParser.parseString(value.toPlainString())).thenReturn(expectedDecimal);
+        });
+
+        // When
+        Decimal actualDecimal = Decimal.decimal(value);
+
+        // Then
+        assertThat(actualDecimal, equalTo(expectedDecimal));
+
+        verifyStaticCalls(() -> {
+            DecimalParser.parseString(value.toPlainString());
+        });
+    }
+
+    @Test
+    public void shouldCreateDecimalFromString() {
+        String value = randomBigDecimal().toPlainString();
+
+        Decimal expectedDecimal = mock(Decimal.class);
+        mockStaticCalls(() -> {
+            when(DecimalParser.parseString(value)).thenReturn(expectedDecimal);
+        });
+
+        // When
+        Decimal actualDecimal = Decimal.decimal(value);
+
+        // Then
+        assertThat(actualDecimal, equalTo(expectedDecimal));
+
+        verifyStaticCalls(() -> {
+            DecimalParser.parseString(value);
+        });
+    }
+
+    @Test
+    public void shouldCreateDecimalFromString2() {
+        String value = randomBigDecimal().toPlainString();
+
+        Decimal expectedDecimal = mock(Decimal.class);
+        mockStaticCalls(() -> {
+            when(DecimalParser.parseString(value)).thenReturn(expectedDecimal);
+        });
+
+        // When
+        Decimal actualDecimal = Decimal.d(value);
+
+        // Then
+        assertThat(actualDecimal, equalTo(expectedDecimal));
+
+        verifyStaticCalls(() -> {
+            DecimalParser.parseString(value);
+        });
+    }
+
+    @Test
+    public void shouldCompareTwoDecimals() {
+        Decimal decimal1 = mock(Decimal.class);
+        Decimal decimal2 = mock(Decimal.class);
+
+        int expectedComparisonResult = pickRandomValue(-1, 0, 1);
+        mockStaticCalls(() -> {
+            when(DecimalEqualizer.compare(decimal1, decimal2)).thenReturn(expectedComparisonResult);
+        });
+
+        // When
+        int actualComparisonResult = Decimal.compare(decimal1, decimal2);
+
+        // Then
+        assertThat(actualComparisonResult, equalTo(expectedComparisonResult));
+
+        verifyStaticCalls(() -> {
+            DecimalEqualizer.compare(decimal1, decimal2);
+        });
+    }
+
+
+
 
     private void mockStaticCalls(Task task) {
         mockStatic(

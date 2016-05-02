@@ -104,23 +104,19 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return DecimalCreator.createDecimal(unscaledValue, scale);
     }
 
-    // todo: test this
     public static Decimal decimal(BigDecimal value) {
         return DecimalParser.parseString(value.toPlainString());
     }
 
-    // todo: test this
     public static Decimal decimal(String stringValue) {
         return DecimalParser.parseString(stringValue);
     }
 
-    // todo: test this
     public static Decimal d(String stringValue) {
         return decimal(stringValue);
     }
 
 
-    // todo: test this
     public static int compare(Decimal x, Decimal y) {
         return DecimalEqualizer.compare(x, y);
     }
