@@ -44,13 +44,15 @@ The advantages it provides are:
         assertThat(decimal("-1.2").hashCode(), equalTo(decimal("-1.200").hashCode()));
 ```
 
-* sensible defaults (rounding `HALF_UP` - the one we used in school) when doing math operation (this can be overridden)
+* sensible defaults - using rounding `HALF_UP` (the one we used in school) when doing math operation (of course this is just a default and you can always specify your own)
 
-* approximately 50% faster creation times
+* fast - approximately 50% faster creation times (in comparison to `BigDecimal`)
 
-* creation using only static factory methods doesn't expose defined types (you always refer to them as `Decimal`), so that the library can evolve without any changes needed on the users/client side.
+* extendible (although not by you :D ) - `Decimal` is an abstract class, and currently supports two subtypes `LongDecimal` (for number with precision up to 19 digits - backed by `long`) and `HugeDecimal` for everything else (backed by `BigInteger`). The library handles the transitions between them seamlessly when doing math operation and always uses the least memory consuming type. There are plans the introduce additional types `InfinityDecimal` and `NANDecimal` (that will be disabled by default)
 
-* able to use underscores during creation to improve readability (as in Java 7). Also it is able to use one character creation methods:
+* can evolve without affecting you - creation using only static factory methods doesn't expose defined types (you always refer to them as `Decimal`), so that the library can evolve without any changes needed on the users/client side.
+
+* readable - able to use underscores during creation to improve readability (as in Java 7). Also it is able to use one character creation methods:
 
 ```Java
         Decimal value = decimal("29_013_903_171.22");
@@ -58,6 +60,8 @@ The advantages it provides are:
         Decimal sum = d("0.456").plus(value);
 ```
 
-* extendible - `Decimal` is abstract, and currently supports two subtypes `LongDecimal` (for number with precision up to 19 digits - backed by `long`) and `HugeDecimal` for everything else (backed by `BigInteger`). The library handles the transitions between types seamlessly when doing math operation and always uses the least memory consuming type. There are plans the introduce additional types `InfinityDecimal` and `NANDecimal` (that will be disabled by default)
+* kotlin operators:
 
-* operator overriding in kotlin
+```Kotlin
+        val monthlyInterest = d("115_000.00") * d("0.03") / d("12");
+```
