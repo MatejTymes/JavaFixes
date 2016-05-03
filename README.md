@@ -63,5 +63,7 @@ The advantages it provides are:
 * kotlin operators:
 
 ```Kotlin
-        val monthlyInterest = d("115_000.00") * d("0.03") / d("12");
+        val monthlyInterest = d("129_550.00") * d("0.03") / d("12");
+
+        val expectedPayment = monthlyInterest.descaleTo(2, RoundingMode.UP)
 ```
