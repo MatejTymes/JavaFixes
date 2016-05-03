@@ -1,6 +1,5 @@
 package co.uk.matejtymes.tdp;
 
-import co.uk.matejtymes.concurrency.Task;
 import co.uk.matejtymes.tdp.Decimal.HugeDecimal;
 import co.uk.matejtymes.tdp.Decimal.LongDecimal;
 import org.junit.Test;
@@ -287,7 +286,7 @@ public class DecimalStaticCallTest {
 
 
 
-    private void mockStaticCalls(Task task) {
+    private void mockStaticCalls(Runnable task) {
         mockStatic(
                 DecimalCreator.class,
                 DecimalParser.class,
@@ -302,7 +301,7 @@ public class DecimalStaticCallTest {
         }
     }
 
-    private void verifyStaticCalls(Task task) {
+    private void verifyStaticCalls(Runnable task) {
         verifyStatic();
 
         try {

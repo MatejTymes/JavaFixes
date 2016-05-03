@@ -1,4 +1,4 @@
-package co.uk.matejtymes.concurrency;
+package mtymes.javafixes.concurrency;
 
 import org.junit.Test;
 
