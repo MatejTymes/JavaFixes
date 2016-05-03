@@ -37,27 +37,27 @@ Introducing new class `Decimal`, that should fix the troubles we're currently fa
 
 The advantages it provides are:
 
-1. `equals` reflects the `compareTo` behavior (plus `hashCode` is fixed respectivelly)
+* `equals` reflects the `compareTo` behavior (plus `hashCode` is fixed respectivelly)
 
 ```Java
         assertThat(decimal("-1.2").equals(decimal("-1.200")), is(true));
         assertThat(decimal("-1.2").hashCode(), equalTo(decimal("-1.200").hashCode()));
 ```
 
-2. sensible defaults (rounding `HALF_UP` - the one we used in school) when doing math operation (this can be overridden)
+* sensible defaults (rounding `HALF_UP` - the one we used in school) when doing math operation (this can be overridden)
 
-3. approximately 50% faster creation times
+* approximately 50% faster creation times
 
-4. operator overriding in kotlin
+* creation using only static factory methods doesn't expose defined types (you always refer to them as `Decimal`), so that the library can evolve without any changes needed on the users/client side.
 
-5. extendible - currently supports two subtypes `LongDecimal` (for number with precision up to 19 digits) and `HugeDecimal` for everything else. There are plans the introduce additional types `InfinityDecimal` and `NANDecimal` (that will be disabled by default)
-
-6. able to use underscores during creation to improve readability (as in Java 7) also adds one character creation methods:
+* able to use underscores during creation to improve readability (as in Java 7). Also it is able to use one character creation methods:
 
 ```Java
         Decimal value = decimal("29_013_903_171.22");
 
-        Decimal sum = value.plus(d("0.456"));
+        Decimal sum = d("0.456").plus(value);
 ```
 
-7. uses static factory methods and doesn't expose used types (you always refer to them as `Decimal`), so that the library can evolve without any changes needed in already existing code.
+* extendible - `Decimal` is abstract, and currently supports two subtypes `LongDecimal` (for number with precision up to 19 digits - backed by `long`) and `HugeDecimal` for everything else (backed by `BigInteger`). The library handles the transitions between types seamlessly when doing math operation and always uses the least memory consuming type. There are plans the introduce additional types `InfinityDecimal` and `NANDecimal` (that will be disabled by default)
+
+* operator overriding in kotlin
