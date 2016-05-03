@@ -1,4 +1,4 @@
-package co.uk.matejtymes.tdp;
+package mtymes.javafixes.beta.decimal;
 
 public class UnsupportedDecimalTypeException extends RuntimeException {
 

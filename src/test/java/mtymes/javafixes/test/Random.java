@@ -1,4 +1,4 @@
-package co.uk.matejtymes.test;
+package mtymes.javafixes.test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

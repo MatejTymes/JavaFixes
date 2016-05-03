@@ -1,4 +1,4 @@
-package co.uk.matejtymes.tdp;
+package mtymes.javafixes.beta.decimal;
 
 // contains mostly methods from guava and java 8
 public class LongUtil {

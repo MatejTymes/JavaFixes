@@ -1,10 +1,10 @@
-package co.uk.matejtymes.tdp;
+package mtymes.javafixes.beta.decimal;
 
 import java.math.RoundingMode;
 
-import static co.uk.matejtymes.tdp.DecimalCreator.createDecimal;
-import static co.uk.matejtymes.tdp.LongUtil.*;
 import static java.lang.Math.max;
+import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
+import static mtymes.javafixes.beta.decimal.LongUtil.*;
 
 // todo: test it
 class DecimalAdder {

@@ -1,11 +1,11 @@
-package co.uk.matejtymes.tdp;
+package mtymes.javafixes.beta.decimal;
 
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static co.uk.matejtymes.tdp.Decimal.decimal;
+import static mtymes.javafixes.beta.decimal.Decimal.decimal;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;

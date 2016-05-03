@@ -1,7 +1,7 @@
-package co.uk.matejtymes.tdp;
+package mtymes.javafixes.beta.decimal;
 
-import co.uk.matejtymes.tdp.Decimal.HugeDecimal;
-import co.uk.matejtymes.tdp.Decimal.LongDecimal;
+import mtymes.javafixes.beta.decimal.Decimal.HugeDecimal;
+import mtymes.javafixes.beta.decimal.Decimal.LongDecimal;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -10,7 +10,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import static co.uk.matejtymes.test.Random.*;
+import static mtymes.javafixes.test.Random.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;

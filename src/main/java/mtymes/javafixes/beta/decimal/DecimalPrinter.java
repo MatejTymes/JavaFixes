@@ -1,7 +1,7 @@
-package co.uk.matejtymes.tdp;
+package mtymes.javafixes.beta.decimal;
 
-import co.uk.matejtymes.tdp.Decimal.HugeDecimal;
-import co.uk.matejtymes.tdp.Decimal.LongDecimal;
+import mtymes.javafixes.beta.decimal.Decimal.HugeDecimal;
+import mtymes.javafixes.beta.decimal.Decimal.LongDecimal;
 
 import java.util.Arrays;
 

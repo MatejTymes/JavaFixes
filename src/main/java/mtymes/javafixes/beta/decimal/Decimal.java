@@ -1,10 +1,9 @@
-package co.uk.matejtymes.tdp;
+package mtymes.javafixes.beta.decimal;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import static co.uk.matejtymes.tdp.DecimalsIntern.*;
 import static java.lang.Math.max;
 import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UNNECESSARY;
@@ -184,7 +183,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public final Decimal minus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        return subtract(this, value, scaleToUse, roundingMode);
+        return DecimalsIntern.subtract(this, value, scaleToUse, roundingMode);
     }
 
     // todo: test
@@ -198,7 +197,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public final Decimal times(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        return multiply(this, value, scaleToUse, roundingMode);
+        return DecimalsIntern.multiply(this, value, scaleToUse, roundingMode);
     }
 
     // todo: test
@@ -212,7 +211,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public final Decimal div(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        return divide(this, value, scaleToUse, roundingMode);
+        return DecimalsIntern.divide(this, value, scaleToUse, roundingMode);
     }
 
     // todo: test

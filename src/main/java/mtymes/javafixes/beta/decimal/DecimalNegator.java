@@ -1,8 +1,8 @@
-package co.uk.matejtymes.tdp;
+package mtymes.javafixes.beta.decimal;
 
 import java.math.BigInteger;
 
-import static co.uk.matejtymes.tdp.DecimalCreator.createDecimal;
+import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
 
 // todo: test it
 class DecimalNegator {

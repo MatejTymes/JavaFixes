@@ -1,9 +1,9 @@
-package co.uk.matejtymes.tdp;
+package mtymes.javafixes.beta.decimal;
 
 import java.math.BigInteger;
 
-import static co.uk.matejtymes.tdp.BigIntegerUtil.canConvertToLong;
-import static co.uk.matejtymes.tdp.DecimalMath.BIG_TEN;
+import static mtymes.javafixes.beta.decimal.BigIntegerUtil.canConvertToLong;
+import static mtymes.javafixes.beta.decimal.DecimalMath.BIG_TEN;
 
 // todo: test it
 class DecimalCreator {

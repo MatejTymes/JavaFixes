@@ -1,4 +1,4 @@
-package co.uk.matejtymes.tdp;
+package mtymes.javafixes.beta.decimal;
 
 import java.math.BigInteger;
 

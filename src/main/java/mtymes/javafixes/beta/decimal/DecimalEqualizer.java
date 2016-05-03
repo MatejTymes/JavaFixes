@@ -1,13 +1,13 @@
-package co.uk.matejtymes.tdp;
+package mtymes.javafixes.beta.decimal;
 
-import co.uk.matejtymes.tdp.Decimal.HugeDecimal;
-import co.uk.matejtymes.tdp.Decimal.LongDecimal;
+import mtymes.javafixes.beta.decimal.Decimal.HugeDecimal;
+import mtymes.javafixes.beta.decimal.Decimal.LongDecimal;
 
 import java.math.BigInteger;
 
-import static co.uk.matejtymes.tdp.DecimalMath.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static mtymes.javafixes.beta.decimal.DecimalMath.*;
 
 // todo: test it
 class DecimalEqualizer {

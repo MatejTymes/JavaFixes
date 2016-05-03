@@ -1,15 +1,15 @@
-package co.uk.matejtymes.tdp;
+package mtymes.javafixes.beta.decimal;
 
-import co.uk.matejtymes.tdp.Decimal.HugeDecimal;
-import co.uk.matejtymes.tdp.Decimal.LongDecimal;
+import mtymes.javafixes.beta.decimal.Decimal.HugeDecimal;
+import mtymes.javafixes.beta.decimal.Decimal.LongDecimal;
 
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import static co.uk.matejtymes.tdp.DecimalCreator.createDecimal;
-import static co.uk.matejtymes.tdp.DecimalMath.*;
 import static java.lang.Math.min;
 import static java.lang.String.format;
+import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
+import static mtymes.javafixes.beta.decimal.DecimalMath.*;
 
 // todo: test it
 public class DecimalScaler {

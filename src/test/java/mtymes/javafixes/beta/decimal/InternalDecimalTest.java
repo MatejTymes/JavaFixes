@@ -1,11 +1,11 @@
-package co.uk.matejtymes.tdp;
+package mtymes.javafixes.beta.decimal;
 
-import co.uk.matejtymes.tdp.Decimal.HugeDecimal;
-import co.uk.matejtymes.tdp.Decimal.LongDecimal;
+import mtymes.javafixes.beta.decimal.Decimal.HugeDecimal;
+import mtymes.javafixes.beta.decimal.Decimal.LongDecimal;
 import org.junit.Test;
 
-import static co.uk.matejtymes.tdp.Decimal.d;
-import static co.uk.matejtymes.tdp.Decimal.decimal;
+import static mtymes.javafixes.beta.decimal.Decimal.d;
+import static mtymes.javafixes.beta.decimal.Decimal.decimal;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
