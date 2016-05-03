@@ -52,8 +52,12 @@ The advantages it provides are:
 
 5. extendible - currently supports two subtypes `LongDecimal` (for number with precision up to 19 digits) and `HugeDecimal` for everything else. There are plans the introduce additional types `InfinityDecimal` and `NANDecimal` (that will be disabled by default)
 
-6. able to use underscores during creation to improve readability (as in Java 7)
+6. able to use underscores during creation to improve readability (as in Java 7) also adds one character creation methods:
 
 ```Java
         Decimal value = decimal("29_013_903_171.22");
+
+        Decimal sum = value.plus(d("0.456"));
 ```
+
+7. uses static factory methods and doesn't expose used types (you always refer to them as `Decimal`), so that the library can evolve without any changes needed in already existing code.
