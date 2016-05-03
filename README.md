@@ -13,7 +13,8 @@ Adding some features which would be normally nice to have in Java
         runner.run(runnable);
 
 
-        runner.waitTillDone(); // blocks until all tasks are finished (or failed)
+         // blocks until all tasks are finished (or failed)
+        runner.waitTillDone();
 
 
         // and reuse it
@@ -43,7 +44,7 @@ The advantages it provides are:
         assertThat(decimal("-1.2").hashCode(), equalTo(decimal("-1.200").hashCode()));
 ```
 
-2. sensible defaults (rounding `HALF_UP` - the one we used in school) when doing math operation (that can be overridden)
+2. sensible defaults (rounding `HALF_UP` - the one we used in school) when doing math operation (this can be overridden)
 
 3. approximately 50% faster creation times
 
