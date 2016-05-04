@@ -24,6 +24,9 @@ public class InternalDecimalTest {
         assertThat(d("0.0000352").unscaledValue(), equalTo(352L));
         assertThat(d("0.0000352").scale(), equalTo(7));
 
+        assertThat(d("710200").unscaledValue(), equalTo(7102L));
+        assertThat(d("710200").scale(), equalTo(-2));
+
         assertThat(d("9100400000.00").unscaledValue(), equalTo(91004L));
         assertThat(d("9100400000.00").scale(), equalTo(-5));
 
