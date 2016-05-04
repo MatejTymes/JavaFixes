@@ -50,16 +50,12 @@ class DecimalEqualizer {
 
             int maxScale = max(scaleX, scaleY);
 
-            while (scaleX < maxScale) {
-                int upscalePower = min(maxBigPowerOf10(), maxScale - scaleX);
-                unscaledX = unscaledX.multiply(powerOf10Big(upscalePower));
-                scaleX += upscalePower;
+            if (scaleX < maxScale) {
+                unscaledX = upscaleByPowerOf10(unscaledX, maxScale - scaleX);
             }
 
-            while (scaleY < maxScale) {
-                int upscalePower = min(maxBigPowerOf10(), maxScale - scaleY);
-                unscaledY = unscaledY.multiply(powerOf10Big(upscalePower));
-                scaleY += upscalePower;
+            if (scaleY < maxScale) {
+                unscaledY = upscaleByPowerOf10(unscaledY, maxScale - scaleY);
             }
 
             return unscaledX.compareTo(unscaledY);

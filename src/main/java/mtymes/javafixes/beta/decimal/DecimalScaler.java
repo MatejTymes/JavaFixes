@@ -6,7 +6,6 @@ import mtymes.javafixes.beta.decimal.Decimal.LongDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import static java.lang.Math.min;
 import static java.lang.String.format;
 import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
 import static mtymes.javafixes.beta.decimal.DecimalMath.*;
@@ -26,11 +25,7 @@ public class DecimalScaler {
         if (d instanceof LongDecimal) {
             long unscaledValue = ((LongDecimal) d).unscaledValue;
 
-            while (scaleDiff > 1 && unscaledValue != 0) {
-                int descalePower = min(maxLongPowerOf10(), scaleDiff - 1);
-                unscaledValue /= powerOf10Long(descalePower);
-                scaleDiff -= descalePower;
-            }
+            unscaledValue = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
 
             if (unscaledValue == 0) {
                 return Decimal.ZERO;
@@ -46,11 +41,7 @@ public class DecimalScaler {
         } else if (d instanceof HugeDecimal) {
             BigInteger unscaledValue = ((HugeDecimal) d).unscaledValue;
 
-            while (scaleDiff > 1 && unscaledValue.signum() != 0) {
-                int descalePower = min(maxBigPowerOf10(), scaleDiff - 1);
-                unscaledValue = unscaledValue.divide(powerOf10Big(descalePower));
-                scaleDiff -= descalePower;
-            }
+            unscaledValue = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
 
             if (unscaledValue.signum() == 0) {
                 return Decimal.ZERO;

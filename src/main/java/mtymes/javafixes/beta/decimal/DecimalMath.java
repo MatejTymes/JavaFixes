@@ -2,6 +2,8 @@ package mtymes.javafixes.beta.decimal;
 
 import java.math.BigInteger;
 
+import static java.lang.Math.min;
+
 // todo: test it
 public class DecimalMath {
 
@@ -68,5 +70,36 @@ public class DecimalMath {
 
     public static BigInteger powerOf10Big(int n) {
         return powersOf10B[n];
+    }
+
+    // todo: should we add upscaleByPowerOf10 - could resolve into long overflow
+
+    public static long downscaleByPowerOf10(long value, int n) {
+        while (n > 0 && value != 0) {
+            int scale = min(maxLongPowerOf10(), n);
+            value /= powerOf10Long(scale);
+            n -= scale;
+        }
+        return value;
+    }
+
+    public static BigInteger upscaleByPowerOf10(BigInteger value, int n) {
+        if (value.signum() != 0) {
+            while (n > 0) {
+                int scale = min(maxBigPowerOf10(), n);
+                value = value.multiply(powerOf10Big(scale));
+                n -= scale;
+            }
+        }
+        return value;
+    }
+
+    public static BigInteger downscaleByPowerOf10(BigInteger value, int n) {
+        while (n > 0 && value.signum() != 0) {
+            int scale = min(maxBigPowerOf10(), n);
+            value = value.divide(powerOf10Big(scale));
+            n -= scale;
+        }
+        return value;
     }
 }

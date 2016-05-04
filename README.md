@@ -52,7 +52,7 @@ The advantages it provides are:
 
 * can evolve without affecting you - creation using only static factory methods doesn't expose defined types (you always refer to them as `Decimal`), so that the library can evolve without any changes needed on the users/client side.
 
-* readable - able to use underscores during creation to improve readability (as in Java 7). Also it is able to use one character creation methods:
+* readable - able to use underscores during creation to improve readability (as in Java 7). Also can use short creation method `d(...)`:
 
 ```Java
         Decimal value = decimal("29_013_903_171.22");

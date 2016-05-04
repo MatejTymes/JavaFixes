@@ -33,4 +33,20 @@ class DecimalAdder {
                 maxScale
         ).descaleTo(scaleToUse, roundingMode);
     }
+
+//    private Decimal add(int scaleA, int scaleB, BigInteger unscaledValueA, BigInteger unscaledValueB, int scaleToUse, RoundingMode roundingMode) {
+//        int maxScale = max(scaleA, scaleB);
+//
+//        if (scaleA < maxScale) {
+//            unscaledValueA = upscaleByPowerOf10(unscaledValueA, maxScale - scaleA);
+//        }
+//        if (scaleB < maxScale) {
+//            unscaledValueB = upscaleByPowerOf10(unscaledValueB, maxScale - scaleB);
+//        }
+//
+//        return createDecimal(
+//                unscaledValueA.add(unscaledValueB),
+//                maxScale
+//        ).descaleTo(scaleToUse, roundingMode);
+//    }
 }
