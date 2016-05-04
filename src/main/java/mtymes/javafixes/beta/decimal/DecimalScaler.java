@@ -66,7 +66,7 @@ public class DecimalScaler {
 
 
     // todo: in the future make sure the digit is only from 0 to 9 (currently the sign of the digit makes it a little bit awkward)
-    private static byte roundingCorrection(long valueBeforeRounding, byte remainingDigit, RoundingMode roundingMode) {
+    static byte roundingCorrection(long valueBeforeRounding, byte remainingDigit, RoundingMode roundingMode) {
         if (remainingDigit < -9 || remainingDigit > 9) {
             throw new IllegalArgumentException(format("Invalid remaining digit (%d). Should be only -9 to 9", remainingDigit));
         }
@@ -125,7 +125,7 @@ public class DecimalScaler {
     }
 
     // todo: in the future make sure the digit is only from 0 to 9 (currently the sign of the digit makes it a little bit awkward)
-    private static BigInteger roundingCorrection(BigInteger valueBeforeRounding, byte remainingDigit, RoundingMode roundingMode) {
+    static BigInteger roundingCorrection(BigInteger valueBeforeRounding, byte remainingDigit, RoundingMode roundingMode) {
         if (remainingDigit < -9 || remainingDigit > 9) {
             throw new IllegalArgumentException(format("Invalid remaining digit (%d). Should be only -9 to 9", remainingDigit));
         }

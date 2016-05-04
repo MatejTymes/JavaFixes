@@ -8,13 +8,7 @@ import static java.lang.Math.max;
 import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UNNECESSARY;
 
-// nice things this class has:
-// - fixed equals
-// - hash code for values that are comparable is the same
-// - sensible rounding defaults
-// - string construction can use '_' symbol
-// - faster creation than BigDecimal
-// - extendible - could introduce classes like InfiniteDecimal and NANDecimal in the future
+// todo: handle scale overflows
 public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     public static final Decimal ZERO = decimal(0, 0);
@@ -211,7 +205,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public final Decimal div(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        return DecimalsIntern.divide(this, value, scaleToUse, roundingMode);
+        return DecimalDivisor.divide(this, value, scaleToUse, roundingMode);
     }
 
     // todo: test

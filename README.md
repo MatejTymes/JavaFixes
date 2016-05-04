@@ -31,7 +31,7 @@ In case you would like to just monitor task submitted to existing scheduled exec
 
 ## Math
 
-*this feature is currently in beta / WIP state*
+*this feature is currently in a beta / WIP state - although feature and api complete still requires more testing and performance tuning for arithmetic operations*
 
 Introducing new class `Decimal`, that should fix the troubles we're currently facing when dealing with `BigDecimal`.
 

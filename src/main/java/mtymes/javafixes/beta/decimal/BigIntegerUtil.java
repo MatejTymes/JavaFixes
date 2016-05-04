@@ -2,7 +2,7 @@ package mtymes.javafixes.beta.decimal;
 
 import java.math.BigInteger;
 
-// todo: test
+// todo: test it
 public class BigIntegerUtil {
 
     private static final BigInteger BIG_INTEGER_MAX_LONG = BigInteger.valueOf(Long.MAX_VALUE);

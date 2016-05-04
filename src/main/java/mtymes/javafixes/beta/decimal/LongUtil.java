@@ -1,32 +1,8 @@
 package mtymes.javafixes.beta.decimal;
 
 // contains mostly methods from guava and java 8
+// todo: test it - or remove it
 public class LongUtil {
-
-    @Deprecated // todo: use the code in DecimalMath instead
-    private static final long[] powersOf10 = {1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L, 100000000L, 1000000000L, 10000000000L, 100000000000L, 1000000000000L, 10000000000000L, 100000000000000L, 1000000000000000L, 10000000000000000L, 100000000000000000L, 1000000000000000000L};
-
-    @Deprecated // todo: use the code in DecimalMath instead
-    public static long pow10(int scale) {
-        if (scale < 0) {
-            throw new IllegalArgumentException("Can calculate only non-negative scales");
-        }
-
-        if (scale < powersOf10.length) {
-            return powersOf10[scale];
-        }
-
-        // todo: this part won't work
-
-        int lastIndex = powersOf10.length - 1;
-
-        long multiplier = powersOf10[lastIndex];
-        for (int i = lastIndex; i < scale; i++) {
-            // todo: we would get an immediate buffer overflow here
-            multiplier = multiplyExact(multiplier, 10);
-        }
-        return multiplier;
-    }
 
     public static long absExact(long a) {
         return (a >= 0) ? a : negateExact(a);

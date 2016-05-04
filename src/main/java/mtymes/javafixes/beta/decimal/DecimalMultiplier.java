@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
 import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValue;
 
+// todo: test it
 class DecimalMultiplier {
 
     static Decimal multiply(Decimal a, Decimal b, int scaleToUse, RoundingMode roundingMode) {
