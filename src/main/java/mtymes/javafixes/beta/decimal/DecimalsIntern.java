@@ -10,11 +10,6 @@ import static mtymes.javafixes.beta.decimal.LongUtil.*;
 class DecimalsIntern {
 
     // todo: add support for HugeDecimal
-    static Decimal subtract(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
-        return DecimalAdder.add(x, DecimalNegator.negate(y), scaleToUse, roundingMode);
-    }
-
-    // todo: add support for HugeDecimal
     static Decimal multiply(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
 
         // todo: extremely simplistic algorithm - please improve

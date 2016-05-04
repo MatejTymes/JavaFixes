@@ -9,16 +9,8 @@ import static mtymes.javafixes.beta.decimal.DecimalMath.upscaleByPowerOf10;
 import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValue;
 
 // todo: test it
-class DecimalAdder {
+class DecimalAccumulator {
 
-    // todo: IMPLEMENT PROPERLY
-    // todo: IMPLEMENT PROPERLY
-    // todo: IMPLEMENT PROPERLY
-    // todo: IMPLEMENT PROPERLY
-    // todo: IMPLEMENT PROPERLY
-    // todo: HUGEDECIMAL
-
-    // todo: add support for HugeDecimal
     static Decimal add(Decimal a, Decimal b, int scaleToUse, RoundingMode roundingMode) {
 
         int scaleA = a.scale();
@@ -51,5 +43,10 @@ class DecimalAdder {
 //                addExact(maxScaledValueX, maxScaledValueY),
 //                maxScale
 //        ).descaleTo(scaleToUse, roundingMode);
+    }
+
+    static Decimal subtract(Decimal a, Decimal b, int scaleToUse, RoundingMode roundingMode) {
+        // todo: don't call the DecimalNegator.negate(b) method as it creates another (intermediate) Decimal
+        return add(a, DecimalNegator.negate(b), scaleToUse, roundingMode);
     }
 }
