@@ -457,6 +457,136 @@ public class DecimalStaticCallTest {
         });
     }
 
+    @Test
+    public void shouldSubtractDecimalFromLongDecimal1() {
+        LongDecimal longDecimal = randomLongDecimal();
+        Decimal decimalToSubtract = mock(Decimal.class);
+        int scaleToUse = randomInt();
+        RoundingMode roundingMode = randomRoundingMode();
+
+        Decimal expectedResult = mock(Decimal.class);
+        mockStaticCalls(() -> {
+            when(DecimalAccumulator.subtract(longDecimal, decimalToSubtract, scaleToUse, roundingMode)).thenReturn(expectedResult);
+        });
+
+        // When
+        Decimal actualResult = longDecimal.minus(decimalToSubtract, scaleToUse, roundingMode);
+
+        // Then
+        assertThat(actualResult, equalTo(expectedResult));
+        verifyStaticCalls(() -> {
+            DecimalAccumulator.subtract(longDecimal, decimalToSubtract, scaleToUse, roundingMode);
+        });
+    }
+
+    @Test
+    public void shouldSubtractDecimalFromHugeDecimal1() {
+        HugeDecimal hugeDecimal = randomHugeDecimal();
+        Decimal decimalToSubtract = mock(Decimal.class);
+        int scaleToUse = randomInt();
+        RoundingMode roundingMode = randomRoundingMode();
+
+        Decimal expectedResult = mock(Decimal.class);
+        mockStaticCalls(() -> {
+            when(DecimalAccumulator.subtract(hugeDecimal, decimalToSubtract, scaleToUse, roundingMode)).thenReturn(expectedResult);
+        });
+
+        // When
+        Decimal actualResult = hugeDecimal.minus(decimalToSubtract, scaleToUse, roundingMode);
+
+        // Then
+        assertThat(actualResult, equalTo(expectedResult));
+        verifyStaticCalls(() -> {
+            DecimalAccumulator.subtract(hugeDecimal, decimalToSubtract, scaleToUse, roundingMode);
+        });
+    }
+
+    @Test
+    public void shouldSubtractDecimalFromLongDecimal2() {
+        LongDecimal longDecimal = randomLongDecimal();
+        Decimal decimalToSubtract = mock(Decimal.class);
+        int scaleToUse = randomInt();
+
+        Decimal expectedResult = mock(Decimal.class);
+        mockStaticCalls(() -> {
+            when(DecimalAccumulator.subtract(longDecimal, decimalToSubtract, scaleToUse, HALF_UP)).thenReturn(expectedResult);
+        });
+
+        // When
+        Decimal actualResult = longDecimal.minus(decimalToSubtract, scaleToUse);
+
+        // Then
+        assertThat(actualResult, equalTo(expectedResult));
+        verifyStaticCalls(() -> {
+            DecimalAccumulator.subtract(longDecimal, decimalToSubtract, scaleToUse, HALF_UP);
+        });
+    }
+
+    @Test
+    public void shouldSubtractDecimalFromHugeDecimal2() {
+        HugeDecimal hugeDecimal = randomHugeDecimal();
+        Decimal decimalToSubtract = mock(Decimal.class);
+        int scaleToUse = randomInt();
+
+        Decimal expectedResult = mock(Decimal.class);
+        mockStaticCalls(() -> {
+            when(DecimalAccumulator.subtract(hugeDecimal, decimalToSubtract, scaleToUse, HALF_UP)).thenReturn(expectedResult);
+        });
+
+        // When
+        Decimal actualResult = hugeDecimal.minus(decimalToSubtract, scaleToUse);
+
+        // Then
+        assertThat(actualResult, equalTo(expectedResult));
+        verifyStaticCalls(() -> {
+            DecimalAccumulator.subtract(hugeDecimal, decimalToSubtract, scaleToUse, HALF_UP);
+        });
+    }
+
+    @Test
+    public void shouldSubtractDecimalFromLongDecimal3() {
+        LongDecimal longDecimal = randomLongDecimal();
+        Decimal decimalToSubtract = mock(Decimal.class);
+        int otherScale = randomInt();
+
+        Decimal expectedResult = mock(Decimal.class);
+        mockStaticCalls(() -> {
+            when(decimalToSubtract.scale()).thenReturn(otherScale);
+            when(DecimalAccumulator.subtract(longDecimal, decimalToSubtract, max(longDecimal.scale(), otherScale), UNNECESSARY)).thenReturn(expectedResult);
+        });
+
+        // When
+        Decimal actualResult = longDecimal.minus(decimalToSubtract);
+
+        // Then
+        assertThat(actualResult, equalTo(expectedResult));
+        verifyStaticCalls(() -> {
+            DecimalAccumulator.subtract(longDecimal, decimalToSubtract, max(longDecimal.scale(), otherScale), UNNECESSARY);
+        });
+    }
+
+    @Test
+    public void shouldSubtractDecimalFromHugeDecimal3() {
+        HugeDecimal hugeDecimal = randomHugeDecimal();
+        Decimal decimalToSubtract = mock(Decimal.class);
+        int otherScale = randomInt();
+
+        Decimal expectedResult = mock(Decimal.class);
+        mockStaticCalls(() -> {
+            when(decimalToSubtract.scale()).thenReturn(otherScale);
+            when(DecimalAccumulator.subtract(hugeDecimal, decimalToSubtract, max(hugeDecimal.scale(), otherScale), UNNECESSARY)).thenReturn(expectedResult);
+        });
+
+        // When
+        Decimal actualResult = hugeDecimal.minus(decimalToSubtract);
+
+        // Then
+        assertThat(actualResult, equalTo(expectedResult));
+        verifyStaticCalls(() -> {
+            DecimalAccumulator.subtract(hugeDecimal, decimalToSubtract, max(hugeDecimal.scale(), otherScale), UNNECESSARY);
+        });
+    }
+
 
 
 

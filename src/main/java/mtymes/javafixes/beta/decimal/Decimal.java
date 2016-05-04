@@ -156,17 +156,14 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return plus(value, max(this.scale(), value.scale()), UNNECESSARY);
     }
 
-    // todo: test
     public final Decimal minus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
         return DecimalAccumulator.subtract(this, value, scaleToUse, roundingMode);
     }
 
-    // todo: test
     public final Decimal minus(Decimal value, int scaleToUse) {
         return minus(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
 
-    // todo: test
     public final Decimal minus(Decimal value) {
         return minus(value, max(this.scale(), value.scale()), UNNECESSARY);
     }
