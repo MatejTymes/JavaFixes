@@ -144,17 +144,14 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return DecimalNegator.negate(this);
     }
 
-    // todo: test this
     public final Decimal plus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
         return DecimalAccumulator.add(this, value, scaleToUse, roundingMode);
     }
 
-    // todo: test
     public final Decimal plus(Decimal value, int scaleToUse) {
         return plus(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
 
-    // todo: test
     public final Decimal plus(Decimal value) {
         return plus(value, max(this.scale(), value.scale()), UNNECESSARY);
     }
@@ -186,7 +183,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public final Decimal times(Decimal value) {
-        return times(value, this.scale() + value.scale(), DEFAULT_ROUNDING_MODE);
+        return times(value, this.scale() + value.scale(), UNNECESSARY);
     }
 
     // todo: test
@@ -203,8 +200,8 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     public final Decimal div(Decimal value) {
         return div(
                 value,
-                // todo: change from 8 -> 28
-                max(8, max(this.scale(), value.scale())),
+                // todo: change it to 28 instead ???
+                max(18, max(this.scale(), value.scale())),
                 DEFAULT_ROUNDING_MODE
         );
     }

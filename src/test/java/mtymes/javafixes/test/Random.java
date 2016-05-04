@@ -2,6 +2,7 @@ package mtymes.javafixes.test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 public class Random {
 
@@ -41,9 +42,12 @@ public class Random {
         return randomBigDecimal("-999999999999999999.99999", "999999999999999999.99999");
     }
 
+    public static RoundingMode randomRoundingMode() {
+        return pickRandomValue(RoundingMode.values());
+    }
+
     @SafeVarargs
-    public static  <T> T pickRandomValue(T... values) {
-        // todo: implement properly
-        return values[0];
+    public static <T> T pickRandomValue(T... values) {
+        return values[randomInt(0, values.length - 1)];
     }
 }
