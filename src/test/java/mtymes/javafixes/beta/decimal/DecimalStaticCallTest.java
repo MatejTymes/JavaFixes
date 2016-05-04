@@ -21,7 +21,8 @@ import static org.powermock.api.mockito.PowerMockito.*;
         DecimalCreator.class,
         DecimalParser.class,
         DecimalEqualizer.class,
-        DecimalPrinter.class
+        DecimalPrinter.class,
+        DecimalNegator.class
 })
 public class DecimalStaticCallTest {
 
@@ -283,7 +284,43 @@ public class DecimalStaticCallTest {
         });
     }
 
+    @Test
+    public void shouldNegateLongDecimal() {
+        LongDecimal longDecimal = new LongDecimal(randomLong(), randomInt());
 
+        Decimal expectedDecimal = mock(Decimal.class);
+        mockStaticCalls(() -> {
+            when(DecimalNegator.negate(longDecimal)).thenReturn(expectedDecimal);
+        });
+
+        // When
+        Decimal actualDecimal = longDecimal.negate();
+
+        // Then
+        assertThat(actualDecimal, equalTo(expectedDecimal));
+        verifyStaticCalls(() -> {
+            DecimalNegator.negate(longDecimal);
+        });
+    }
+
+    @Test
+    public void shouldNegateHugeDecimal() {
+        HugeDecimal hugeDecimal = new HugeDecimal(randomBigInteger(), randomInt());
+
+        Decimal expectedDecimal = mock(Decimal.class);
+        mockStaticCalls(() -> {
+            when(DecimalNegator.negate(hugeDecimal)).thenReturn(expectedDecimal);
+        });
+
+        // When
+        Decimal actualDecimal = hugeDecimal.negate();
+
+        // Then
+        assertThat(actualDecimal, equalTo(expectedDecimal));
+        verifyStaticCalls(() -> {
+            DecimalNegator.negate(hugeDecimal);
+        });
+    }
 
 
     private void mockStaticCalls(Runnable task) {
@@ -291,7 +328,8 @@ public class DecimalStaticCallTest {
                 DecimalCreator.class,
                 DecimalParser.class,
                 DecimalEqualizer.class,
-                DecimalPrinter.class
+                DecimalPrinter.class,
+                DecimalNegator.class
         );
 
         try {
@@ -314,7 +352,8 @@ public class DecimalStaticCallTest {
                 DecimalCreator.class,
                 DecimalParser.class,
                 DecimalEqualizer.class,
-                DecimalPrinter.class
+                DecimalPrinter.class,
+                DecimalNegator.class
         );
     }
 }

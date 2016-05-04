@@ -140,7 +140,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return new BigDecimal(toPlainString());
     }
 
-    // todo: test this
     public final Decimal negate() {
         return DecimalNegator.negate(this);
     }
@@ -160,6 +159,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return plus(value, max(this.scale(), value.scale()), UNNECESSARY);
     }
 
+    // todo: test
     public final Decimal minus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
         return DecimalAccumulator.subtract(this, value, scaleToUse, roundingMode);
     }
@@ -174,6 +174,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return minus(value, max(this.scale(), value.scale()), UNNECESSARY);
     }
 
+    // todo: test
     public final Decimal times(Decimal value, int scaleToUse, RoundingMode roundingMode) {
         return DecimalMultiplier.multiply(this, value, scaleToUse, roundingMode);
     }
@@ -188,6 +189,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return times(value, this.scale() + value.scale(), DEFAULT_ROUNDING_MODE);
     }
 
+    // todo: test
     public final Decimal div(Decimal value, int scaleToUse, RoundingMode roundingMode) {
         return DecimalDivisor.divide(this, value, scaleToUse, roundingMode);
     }
@@ -207,15 +209,18 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         );
     }
 
+    // todo: test
     public final Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) {
         return DecimalScaler.descaleTo(this, scaleToUse, roundingMode);
     }
 
+    // todo: test
     @Override
     public final int compareTo(Decimal other) {
         return DecimalEqualizer.compare(this, other);
     }
 
+    // todo: test
     @Override
     public final boolean equals(Object other) {
         if (this == other) return true;
@@ -226,23 +231,28 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return DecimalEqualizer.areEqual(this, (Decimal) other);
     }
 
+    // todo: test
     @Override
     public final int hashCode() {
         return DecimalEqualizer.hashCode(this);
     }
 
+    // todo: test
     public final String toPlainString(int minScaleToUse) {
         return DecimalPrinter.toPlainString(this, minScaleToUse);
     }
 
+    // todo: test
     public final String toPlainString() {
         return toPlainString(0);
     }
 
+    // todo: test
     public final String toScientificNotation() {
         return DecimalPrinter.toScientificNotation(this);
     }
 
+    // todo: test
     @Override
     public final String toString() {
         return toPlainString();
