@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static mtymes.javafixes.beta.decimal.DecimalMath.*;
+import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValue;
 
 // todo: test it
 class DecimalEqualizer {
@@ -101,17 +102,5 @@ class DecimalEqualizer {
         return (toScale > fromScale)
                 ? upscaleByPowerOf10(value, toScale - fromScale)
                 : value;
-    }
-
-    private static BigInteger bigUnscaledValue(Decimal d) {
-        BigInteger unscaledValue;
-        if (d instanceof LongDecimal) {
-            unscaledValue = BigInteger.valueOf(((LongDecimal) d).unscaledValue);
-        } else if (d instanceof HugeDecimal) {
-            unscaledValue = ((HugeDecimal) d).unscaledValue;
-        } else {
-            throw new UnsupportedDecimalTypeException(d);
-        }
-        return unscaledValue;
     }
 }
