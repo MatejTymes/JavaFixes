@@ -72,7 +72,16 @@ public class DecimalMath {
         return powersOf10B[n];
     }
 
-    // todo: should we add upscaleByPowerOf10 - could resolve into long overflow
+    public static long upscaleByPowerOf10(long value, int n) { // todo: throw exception of number overflow
+        if (value != 0) {
+            while (n > 0 && value != 0) {
+                int scale = min(maxLongPowerOf10(), n);
+                value *= powerOf10Long(scale);
+                n -= scale;
+            }
+        }
+        return value;
+    }
 
     public static long downscaleByPowerOf10(long value, int n) {
         while (n > 0 && value != 0) {

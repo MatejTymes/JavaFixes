@@ -23,8 +23,8 @@ class DecimalEqualizer {
         int scaleY = y.scale();
 
         if (x instanceof LongDecimal && y instanceof LongDecimal) {
-            long unscaledX = x.unscaledValue();
-            long unscaledY = y.unscaledValue();
+            long unscaledX = ((LongDecimal) x).unscaledValue;
+            long unscaledY = ((LongDecimal) y).unscaledValue;
 
             if (scaleX == scaleY) {
                 return Long.compare(unscaledX, unscaledY);
@@ -32,6 +32,7 @@ class DecimalEqualizer {
 
             int scaleToGet = min(scaleX, scaleY);
 
+            // upper part comparison
             long rescaledX = descaleValue(unscaledX, scaleX, scaleToGet);
             long rescaledY = descaleValue(unscaledY, scaleY, scaleToGet);
 
@@ -39,6 +40,7 @@ class DecimalEqualizer {
             if (topComparison != 0) {
                 return topComparison;
             } else {
+                // remainder comparison
                 long remainderX = unscaledX - upScaleValue(rescaledX, scaleToGet, scaleX);
                 long remainderY = unscaledY - upScaleValue(rescaledY, scaleToGet, scaleY);
 
@@ -90,31 +92,15 @@ class DecimalEqualizer {
     }
 
     private static long descaleValue(long value, int fromScale, int toScale) {
-        long rescaledValue = value;
-        int newScale = fromScale;
-
-        while (rescaledValue != 0 && toScale < newScale) {
-            int scale = min(maxLongPowerOf10(), newScale - toScale);
-            long scaler = powerOf10Long(scale);
-            rescaledValue /= scaler;
-            newScale -= scale;
-        }
-
-        return rescaledValue;
+        return (toScale < fromScale)
+                ? downscaleByPowerOf10(value, fromScale - toScale)
+                : value;
     }
 
     private static long upScaleValue(long value, int fromScale, int toScale) {
-        long rescaledValue = value;
-        int newScale = fromScale;
-
-        while (rescaledValue != 0 && toScale > newScale) {
-            int scale = min(maxLongPowerOf10(), toScale - newScale);
-            long scaler = powerOf10Long(scale);
-            rescaledValue *= scaler;
-            newScale += scale;
-        }
-
-        return rescaledValue;
+        return (toScale > fromScale)
+                ? upscaleByPowerOf10(value, toScale - fromScale)
+                : value;
     }
 
     private static BigInteger bigUnscaledValue(Decimal d) {
