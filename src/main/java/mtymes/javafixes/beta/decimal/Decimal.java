@@ -8,7 +8,7 @@ import static java.lang.Math.max;
 import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UNNECESSARY;
 
-// todo: handle scale overflows
+// todo: handle scale overflows and underflow
 public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     public static final Decimal ZERO = decimal(0, 0);
@@ -34,19 +34,12 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
             return Long.signum(unscaledValue);
         }
 
-        @Deprecated // todo: remove
-        @Override
-        long unscaledValue() {
-            return unscaledValue;
-        }
-
         @Override
         int scale() {
             return scale;
         }
     }
 
-    // todo: start using this
     static final class HugeDecimal extends Decimal {
 
         transient final BigInteger unscaledValue;
@@ -60,12 +53,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         @Override
         int signum() {
             return unscaledValue.signum();
-        }
-
-        @Deprecated // todo: remove
-        @Override
-        long unscaledValue() {
-            throw new IllegalStateException("Can't transform into unscaled value of primitive type - the value is too big");
         }
 
         @Override
@@ -116,9 +103,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
 
     abstract int signum();
-
-    @Deprecated // todo: remove or return this as a Number
-    abstract long unscaledValue();
 
     // todo: start handling scale overflow and underflow
     abstract int scale();
