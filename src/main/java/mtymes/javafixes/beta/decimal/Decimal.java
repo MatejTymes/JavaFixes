@@ -197,7 +197,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public final Decimal times(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        return DecimalsIntern.multiply(this, value, scaleToUse, roundingMode);
+        return DecimalMultiplier.multiply(this, value, scaleToUse, roundingMode);
     }
 
     // todo: test

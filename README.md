@@ -67,3 +67,5 @@ The advantages it provides are:
 
         val expectedPayment = monthlyInterest.descaleTo(2, RoundingMode.UP)
 ```
+
+Some possible future advantages might be addition of more mathematical functions.

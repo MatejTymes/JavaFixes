@@ -9,24 +9,6 @@ import static mtymes.javafixes.beta.decimal.LongUtil.*;
 // todo: test this
 class DecimalsIntern {
 
-    // todo: add support for HugeDecimal
-    static Decimal multiply(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
-
-        // todo: extremely simplistic algorithm - please improve
-        // todo: - this is extremely prone to overflow
-
-        // todo: use BigInteger in case of overflow
-        long unscaledValue = multiplyExact(x.unscaledValue(), y.unscaledValue());
-//        long unscaledValue = BigInteger.valueOf(strippedX.unscaledValue())
-//                .multiply(BigInteger.valueOf(strippedY.unscaledValue()))
-//                .longValueExact();
-
-        return createDecimal(
-                unscaledValue,
-                x.scale() + y.scale()
-        ).descaleTo(scaleToUse, roundingMode);
-    }
-
     // todo: handle zero divisor exception
     static Decimal divide(Decimal x, Decimal y, int scaleToUse, RoundingMode roundingMode) {
 
