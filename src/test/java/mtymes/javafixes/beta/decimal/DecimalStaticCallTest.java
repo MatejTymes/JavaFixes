@@ -30,7 +30,8 @@ import static org.powermock.api.mockito.PowerMockito.*;
         DecimalPrinter.class,
         DecimalNegator.class,
         DecimalAccumulator.class,
-        DecimalMultiplier.class
+        DecimalMultiplier.class,
+        DecimalDivider.class
 })
 public class DecimalStaticCallTest {
 
@@ -507,6 +508,147 @@ public class DecimalStaticCallTest {
         }
     }
 
+    @Test
+    public void shouldMultiplyDecimalWithAnotherDecimal1b() {
+        for (Decimal decimal : allDecimalTypes()) {
+
+            Decimal decimalToMultiplyWith = mock(Decimal.class);
+            int scaleToUse = randomInt();
+            RoundingMode roundingMode = randomRoundingMode();
+
+            Decimal expectedResult = mock(Decimal.class);
+            mockStaticCalls(() -> {
+                when(DecimalMultiplier.multiply(decimal, decimalToMultiplyWith, scaleToUse, roundingMode)).thenReturn(expectedResult);
+            });
+
+            // When
+            Decimal actualResult = decimal.multiply(decimalToMultiplyWith, scaleToUse, roundingMode);
+
+            // Then
+            assertThat(actualResult, equalTo(expectedResult));
+            verifyStaticCalls(() -> {
+                DecimalMultiplier.multiply(decimal, decimalToMultiplyWith, scaleToUse, roundingMode);
+            });
+        }
+    }
+
+    @Test
+    public void shouldMultiplyDecimalWithAnotherDecimal2b() {
+        for (Decimal decimal : allDecimalTypes()) {
+
+            Decimal decimalToMultiplyWith = mock(Decimal.class);
+            int scaleToUse = randomInt();
+
+            Decimal expectedResult = mock(Decimal.class);
+            mockStaticCalls(() -> {
+                when(DecimalMultiplier.multiply(decimal, decimalToMultiplyWith, scaleToUse, HALF_UP)).thenReturn(expectedResult);
+            });
+
+            // When
+            Decimal actualResult = decimal.multiply(decimalToMultiplyWith, scaleToUse);
+
+            // Then
+            assertThat(actualResult, equalTo(expectedResult));
+            verifyStaticCalls(() -> {
+                DecimalMultiplier.multiply(decimal, decimalToMultiplyWith, scaleToUse, HALF_UP);
+            });
+        }
+    }
+
+    @Test
+    public void shouldMultiplyDecimalWithAnotherDecimal3b() {
+        for (Decimal decimal : allDecimalTypes()) {
+
+            Decimal decimalToMultiplyWith = mock(Decimal.class);
+            int otherScale = randomInt();
+
+            Decimal expectedResult = mock(Decimal.class);
+            mockStaticCalls(() -> {
+                when(decimalToMultiplyWith.scale()).thenReturn(otherScale);
+                when(DecimalMultiplier.multiply(decimal, decimalToMultiplyWith, decimal.scale() + otherScale, UNNECESSARY)).thenReturn(expectedResult);
+            });
+
+            // When
+            Decimal actualResult = decimal.multiply(decimalToMultiplyWith);
+
+            // Then
+            assertThat(actualResult, equalTo(expectedResult));
+            verifyStaticCalls(() -> {
+                DecimalMultiplier.multiply(decimal, decimalToMultiplyWith, decimal.scale() + otherScale, UNNECESSARY);
+            });
+        }
+    }
+
+    @Test
+    public void shouldDivideDecimalByAnotherDecimal1() {
+        for (Decimal decimal : allDecimalTypes()) {
+
+            Decimal decimalToDivideBy = mock(Decimal.class);
+            int scaleToUse = randomInt();
+            RoundingMode roundingMode = randomRoundingMode();
+
+            Decimal expectedResult = mock(Decimal.class);
+            mockStaticCalls(() -> {
+                when(DecimalDivider.divide(decimal, decimalToDivideBy, scaleToUse, roundingMode)).thenReturn(expectedResult);
+            });
+
+            // When
+            Decimal actualResult = decimal.div(decimalToDivideBy, scaleToUse, roundingMode);
+
+            // Then
+            assertThat(actualResult, equalTo(expectedResult));
+            verifyStaticCalls(() -> {
+                DecimalDivider.divide(decimal, decimalToDivideBy, scaleToUse, roundingMode);
+            });
+        }
+    }
+
+    @Test
+    public void shouldDivideDecimalByAnotherDecimal2() {
+        for (Decimal decimal : allDecimalTypes()) {
+
+            Decimal decimalToDivideBy = mock(Decimal.class);
+            int scaleToUse = randomInt();
+
+            Decimal expectedResult = mock(Decimal.class);
+            mockStaticCalls(() -> {
+                when(DecimalDivider.divide(decimal, decimalToDivideBy, scaleToUse, HALF_UP)).thenReturn(expectedResult);
+            });
+
+            // When
+            Decimal actualResult = decimal.div(decimalToDivideBy, scaleToUse);
+
+            // Then
+            assertThat(actualResult, equalTo(expectedResult));
+            verifyStaticCalls(() -> {
+                DecimalDivider.divide(decimal, decimalToDivideBy, scaleToUse, HALF_UP);
+            });
+        }
+    }
+
+    @Test
+    public void shouldDivideDecimalByAnotherDecimal3() {
+        for (Decimal decimal : allDecimalTypes()) {
+
+            Decimal decimalToDivideBy = mock(Decimal.class);
+            int otherScale = randomInt();
+
+            Decimal expectedResult = mock(Decimal.class);
+            mockStaticCalls(() -> {
+                when(decimalToDivideBy.scale()).thenReturn(otherScale);
+                when(DecimalDivider.divide(decimal, decimalToDivideBy, max(18, max(decimal.scale(), otherScale)), HALF_UP)).thenReturn(expectedResult);
+            });
+
+            // When
+            Decimal actualResult = decimal.div(decimalToDivideBy);
+
+            // Then
+            assertThat(actualResult, equalTo(expectedResult));
+            verifyStaticCalls(() -> {
+                DecimalDivider.divide(decimal, decimalToDivideBy, max(18, max(decimal.scale(), otherScale)), HALF_UP);
+            });
+        }
+    }
 
 
 
@@ -524,7 +666,8 @@ public class DecimalStaticCallTest {
                 DecimalPrinter.class,
                 DecimalNegator.class,
                 DecimalAccumulator.class,
-                DecimalMultiplier.class
+                DecimalMultiplier.class,
+                DecimalDivider.class
         );
 
         try {
@@ -550,7 +693,8 @@ public class DecimalStaticCallTest {
                 DecimalPrinter.class,
                 DecimalNegator.class,
                 DecimalAccumulator.class,
-                DecimalMultiplier.class
+                DecimalMultiplier.class,
+                DecimalDivider.class
         );
     }
 

@@ -8,7 +8,7 @@ import static mtymes.javafixes.beta.decimal.DecimalMath.BIG_TEN;
 import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValue;
 
 // todo: test it
-class DecimalDivisor {
+class DecimalDivider {
 
     static Decimal divide(Decimal a, Decimal b, int scaleToUse, RoundingMode roundingMode) {
 

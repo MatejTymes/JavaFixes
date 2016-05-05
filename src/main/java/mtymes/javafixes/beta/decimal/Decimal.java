@@ -181,32 +181,26 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return times(value, this.scale() + value.scale(), UNNECESSARY);
     }
 
-    // todo: test this
     public final Decimal multiply(Decimal value, int scaleToUse, RoundingMode roundingMode) {
         return DecimalMultiplier.multiply(this, value, scaleToUse, roundingMode);
     }
 
-    // todo: test this
     public final Decimal multiply(Decimal value, int scaleToUse) {
         return multiply(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
 
-    // todo: test this
     public final Decimal multiply(Decimal value) {
         return multiply(value, this.scale() + value.scale(), UNNECESSARY);
     }
 
-    // todo: test
     public final Decimal div(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        return DecimalDivisor.divide(this, value, scaleToUse, roundingMode);
+        return DecimalDivider.divide(this, value, scaleToUse, roundingMode);
     }
 
-    // todo: test
     public final Decimal div(Decimal value, int scaleToUse) {
         return div(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
 
-    // todo: test
     public final Decimal div(Decimal value) {
         return div(
                 value,
