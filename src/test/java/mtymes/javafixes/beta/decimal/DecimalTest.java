@@ -388,11 +388,11 @@ public class DecimalTest {
                 decimal("1000").times(decimal("-0.972")), equalTo(decimal("-972")));
 
         assertThat(
-                decimal("12.34").div(decimal("45.67")), equalTo(decimal("0.27019926")));
+                decimal("12.34").div(decimal("45.67")), equalTo(decimal("0.270199255528793519")));
         assertThat(
-                decimal("1000").div(decimal("-0.972")), equalTo(decimal("-1028.80658436")));
+                decimal("1000").div(decimal("-0.972")), equalTo(decimal("-1028.806584362139917695")));
         assertThat(
-                decimal("1").div(decimal("3")), equalTo(decimal("0.33333333")));
+                decimal("1").div(decimal("3")), equalTo(decimal("0.333333333333333333")));
     }
 
 }
