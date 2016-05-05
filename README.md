@@ -44,7 +44,7 @@ The advantages it provides are:
         assertThat(decimal("-1.2").hashCode(), equalTo(decimal("-1.200").hashCode()));
 ```
 
-* sensible defaults - using rounding `HALF_UP` (the one we used in school) when doing math operation (of course this is just a default and you can always specify your own) and max(18, valueA.scale(), valueB.scale()) decimal places when doing division (I'm still deciding what should be a correct number - or if to add ability to change the defaults)
+* sensible defaults - using rounding `HALF_UP` (the one we used in school) when doing math operation (of course this is just a default and you can always specify your own) and max(18, valueA.scale(), valueB.scale()) decimal places when doing division (I'm still deciding what should be a correct approach - or if to add ability to change the defaults)
 
 * faster creation times than `BigDecimal`
 
