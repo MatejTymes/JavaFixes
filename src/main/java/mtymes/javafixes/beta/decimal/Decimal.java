@@ -140,6 +140,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return new BigDecimal(toPlainString());
     }
 
+    // todo: add abs
     public final Decimal negate() {
         return DecimalNegator.negate(this);
     }
@@ -178,6 +179,21 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     public final Decimal times(Decimal value) {
         return times(value, this.scale() + value.scale(), UNNECESSARY);
+    }
+
+    // todo: test this
+    public final Decimal multiply(Decimal value, int scaleToUse, RoundingMode roundingMode) {
+        return DecimalMultiplier.multiply(this, value, scaleToUse, roundingMode);
+    }
+
+    // todo: test this
+    public final Decimal multiply(Decimal value, int scaleToUse) {
+        return multiply(value, scaleToUse, DEFAULT_ROUNDING_MODE);
+    }
+
+    // todo: test this
+    public final Decimal multiply(Decimal value) {
+        return multiply(value, this.scale() + value.scale(), UNNECESSARY);
     }
 
     // todo: test

@@ -60,7 +60,13 @@ The advantages it provides are:
         Decimal sum = d("0.456").plus(value);
 ```
 
-* kotlin operators:
+* groovy and kotlin operators (sorry scala you have too ugly syntax):
+
+```Groovy
+        def monthlyInterest = d("129_550.00") * d("0.03") / d("12");
+
+        def expectedPayment = monthlyInterest.descaleTo(2, RoundingMode.UP)
+```
 
 ```Kotlin
         val monthlyInterest = d("129_550.00") * d("0.03") / d("12");
