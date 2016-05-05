@@ -210,18 +210,15 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         );
     }
 
-    // todo: test
     public final Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) {
         return DecimalScaler.descaleTo(this, scaleToUse, roundingMode);
     }
 
-    // todo: test
     @Override
     public final int compareTo(Decimal other) {
         return DecimalEqualizer.compare(this, other);
     }
 
-    // todo: test
     @Override
     public final boolean equals(Object other) {
         if (this == other) return true;
@@ -232,28 +229,23 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return DecimalEqualizer.areEqual(this, (Decimal) other);
     }
 
-    // todo: test
     @Override
     public final int hashCode() {
         return DecimalEqualizer.hashCode(this);
     }
 
-    // todo: test
     public final String toPlainString(int minScaleToUse) {
         return DecimalPrinter.toPlainString(this, minScaleToUse);
     }
 
-    // todo: test
     public final String toPlainString() {
         return toPlainString(0);
     }
 
-    // todo: test
     public final String toScientificNotation() {
         return DecimalPrinter.toScientificNotation(this);
     }
 
-    // todo: test
     @Override
     public final String toString() {
         return toPlainString();

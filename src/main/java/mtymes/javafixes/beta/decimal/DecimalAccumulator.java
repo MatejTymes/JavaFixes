@@ -36,11 +36,11 @@ class DecimalAccumulator {
 
 //        int maxScale = max(scaleA, scaleB);
 //
-//        long maxScaledValueX = multiplyExact(a.unscaledValue(), pow10(maxScale - scaleA));
-//        long maxScaledValueY = multiplyExact(b.unscaledValue(), pow10(maxScale - scaleB));
+//        long maxScaledValueA = multiplyExact(a.unscaledValue(), pow10(maxScale - scaleA));
+//        long maxScaledValueB = multiplyExact(b.unscaledValue(), pow10(maxScale - scaleB));
 //
 //        return createDecimal(
-//                addExact(maxScaledValueX, maxScaledValueY),
+//                addExact(maxScaledValueA, maxScaledValueB),
 //                maxScale
 //        ).descaleTo(scaleToUse, roundingMode);
     }

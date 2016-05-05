@@ -31,7 +31,8 @@ import static org.powermock.api.mockito.PowerMockito.*;
         DecimalNegator.class,
         DecimalAccumulator.class,
         DecimalMultiplier.class,
-        DecimalDivider.class
+        DecimalDivider.class,
+        DecimalScaler.class
 })
 public class DecimalStaticCallTest {
 
@@ -650,6 +651,175 @@ public class DecimalStaticCallTest {
         }
     }
 
+    @Test
+    public void shouldDescaleDecimal() {
+        for (Decimal decimal : allDecimalTypes()) {
+
+            int newScale = randomInt();
+            RoundingMode roundingMode = randomRoundingMode();
+
+            Decimal expectedResult = mock(Decimal.class);
+            mockStaticCalls(() -> {
+                when(DecimalScaler.descaleTo(decimal, newScale, roundingMode)).thenReturn(expectedResult);
+            });
+
+            // When
+            Decimal actualResult = decimal.descaleTo(newScale, roundingMode);
+
+            // Then
+            assertThat(actualResult, equalTo(expectedResult));
+            verifyStaticCalls(() -> {
+                DecimalScaler.descaleTo(decimal, newScale, roundingMode);
+            });
+        }
+    }
+
+    @Test
+    public void shouldCompareDecimalToAnotherDecimal() {
+        for (Decimal decimal : allDecimalTypes()) {
+
+            Decimal otherDecimal = mock(Decimal.class);
+
+            int expectedResult = pickRandomValue(-1, 0, -1);
+            mockStaticCalls(() -> {
+                when(DecimalEqualizer.compare(decimal, otherDecimal)).thenReturn(expectedResult);
+            });
+
+            // When
+            int actualResult = decimal.compareTo(otherDecimal);
+
+            // Then
+            assertThat(actualResult, equalTo(expectedResult));
+            verifyStaticCalls(() -> {
+                DecimalEqualizer.compare(decimal, otherDecimal);
+            });
+        }
+    }
+
+    @Test
+    public void shouldCheckIfDecimalsAreEqual() {
+        for (Decimal decimal : allDecimalTypes()) {
+
+            Decimal otherDecimal = mock(Decimal.class);
+
+            boolean expectedResult = randomBoolean();
+            mockStaticCalls(() -> {
+                when(DecimalEqualizer.areEqual(decimal, otherDecimal)).thenReturn(expectedResult);
+            });
+
+            // When
+            boolean actualResult = decimal.equals(otherDecimal);
+
+            // Then
+            assertThat(actualResult, equalTo(expectedResult));
+            verifyStaticCalls(() -> {
+                DecimalEqualizer.areEqual(decimal, otherDecimal);
+            });
+        }
+    }
+
+    @Test
+    public void shouldGetHashCode() {
+        for (Decimal decimal : allDecimalTypes()) {
+
+            int expectedResult = randomInt();
+            mockStaticCalls(() -> {
+                when(DecimalEqualizer.hashCode(decimal)).thenReturn(expectedResult);
+            });
+
+            // When
+            int actualResult = decimal.hashCode();
+
+            // Then
+            assertThat(actualResult, equalTo(expectedResult));
+            verifyStaticCalls(() -> {
+                DecimalEqualizer.hashCode(decimal);
+            });
+        }
+    }
+
+    @Test
+    public void shouldConvertToPlainString1() {
+        for (Decimal decimal : allDecimalTypes()) {
+
+            int minScaleToUse = randomInt();
+
+            String expectedResult = randomDecimalString();
+            mockStaticCalls(() -> {
+                when(DecimalPrinter.toPlainString(decimal, minScaleToUse)).thenReturn(expectedResult);
+            });
+
+            // When
+            String actualResult = decimal.toPlainString(minScaleToUse);
+
+            // Then
+            assertThat(actualResult, equalTo(expectedResult));
+            verifyStaticCalls(() -> {
+                DecimalPrinter.toPlainString(decimal, minScaleToUse);
+            });
+        }
+    }
+
+    @Test
+    public void shouldConvertToPlainString2() {
+        for (Decimal decimal : allDecimalTypes()) {
+
+            String expectedResult = randomDecimalString();
+            mockStaticCalls(() -> {
+                when(DecimalPrinter.toPlainString(decimal, 0)).thenReturn(expectedResult);
+            });
+
+            // When
+            String actualResult = decimal.toPlainString();
+
+            // Then
+            assertThat(actualResult, equalTo(expectedResult));
+            verifyStaticCalls(() -> {
+                DecimalPrinter.toPlainString(decimal, 0);
+            });
+        }
+    }
+
+    @Test
+    public void shouldConvertToScientificNotation() {
+        for (Decimal decimal : allDecimalTypes()) {
+
+            String expectedResult = randomScientificNotationDecimalString();
+            mockStaticCalls(() -> {
+                when(DecimalPrinter.toScientificNotation(decimal)).thenReturn(expectedResult);
+            });
+
+            // When
+            String actualResult = decimal.toScientificNotation();
+
+            // Then
+            assertThat(actualResult, equalTo(expectedResult));
+            verifyStaticCalls(() -> {
+                DecimalPrinter.toScientificNotation(decimal);
+            });
+        }
+    }
+
+    @Test
+    public void shouldConvertToString() {
+        for (Decimal decimal : allDecimalTypes()) {
+
+            String expectedResult = randomDecimalString();
+            mockStaticCalls(() -> {
+                when(DecimalPrinter.toPlainString(decimal, 0)).thenReturn(expectedResult);
+            });
+
+            // When
+            String actualResult = decimal.toString();
+
+            // Then
+            assertThat(actualResult, equalTo(expectedResult));
+            verifyStaticCalls(() -> {
+                DecimalPrinter.toPlainString(decimal, 0);
+            });
+        }
+    }
+
 
 
 
@@ -667,7 +837,8 @@ public class DecimalStaticCallTest {
                 DecimalNegator.class,
                 DecimalAccumulator.class,
                 DecimalMultiplier.class,
-                DecimalDivider.class
+                DecimalDivider.class,
+                DecimalScaler.class
         );
 
         try {
@@ -694,7 +865,8 @@ public class DecimalStaticCallTest {
                 DecimalNegator.class,
                 DecimalAccumulator.class,
                 DecimalMultiplier.class,
-                DecimalDivider.class
+                DecimalDivider.class,
+                DecimalScaler.class
         );
     }
 

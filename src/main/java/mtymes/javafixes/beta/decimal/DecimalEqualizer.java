@@ -13,60 +13,60 @@ import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValue;
 // todo: test it
 class DecimalEqualizer {
 
-    static int compare(Decimal x, Decimal y) {
+    static int compare(Decimal a, Decimal b) {
 
-        int signComparison = Integer.compare(x.signum(), y.signum());
+        int signComparison = Integer.compare(a.signum(), b.signum());
         if (signComparison != 0) {
             return signComparison;
         }
 
-        int scaleX = x.scale();
-        int scaleY = y.scale();
+        int scaleA = a.scale();
+        int scaleB = b.scale();
 
-        if (x instanceof LongDecimal && y instanceof LongDecimal) {
-            long unscaledX = ((LongDecimal) x).unscaledValue;
-            long unscaledY = ((LongDecimal) y).unscaledValue;
+        if (a instanceof LongDecimal && b instanceof LongDecimal) {
+            long unscaledA = ((LongDecimal) a).unscaledValue;
+            long unscaledB = ((LongDecimal) b).unscaledValue;
 
-            if (scaleX == scaleY) {
-                return Long.compare(unscaledX, unscaledY);
+            if (scaleA == scaleB) {
+                return Long.compare(unscaledA, unscaledB);
             }
 
-            int scaleToGet = min(scaleX, scaleY);
+            int scaleToGet = min(scaleA, scaleB);
 
             // upper part comparison
-            long rescaledX = descaleValue(unscaledX, scaleX, scaleToGet);
-            long rescaledY = descaleValue(unscaledY, scaleY, scaleToGet);
+            long rescaledA = descaleValue(unscaledA, scaleA, scaleToGet);
+            long rescaledB = descaleValue(unscaledB, scaleB, scaleToGet);
 
-            int topComparison = Long.compare(rescaledX, rescaledY);
+            int topComparison = Long.compare(rescaledA, rescaledB);
             if (topComparison != 0) {
                 return topComparison;
             } else {
                 // remainder comparison
-                long remainderX = unscaledX - upScaleValue(rescaledX, scaleToGet, scaleX);
-                long remainderY = unscaledY - upScaleValue(rescaledY, scaleToGet, scaleY);
+                long remainderA = unscaledA - upScaleValue(rescaledA, scaleToGet, scaleA);
+                long remainderB = unscaledB - upScaleValue(rescaledB, scaleToGet, scaleB);
 
-                return Long.compare(remainderX, remainderY);
+                return Long.compare(remainderA, remainderB);
             }
         } else {
-            BigInteger unscaledX = bigUnscaledValue(x);
-            BigInteger unscaledY = bigUnscaledValue(y);
+            BigInteger unscaledA = bigUnscaledValue(a);
+            BigInteger unscaledB = bigUnscaledValue(b);
 
-            int maxScale = max(scaleX, scaleY);
+            int maxScale = max(scaleA, scaleB);
 
-            if (scaleX < maxScale) {
-                unscaledX = upscaleByPowerOf10(unscaledX, maxScale - scaleX);
+            if (scaleA < maxScale) {
+                unscaledA = upscaleByPowerOf10(unscaledA, maxScale - scaleA);
             }
 
-            if (scaleY < maxScale) {
-                unscaledY = upscaleByPowerOf10(unscaledY, maxScale - scaleY);
+            if (scaleB < maxScale) {
+                unscaledB = upscaleByPowerOf10(unscaledB, maxScale - scaleB);
             }
 
-            return unscaledX.compareTo(unscaledY);
+            return unscaledA.compareTo(unscaledB);
         }
     }
 
-    static boolean areEqual(Decimal x, Decimal y) {
-        return x.compareTo(y) == 0;
+    static boolean areEqual(Decimal a, Decimal b) {
+        return a.compareTo(b) == 0;
     }
 
     static int hashCode(Decimal d) {
