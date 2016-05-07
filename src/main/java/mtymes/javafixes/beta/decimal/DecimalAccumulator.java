@@ -69,7 +69,6 @@ class DecimalAccumulator {
         }
 
         return createDecimal(result, sumScale);
-
     }
 
     private static Decimal sumOf(BigInteger unscaledValueA, BigInteger unscaledValueB, int scaleA, int scaleB, int scaleToUse, RoundingMode roundingMode) {
