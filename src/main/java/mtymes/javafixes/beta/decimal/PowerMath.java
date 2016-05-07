@@ -4,14 +4,7 @@ import java.math.BigInteger;
 
 import static java.lang.Math.min;
 
-// todo: test it
-public class DecimalMath {
-
-    public static final BigInteger BIG_ZERO = BigInteger.ZERO;
-    public static final BigInteger BIG_ONE = BigInteger.ONE;
-    public static final BigInteger BIG_MINUS_ONE = BigInteger.ONE.negate();
-    public static final BigInteger BIG_TWO = BigInteger.valueOf(2L);
-    public static final BigInteger BIG_TEN = BigInteger.TEN;
+public class PowerMath {
 
     private static final long[] powersOf10L = {
             1L,                  // 10 ^ 0
@@ -98,28 +91,6 @@ public class DecimalMath {
             Long.MAX_VALUE / 1000000000000000000L
     };
 
-    // although nicer - it makes the code slower
-//    static {
-//        powersOf10L = new long[19];
-//        powersOf10L[0] = 1L;
-//        for (int i = 1; i < powersOf10L.length; i++) {  // 18 is the maximum power of 10 for long variables
-//            powersOf10L[i] = powersOf10L[i - 1] * 10;
-//        }
-//
-//        powersOf10B = new BigInteger[25];
-//        powersOf10B[0] = BIG_ONE;
-//        for (int i = 1; i < powersOf10B.length; i++) {  // 18 is the maximum power of 10 for long variables
-//            powersOf10B[i] = powersOf10B[i - 1].multiply(BIG_TEN);
-//        }
-
-//        minUpscaleLimitForPowOf10 = new long[powersOf10L.length];
-//        maxUpscaleLimitForPowOf10 = new long[powersOf10L.length];
-//        for (int i = 0; i < powersOf10L.length; i++) {
-//            minUpscaleLimitForPowOf10[i] = Long.MIN_VALUE / powersOf10L[i];
-//            maxUpscaleLimitForPowOf10[i] = Long.MAX_VALUE / powersOf10L[i];
-//        }
-//    }
-
     public static int maxLongPowerOf10() {
         return powersOf10L.length - 1;
     }
@@ -136,7 +107,7 @@ public class DecimalMath {
         return powersOf10B[n];
     }
 
-    public static boolean canUpscaleByPowerOf10(long value, int n) {
+    public static boolean canUpscaleLongByPowerOf10(long value, int n) {
         if (n >= 19) {
             return false;
         }
@@ -149,8 +120,8 @@ public class DecimalMath {
             int newN = n;
             while (newN > 0 && newValue != 0) {
                 int scale = min(maxLongPowerOf10(), newN);
-                if (!canUpscaleByPowerOf10(newValue, scale)) {
-                    throw new ArithmeticException("can't upscale long " + value + " by " + n + " power of 10");
+                if (!canUpscaleLongByPowerOf10(newValue, scale)) {
+                    throw new ArithmeticException("can't upscale long " + value + " by " + n + ". power of 10");
                 }
                 newValue *= powerOf10Long(scale);
                 newN -= scale;

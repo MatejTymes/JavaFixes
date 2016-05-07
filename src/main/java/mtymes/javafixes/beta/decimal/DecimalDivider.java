@@ -3,8 +3,8 @@ package mtymes.javafixes.beta.decimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
+import static mtymes.javafixes.beta.decimal.Constants.BIG_TEN;
 import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
-import static mtymes.javafixes.beta.decimal.DecimalMath.BIG_TEN;
 import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValue;
 
 // todo: test it

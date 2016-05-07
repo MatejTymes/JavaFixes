@@ -7,8 +7,9 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import static java.lang.String.format;
+import static mtymes.javafixes.beta.decimal.Constants.*;
 import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
-import static mtymes.javafixes.beta.decimal.DecimalMath.*;
+import static mtymes.javafixes.beta.decimal.PowerMath.downscaleByPowerOf10;
 
 // todo: test it
 class DecimalScaler {

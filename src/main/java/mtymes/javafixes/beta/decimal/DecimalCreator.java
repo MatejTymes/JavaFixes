@@ -4,7 +4,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import static mtymes.javafixes.beta.decimal.BigIntegerUtil.canConvertToLong;
-import static mtymes.javafixes.beta.decimal.DecimalMath.BIG_TEN;
+import static mtymes.javafixes.beta.decimal.Constants.BIG_TEN;
 
 // todo: test it
 // todo: maybe merge DecimalCreator and DecimalScaler
