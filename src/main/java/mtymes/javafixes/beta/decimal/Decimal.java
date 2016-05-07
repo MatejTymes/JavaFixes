@@ -202,6 +202,16 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public final Decimal div(Decimal value) {
+
+        // todo: use this algorithm to calculate scaleToUse - and make sure we won't get an int overflow
+        // long precisionA = this.precision();
+        // long precisionB = value.precision();
+        // long precisionToUse = max(28, max(precisionA, precisionB))
+
+        // int scaleA = this.scale()
+        // int scaleB = this.scale()
+        // long scaleToUse = (long) scaleA - (long) scaleB + precisionToUse - 1
+
         return div(
                 value,
                 // todo: make it work in some better way
