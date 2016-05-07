@@ -10,6 +10,9 @@ import static mtymes.javafixes.beta.decimal.Constants.BIG_TEN;
 // todo: maybe merge DecimalCreator and DecimalScaler
 class DecimalCreator {
 
+    // todo: add flag to not remove trailing zeros
+    // - this can resolve into higher memory consumption but might increase creation times and some arithmetic operations
+
     static Decimal createDecimal(long unscaledValue, int scale) {
         // todo: strip trailing zeros in better/faster way
         while (unscaledValue != 0 && unscaledValue % 10 == 0) {
@@ -35,14 +38,14 @@ class DecimalCreator {
     }
 
     static Decimal createDecimal(long unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
-//        return DecimalScaler.descaleTo(unscaledValue, scale, scaleToUse, roundingMode);
+        return DecimalScaler.descaleTo(unscaledValue, scale, scaleToUse, roundingMode);
         // todo: why does this seems to be faster?
-        return createDecimal(unscaledValue, scale).descaleTo(scaleToUse, roundingMode);
+//        return createDecimal(unscaledValue, scale).descaleTo(scaleToUse, roundingMode);
     }
 
     static Decimal createDecimal(BigInteger unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
-//        return DecimalScaler.descaleTo(unscaledValue, scale, scaleToUse, roundingMode);
+        return DecimalScaler.descaleTo(unscaledValue, scale, scaleToUse, roundingMode);
         // todo: why does this seems to be faster?
-        return createDecimal(unscaledValue, scale).descaleTo(scaleToUse, roundingMode);
+//        return createDecimal(unscaledValue, scale).descaleTo(scaleToUse, roundingMode);
     }
 }

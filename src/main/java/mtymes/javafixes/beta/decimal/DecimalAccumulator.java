@@ -62,6 +62,17 @@ class DecimalAccumulator {
     }
 
 
+    private static Decimal sumOf(long valueA, long valueB, int sumScale, int scaleToUse, RoundingMode roundingMode) {
+        long result = valueA + valueB;
+
+        if (hasAdditionOverflown(result, valueA, valueB)) {
+            return sumOf(BigInteger.valueOf(valueA), BigInteger.valueOf(valueB), sumScale, scaleToUse, roundingMode);
+        }
+
+        return createDecimal(result, sumScale);
+
+    }
+
     private static Decimal sumOf(BigInteger unscaledValueA, BigInteger unscaledValueB, int scaleA, int scaleB, int scaleToUse, RoundingMode roundingMode) {
         int sumScale = max(scaleA, scaleB);
         if (scaleA < sumScale) {
@@ -72,18 +83,6 @@ class DecimalAccumulator {
         }
 
         return sumOf(unscaledValueA, unscaledValueB, sumScale, scaleToUse, roundingMode);
-    }
-
-    //
-    private static Decimal sumOf(long valueA, long valueB, int sumScale, int scaleToUse, RoundingMode roundingMode) {
-        long result = valueA + valueB;
-
-        if (hasAdditionOverflown(result, valueA, valueB)) {
-            return sumOf(BigInteger.valueOf(valueA), BigInteger.valueOf(valueB), sumScale, scaleToUse, roundingMode);
-        }
-
-        return createDecimal(result, sumScale);
-
     }
 
     private static Decimal sumOf(BigInteger valueA, BigInteger valueB, int sumScale, int scaleToUse, RoundingMode roundingMode) {
