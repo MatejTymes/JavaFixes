@@ -8,7 +8,7 @@ import java.math.BigInteger;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static mtymes.javafixes.beta.decimal.Constants.BIG_TEN;
-import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValue;
+import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValueFrom;
 import static mtymes.javafixes.beta.decimal.PowerMath.downscaleByPowerOf10;
 import static mtymes.javafixes.beta.decimal.PowerMath.upscaleByPowerOf10;
 
@@ -50,8 +50,8 @@ class DecimalEqualizer {
                 return Long.compare(remainderA, remainderB);
             }
         } else {
-            BigInteger unscaledA = bigUnscaledValue(a);
-            BigInteger unscaledB = bigUnscaledValue(b);
+            BigInteger unscaledA = bigUnscaledValueFrom(a);
+            BigInteger unscaledB = bigUnscaledValueFrom(b);
 
             int maxScale = max(scaleA, scaleB);
 

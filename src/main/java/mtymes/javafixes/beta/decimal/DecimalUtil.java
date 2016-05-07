@@ -7,7 +7,7 @@ import java.math.BigInteger;
 
 class DecimalUtil {
 
-    static BigInteger bigUnscaledValue(Decimal d) {
+    static BigInteger bigUnscaledValueFrom(Decimal d) {
         BigInteger unscaledValue;
         if (d instanceof LongDecimal) {
             unscaledValue = BigInteger.valueOf(((LongDecimal) d).unscaledValue);

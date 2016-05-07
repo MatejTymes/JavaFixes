@@ -5,7 +5,7 @@ import java.math.RoundingMode;
 
 import static mtymes.javafixes.beta.decimal.Constants.BIG_TEN;
 import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
-import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValue;
+import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValueFrom;
 
 // todo: test it
 class DecimalDivider {
@@ -42,8 +42,8 @@ class DecimalDivider {
 
         // todo: although correct (no overflows) currently slow when handling just longs - refactor in the near future
         int finalSign = a.signum() * b.signum();
-        BigInteger remainder = bigUnscaledValue(a).abs();
-        BigInteger divisor = bigUnscaledValue(b).abs();
+        BigInteger remainder = bigUnscaledValueFrom(a).abs();
+        BigInteger divisor = bigUnscaledValueFrom(b).abs();
 
         BigInteger result = remainder.divide(divisor);
         remainder = remainder.mod(divisor).multiply(BIG_TEN);

@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 
 import static java.lang.Math.max;
 import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
-import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValue;
+import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValueFrom;
 import static mtymes.javafixes.beta.decimal.OverflowUtil.hasAdditionOverflown;
 import static mtymes.javafixes.beta.decimal.PowerMath.*;
 
@@ -18,7 +18,6 @@ class DecimalAccumulator {
 
         int scaleA = a.scale();
         int scaleB = b.scale();
-
 
         if (a instanceof LongDecimal && b instanceof LongDecimal) {
 
@@ -49,8 +48,8 @@ class DecimalAccumulator {
 
             return sumOf(rescaledValueA, rescaledValueB, sumScale, scaleToUse, roundingMode);
         } else {
-            BigInteger unscaledValueA = bigUnscaledValue(a);
-            BigInteger unscaledValueB = bigUnscaledValue(b);
+            BigInteger unscaledValueA = bigUnscaledValueFrom(a);
+            BigInteger unscaledValueB = bigUnscaledValueFrom(b);
 
             return sumOf(unscaledValueA, unscaledValueB, scaleA, scaleB, scaleToUse, roundingMode);
         }
