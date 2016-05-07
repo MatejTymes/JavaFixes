@@ -3,6 +3,7 @@ package mtymes.javafixes.test;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static java.util.UUID.randomUUID;
 
@@ -13,7 +14,8 @@ public class Random {
     }
 
     public static int randomInt(int from, int to) {
-        return (int) (Math.random() * (((long) to) - from + 1)) + from;
+        // typecast it to long as otherwise we could get int overflow
+        return (int) ((long) (Math.random() * ((long) to - (long) from + 1L)) + (long) from);
     }
 
     public static int randomInt() {
@@ -21,8 +23,7 @@ public class Random {
     }
 
     public static long randomLong(long from, long to) {
-        // todo: implement properly
-        return from;
+        return ThreadLocalRandom.current().nextLong(from, to) + (long) randomInt(0, 1);
     }
 
     public static long randomLong() {

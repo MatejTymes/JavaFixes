@@ -4,6 +4,7 @@ import java.math.BigInteger;
 
 import static java.lang.Math.min;
 
+// todo: test it
 public class PowerMath {
 
     private static final long[] powersOf10L = {

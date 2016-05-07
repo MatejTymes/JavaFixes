@@ -4,8 +4,7 @@ import org.junit.Test;
 
 import static java.lang.Long.MAX_VALUE;
 import static java.lang.Long.MIN_VALUE;
-import static mtymes.javafixes.beta.decimal.OverflowUtil.hasAdditionOverflown;
-import static mtymes.javafixes.beta.decimal.OverflowUtil.willNegationOverflow;
+import static mtymes.javafixes.beta.decimal.OverflowUtil.*;
 import static mtymes.javafixes.test.Random.randomLong;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -44,5 +43,21 @@ public class OverflowUtilTest {
         assertThat(hasAdditionOverflown(-9223372036854774808L + -1000L, -9223372036854774808L, -1000L), is(false));
     }
 
+    @Test
+    public void shouldFindIfMultiplicationHasOverflown() {
+        assertThat(hasMultiplicationOverflown(MAX_VALUE * 2, MAX_VALUE, 2), is(true));
+        assertThat(hasMultiplicationOverflown(-2 * MAX_VALUE, -2, MAX_VALUE), is(true));
+        assertThat(hasMultiplicationOverflown(MAX_VALUE * MAX_VALUE, MAX_VALUE, MAX_VALUE), is(true));
+        assertThat(hasMultiplicationOverflown(MIN_VALUE * -1, MIN_VALUE, -1), is(true));
+        assertThat(hasMultiplicationOverflown(2 * MIN_VALUE, 2, MIN_VALUE), is(true));
+        assertThat(hasMultiplicationOverflown(-2 * MIN_VALUE, -2, MIN_VALUE), is(true));
+        assertThat(hasMultiplicationOverflown(MIN_VALUE * MIN_VALUE, MIN_VALUE, MIN_VALUE), is(true));
+        assertThat(hasMultiplicationOverflown(MIN_VALUE * MAX_VALUE, MIN_VALUE, MAX_VALUE), is(true));
+
+        assertThat(hasMultiplicationOverflown(MAX_VALUE * 1, MAX_VALUE, 1), is(false));
+        assertThat(hasMultiplicationOverflown(-1 * MAX_VALUE, -1, MAX_VALUE), is(false));
+        assertThat(hasMultiplicationOverflown(1 * MIN_VALUE, 1, MIN_VALUE), is(false));
+        assertThat(hasMultiplicationOverflown(394019L * -9321409L, 394019L, -9321409L), is(false));
+    }
 
 }

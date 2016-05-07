@@ -14,7 +14,6 @@ public class OverflowUtil {
         return false;
     }
 
-    // todo: test this
     public static boolean hasMultiplicationOverflown(long result, long valueA, long valueB) {
         long absA = Math.abs(valueA);
         long absB = Math.abs(valueB);
