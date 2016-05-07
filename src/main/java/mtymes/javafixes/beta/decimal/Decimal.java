@@ -210,6 +210,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         );
     }
 
+    // todo: add descaleTo(int scaleToUse) - without the RoundingMode
     public final Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) {
         return DecimalScaler.descaleTo(this, scaleToUse, roundingMode);
     }
