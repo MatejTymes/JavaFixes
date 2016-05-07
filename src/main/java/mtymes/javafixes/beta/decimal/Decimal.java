@@ -8,6 +8,8 @@ import static java.lang.Math.max;
 import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UNNECESSARY;
 
+// todo: add intValueExact(), longValueExact(), ...
+
 // todo: handle scale overflows and underflow
 public abstract class Decimal extends Number implements Comparable<Decimal> {
 
