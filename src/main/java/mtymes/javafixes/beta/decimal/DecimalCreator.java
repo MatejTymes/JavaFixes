@@ -14,9 +14,10 @@ class DecimalCreator {
     // - this can resolve into higher memory consumption but might increase creation times and some arithmetic operations
 
     static Decimal createDecimal(long unscaledValue, int scale) {
-        // todo: strip trailing zeros in better/faster way
-        while (unscaledValue != 0 && unscaledValue % 10 == 0) {
-            unscaledValue /= 10;
+        while (unscaledValue != 0L
+                && ((int) unscaledValue & 1) == 0
+                && unscaledValue % 10 == 0) {
+            unscaledValue /= 10L;
             scale--;
         }
 
@@ -24,9 +25,13 @@ class DecimalCreator {
     }
 
     static Decimal createDecimal(BigInteger unscaledValue, int scale) {
-        // todo: strip trailing zeros in better/faster way
-        while (unscaledValue.signum() != 0 && unscaledValue.mod(BIG_TEN).signum() == 0) {
-            unscaledValue = unscaledValue.divide(BIG_TEN);
+        while (unscaledValue.signum() != 0) {
+            // todo: verify this
+            BigInteger[] divideAndRemainder = unscaledValue.divideAndRemainder(BIG_TEN);
+            if (divideAndRemainder[1].signum() != 0) {
+                break;
+            }
+            unscaledValue = divideAndRemainder[0];
             scale--;
         }
 
