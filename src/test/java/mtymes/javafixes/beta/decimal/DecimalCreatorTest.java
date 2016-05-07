@@ -1,5 +1,7 @@
 package mtymes.javafixes.beta.decimal;
 
+import mtymes.javafixes.beta.decimal.Decimal.HugeDecimal;
+import mtymes.javafixes.beta.decimal.Decimal.LongDecimal;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -70,6 +72,7 @@ public class DecimalCreatorTest {
             if (comparisonResult != 0) {
                 throw new AssertionError("" +
                         "got different result for unscaledValue = " + unscaledValue + ", scale = " + scale + ", scaleToUse = " + scaleToUse + ", roundingMode = " + roundingMode +
+                        "\n original   = " + new LongDecimal(unscaledValue, scale) +
                         "\n decimal    = " + decimal.toPlainString() +
                         "\n bigDecimal = " + bigDecimal.toPlainString()
                 );
@@ -96,6 +99,7 @@ public class DecimalCreatorTest {
             if (comparisonResult != 0) {
                 throw new AssertionError("" +
                         "got different result for unscaledValue = " + unscaledValue + ", scale = " + scale + ", scaleToUse = " + scaleToUse + ", roundingMode = " + roundingMode +
+                        "\n original   = " + new HugeDecimal(unscaledValue, scale) +
                         "\n decimal    = " + decimal.toPlainString() +
                         "\n bigDecimal = " + bigDecimal.toPlainString()
                 );

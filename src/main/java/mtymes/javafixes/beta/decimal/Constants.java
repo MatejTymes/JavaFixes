@@ -2,7 +2,7 @@ package mtymes.javafixes.beta.decimal;
 
 import java.math.BigInteger;
 
-public class Constants {
+class Constants {
 
     public static final BigInteger BIG_ZERO = BigInteger.ZERO;
     public static final BigInteger BIG_ONE = BigInteger.ONE;
