@@ -11,7 +11,7 @@ import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
 import static mtymes.javafixes.beta.decimal.DecimalMath.*;
 
 // todo: test it
-public class DecimalScaler {
+class DecimalScaler {
 
     static Decimal descaleTo(Decimal d, int scaleToUse, RoundingMode roundingMode) {
 
@@ -20,46 +20,73 @@ public class DecimalScaler {
             return d; // no need to scale
         }
 
-        int scaleDiff = scale - scaleToUse;
-
         if (d instanceof LongDecimal) {
-            long unscaledValue = ((LongDecimal) d).unscaledValue;
 
-            unscaledValue = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
+            return downscale(((LongDecimal) d).unscaledValue, scale, scaleToUse, roundingMode);
 
-            if (unscaledValue == 0) {
-                return Decimal.ZERO;
-            }
-
-            long rescaledValue = unscaledValue / (long) 10;
-            byte remainingDigit = (byte) (unscaledValue - (rescaledValue * 10));
-
-            byte roundingCorrection = roundingCorrection(rescaledValue, remainingDigit, roundingMode);
-            rescaledValue += roundingCorrection;
-
-            return createDecimal(rescaledValue, scaleToUse);
         } else if (d instanceof HugeDecimal) {
-            BigInteger unscaledValue = ((HugeDecimal) d).unscaledValue;
 
-            unscaledValue = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
+            return downscale(((HugeDecimal) d).unscaledValue, scale, scaleToUse, roundingMode);
 
-            if (unscaledValue.signum() == 0) {
-                return Decimal.ZERO;
-            }
-
-            BigInteger rescaledValue = unscaledValue.divide(BIG_TEN);
-            byte remainingDigit = unscaledValue.mod(BIG_TEN).byteValue();
-            if (unscaledValue.signum() < 0) {
-                remainingDigit -= 10;
-            }
-
-            BigInteger roundingCorrection = roundingCorrection(rescaledValue, remainingDigit, roundingMode);
-            rescaledValue = rescaledValue.add(roundingCorrection);
-
-            return createDecimal(rescaledValue, scaleToUse);
         } else {
             throw new UnsupportedDecimalTypeException(d);
         }
+    }
+
+    static Decimal descaleTo(long unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
+        if (scaleToUse >= scale) {
+            return createDecimal(unscaledValue, scale);
+        }
+
+        return downscale(unscaledValue, scale, scaleToUse, roundingMode);
+    }
+
+    static Decimal descaleTo(BigInteger unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
+        if (scaleToUse >= scale) {
+            return createDecimal(unscaledValue, scale);
+        }
+
+        return downscale(unscaledValue, scale, scaleToUse, roundingMode);
+    }
+
+
+    private static Decimal downscale(long unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
+        int scaleDiff = scale - scaleToUse;
+
+        unscaledValue = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
+
+        if (unscaledValue == 0) {
+            return Decimal.ZERO;
+        }
+
+        long rescaledValue = unscaledValue / (long) 10;
+        byte remainingDigit = (byte) (unscaledValue - (rescaledValue * 10));
+
+        byte roundingCorrection = roundingCorrection(rescaledValue, remainingDigit, roundingMode);
+        rescaledValue += roundingCorrection;
+
+        return createDecimal(rescaledValue, scaleToUse);
+    }
+
+    private static Decimal downscale(BigInteger unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
+        int scaleDiff = scale - scaleToUse;
+
+        unscaledValue = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
+
+        if (unscaledValue.signum() == 0) {
+            return Decimal.ZERO;
+        }
+
+        BigInteger rescaledValue = unscaledValue.divide(BIG_TEN);
+        byte remainingDigit = unscaledValue.mod(BIG_TEN).byteValue();
+        if (unscaledValue.signum() < 0) {
+            remainingDigit -= 10;
+        }
+
+        BigInteger roundingCorrection = roundingCorrection(rescaledValue, remainingDigit, roundingMode);
+        rescaledValue = rescaledValue.add(roundingCorrection);
+
+        return createDecimal(rescaledValue, scaleToUse);
     }
 
     // todo: move this code somewhere else Decimal Rounder

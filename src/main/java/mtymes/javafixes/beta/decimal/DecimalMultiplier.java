@@ -17,7 +17,9 @@ class DecimalMultiplier {
 
         return createDecimal(
                 unscaledValueA.multiply(unscaledValueB),
-                a.scale() + b.scale()
-        ).descaleTo(scaleToUse, roundingMode);
+                a.scale() + b.scale(),
+                scaleToUse,
+                roundingMode
+        );
     }
 }

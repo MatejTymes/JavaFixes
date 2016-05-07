@@ -1,11 +1,13 @@
 package mtymes.javafixes.beta.decimal;
 
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 import static mtymes.javafixes.beta.decimal.BigIntegerUtil.canConvertToLong;
 import static mtymes.javafixes.beta.decimal.DecimalMath.BIG_TEN;
 
 // todo: test it
+// todo: maybe merge DecimalCreator and DecimalScaler
 class DecimalCreator {
 
     static Decimal createDecimal(long unscaledValue, int scale) {
@@ -30,5 +32,17 @@ class DecimalCreator {
         } else {
             return new Decimal.HugeDecimal(unscaledValue, scale);
         }
+    }
+
+    static Decimal createDecimal(long unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
+//        return DecimalScaler.descaleTo(unscaledValue, scale, scaleToUse, roundingMode);
+        // todo: why does this seems to be faster?
+        return createDecimal(unscaledValue, scale).descaleTo(scaleToUse, roundingMode);
+    }
+
+    static Decimal createDecimal(BigInteger unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
+//        return DecimalScaler.descaleTo(unscaledValue, scale, scaleToUse, roundingMode);
+        // todo: why does this seems to be faster?
+        return createDecimal(unscaledValue, scale).descaleTo(scaleToUse, roundingMode);
     }
 }

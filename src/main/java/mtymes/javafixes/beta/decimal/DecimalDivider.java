@@ -26,8 +26,7 @@ class DecimalDivider {
 //        int newScale = a.scale() - b.scale();
 //
 //        if (newScale > scaleToUse) {
-//            return createDecimal(result, newScale)
-//                    .descaleTo(scaleToUse, roundingMode);
+//            return createDecimal(result, newScale, scaleToUse, roundingMode);
 //        } else {
 //            while (newScale < scaleToUse) {
 //                result = addExact(multiplyBy10Exact(result), (remainder / divisor));
@@ -38,8 +37,7 @@ class DecimalDivider {
 //            result = roundBasedOnRemainder(result, remainingDigit, roundingMode);
 //
 //
-//            return createDecimal(result, newScale)
-//                    .descaleTo(scaleToUse, roundingMode);
+//            return createDecimal(result, newScale, scaleToUse, roundingMode);
 //        }
 
         // todo: although correct (no overflows) currently slow when handling just longs - refactor in the near future
@@ -54,8 +52,10 @@ class DecimalDivider {
         if (newScale > scaleToUse) {
             return createDecimal(
                     finalSign < 0 ? result.negate() : result,
-                    newScale
-            ).descaleTo(scaleToUse, roundingMode);
+                    newScale,
+                    scaleToUse,
+                    roundingMode
+            );
         } else {
             while (newScale < scaleToUse) {
                 result = result.multiply(BIG_TEN).add((remainder.divide(divisor)));
@@ -68,8 +68,10 @@ class DecimalDivider {
 
             return createDecimal(
                     finalSign < 0 ? result.negate() : result,
-                    newScale
-            ).descaleTo(scaleToUse, roundingMode);
+                    newScale,
+                    scaleToUse,
+                    roundingMode
+            );
         }
     }
 }
