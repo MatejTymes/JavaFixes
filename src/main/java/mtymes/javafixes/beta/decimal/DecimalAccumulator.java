@@ -9,55 +9,68 @@ import static java.lang.Math.max;
 import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
 import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValueFrom;
 import static mtymes.javafixes.beta.decimal.OverflowUtil.hasAdditionOverflown;
+import static mtymes.javafixes.beta.decimal.OverflowUtil.willNegationOverflow;
 import static mtymes.javafixes.beta.decimal.PowerMath.*;
 
 // todo: test it
 class DecimalAccumulator {
 
     static Decimal add(Decimal a, Decimal b, int scaleToUse, RoundingMode roundingMode) {
-
-        int scaleA = a.scale();
-        int scaleB = b.scale();
-
         if (a instanceof LongDecimal && b instanceof LongDecimal) {
-
             long unscaledValueA = ((LongDecimal) a).unscaledValue;
             long unscaledValueB = ((LongDecimal) b).unscaledValue;
 
-            int sumScale = max(scaleA, scaleB);
-
-            int scaleFactorA = sumScale - scaleA;
-            int scaleFactorB = sumScale - scaleB;
-            if (!canUpscaleLongByPowerOf10(unscaledValueA, scaleFactorA) || !canUpscaleLongByPowerOf10(unscaledValueB, scaleB)) {
-                return sumOf(BigInteger.valueOf(unscaledValueA), BigInteger.valueOf(unscaledValueB), scaleA, scaleB, scaleToUse, roundingMode);
-            }
-
-            long rescaledValueA;
-            if (scaleFactorA == 0) {
-                rescaledValueA = unscaledValueA;
-            } else {
-                rescaledValueA = unscaledValueA * powerOf10Long(scaleFactorA);
-            }
-
-            long rescaledValueB;
-            if (scaleFactorB == 0) {
-                rescaledValueB = unscaledValueB;
-            } else {
-                rescaledValueB = unscaledValueB * powerOf10Long(scaleFactorB);
-            }
-
-            return sumOf(rescaledValueA, rescaledValueB, sumScale, scaleToUse, roundingMode);
+            return sumOf(unscaledValueA, unscaledValueB, a.scale(), b.scale(), scaleToUse, roundingMode);
         } else {
             BigInteger unscaledValueA = bigUnscaledValueFrom(a);
             BigInteger unscaledValueB = bigUnscaledValueFrom(b);
 
-            return sumOf(unscaledValueA, unscaledValueB, scaleA, scaleB, scaleToUse, roundingMode);
+            return sumOf(unscaledValueA, unscaledValueB, a.scale(), b.scale(), scaleToUse, roundingMode);
         }
     }
 
     static Decimal subtract(Decimal a, Decimal b, int scaleToUse, RoundingMode roundingMode) {
-        // todo: don't call the DecimalNegator.negate(b) method as it creates another (intermediate) Decimal
-        return add(a, DecimalNegator.negate(b), scaleToUse, roundingMode);
+        if (a instanceof LongDecimal && b instanceof LongDecimal) {
+            long unscaledValueA = ((LongDecimal) a).unscaledValue;
+            long unscaledValueB = ((LongDecimal) b).unscaledValue;
+
+            if (willNegationOverflow(unscaledValueB)) {
+                return sumOf(BigInteger.valueOf(unscaledValueA), BigInteger.valueOf(unscaledValueB).negate(), a.scale(), b.scale(), scaleToUse, roundingMode);
+            }
+
+            return sumOf(unscaledValueA, -unscaledValueB, a.scale(), b.scale(), scaleToUse, roundingMode);
+        } else {
+            BigInteger unscaledValueA = bigUnscaledValueFrom(a);
+            BigInteger unscaledValueB = bigUnscaledValueFrom(b);
+
+            return sumOf(unscaledValueA, unscaledValueB.negate(), a.scale(), b.scale(), scaleToUse, roundingMode);
+        }
+    }
+
+    private static Decimal sumOf(long unscaledValueA, long unscaledValueB, int scaleA, int scaleB, int scaleToUse, RoundingMode roundingMode) {
+        int sumScale = max(scaleA, scaleB);
+
+        int scaleFactorA = sumScale - scaleA;
+        int scaleFactorB = sumScale - scaleB;
+        if (!canUpscaleLongByPowerOf10(unscaledValueA, scaleFactorA) || !canUpscaleLongByPowerOf10(unscaledValueB, scaleB)) {
+            return sumOf(BigInteger.valueOf(unscaledValueA), BigInteger.valueOf(unscaledValueB), scaleA, scaleB, scaleToUse, roundingMode);
+        }
+
+        long rescaledValueA;
+        if (scaleFactorA == 0) {
+            rescaledValueA = unscaledValueA;
+        } else {
+            rescaledValueA = unscaledValueA * powerOf10Long(scaleFactorA);
+        }
+
+        long rescaledValueB;
+        if (scaleFactorB == 0) {
+            rescaledValueB = unscaledValueB;
+        } else {
+            rescaledValueB = unscaledValueB * powerOf10Long(scaleFactorB);
+        }
+
+        return sumOf(rescaledValueA, rescaledValueB, sumScale, scaleToUse, roundingMode);
     }
 
 

@@ -33,6 +33,7 @@ class DecimalEqualizer {
                 return Long.compare(unscaledA, unscaledB);
             }
 
+            // todo: maybe upscale if possible - shoul result into faster comparison
             int scaleToGet = min(scaleA, scaleB);
 
             // upper part comparison

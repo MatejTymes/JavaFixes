@@ -368,7 +368,7 @@ public class DecimalTest {
         try { decimal("-100000000000000000000000005.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
     }
 
-    // todo: properly test arithmetic operations
+    // todo: thoroughtly test arithmetic operations
 
     @Test
     public void shouldCalculateValues() {
