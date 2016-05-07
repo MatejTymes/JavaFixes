@@ -147,7 +147,7 @@ public class DecimalMath {
         long newValue = value;
         if (value != 0) {
             int newN = n;
-            while (newN > 0 && newValue != 0) {
+            while (newN > 1 && newValue != 0) {
                 int scale = min(maxLongPowerOf10(), newN);
                 if (!canUpscaleByPowerOf10(newValue, scale)) {
                     throw new ArithmeticException("can't upscale long " + value + " by " + n + " power of 10");
@@ -160,7 +160,7 @@ public class DecimalMath {
     }
 
     public static long downscaleByPowerOf10(long value, int n) {
-        while (n > 0 && value != 0) {
+        while (n > 1 && value != 0) {
             int scale = min(maxLongPowerOf10(), n);
             value /= powerOf10Long(scale);
             n -= scale;
@@ -170,7 +170,7 @@ public class DecimalMath {
 
     public static BigInteger upscaleByPowerOf10(BigInteger value, int n) {
         if (value.signum() != 0) {
-            while (n > 0) {
+            while (n > 1) {
                 int scale = min(maxBigPowerOf10(), n);
                 value = value.multiply(powerOf10Big(scale));
                 n -= scale;
@@ -180,7 +180,7 @@ public class DecimalMath {
     }
 
     public static BigInteger downscaleByPowerOf10(BigInteger value, int n) {
-        while (n > 0 && value.signum() != 0) {
+        while (n > 1 && value.signum() != 0) {
             int scale = min(maxBigPowerOf10(), n);
             value = value.divide(powerOf10Big(scale));
             n -= scale;

@@ -204,8 +204,8 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     public final Decimal div(Decimal value) {
         return div(
                 value,
-                // todo: change it to 28 instead ???
-                max(18, max(this.scale(), value.scale())),
+                // todo: make it work in some better way
+                max(28, max(this.scale(), value.scale())),
                 DEFAULT_ROUNDING_MODE
         );
     }
