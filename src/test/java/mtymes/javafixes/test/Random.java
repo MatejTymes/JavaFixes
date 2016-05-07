@@ -3,11 +3,15 @@ package mtymes.javafixes.test;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static java.util.UUID.randomUUID;
 
 public class Random {
+
+    private static final BigInteger BIG_PLUS_INTEGER = BigInteger.valueOf(Long.MAX_VALUE);
+    private static final BigInteger BIG_MINUS_INTEGER = BigInteger.valueOf(Long.MIN_VALUE + 1);
 
     public static boolean randomBoolean() {
         return pickRandomValue(true, false);
@@ -30,23 +34,27 @@ public class Random {
         return randomLong(Long.MIN_VALUE, Long.MAX_VALUE);
     }
 
-    public static BigInteger randomBigInteger(String fromValue, String toValue) {
-        // todo: implement properly
-        return new BigInteger(fromValue);
-    }
-
     public static BigInteger randomBigInteger() {
-        // todo: implement properly
-        return randomBigInteger("-999999999999999999", "999999999999999999");
+        boolean positive = randomBoolean();
+        return (positive ? BIG_PLUS_INTEGER : BIG_MINUS_INTEGER)
+                .multiply(BigInteger.valueOf(randomLong(0, 100)))
+                .add(BigInteger.valueOf(positive ? randomLong(0, Long.MAX_VALUE) : randomLong(Long.MIN_VALUE + 1, 0)));
     }
 
-    public static BigDecimal randomBigDecimal(String fromValue, String toValue) {
-        // todo: implement properly
-        return new BigDecimal(fromValue);
+    public static BigInteger randomNegativeBigInteger() {
+        return BIG_MINUS_INTEGER
+                .multiply(BigInteger.valueOf(randomLong(0, 100)))
+                .add(BigInteger.valueOf(randomLong(Long.MIN_VALUE + 1, -1)));
+    }
+
+    public static BigInteger randomPositiveBigInteger() {
+        return BIG_PLUS_INTEGER
+                .multiply(BigInteger.valueOf(randomLong(0, 100)))
+                .add(BigInteger.valueOf(randomLong(1, Long.MAX_VALUE)));
     }
 
     public static BigDecimal randomBigDecimal() {
-        return randomBigDecimal("-999999999999999999.99999", "999999999999999999.99999");
+        return new BigDecimal(randomBigInteger(), randomInt(-100, 100));
     }
 
     public static String randomUUIDString() {
@@ -109,5 +117,9 @@ public class Random {
     @SafeVarargs
     public static <T> T pickRandomValue(T... values) {
         return values[randomInt(0, values.length - 1)];
+    }
+
+    public static <T> T pickRandomValue(List<T> values) {
+        return values.get(randomInt(0, values.size() - 1));
     }
 }

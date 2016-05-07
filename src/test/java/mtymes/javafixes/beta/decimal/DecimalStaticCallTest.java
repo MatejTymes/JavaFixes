@@ -243,9 +243,9 @@ public class DecimalStaticCallTest {
         assertThat(new LongDecimal(0, randomInt()).signum(), equalTo(0));
         assertThat(new LongDecimal(randomLong(1, Long.MAX_VALUE), randomInt()).signum(), equalTo(1));
 
-        assertThat(new HugeDecimal(randomBigInteger("-9999999999999999999999999999999", "-1"), randomInt()).signum(), equalTo(-1));
+        assertThat(new HugeDecimal(randomNegativeBigInteger(), randomInt()).signum(), equalTo(-1));
         assertThat(new HugeDecimal(BigInteger.ZERO, randomInt()).signum(), equalTo(0));
-        assertThat(new HugeDecimal(randomBigInteger("1", "9999999999999999999999999999999"), randomInt()).signum(), equalTo(1));
+        assertThat(new HugeDecimal(randomPositiveBigInteger(), randomInt()).signum(), equalTo(1));
     }
 
     @Test
