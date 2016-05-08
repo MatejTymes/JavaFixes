@@ -386,7 +386,7 @@ public class DecimalTest {
         assertThat(decimal("100000000000000000000000002.501").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("100000000000000000000000002")));
         assertThat(decimal("100000000000000000000000001.001").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("100000000000000000000000001")));
         assertThat(decimal("100000000000000000000000000.001").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("100000000000000000000000000")));
-        assertThat(decimal("-100000000000000000000000000.001").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("100000000000000000000000000")));
+        assertThat(decimal("-100000000000000000000000000.001").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("-100000000000000000000000000")));
         assertThat(decimal("-100000000000000000000000001.001").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("-100000000000000000000000001")));
         assertThat(decimal("-100000000000000000000000002.501").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("-100000000000000000000000002")));
         assertThat(decimal("-100000000000000000000000005.501").descaleTo(0, RoundingMode.DOWN), equalTo(decimal("-100000000000000000000000005")));
@@ -406,7 +406,7 @@ public class DecimalTest {
         assertThat(decimal("100000000000000000000000002.501").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("100000000000000000000000003")));
         assertThat(decimal("100000000000000000000000001.001").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("100000000000000000000000002")));
         assertThat(decimal("100000000000000000000000000.001").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("100000000000000000000000001")));
-        assertThat(decimal("-100000000000000000000000000.001").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("100000000000000000000000000")));
+        assertThat(decimal("-100000000000000000000000000.001").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("-100000000000000000000000000")));
         assertThat(decimal("-100000000000000000000000001.001").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("-100000000000000000000000001")));
         assertThat(decimal("-100000000000000000000000002.501").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("-100000000000000000000000002")));
         assertThat(decimal("-100000000000000000000000005.501").descaleTo(0, RoundingMode.CEILING), equalTo(decimal("-100000000000000000000000005")));
@@ -486,7 +486,7 @@ public class DecimalTest {
         assertThat(decimal("100000000000000000000000002.501").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("100000000000000000000000003")));
         assertThat(decimal("100000000000000000000000001.001").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("100000000000000000000000001")));
         assertThat(decimal("100000000000000000000000000.001").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("100000000000000000000000000")));
-        assertThat(decimal("-100000000000000000000000000.001").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("100000000000000000000000000")));
+        assertThat(decimal("-100000000000000000000000000.001").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-100000000000000000000000000")));
         assertThat(decimal("-100000000000000000000000001.001").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-100000000000000000000000001")));
         assertThat(decimal("-100000000000000000000000002.501").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-100000000000000000000000003")));
         assertThat(decimal("-100000000000000000000000005.501").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-100000000000000000000000006")));
@@ -512,7 +512,7 @@ public class DecimalTest {
         try { decimal("-100000000000000000000000005.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
     }
 
-    // todo: thoroughtly test arithmetic operations
+    // todo: thoroughly test arithmetic operations
 
     @Test
     public void shouldCalculateValues() {

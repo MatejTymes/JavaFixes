@@ -79,27 +79,50 @@ class DecimalScaler {
     private static Decimal downscale(BigInteger unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
         int scaleDiff = scale - scaleToUse;
 
-        unscaledValue = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
+        boolean hasAdditionalRemainder = false;
+        BigInteger valueWithRoundingDigit = unscaledValue;
+        int n = scaleDiff - 1;
+        while (n > 0 && valueWithRoundingDigit.signum() != 0) {
+            int descaleBy = Math.min(PowerMath.maxBigPowerOf10(), n);
+            BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(PowerMath.powerOf10Big(descaleBy));
+            valueWithRoundingDigit = divAndMod[0];
+            if (divAndMod[1].signum() != 0) {
+                hasAdditionalRemainder = true;
+            }
+            n -= descaleBy;
+        }
 
-        if (unscaledValue.signum() == 0) {
+        if (valueWithRoundingDigit.signum() == 0 && !hasAdditionalRemainder) {
             return Decimal.ZERO;
         }
 
-        BigInteger rescaledValue = unscaledValue.divide(BIG_TEN);
-        byte remainingDigit = unscaledValue.mod(BIG_TEN).byteValue();
-        if (unscaledValue.signum() < 0) {
+        BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(BIG_TEN);
+        BigInteger rescaledValue = divAndMod[0];
+        int remainingDigit = divAndMod[1].intValue();
+        if (unscaledValue.signum() < 0 && remainingDigit > 0) {
             remainingDigit -= 10;
         }
 
-        BigInteger roundingCorrection = roundingCorrection(rescaledValue, remainingDigit, roundingMode);
-        rescaledValue = rescaledValue.add(roundingCorrection);
+        int roundingCorrection = DecimalRounder.roundingCorrection(
+                unscaledValue.signum(),
+                rescaledValue,
+                remainingDigit,
+                hasAdditionalRemainder,
+                roundingMode
+        );
+
+        rescaledValue = rescaledValue.add(
+                (roundingCorrection == 1)
+                        ? BIG_ONE
+                        : (roundingCorrection == -1)
+                        ? BIG_MINUS_ONE
+                        : BIG_ZERO
+        );
 
         return createDecimal(rescaledValue, scaleToUse);
     }
 
-    // todo: move this code somewhere else Decimal Rounder
-
-    // todo: in the future make sure the digit is only from 0 to 9 (currently the sign of the digit makes it a little bit awkward)
+    @Deprecated // todo: remove this - use DecimalRounder.roundingCorrection(...)
     static BigInteger roundingCorrection(BigInteger valueBeforeRounding, byte remainingDigit, RoundingMode roundingMode) {
         if (remainingDigit < -9 || remainingDigit > 9) {
             throw new IllegalArgumentException(format("Invalid remaining digit (%d). Should be only -9 to 9", remainingDigit));

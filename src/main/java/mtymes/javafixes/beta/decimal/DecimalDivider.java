@@ -45,8 +45,9 @@ class DecimalDivider {
         BigInteger remainder = bigUnscaledValueFrom(a).abs();
         BigInteger divisor = bigUnscaledValueFrom(b).abs();
 
-        BigInteger result = remainder.divide(divisor);
-        remainder = remainder.mod(divisor).multiply(BIG_TEN);
+        BigInteger[] divAndMod = remainder.divideAndRemainder(divisor);
+        BigInteger result = divAndMod[0];
+        remainder = divAndMod[1].multiply(BIG_TEN);
         int newScale = a.scale() - b.scale();
 
         if (newScale > scaleToUse) {
@@ -58,8 +59,9 @@ class DecimalDivider {
             );
         } else {
             while (newScale < scaleToUse) {
-                result = result.multiply(BIG_TEN).add((remainder.divide(divisor)));
-                remainder = remainder.mod(divisor).multiply(BIG_TEN);
+                BigInteger[] divAndMod2 = remainder.divideAndRemainder(divisor);
+                result = result.multiply(BIG_TEN).add(divAndMod2[0]);
+                remainder = divAndMod2[1].multiply(BIG_TEN);
                 newScale++;
             }
             byte remainingDigit = remainder.divide(divisor).byteValue();

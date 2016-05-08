@@ -53,7 +53,6 @@ public class DecimalCreatorTest {
         }
     }
 
-    // todo: my scaling is wrong as it takes into consideration just the last digit not all remaining digits
     @Test
     public void shouldBeAbleToCreateDecimalFromLongAndRescaleIt() {
         List<RoundingMode> usableRoundingModes = removeFrom(RoundingMode.values(), RoundingMode.UNNECESSARY);
@@ -80,7 +79,6 @@ public class DecimalCreatorTest {
         }
     }
 
-    // todo: my scaling is wrong as it takes into consideration just the last digit not all remaining digits
     @Test
     public void shouldBeAbleToCreateDecimalFromBigIntegerAndRescaleIt() {
         List<RoundingMode> usableRoundingModes = removeFrom(RoundingMode.values(), RoundingMode.UNNECESSARY);

@@ -6,7 +6,6 @@ import java.math.RoundingMode;
 import static mtymes.javafixes.beta.decimal.BigIntegerUtil.canConvertToLong;
 import static mtymes.javafixes.beta.decimal.Constants.BIG_TEN;
 
-// todo: test it
 // todo: maybe merge DecimalCreator and DecimalScaler
 class DecimalCreator {
 
@@ -26,12 +25,11 @@ class DecimalCreator {
 
     static Decimal createDecimal(BigInteger unscaledValue, int scale) {
         while (unscaledValue.signum() != 0) {
-            // todo: verify this
-            BigInteger[] divideAndRemainder = unscaledValue.divideAndRemainder(BIG_TEN);
-            if (divideAndRemainder[1].signum() != 0) {
+            BigInteger[] divAndMod = unscaledValue.divideAndRemainder(BIG_TEN);
+            if (divAndMod[1].signum() != 0) {
                 break;
             }
-            unscaledValue = divideAndRemainder[0];
+            unscaledValue = divAndMod[0];
             scale--;
         }
 
@@ -43,14 +41,12 @@ class DecimalCreator {
     }
 
     static Decimal createDecimal(long unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
-        return DecimalScaler.descaleTo(unscaledValue, scale, scaleToUse, roundingMode);
-        // todo: why does this seems to be faster?
 //        return createDecimal(unscaledValue, scale).descaleTo(scaleToUse, roundingMode);
+        return DecimalScaler.descaleTo(unscaledValue, scale, scaleToUse, roundingMode);
     }
 
     static Decimal createDecimal(BigInteger unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
-        return DecimalScaler.descaleTo(unscaledValue, scale, scaleToUse, roundingMode);
-        // todo: why does this seems to be faster?
 //        return createDecimal(unscaledValue, scale).descaleTo(scaleToUse, roundingMode);
+        return DecimalScaler.descaleTo(unscaledValue, scale, scaleToUse, roundingMode);
     }
 }

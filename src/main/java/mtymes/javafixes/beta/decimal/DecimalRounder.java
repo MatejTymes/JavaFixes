@@ -1,5 +1,6 @@
 package mtymes.javafixes.beta.decimal;
 
+import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import static java.lang.Math.abs;
@@ -11,14 +12,23 @@ class DecimalRounder {
 
     // todo: division currently doesn't provide flag : hasAdditionalRemainder - which is quite importantly wrong
 
-    // todo: start using this
     static int roundingCorrection(int signum, long valueToRound, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) {
-        return roundingCorrection(signum, ((int) valueToRound & 1) == 1, abs(roundingDigit), hasAdditionalRemainder, roundingMode);
+        Boolean isDigitToRoundOdd = null;
+        if (roundingMode == HALF_EVEN) {
+            isDigitToRoundOdd = ((int) valueToRound & 1) == 1;
+        }
+        return roundingCorrection(signum, isDigitToRoundOdd, abs(roundingDigit), hasAdditionalRemainder, roundingMode);
     }
 
-    // todo: only HALF_EVEN uses the isDigitToRoundOdd - so maybe don't even bother calculating it for the others
+    static int roundingCorrection(int signum, BigInteger valueToRound, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) {
+        Boolean isDigitToRoundOdd = null;
+        if (roundingMode == HALF_EVEN) {
+            isDigitToRoundOdd = (valueToRound.intValue() & 1) == 1;
+        }
+        return roundingCorrection(signum, isDigitToRoundOdd, abs(roundingDigit), hasAdditionalRemainder, roundingMode);
+    }
 
-    private static int roundingCorrection(int signum, boolean isDigitToRoundOdd, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) {
+    private static int roundingCorrection(int signum, Boolean isDigitToRoundOdd, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) {
         if (signum < -1 || signum > 1) {
             throw new IllegalArgumentException(format("Invalid signum (%d). Should be between -1 and 1", signum));
         } else if (roundingDigit < 0 || roundingDigit > 9) {

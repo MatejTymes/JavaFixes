@@ -85,8 +85,9 @@ class DecimalEqualizer {
         } else if (d instanceof HugeDecimal) {
             BigInteger remainder = ((HugeDecimal) d).unscaledValue;
             while (remainder.signum() != 0) {
-                hashCode = (hashCode * 5) + remainder.mod(BIG_TEN).intValue();
-                remainder = remainder.divide(BIG_TEN);
+                BigInteger[] divAndMod = remainder.divideAndRemainder(BIG_TEN);
+                remainder = divAndMod[0];
+                hashCode = (hashCode * 5) + divAndMod[1].intValue();
             }
         } else {
             throw new UnsupportedDecimalTypeException(d);
