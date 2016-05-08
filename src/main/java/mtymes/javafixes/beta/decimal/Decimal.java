@@ -10,6 +10,8 @@ import static java.math.RoundingMode.UNNECESSARY;
 
 // todo: add intValueExact(), longValueExact(), ...
 
+// todo: add DecimalContext: ScaleContext, PrecisionContext
+
 // todo: handle scale overflows and underflow
 public abstract class Decimal extends Number implements Comparable<Decimal> {
 
