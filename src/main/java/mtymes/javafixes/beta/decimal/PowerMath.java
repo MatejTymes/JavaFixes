@@ -110,7 +110,7 @@ public class PowerMath {
 
     public static boolean canUpscaleLongByPowerOf10(long value, int n) {
         if (n >= 19) {
-            return false;
+            return (value == 0); // only zero can be upscaled in this case
         }
         return minUpscaleLimitForPowOf10[n] <= value && value <= maxUpscaleLimitForPowOf10[n];
     }

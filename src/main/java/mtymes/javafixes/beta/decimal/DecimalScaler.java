@@ -10,6 +10,7 @@ import static java.lang.String.format;
 import static mtymes.javafixes.beta.decimal.Constants.*;
 import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
 import static mtymes.javafixes.beta.decimal.PowerMath.downscaleByPowerOf10;
+import static mtymes.javafixes.beta.decimal.PowerMath.upscaleByPowerOf10;
 
 // todo: test it
 class DecimalScaler {
@@ -54,16 +55,22 @@ class DecimalScaler {
     private static Decimal downscale(long unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
         int scaleDiff = scale - scaleToUse;
 
-        unscaledValue = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
-
-        if (unscaledValue == 0) {
+        long valueWithRoundingDigit = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
+        boolean hasAdditionalRemainder = unscaledValue != upscaleByPowerOf10(valueWithRoundingDigit, scaleDiff - 1);
+        if (valueWithRoundingDigit == 0 && !hasAdditionalRemainder) {
             return Decimal.ZERO;
         }
 
-        long rescaledValue = unscaledValue / (long) 10;
-        byte remainingDigit = (byte) (unscaledValue - (rescaledValue * 10));
+        long rescaledValue = valueWithRoundingDigit / (long) 10;
+        int remainingDigit = (int) (valueWithRoundingDigit - (rescaledValue * 10));
 
-        byte roundingCorrection = roundingCorrection(rescaledValue, remainingDigit, roundingMode);
+        int roundingCorrection = DecimalRounder.roundingCorrection(
+                Long.signum(unscaledValue),
+                rescaledValue,
+                remainingDigit,
+                hasAdditionalRemainder,
+                roundingMode
+        );
         rescaledValue += roundingCorrection;
 
         return createDecimal(rescaledValue, scaleToUse);
@@ -91,66 +98,6 @@ class DecimalScaler {
     }
 
     // todo: move this code somewhere else Decimal Rounder
-
-
-    // todo: in the future make sure the digit is only from 0 to 9 (currently the sign of the digit makes it a little bit awkward)
-    static byte roundingCorrection(long valueBeforeRounding, byte remainingDigit, RoundingMode roundingMode) {
-        if (remainingDigit < -9 || remainingDigit > 9) {
-            throw new IllegalArgumentException(format("Invalid remaining digit (%d). Should be only -9 to 9", remainingDigit));
-        }
-
-        byte roundingCorrection = 0;
-
-        if (remainingDigit != 0) {
-            if (roundingMode == RoundingMode.UP) {
-                if (remainingDigit > 0 && valueBeforeRounding >= 0) {
-                    roundingCorrection = 1;
-                } else if (remainingDigit < 0 && valueBeforeRounding < 0) {
-                    roundingCorrection = -1;
-                }
-            } else if (roundingMode == RoundingMode.DOWN) {
-                if (remainingDigit < 0 && valueBeforeRounding >= 0) {
-                    roundingCorrection = -1;
-                } else if (remainingDigit > 0 && valueBeforeRounding < 0) {
-                    roundingCorrection = 1;
-                }
-            } else if (roundingMode == RoundingMode.CEILING) {
-                if (remainingDigit > 0 && valueBeforeRounding >= 0) {
-                    roundingCorrection = 1;
-                }
-            } else if (roundingMode == RoundingMode.FLOOR) {
-                if (remainingDigit < 0 && valueBeforeRounding < 0) {
-                    roundingCorrection = -1;
-                }
-            } else if (roundingMode == RoundingMode.HALF_UP) {
-                if (remainingDigit >= 5 && valueBeforeRounding >= 0) {
-                    roundingCorrection = 1;
-                } else if (remainingDigit <= -5 && valueBeforeRounding < 0) {
-                    roundingCorrection = -1;
-                }
-            } else if (roundingMode == RoundingMode.HALF_DOWN) {
-                if (remainingDigit > 5 && valueBeforeRounding >= 0) {
-                    roundingCorrection = 1;
-                } else if (remainingDigit < -5 && valueBeforeRounding < 0) {
-                    roundingCorrection = -1;
-                }
-            } else if (roundingMode == RoundingMode.HALF_EVEN) {
-                if (valueBeforeRounding >= 0) {
-                    if (remainingDigit > 5 || (remainingDigit == 5 && valueBeforeRounding % 2 != 0)) {
-                        roundingCorrection = 1;
-                    }
-                } else {
-                    if (remainingDigit < -5 || (remainingDigit == -5 && valueBeforeRounding % 2 != 0)) {
-                        roundingCorrection = -1;
-                    }
-                }
-            } else if (roundingMode == RoundingMode.UNNECESSARY) {
-                throw new ArithmeticException("Rounding necessary");
-            }
-        }
-
-        return roundingCorrection;
-    }
 
     // todo: in the future make sure the digit is only from 0 to 9 (currently the sign of the digit makes it a little bit awkward)
     static BigInteger roundingCorrection(BigInteger valueBeforeRounding, byte remainingDigit, RoundingMode roundingMode) {
