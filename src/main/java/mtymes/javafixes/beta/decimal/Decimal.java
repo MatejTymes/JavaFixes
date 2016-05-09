@@ -34,13 +34,18 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         // todo: implement faster doubleValue() as in this case it could be much faster
 
         @Override
-        int signum() {
+        public int signum() {
             return Long.signum(unscaledValue);
         }
 
         @Override
-        int scale() {
+        public int scale() {
             return scale;
+        }
+
+        @Override
+        public Number unscaledValue() {
+            return unscaledValue;
         }
     }
 
@@ -55,13 +60,18 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
 
         @Override
-        int signum() {
+        public int signum() {
             return unscaledValue.signum();
         }
 
         @Override
-        int scale() {
+        public int scale() {
             return scale;
+        }
+
+        @Override
+        public Number unscaledValue() {
+            return unscaledValue;
         }
     }
 
@@ -106,11 +116,15 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
 
-    abstract int signum();
+    // todo: add test for this
+    abstract public int signum();
 
+    // todo: add test for this
     // todo: start handling scale overflow and underflow
-    abstract int scale();
+    abstract public int scale();
 
+    // todo: add test for this
+    abstract public Number unscaledValue();
 
     // todo: test this
     // todo: fail if too big
