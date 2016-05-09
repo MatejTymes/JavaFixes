@@ -5,7 +5,8 @@ import mtymes.javafixes.beta.decimal.Decimal.LongDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
+import static mtymes.javafixes.beta.decimal.DecimalScaler.descaleBigInteger;
+import static mtymes.javafixes.beta.decimal.DecimalScaler.descaleLong;
 import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValueFrom;
 import static mtymes.javafixes.beta.decimal.OverflowUtil.hasMultiplicationOverflown;
 
@@ -19,7 +20,7 @@ class DecimalMultiplier {
 
             long result = unscaledValueA * unscaledValueB;
             if (hasMultiplicationOverflown(result, unscaledValueA, unscaledValueB)) {
-                return createDecimal(
+                return descaleBigInteger(
                         BigInteger.valueOf(unscaledValueA).multiply(BigInteger.valueOf(unscaledValueB)),
                         a.scale() + b.scale(),
                         scaleToUse,
@@ -27,12 +28,12 @@ class DecimalMultiplier {
                 );
             }
 
-            return createDecimal(result, a.scale() + b.scale(), scaleToUse, roundingMode);
+            return descaleLong(result, a.scale() + b.scale(), scaleToUse, roundingMode);
         } else {
             BigInteger unscaledValueA = bigUnscaledValueFrom(a);
             BigInteger unscaledValueB = bigUnscaledValueFrom(b);
 
-            return createDecimal(unscaledValueA.multiply(unscaledValueB), a.scale() + b.scale(), scaleToUse, roundingMode);
+            return descaleBigInteger(unscaledValueA.multiply(unscaledValueB), a.scale() + b.scale(), scaleToUse, roundingMode);
         }
     }
 }

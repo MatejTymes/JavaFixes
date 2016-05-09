@@ -12,7 +12,6 @@ import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
 import static mtymes.javafixes.beta.decimal.PowerMath.downscaleByPowerOf10;
 import static mtymes.javafixes.beta.decimal.PowerMath.upscaleByPowerOf10;
 
-// todo: test it
 class DecimalScaler {
 
     static Decimal descaleTo(Decimal d, int scaleToUse, RoundingMode roundingMode) {
@@ -35,7 +34,7 @@ class DecimalScaler {
         }
     }
 
-    static Decimal descaleTo(long unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
+    static Decimal descaleLong(long unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
         if (scaleToUse >= scale) {
             return createDecimal(unscaledValue, scale);
         }
@@ -43,7 +42,7 @@ class DecimalScaler {
         return downscale(unscaledValue, scale, scaleToUse, roundingMode);
     }
 
-    static Decimal descaleTo(BigInteger unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
+    static Decimal descaleBigInteger(BigInteger unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
         if (scaleToUse >= scale) {
             return createDecimal(unscaledValue, scale);
         }
@@ -122,6 +121,7 @@ class DecimalScaler {
         return createDecimal(rescaledValue, scaleToUse);
     }
 
+    // todo: remove this
     @Deprecated // todo: remove this - use DecimalRounder.roundingCorrection(...)
     static BigInteger roundingCorrection(BigInteger valueBeforeRounding, byte remainingDigit, RoundingMode roundingMode) {
         if (remainingDigit < -9 || remainingDigit > 9) {

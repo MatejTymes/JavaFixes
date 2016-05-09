@@ -4,7 +4,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import static mtymes.javafixes.beta.decimal.Constants.BIG_TEN;
-import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
+import static mtymes.javafixes.beta.decimal.DecimalScaler.descaleBigInteger;
 import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValueFrom;
 
 // todo: test it
@@ -51,7 +51,7 @@ class DecimalDivider {
         int newScale = a.scale() - b.scale();
 
         if (newScale > scaleToUse) {
-            return createDecimal(
+            return descaleBigInteger(
                     finalSign < 0 ? result.negate() : result,
                     newScale,
                     scaleToUse,
@@ -68,7 +68,7 @@ class DecimalDivider {
             BigInteger roundingCorrection = DecimalScaler.roundingCorrection(result, remainingDigit, roundingMode);
             result = result.add(roundingCorrection);
 
-            return createDecimal(
+            return descaleBigInteger(
                     finalSign < 0 ? result.negate() : result,
                     newScale,
                     scaleToUse,

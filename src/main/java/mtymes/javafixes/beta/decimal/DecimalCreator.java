@@ -1,16 +1,11 @@
 package mtymes.javafixes.beta.decimal;
 
 import java.math.BigInteger;
-import java.math.RoundingMode;
 
 import static mtymes.javafixes.beta.decimal.BigIntegerUtil.canConvertToLong;
 import static mtymes.javafixes.beta.decimal.Constants.BIG_TEN;
 
-// todo: maybe merge DecimalCreator and DecimalScaler
 class DecimalCreator {
-
-    // todo: add flag to not remove trailing zeros
-    // - this can resolve into higher memory consumption but might increase creation times and some arithmetic operations
 
     static Decimal createDecimal(long unscaledValue, int scale) {
         while (unscaledValue != 0L
@@ -38,15 +33,5 @@ class DecimalCreator {
         } else {
             return new Decimal.HugeDecimal(unscaledValue, scale);
         }
-    }
-
-    static Decimal createDecimal(long unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
-//        return createDecimal(unscaledValue, scale).descaleTo(scaleToUse, roundingMode);
-        return DecimalScaler.descaleTo(unscaledValue, scale, scaleToUse, roundingMode);
-    }
-
-    static Decimal createDecimal(BigInteger unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
-//        return createDecimal(unscaledValue, scale).descaleTo(scaleToUse, roundingMode);
-        return DecimalScaler.descaleTo(unscaledValue, scale, scaleToUse, roundingMode);
     }
 }

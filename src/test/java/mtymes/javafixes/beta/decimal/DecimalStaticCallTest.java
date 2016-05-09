@@ -18,6 +18,7 @@ import static java.math.RoundingMode.UNNECESSARY;
 import static java.util.Arrays.asList;
 import static mtymes.javafixes.test.Random.*;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.powermock.api.mockito.PowerMockito.*;
@@ -269,7 +270,7 @@ public class DecimalStaticCallTest {
             BigDecimal actualBigDecimal = decimal.bigDecimalValue();
 
             // Then
-            assertThat(actualBigDecimal, equalTo(expectedBigDecimal));
+            assertThat(actualBigDecimal, comparesEqualTo(expectedBigDecimal));
             verifyStaticCalls(() -> {
                 DecimalPrinter.toPlainString(decimal, 0);
             });
