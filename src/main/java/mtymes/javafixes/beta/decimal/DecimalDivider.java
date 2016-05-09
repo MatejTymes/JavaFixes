@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import static mtymes.javafixes.beta.decimal.Constants.BIG_TEN;
+import static mtymes.javafixes.beta.decimal.DecimalRounder.roundingCorrection;
 import static mtymes.javafixes.beta.decimal.DecimalScaler.descaleBigInteger;
 import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValueFrom;
 
@@ -64,8 +65,15 @@ class DecimalDivider {
                 remainder = divAndMod2[1].multiply(BIG_TEN);
                 newScale++;
             }
-            byte remainingDigit = remainder.divide(divisor).byteValue();
-            BigInteger roundingCorrection = DecimalScaler.roundingCorrection(result, remainingDigit, roundingMode);
+
+            int remainingDigit = remainder.divide(divisor).intValue();
+            BigInteger roundingCorrection = roundingCorrection(
+                    finalSign,
+                    result,
+                    remainingDigit,
+                    remainder.signum() != 0,
+                    roundingMode
+            );
             result = result.add(roundingCorrection);
 
             return descaleBigInteger(

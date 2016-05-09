@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static java.math.RoundingMode.*;
+import static mtymes.javafixes.beta.decimal.Constants.*;
 
 // todo: test it
 class DecimalRounder {
@@ -20,12 +21,13 @@ class DecimalRounder {
         return roundingCorrection(signum, isDigitToRoundOdd, abs(roundingDigit), hasAdditionalRemainder, roundingMode);
     }
 
-    static int roundingCorrection(int signum, BigInteger valueToRound, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) {
+    static BigInteger roundingCorrection(int signum, BigInteger valueToRound, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) {
         Boolean isDigitToRoundOdd = null;
         if (roundingMode == HALF_EVEN) {
             isDigitToRoundOdd = (valueToRound.intValue() & 1) == 1;
         }
-        return roundingCorrection(signum, isDigitToRoundOdd, abs(roundingDigit), hasAdditionalRemainder, roundingMode);
+        int correction = roundingCorrection(signum, isDigitToRoundOdd, abs(roundingDigit), hasAdditionalRemainder, roundingMode);
+        return (correction == 1) ? BIG_ONE : (correction == -1) ? BIG_MINUS_ONE : BIG_ZERO;
     }
 
     private static int roundingCorrection(int signum, Boolean isDigitToRoundOdd, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) {

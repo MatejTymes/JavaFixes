@@ -6,8 +6,7 @@ import mtymes.javafixes.beta.decimal.Decimal.LongDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import static java.lang.String.format;
-import static mtymes.javafixes.beta.decimal.Constants.*;
+import static mtymes.javafixes.beta.decimal.Constants.BIG_TEN;
 import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
 import static mtymes.javafixes.beta.decimal.PowerMath.downscaleByPowerOf10;
 import static mtymes.javafixes.beta.decimal.PowerMath.upscaleByPowerOf10;
@@ -102,82 +101,15 @@ class DecimalScaler {
             remainingDigit -= 10;
         }
 
-        int roundingCorrection = DecimalRounder.roundingCorrection(
+        BigInteger roundingCorrection = DecimalRounder.roundingCorrection(
                 unscaledValue.signum(),
                 rescaledValue,
                 remainingDigit,
                 hasAdditionalRemainder,
                 roundingMode
         );
-
-        rescaledValue = rescaledValue.add(
-                (roundingCorrection == 1)
-                        ? BIG_ONE
-                        : (roundingCorrection == -1)
-                        ? BIG_MINUS_ONE
-                        : BIG_ZERO
-        );
+        rescaledValue = rescaledValue.add(roundingCorrection);
 
         return createDecimal(rescaledValue, scaleToUse);
-    }
-
-    // todo: remove this
-    @Deprecated // todo: remove this - use DecimalRounder.roundingCorrection(...)
-    static BigInteger roundingCorrection(BigInteger valueBeforeRounding, byte remainingDigit, RoundingMode roundingMode) {
-        if (remainingDigit < -9 || remainingDigit > 9) {
-            throw new IllegalArgumentException(format("Invalid remaining digit (%d). Should be only -9 to 9", remainingDigit));
-        }
-
-        BigInteger roundingCorrection = BIG_ZERO;
-
-        if (remainingDigit != 0) {
-            if (roundingMode == RoundingMode.UP) {
-                if (remainingDigit > 0 && valueBeforeRounding.signum() >= 0) {
-                    roundingCorrection = BIG_ONE;
-                } else if (remainingDigit < 0 && valueBeforeRounding.signum() < 0) {
-                    roundingCorrection = BIG_MINUS_ONE;
-                }
-            } else if (roundingMode == RoundingMode.DOWN) {
-                if (remainingDigit < 0 && valueBeforeRounding.signum() >= 0) {
-                    roundingCorrection = BIG_MINUS_ONE;
-                } else if (remainingDigit > 0 && valueBeforeRounding.signum() < 0) {
-                    roundingCorrection = BIG_ONE;
-                }
-            } else if (roundingMode == RoundingMode.CEILING) {
-                if (remainingDigit > 0 && valueBeforeRounding.signum() >= 0) {
-                    roundingCorrection = BIG_ONE;
-                }
-            } else if (roundingMode == RoundingMode.FLOOR) {
-                if (remainingDigit < 0 && valueBeforeRounding.signum() < 0) {
-                    roundingCorrection = BIG_MINUS_ONE;
-                }
-            } else if (roundingMode == RoundingMode.HALF_UP) {
-                if (remainingDigit >= 5 && valueBeforeRounding.signum() >= 0) {
-                    roundingCorrection = BIG_ONE;
-                } else if (remainingDigit <= -5 && valueBeforeRounding.signum() < 0) {
-                    roundingCorrection = BIG_MINUS_ONE;
-                }
-            } else if (roundingMode == RoundingMode.HALF_DOWN) {
-                if (remainingDigit > 5 && valueBeforeRounding.signum() >= 0) {
-                    roundingCorrection = BIG_ONE;
-                } else if (remainingDigit < -5 && valueBeforeRounding.signum() < 0) {
-                    roundingCorrection = BIG_MINUS_ONE;
-                }
-            } else if (roundingMode == RoundingMode.HALF_EVEN) {
-                if (valueBeforeRounding.signum() >= 0) {
-                    if (remainingDigit > 5 || (remainingDigit == 5 && valueBeforeRounding.mod(BIG_TWO).signum() != 0)) {
-                        roundingCorrection = BIG_ONE;
-                    }
-                } else {
-                    if (remainingDigit < -5 || (remainingDigit == -5 && valueBeforeRounding.mod(BIG_TWO).signum() != 0)) {
-                        roundingCorrection = BIG_MINUS_ONE;
-                    }
-                }
-            } else if (roundingMode == RoundingMode.UNNECESSARY) {
-                throw new ArithmeticException("Rounding necessary");
-            }
-        }
-
-        return roundingCorrection;
     }
 }
