@@ -8,8 +8,6 @@ import static java.lang.Math.max;
 import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UNNECESSARY;
 
-// todo: add intValueExact(), longValueExact(), ...
-
 // todo: add DecimalContext: ScaleContext, PrecisionContext
 
 // todo: handle scale overflows and underflow
@@ -126,15 +124,15 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     // todo: add test for this
     abstract public Number unscaledValue();
 
+    // todo: add intValueExact(), longValueExact(), ...
+
     // todo: test this
-    // todo: fail if too big
     @Override
     public final int intValue() {
         return (int) doubleValue();
     }
 
     // todo: test this
-    // todo: fail if too big
     @Override
     public final long longValue() {
         return (long) doubleValue();
@@ -158,7 +156,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return new BigDecimal(toPlainString());
     }
 
-    // todo: add abs
+    // todo: test this
+    public final Decimal abs() {
+        return  (signum() < 0) ? negate() : this;
+    }
+
     public final Decimal negate() {
         return DecimalNegator.negate(this);
     }
