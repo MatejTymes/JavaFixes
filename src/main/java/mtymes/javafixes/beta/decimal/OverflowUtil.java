@@ -6,7 +6,7 @@ public class OverflowUtil {
         return value == Long.MIN_VALUE;
     }
 
-    public static boolean hasAdditionOverflown(long result, long valueA, long valueB) {
+    public static boolean didOverflowOnAddition(long result, long valueA, long valueB) {
         // HD 2-12 Overflow iff both arguments have the opposite sign of the result
         if (((valueA ^ result) & (valueB ^ result)) < 0) {
             return true;
@@ -14,7 +14,7 @@ public class OverflowUtil {
         return false;
     }
 
-    public static boolean hasMultiplicationOverflown(long result, long valueA, long valueB) {
+    public static boolean didOverflowOnMultiplication(long result, long valueA, long valueB) {
         long absA = Math.abs(valueA);
         long absB = Math.abs(valueB);
 

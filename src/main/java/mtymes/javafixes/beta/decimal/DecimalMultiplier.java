@@ -8,7 +8,7 @@ import java.math.RoundingMode;
 import static mtymes.javafixes.beta.decimal.DecimalScaler.descaleBigInteger;
 import static mtymes.javafixes.beta.decimal.DecimalScaler.descaleLong;
 import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValueFrom;
-import static mtymes.javafixes.beta.decimal.OverflowUtil.hasMultiplicationOverflown;
+import static mtymes.javafixes.beta.decimal.OverflowUtil.didOverflowOnMultiplication;
 
 // todo: test it
 class DecimalMultiplier {
@@ -19,7 +19,7 @@ class DecimalMultiplier {
             long unscaledValueB = ((LongDecimal) b).unscaledValue;
 
             long result = unscaledValueA * unscaledValueB;
-            if (hasMultiplicationOverflown(result, unscaledValueA, unscaledValueB)) {
+            if (didOverflowOnMultiplication(result, unscaledValueA, unscaledValueB)) {
                 return descaleBigInteger(
                         BigInteger.valueOf(unscaledValueA).multiply(BigInteger.valueOf(unscaledValueB)),
                         a.scale() + b.scale(),
