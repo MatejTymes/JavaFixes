@@ -19,16 +19,20 @@ class DecimalParser {
         boolean negate = false;
         boolean foundDecimalPoint = false;
 
-        if (stringValue.charAt(0) == '+') {
+        if (stringValue.length() == 0) {
+            throw new NumberFormatException("No value defined");
+        } else if (stringValue.charAt(0) == '+') {
             startIndex++;
         } else if (stringValue.charAt(0) == '-') {
             negate = true;
             startIndex++;
         }
 
+        boolean foundValue = false;
         for (int i = startIndex; i < stringValue.length(); i++) {
             char c = stringValue.charAt(i);
             if (c >= '0' && c <= '9') {
+                foundValue = true;
                 byte digitToAdd = (byte) (c - '0');
                 if (unscaledValueB == null) {
                     if (unscaledValueL <= SAFE_TO_ADD_DIGIT_BOUND) {
@@ -61,6 +65,10 @@ class DecimalParser {
                 // todo: test this
                 throw new NumberFormatException("Decimal contains invalid character: " + c);
             }
+        }
+
+        if (!foundValue) {
+            throw new NumberFormatException("No value defined");
         }
 
         return unscaledValueB == null
