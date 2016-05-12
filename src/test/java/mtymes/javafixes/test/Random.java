@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static java.util.UUID.randomUUID;
 
@@ -26,6 +28,10 @@ public class Random {
         return randomInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
+    public static int randomInt(Function<Integer, Boolean> validityCondition) {
+        return valueWhere(Random::randomInt, validityCondition);
+    }
+
     public static long randomLong(long from, long to) {
         return ThreadLocalRandom.current().nextLong(from, to) + (long) randomInt(0, 1);
     }
@@ -34,11 +40,19 @@ public class Random {
         return randomLong(Long.MIN_VALUE, Long.MAX_VALUE);
     }
 
+    public static long randomLong(Function<Long, Boolean> validityCondition) {
+        return valueWhere(Random::randomLong, validityCondition);
+    }
+
     public static BigInteger randomBigInteger() {
         boolean positive = randomBoolean();
         return (positive ? BIG_PLUS_INTEGER : BIG_MINUS_INTEGER)
                 .multiply(BigInteger.valueOf(randomLong(0, 100)))
                 .add(BigInteger.valueOf(positive ? randomLong(0, Long.MAX_VALUE) : randomLong(Long.MIN_VALUE + 1, 0)));
+    }
+
+    public static BigInteger randomBigInteger(Function<BigInteger, Boolean> validityCondition) {
+        return valueWhere(Random::randomBigInteger, validityCondition);
     }
 
     public static BigInteger randomNegativeBigInteger() {
@@ -122,4 +136,13 @@ public class Random {
     public static <T> T pickRandomValue(List<T> values) {
         return values.get(randomInt(0, values.size() - 1));
     }
+
+    private static <T> T valueWhere(Supplier<T> generator, Function<T, Boolean> validityCondition) {
+        T value;
+        do {
+            value = generator.get();
+        } while (!validityCondition.apply(value));
+        return value;
+    }
+
 }

@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import static mtymes.javafixes.beta.decimal.BigIntegerUtil.canConvertToLong;
 import static mtymes.javafixes.beta.decimal.Constants.BIG_TEN;
 
+// todo: make part of the Decimal
 class DecimalCreator {
 
     static Decimal createDecimal(long unscaledValue, int scale) {

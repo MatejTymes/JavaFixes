@@ -1,43 +1,80 @@
 package mtymes.javafixes.beta.decimal;
 
+import mtymes.javafixes.test.Conditions;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import static mtymes.javafixes.beta.decimal.PowerMath.upscaleByPowerOf10;
 import static mtymes.javafixes.test.Random.*;
-import static org.hamcrest.Matchers.comparesEqualTo;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class DecimalCreatorTest {
 
-    // todo: add test that the creator will strip trailing zeros
-
     @Test
-    public void shouldBeAbleToCreateDecimalFromLong() {
-        for (int i = 0; i < 500_000; i++) {
+    public void shouldCreateDecimalFromLong() {
+        long unscaledValue = randomLong(Conditions.notDivisibleBy10());
+        int scale = randomInt();
 
-            long unscaledValue = randomLong();
-            int scale = randomInt(-1000, 1000);
-
-            Decimal decimal = DecimalCreator.createDecimal(unscaledValue, scale);
-            BigDecimal referenceValue = BigDecimal.valueOf(unscaledValue, scale);
-
-            assertThat(decimal.bigDecimalValue(), comparesEqualTo(referenceValue));
-        }
+        assertThat(DecimalCreator.createDecimal(unscaledValue, scale).unscaledValue(), equalTo(unscaledValue));
+        assertThat(DecimalCreator.createDecimal(unscaledValue, scale).scale(), equalTo(scale));
     }
 
     @Test
-    public void shouldBeAbleToCreateDecimalFromBigInteger() {
-        for (int i = 0; i < 500_000; i++) {
+    public void shouldCreateDecimalFromBigInteger() {
+        BigInteger unscaledValue = randomBigInteger(Conditions.that(Conditions.doesNotFitIntoLong(), Conditions.notDivisibleBy10()));
+        int scale = randomInt();
 
-            BigInteger unscaledValue = randomBigInteger();
-            int scale = randomInt(-1000, 1000);
+        assertThat(DecimalCreator.createDecimal(unscaledValue, scale).unscaledValue(), equalTo(unscaledValue));
+        assertThat(DecimalCreator.createDecimal(unscaledValue, scale).scale(), equalTo(scale));
+    }
 
-            Decimal decimal = DecimalCreator.createDecimal(unscaledValue, scale);
-            BigDecimal referenceValue = new BigDecimal(unscaledValue, scale);
+    @Test
+    public void shouldCreateLongDecimalFromBigInteger() {
+        BigInteger unscaledValue = randomBigInteger(Conditions.that(Conditions.doesFitIntoLong(), Conditions.notDivisibleBy10()));
+        int scale = randomInt();
 
-            assertThat(decimal.bigDecimalValue(), comparesEqualTo(referenceValue));
-        }
+        assertThat(DecimalCreator.createDecimal(unscaledValue, scale).unscaledValue(), equalTo(unscaledValue.longValueExact()));
+        assertThat(DecimalCreator.createDecimal(unscaledValue, scale).scale(), equalTo(scale));
+    }
+
+    @Test
+    public void shouldStripTrailingZerosFromLongOnCreation() {
+
+        long baseValue = randomInt(Conditions.notDivisibleBy10());
+        int scale = randomInt(-1_000, 1_000);
+
+        int trailingZerosCount = randomInt(1, 9);
+        long valueWithTrailingZeros = upscaleByPowerOf10(baseValue, trailingZerosCount);
+
+        assertThat(DecimalCreator.createDecimal(valueWithTrailingZeros, scale).unscaledValue(), equalTo(baseValue));
+        assertThat(DecimalCreator.createDecimal(valueWithTrailingZeros, scale).scale(), equalTo(scale - trailingZerosCount));
+    }
+
+    @Test
+    public void shouldStripTrailingZerosFromBigIntegerOnCreation() {
+
+        BigInteger baseValue = randomBigInteger(Conditions.that(Conditions.doesNotFitIntoLong(), Conditions.notDivisibleBy10()));
+        int scale = randomInt(-1_000, 1_000);
+
+        int trailingZerosCount = randomInt(1, 9);
+        BigInteger valueWithTrailingZeros = upscaleByPowerOf10(baseValue, trailingZerosCount);
+
+        assertThat(DecimalCreator.createDecimal(valueWithTrailingZeros, scale).unscaledValue(), equalTo(baseValue));
+        assertThat(DecimalCreator.createDecimal(valueWithTrailingZeros, scale).scale(), equalTo(scale - trailingZerosCount));
+    }
+
+    @Test
+    public void shouldStringTrailingZerosAndSwitchFromBigIntegerToLongOnCreation() {
+
+        long baseValue = randomLong(Conditions.notDivisibleBy10());
+        int scale = randomInt(-1_000, 1_000);
+
+        int trailingZerosCount = randomInt(19, 40);
+        BigInteger valueWithTrailingZeros = upscaleByPowerOf10(BigInteger.valueOf(baseValue), trailingZerosCount);
+
+        assertThat(DecimalCreator.createDecimal(valueWithTrailingZeros, scale).unscaledValue(), equalTo(baseValue));
+        assertThat(DecimalCreator.createDecimal(valueWithTrailingZeros, scale).scale(), equalTo(scale - trailingZerosCount));
     }
 }
