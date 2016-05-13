@@ -53,12 +53,10 @@ class DecimalParser {
                 }
             } else if (c == '.') {
                 if (foundDecimalPoint) {
-                    // todo: test this
                     throw new NumberFormatException("Illegal value. Too many decimal points");
                 }
                 foundDecimalPoint = true;
             } else if (c != '_') {
-                // todo: test this
                 throw new NumberFormatException("Decimal contains invalid character: " + c);
             }
         }
