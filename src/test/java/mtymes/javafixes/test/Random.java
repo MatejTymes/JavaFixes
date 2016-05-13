@@ -28,8 +28,9 @@ public class Random {
         return randomInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
-    public static int randomInt(Function<Integer, Boolean> validityCondition) {
-        return valueWhere(Random::randomInt, validityCondition);
+    @SafeVarargs
+    public static int randomInt(Function<Integer, Boolean>... validityCondition) {
+        return generateValidValue(Random::randomInt, validityCondition);
     }
 
     public static long randomLong(long from, long to) {
@@ -40,8 +41,9 @@ public class Random {
         return randomLong(Long.MIN_VALUE, Long.MAX_VALUE);
     }
 
-    public static long randomLong(Function<Long, Boolean> validityCondition) {
-        return valueWhere(Random::randomLong, validityCondition);
+    @SafeVarargs
+    public static long randomLong(Function<Long, Boolean>... validityConditions) {
+        return generateValidValue(Random::randomLong, validityConditions);
     }
 
     public static BigInteger randomBigInteger() {
@@ -51,8 +53,9 @@ public class Random {
                 .add(BigInteger.valueOf(positive ? randomLong(0, Long.MAX_VALUE) : randomLong(Long.MIN_VALUE + 1, 0)));
     }
 
-    public static BigInteger randomBigInteger(Function<BigInteger, Boolean> validityCondition) {
-        return valueWhere(Random::randomBigInteger, validityCondition);
+    @SafeVarargs
+    public static BigInteger randomBigInteger(Function<BigInteger, Boolean>... validityConditions) {
+        return generateValidValue(Random::randomBigInteger, validityConditions);
     }
 
     public static BigInteger randomNegativeBigInteger() {
@@ -137,11 +140,22 @@ public class Random {
         return values.get(randomInt(0, values.size() - 1));
     }
 
-    private static <T> T valueWhere(Supplier<T> generator, Function<T, Boolean> validityCondition) {
+    @SafeVarargs
+    private static <T> T generateValidValue(Supplier<T> generator, Function<T, Boolean>... validityConditions) {
         T value;
+
+        boolean valid;
         do {
+            valid = true;
             value = generator.get();
-        } while (!validityCondition.apply(value));
+            for (Function<T, Boolean> validityCondition : validityConditions) {
+                if (!validityCondition.apply(value)) {
+                    valid = false;
+                    break;
+                }
+            }
+        } while (!valid);
+
         return value;
     }
 
