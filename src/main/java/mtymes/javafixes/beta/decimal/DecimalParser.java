@@ -15,21 +15,10 @@ class DecimalParser {
         long unscaledValueL = 0;
         BigInteger unscaledValueB = null;
 
-        int startIndex = 0;
-        boolean negate = false;
-        boolean foundDecimalPoint = false;
-
-        if (stringValue.length() == 0) {
-            throw new NumberFormatException("No value defined");
-        } else if (stringValue.charAt(0) == '+') {
-            startIndex++;
-        } else if (stringValue.charAt(0) == '-') {
-            negate = true;
-            startIndex++;
-        }
-
+        int signum = 0;
         boolean foundValue = false;
-        for (int i = startIndex; i < stringValue.length(); i++) {
+        boolean foundDecimalPoint = false;
+        for (int i = 0; i < stringValue.length(); i++) {
             char c = stringValue.charAt(i);
             if (c >= '0' && c <= '9') {
                 foundValue = true;
@@ -60,7 +49,19 @@ class DecimalParser {
                     throw new NumberFormatException("Illegal value. Too many decimal points");
                 }
                 foundDecimalPoint = true;
-            } else if (c != '_') {
+            } else if (c == '_') {
+                // ignore
+            } else if (c == '+') {
+                if (foundValue || foundDecimalPoint || signum != 0) {
+                    throw new NumberFormatException("Unexpected sign symbol '" + c + "'");
+                }
+                signum = 1;
+            } else if (c == '-') {
+                if (foundValue || foundDecimalPoint || signum != 0) {
+                    throw new NumberFormatException("Unexpected sign symbol '" + c + "'");
+                }
+                signum = -1;
+            } else {
                 throw new NumberFormatException("Decimal contains invalid character: " + c);
             }
         }
@@ -70,15 +71,15 @@ class DecimalParser {
         }
 
         return unscaledValueB == null
-                ? createDecimal(negate ? -unscaledValueL : unscaledValueL, scale)
-                : toDecimal(negate, unscaledValueB, scale);
+                ? createDecimal(signum == -1 ? -unscaledValueL : unscaledValueL, scale)
+                : toDecimal(signum, unscaledValueB, scale);
     }
 
     private static final long SAFE_TO_MULTIPLY_BY_10_BOUND = Long.MAX_VALUE / 10;
     private static final long SAFE_TO_ADD_DIGIT_BOUND = (Long.MAX_VALUE - 9) / 10;
 
     // added to speed up the code
-    private static Decimal toDecimal(boolean negate, BigInteger unscaledValue, int scale) {
-        return createDecimal(negate ? unscaledValue.negate() : unscaledValue, scale);
+    private static Decimal toDecimal(int signum, BigInteger unscaledValue, int scale) {
+        return createDecimal(signum == -1 ? unscaledValue.negate() : unscaledValue, scale);
     }
 }
