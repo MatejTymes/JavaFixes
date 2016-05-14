@@ -86,12 +86,17 @@ public class DecimalParserTest {
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(0));
 
-        // todo: test with underscores at random places
 
         int zerosCount = randomInt(1, 5);
 
         // append n zeros after value
         String newText = text + nZeros(zerosCount);
+        decimal = DecimalParser.parseString(newText);
+        assertThat(decimal, instanceOf(decimalClass));
+        assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
+        assertThat(decimal.scale(), equalTo(expectsZero ? 0 : -zerosCount));
+
+        newText = addUnderscores(newText);
         decimal = DecimalParser.parseString(newText);
         assertThat(decimal, instanceOf(decimalClass));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
@@ -104,8 +109,20 @@ public class DecimalParserTest {
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(0));
 
+        newText = addUnderscores(newText);
+        decimal = DecimalParser.parseString(newText);
+        assertThat(decimal, instanceOf(decimalClass));
+        assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
+        assertThat(decimal.scale(), equalTo(0));
+
         // add decimal point with n zeros after value
         newText = text + "." + nZeros(zerosCount);
+        decimal = DecimalParser.parseString(newText);
+        assertThat(decimal, instanceOf(decimalClass));
+        assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
+        assertThat(decimal.scale(), equalTo(0));
+
+        newText = addUnderscores(newText);
         decimal = DecimalParser.parseString(newText);
         assertThat(decimal, instanceOf(decimalClass));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
@@ -118,8 +135,20 @@ public class DecimalParserTest {
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(expectsZero ? 0 : zerosCount + numberOfDigits(text)));
 
+        newText = addUnderscores(newText);
+        decimal = DecimalParser.parseString(newText);
+        assertThat(decimal, instanceOf(decimalClass));
+        assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
+        assertThat(decimal.scale(), equalTo(expectsZero ? 0 : zerosCount + numberOfDigits(text)));
+
         // prepend with "." and n zeros before value
         newText = sign(text) + "." + nZeros(zerosCount) + valueAfterSign(text);
+        decimal = DecimalParser.parseString(newText);
+        assertThat(decimal, instanceOf(decimalClass));
+        assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
+        assertThat(decimal.scale(), equalTo(expectsZero ? 0 : zerosCount + numberOfDigits(text)));
+
+        newText = addUnderscores(newText);
         decimal = DecimalParser.parseString(newText);
         assertThat(decimal, instanceOf(decimalClass));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
@@ -133,6 +162,23 @@ public class DecimalParserTest {
             assertThat(decimal, instanceOf(decimalClass));
             assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
             assertThat(decimal.scale(), equalTo(scaleTo));
+
+            newText = addUnderscores(newText);
+            decimal = DecimalParser.parseString(newText);
+            assertThat(decimal, instanceOf(decimalClass));
+            assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
+            assertThat(decimal.scale(), equalTo(scaleTo));
+        }
+    }
+
+    private void assertStringFailsParsing(String value) {
+        try {
+            DecimalParser.parseString(value);
+
+            fail("expected NumberFormatException for String '" + value + "'");
+
+        } catch (NumberFormatException e) {
+            // expected
         }
     }
 
@@ -164,15 +210,12 @@ public class DecimalParserTest {
         return hasSignCharacter(text) ? text.substring(1) : text;
     }
 
-    private void assertStringFailsParsing(String value) {
-        try {
-            DecimalParser.parseString(value);
-
-            fail("expected NumberFormatException for String '" + value + "'");
-
-        } catch (NumberFormatException e) {
-            // expected
+    private String addUnderscores(String text) {
+        StringBuilder sb = new StringBuilder(text);
+        int count = randomInt(1, 10);
+        for (int i = 0; i < count; i++) {
+            sb.insert(randomInt(0, sb.length()), "_");
         }
+        return sb.toString();
     }
-
 }

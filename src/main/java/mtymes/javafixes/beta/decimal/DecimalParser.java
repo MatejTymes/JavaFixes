@@ -5,10 +5,8 @@ import java.math.BigInteger;
 import static java.math.BigInteger.TEN;
 import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
 
-// todo: test it
 class DecimalParser {
 
-    // todo: improve for number XYZ000000000000000000000 - currently not great/fast for them
     static Decimal parseString(String stringValue) {
 
         int scale = 0;
