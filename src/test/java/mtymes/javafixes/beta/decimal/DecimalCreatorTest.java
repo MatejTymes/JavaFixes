@@ -29,7 +29,7 @@ public class DecimalCreatorTest {
 
     @Test
     public void shouldCreateDecimalFromBigInteger() {
-        BigInteger unscaledValue = randomBigInteger(doesNotFitIntoLong(), notDivisibleBy10());
+        BigInteger unscaledValue = randomBigInteger(notFitIntoLong(), notDivisibleBy10());
         int scale = randomInt();
 
         Decimal decimal = DecimalCreator.createDecimal(unscaledValue, scale);
@@ -41,7 +41,7 @@ public class DecimalCreatorTest {
 
     @Test
     public void shouldCreateLongDecimalFromBigInteger() {
-        BigInteger unscaledValue = randomBigInteger(doesFitIntoLong(), notDivisibleBy10());
+        BigInteger unscaledValue = randomBigInteger(fitsIntoLong(), notDivisibleBy10());
         int scale = randomInt();
 
         Decimal decimal = DecimalCreator.createDecimal(unscaledValue, scale);
@@ -70,7 +70,7 @@ public class DecimalCreatorTest {
     @Test
     public void shouldStripTrailingZerosFromBigIntegerOnCreation() {
 
-        BigInteger baseValue = randomBigInteger(doesNotFitIntoLong(), notDivisibleBy10());
+        BigInteger baseValue = randomBigInteger(notFitIntoLong(), notDivisibleBy10());
         int scale = randomInt(-1_000, 1_000);
 
         int trailingZerosCount = randomInt(1, 9);
