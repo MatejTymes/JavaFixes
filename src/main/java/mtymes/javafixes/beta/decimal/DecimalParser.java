@@ -53,21 +53,21 @@ class DecimalParser {
                 // ignore
             } else if (c == '+') {
                 if (foundValue || foundDecimalPoint || signum != 0) {
-                    throw new NumberFormatException("Unexpected sign symbol '" + c + "'");
+                    throw new NumberFormatException("Illegal value. Unexpected sign symbol '" + c + "'");
                 }
                 signum = 1;
             } else if (c == '-') {
                 if (foundValue || foundDecimalPoint || signum != 0) {
-                    throw new NumberFormatException("Unexpected sign symbol '" + c + "'");
+                    throw new NumberFormatException("Illegal value. Unexpected sign symbol '" + c + "'");
                 }
                 signum = -1;
             } else {
-                throw new NumberFormatException("Decimal contains invalid character: " + c);
+                throw new NumberFormatException("Illegal value. Invalid character '" + c + "'");
             }
         }
 
         if (!foundValue) {
-            throw new NumberFormatException("No value defined");
+            throw new NumberFormatException("Illegal value. No numeric value defined");
         }
 
         return unscaledValueB == null
