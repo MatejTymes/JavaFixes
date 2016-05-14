@@ -41,6 +41,8 @@ public class DecimalParserTest {
         DecimalParser.parseString("0");
         DecimalParser.parseString("+_1_000");
         DecimalParser.parseString("-_1_000.00_");
+        DecimalParser.parseString("___+1_000");
+        DecimalParser.parseString("___-1_000");
         DecimalParser.parseString("0.0");
         DecimalParser.parseString(".0");
         DecimalParser.parseString("0.");
