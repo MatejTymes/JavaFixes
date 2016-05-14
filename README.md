@@ -31,7 +31,7 @@ In case you would like to just monitor task submitted to existing scheduled exec
 
 ## Math
 
-*this feature is currently in a beta / WIP state - although feature and api complete still requires more testing and performance tuning for arithmetic operations*
+*this feature is currently in a beta / WIP state - although feature complete it still requires more testing, api fine-tuning and tuning of performance for arithmetic operations*
 
 Introducing new class `Decimal`, that should fix the troubles we're currently facing when dealing with `BigDecimal`.
 
@@ -44,7 +44,7 @@ The advantages it provides are:
         assertThat(decimal("-1.2").hashCode(), equalTo(decimal("-1.200").hashCode()));
 ```
 
-* sensible defaults - using rounding `HALF_UP` (the one we used in school) when doing math operation (of course this is just a default and you can always specify your own) and max(28, valueA.scale(), valueB.scale()) decimal places when doing division (I'm still deciding what should be the correct approach - or if to add ability to change the defaults)
+* sensible defaults - using rounding `HALF_UP` (the one we used in school) when doing math operation (this is a default and you can pass in your own value) and max(28, valueA.scale(), valueB.scale()) decimal places when doing division (this will change soon to be defined as precision of 34 - which means number will be rounded after 34 digits - no matter the scale)
 
 * extendible (although not by you :D ) - `Decimal` is an abstract class, and currently supports two subtypes `LongDecimal` (for number with precision up to 19 digits - backed by `long`) and `HugeDecimal` for everything else (backed by `BigInteger`). The library handles the transitions between them seamlessly when doing math operation and always uses the least memory consuming type. There are plans the introduce additional types `InfinityDecimal` and `NANDecimal` (that will be disabled by default)
 
@@ -72,4 +72,9 @@ The advantages it provides are:
         val expectedPayment = monthlyInterest.descaleTo(2, RoundingMode.UP)
 ```
 
-Some possible future advantages might be addition of more mathematical functions.
+It is possible that you'll miss some math functions. To implement your own you can use these Decimal methods:
+* `decimal.signum()` - will return -1 for negative value, 0 for zero and 1 for positive value
+* `decimal.scale()` - will return you the number of decimal digits
+* `decimal.unscaledValue()` - will return the unscaled value which can be of these two types: Long or BigInteger
+
+Also any improvements in forms of patches will be welcomed.
