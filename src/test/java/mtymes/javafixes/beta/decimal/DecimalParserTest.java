@@ -50,6 +50,7 @@ public class DecimalParserTest {
 
     @Test
     public void shouldParseDecimalStringIntoLong() {
+        shouldFindUnscaledValueOnStringPermutations("1", 1L);
         shouldFindUnscaledValueOnStringPermutations("9223372036854775807", Long.MAX_VALUE);
         shouldFindUnscaledValueOnStringPermutations("-9223372036854775808", Long.MIN_VALUE);
 
@@ -71,7 +72,7 @@ public class DecimalParserTest {
 
         // todo: improve with random decimal point, zeros and underscores
 
-        int zerosCount = randomInt(1, 100);
+        int zerosCount = randomInt(1, 5);
 
         decimal = DecimalParser.parseString(text + nZeros(zerosCount));
         assertThat(decimal, instanceOf(LongDecimal.class));
@@ -83,6 +84,26 @@ public class DecimalParserTest {
         assertThat(decimal, instanceOf(LongDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(0));
+
+        decimal = DecimalParser.parseString(addAfterSign(text, "0." + nZeros(zerosCount)));
+        assertThat(decimal, instanceOf(LongDecimal.class));
+        assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
+        expectedScale = expectedUnscaledValue == 0 ? 0 : zerosCount + numberOfDigits(text);
+        assertThat(decimal.scale(), equalTo(expectedScale));
+    }
+
+    private String addAfterSign(String text, String textToAdd) {
+        return hasSignCharacter(text)
+                ? text.substring(0, 1) + textToAdd + text.substring(1)
+                : textToAdd + text;
+    }
+
+    private int numberOfDigits(String text) {
+        return hasSignCharacter(text) ? text.length() - 1 : text.length();
+    }
+
+    private boolean hasSignCharacter(String text) {
+        return text.charAt(0) == '-' || text.charAt(0) == '+';
     }
 
     private String nZeros(int n) {
