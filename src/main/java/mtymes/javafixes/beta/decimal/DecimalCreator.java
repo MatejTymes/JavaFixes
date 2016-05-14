@@ -9,14 +9,14 @@ import static mtymes.javafixes.beta.decimal.Constants.BIG_TEN;
 class DecimalCreator {
 
     static Decimal createDecimal(long unscaledValue, int scale) {
-        while (unscaledValue != 0L
+        while (unscaledValue != 0
                 && ((int) unscaledValue & 1) == 0
                 && unscaledValue % 10 == 0) {
-            unscaledValue /= 10L;
+            unscaledValue /= 10;
             scale--;
         }
 
-        return new Decimal.LongDecimal(unscaledValue, scale);
+        return new Decimal.LongDecimal(unscaledValue, unscaledValue == 0 ? 0 : scale);
     }
 
     static Decimal createDecimal(BigInteger unscaledValue, int scale) {
@@ -30,9 +30,10 @@ class DecimalCreator {
         }
 
         if (canConvertToLong(unscaledValue)) {
-            return new Decimal.LongDecimal(unscaledValue.longValue(), scale);
+            long longUnscaledValue = unscaledValue.longValue();
+            return new Decimal.LongDecimal(longUnscaledValue, longUnscaledValue == 0 ? 0 : scale);
         } else {
-            return new Decimal.HugeDecimal(unscaledValue, scale);
+            return new Decimal.HugeDecimal(unscaledValue, unscaledValue.signum() == 0 ? 0 : scale);
         }
     }
 }

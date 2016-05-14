@@ -62,9 +62,9 @@ public class DecimalParserTest {
         shouldFindUnscaledValueOnStringPermutations("0", 0L);
     }
 
-    private void shouldFindUnscaledValueOnStringPermutations(String stringValue, long expectedUnscaledValue) {
+    private void shouldFindUnscaledValueOnStringPermutations(String text, long expectedUnscaledValue) {
 
-        Decimal decimal = DecimalParser.parseString(stringValue);
+        Decimal decimal = DecimalParser.parseString(text);
         assertThat(decimal, instanceOf(LongDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(0));
@@ -72,13 +72,22 @@ public class DecimalParserTest {
         // todo: improve with random decimal point, zeros and underscores
 
         int zerosCount = randomInt(1, 100);
-        String newStringValue = stringValue + StringUtils.repeat("0", zerosCount);
-        decimal = DecimalParser.parseString(newStringValue);
+
+        decimal = DecimalParser.parseString(text + nZeros(zerosCount));
         assertThat(decimal, instanceOf(LongDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
-        assertThat(decimal.scale(), equalTo(expectedUnscaledValue == 0 ? 0 : -zerosCount));
+        int expectedScale = expectedUnscaledValue == 0 ? 0 : -zerosCount;
+        assertThat(decimal.scale(), equalTo(expectedScale));
+
+        decimal = DecimalParser.parseString(text + "." + nZeros(zerosCount));
+        assertThat(decimal, instanceOf(LongDecimal.class));
+        assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
+        assertThat(decimal.scale(), equalTo(0));
     }
 
+    private String nZeros(int n) {
+        return StringUtils.repeat("0", n);
+    }
 
     private void assertStringFailsParsing(String value) {
         try {
