@@ -54,29 +54,21 @@ class DecimalAccumulator {
     }
 
     private static Decimal sumOf(long unscaledValueA, long unscaledValueB, int scaleA, int scaleB, int scaleToUse, RoundingMode roundingMode) {
-        int sumScale = max(scaleA, scaleB);
+        long scaleDiff = (long) scaleA - scaleB;
 
-        int scaleFactorA = sumScale - scaleA;
-        int scaleFactorB = sumScale - scaleB;
-        if (!canUpscaleLongByPowerOf10(unscaledValueA, scaleFactorA) || !canUpscaleLongByPowerOf10(unscaledValueB, scaleB)) {
-            return sumOf(BigInteger.valueOf(unscaledValueA), BigInteger.valueOf(unscaledValueB), scaleA, scaleB, scaleToUse, roundingMode);
-        }
-
-        long rescaledValueA;
-        if (scaleFactorA == 0) {
-            rescaledValueA = unscaledValueA;
+        if (scaleDiff == 0) {
+            return sumOf(unscaledValueA, unscaledValueB, scaleA, scaleToUse, roundingMode);
+        } else if (scaleDiff < 0) {
+            if (!canUpscaleLongByPowerOf10(unscaledValueA, (int)-scaleDiff)) {
+                return sumOf(BigInteger.valueOf(unscaledValueA), BigInteger.valueOf(unscaledValueB), scaleA, scaleB, scaleToUse, roundingMode);
+            }
+            return sumOf(unscaledValueA * powerOf10Long((int)-scaleDiff), unscaledValueB, scaleB, scaleToUse, roundingMode);
         } else {
-            rescaledValueA = unscaledValueA * powerOf10Long(scaleFactorA);
+            if (!canUpscaleLongByPowerOf10(unscaledValueB, (int)scaleDiff)) {
+                return sumOf(BigInteger.valueOf(unscaledValueA), BigInteger.valueOf(unscaledValueB), scaleA, scaleB, scaleToUse, roundingMode);
+            }
+            return sumOf(unscaledValueA, unscaledValueB * powerOf10Long((int)-scaleDiff), scaleA, scaleToUse, roundingMode);
         }
-
-        long rescaledValueB;
-        if (scaleFactorB == 0) {
-            rescaledValueB = unscaledValueB;
-        } else {
-            rescaledValueB = unscaledValueB * powerOf10Long(scaleFactorB);
-        }
-
-        return sumOf(rescaledValueA, rescaledValueB, sumScale, scaleToUse, roundingMode);
     }
 
 
