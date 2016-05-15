@@ -676,6 +676,28 @@ public class DecimalStaticCallTest {
     }
 
     @Test
+    public void shouldDescaleDecimal2() {
+        for (Decimal decimal : allDecimalTypes()) {
+
+            int newScale = randomInt();
+
+            Decimal expectedResult = mock(Decimal.class);
+            mockStaticCalls(() -> {
+                when(DecimalScaler.descaleTo(decimal, newScale, HALF_UP)).thenReturn(expectedResult);
+            });
+
+            // When
+            Decimal actualResult = decimal.descaleTo(newScale);
+
+            // Then
+            assertThat(actualResult, equalTo(expectedResult));
+            verifyStaticCalls(() -> {
+                DecimalScaler.descaleTo(decimal, newScale, HALF_UP);
+            });
+        }
+    }
+
+    @Test
     public void shouldCompareDecimalToAnotherDecimal() {
         for (Decimal decimal : allDecimalTypes()) {
 

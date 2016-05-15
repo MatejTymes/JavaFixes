@@ -266,9 +266,27 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         );
     }
 
-    // todo: add descaleTo(int scaleToUse) - without the RoundingMode
     public final Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) {
         return DecimalScaler.descaleTo(this, scaleToUse, roundingMode);
+    }
+
+    public final Decimal descaleTo(int scaleToUse) {
+        return descaleTo(scaleToUse, DEFAULT_ROUNDING_MODE);
+    }
+
+    // todo: test
+    public final Decimal deprecisionTo(int precisionToUse, RoundingMode roundingMode) {
+        int currentPrecision = precision();
+        if (currentPrecision <= precisionToUse) {
+            return this;
+        }
+        long newScale = ((long) scale()) + ((long) precisionToUse - (long) currentPrecision);
+        return descaleTo((int) newScale, roundingMode);
+    }
+
+    // todo: test
+    public final Decimal deprecisionTo(int precisionToUse) {
+        return deprecisionTo(precisionToUse, DEFAULT_ROUNDING_MODE);
     }
 
     @Override
