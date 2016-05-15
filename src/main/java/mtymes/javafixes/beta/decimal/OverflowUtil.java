@@ -8,10 +8,7 @@ public class OverflowUtil {
 
     public static boolean didOverflowOnAddition(long result, long valueA, long valueB) {
         // HD 2-12 Overflow iff both arguments have the opposite sign of the result
-        if (((valueA ^ result) & (valueB ^ result)) < 0) {
-            return true;
-        }
-        return false;
+        return ((valueA ^ result) & (valueB ^ result)) < 0;
     }
 
     public static boolean didOverflowOnMultiplication(long result, long valueA, long valueB) {

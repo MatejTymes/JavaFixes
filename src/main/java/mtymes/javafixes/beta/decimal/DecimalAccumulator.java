@@ -18,10 +18,15 @@ class DecimalAccumulator {
 
     static Decimal add(Decimal a, Decimal b, int scaleToUse, RoundingMode roundingMode) {
         if (a instanceof LongDecimal && b instanceof LongDecimal) {
-            long unscaledValueA = ((LongDecimal) a).unscaledValue;
-            long unscaledValueB = ((LongDecimal) b).unscaledValue;
 
-            return sumOf(unscaledValueA, unscaledValueB, a.scale(), b.scale(), scaleToUse, roundingMode);
+            return sumOf(
+                    ((LongDecimal) a).unscaledValue,
+                    ((LongDecimal) b).unscaledValue,
+                    ((LongDecimal) a).scale,
+                    ((LongDecimal) b).scale,
+                    scaleToUse,
+                    roundingMode
+            );
         } else {
             BigInteger unscaledValueA = bigUnscaledValueFrom(a);
             BigInteger unscaledValueB = bigUnscaledValueFrom(b);
