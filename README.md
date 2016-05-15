@@ -7,7 +7,7 @@ Adding some features which would be normally nice to have in Java
 `Runner` custom executor that allows you to wait until submitted tasks (of type `Runnable`, `Callable` or `Task`) have finished or failed
 
 ```Java
-        Runner runner = Runner.runner(10);
+        Runner runner = Runner.runner(numberOfThreads);
 
         runner.runIn(2, SECONDS, runnable);
         runner.run(runnable);
