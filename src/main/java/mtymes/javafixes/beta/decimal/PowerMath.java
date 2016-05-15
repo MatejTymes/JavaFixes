@@ -159,4 +159,31 @@ public class PowerMath {
         }
         return value;
     }
+
+    public static int numberOfDigits(long value) {
+        if (value > 0) {
+            return (int) Math.log10(value) + 1;
+        } else if (value < 0) {
+            if (value == Long.MIN_VALUE) {
+                return 19;
+            }
+            return (int) Math.log10(-value) + 1;
+        } else {
+            return 1;
+        }
+    }
+
+    public static int numberOfDigits(BigInteger value) {
+        if (value.signum() == 0) {
+            return 1;
+        } else if (value.signum() < 1) {
+            value = value.negate();
+        }
+        double factor = Math.log(2) / Math.log(10);
+        int digitCount = (int) (factor * value.bitLength() + 1);
+        if (BigInteger.TEN.pow(digitCount - 1).compareTo(value) > 0) {
+            return digitCount - 1;
+        }
+        return digitCount;
+    }
 }

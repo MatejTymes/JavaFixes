@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 import static java.lang.Math.max;
 import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UNNECESSARY;
+import static mtymes.javafixes.beta.decimal.PowerMath.numberOfDigits;
 
 // todo: add DecimalContext: ScaleContext, PrecisionContext
 
@@ -47,17 +48,9 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
 
         // todo: test this
+        @Override
         public final int precision() {
-            if (unscaledValue > 0) {
-                return (int) Math.log10(unscaledValue) + 1;
-            } else if (unscaledValue < 0) {
-                if (unscaledValue != Long.MIN_VALUE) {
-                    return 19;
-                }
-                return (int) Math.log10(-unscaledValue) + 1;
-            } else {
-                return 1;
-            }
+            return numberOfDigits(unscaledValue);
         }
     }
 
@@ -85,29 +78,37 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         public final BigInteger unscaledValue() {
             return unscaledValue;
         }
+
+        // todo: test this
+        @Override
+        public final int precision() {
+            return numberOfDigits(unscaledValue);
+        }
     }
 
     private Decimal() {
     }
 
-    public static Decimal decimal(int value) {
-        return DecimalCreator.createDecimal((long) value, 0);
-    }
-
-    public static Decimal decimal(long value) {
-        return DecimalCreator.createDecimal(value, 0);
-    }
-
     public static Decimal decimal(long unscaledValue, int scale) {
+        // todo: inline this
         return DecimalCreator.createDecimal(unscaledValue, scale);
-    }
-
-    public static Decimal decimal(BigInteger unscaledValue) {
-        return DecimalCreator.createDecimal(unscaledValue, 0);
     }
 
     public static Decimal decimal(BigInteger unscaledValue, int scale) {
+        // todo: inline this
         return DecimalCreator.createDecimal(unscaledValue, scale);
+    }
+
+    public static Decimal decimal(int value) {
+        return decimal((long) value, 0);
+    }
+
+    public static Decimal decimal(long value) {
+        return decimal(value, 0);
+    }
+
+    public static Decimal decimal(BigInteger unscaledValue) {
+        return decimal(unscaledValue, 0);
     }
 
     public static Decimal decimal(BigDecimal value) {
@@ -118,6 +119,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return DecimalParser.parseString(stringValue);
     }
 
+    // todo: create shorter methods for other combinations as well
     public static Decimal d(String stringValue) {
         return decimal(stringValue);
     }
@@ -137,6 +139,8 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: add test for this
     abstract public Number unscaledValue();
+
+    abstract public int precision();
 
     // todo: add intValueExact(), longValueExact(), ...
 
