@@ -39,12 +39,14 @@ class DecimalAccumulator {
         if (a instanceof LongDecimal && b instanceof LongDecimal) {
             long unscaledValueA = ((LongDecimal) a).unscaledValue;
             long unscaledValueB = ((LongDecimal) b).unscaledValue;
+            int scaleA = ((LongDecimal) a).scale;
+            int scaleB = ((LongDecimal) b).scale;
 
             if (willNegationOverflow(unscaledValueB)) {
-                return sumOf(BigInteger.valueOf(unscaledValueA), BigInteger.valueOf(unscaledValueB).negate(), a.scale(), b.scale(), scaleToUse, roundingMode);
+                return sumOf(BigInteger.valueOf(unscaledValueA), BigInteger.valueOf(unscaledValueB).negate(), scaleA, scaleB, scaleToUse, roundingMode);
             }
 
-            return sumOf(unscaledValueA, -unscaledValueB, a.scale(), b.scale(), scaleToUse, roundingMode);
+            return sumOf(unscaledValueA, -unscaledValueB, scaleA, scaleB, scaleToUse, roundingMode);
         } else {
             BigInteger unscaledValueA = bigUnscaledValueFrom(a);
             BigInteger unscaledValueB = bigUnscaledValueFrom(b);
