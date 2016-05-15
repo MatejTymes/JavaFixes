@@ -12,7 +12,7 @@ import static org.junit.Assert.assertThat;
 public class DecimalReferenceTest {
 
     @Test
-    public void shouldBeComparableToBigDecimalWhenCreatingFromLong() {
+    public void shouldCreateValueFromLong() {
         for (int i = 0; i < 500_000; i++) {
 
             long unscaledValue = randomLong();
@@ -26,7 +26,7 @@ public class DecimalReferenceTest {
     }
 
     @Test
-    public void shouldBeComparableToBigDecimalWhenCreatingFromBigInteger() {
+    public void shouldCreateValueFromBigInteger() {
         for (int i = 0; i < 500_000; i++) {
 
             BigInteger unscaledValue = randomBigInteger();
@@ -36,6 +36,76 @@ public class DecimalReferenceTest {
             BigDecimal referenceValue = new BigDecimal(unscaledValue, scale);
 
             assertThat(decimal.bigDecimalValue(), comparesEqualTo(referenceValue));
+        }
+    }
+
+    @Test
+    public void shouldAddValue() {
+        for (int i = 0; i < 50_000; i++) {
+
+            Decimal decimalA;
+            Decimal decimalB;
+            BigDecimal referenceA;
+            BigDecimal referenceB;
+
+            int scaleA = randomInt(-20, 20);
+            if (randomBoolean()) {
+                long value = randomLong();
+                decimalA = Decimal.decimal(value, scaleA);
+                referenceA = BigDecimal.valueOf(value, scaleA);
+            } else {
+                BigInteger value = randomBigInteger();
+                decimalA = Decimal.decimal(value, scaleA);
+                referenceA = new BigDecimal(value, scaleA);
+            }
+
+            int scaleB = pickRandomValue(scaleA, randomInt(-20, 20));
+            if (randomBoolean()) {
+                long value = randomLong();
+                decimalB = Decimal.decimal(value, scaleB);
+                referenceB = BigDecimal.valueOf(value, scaleB);
+            } else {
+                BigInteger value = randomBigInteger();
+                decimalB = Decimal.decimal(value, scaleB);
+                referenceB = new BigDecimal(value, scaleB);
+            }
+
+            assertThat(decimalA.plus(decimalB).bigDecimalValue(), comparesEqualTo(referenceA.add(referenceB)));
+        }
+    }
+
+    @Test
+    public void shouldSubtractValue() {
+        for (int i = 0; i < 50_000; i++) {
+
+            Decimal decimalA;
+            Decimal decimalB;
+            BigDecimal referenceA;
+            BigDecimal referenceB;
+
+            int scaleA = randomInt(-20, 20);
+            if (randomBoolean()) {
+                long value = randomLong();
+                decimalA = Decimal.decimal(value, scaleA);
+                referenceA = BigDecimal.valueOf(value, scaleA);
+            } else {
+                BigInteger value = randomBigInteger();
+                decimalA = Decimal.decimal(value, scaleA);
+                referenceA = new BigDecimal(value, scaleA);
+            }
+
+            int scaleB = pickRandomValue(scaleA, randomInt(-20, 20));
+            if (randomBoolean()) {
+                long value = randomLong();
+                decimalB = Decimal.decimal(value, scaleB);
+                referenceB = BigDecimal.valueOf(value, scaleB);
+            } else {
+                BigInteger value = randomBigInteger();
+                decimalB = Decimal.decimal(value, scaleB);
+                referenceB = new BigDecimal(value, scaleB);
+            }
+
+            assertThat(decimalA.minus(decimalB).bigDecimalValue(), comparesEqualTo(referenceA.subtract(referenceB)));
         }
     }
 

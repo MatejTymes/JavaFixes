@@ -4,9 +4,11 @@ import mtymes.javafixes.beta.decimal.BigIntegerUtil;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Set;
 import java.util.function.Function;
 
 import static mtymes.javafixes.beta.decimal.BigIntegerUtil.BIG_INTEGER_MIN_LONG;
+import static mtymes.javafixes.test.CollectionUtil.newSet;
 
 public class Conditions {
 
@@ -32,6 +34,11 @@ public class Conditions {
 
     public static Function<BigInteger, Boolean> notFitIntoLong() {
         return value -> value.compareTo(BIG_INTEGER_MIN_LONG) < 0 || value.compareTo(BigIntegerUtil.BIG_INTEGER_MIN_LONG) > 0;
+    }
+
+    public static <T> Function<T, Boolean> excluding(T... values) {
+        Set<T> exclusions = newSet(values);
+        return value -> !exclusions.contains(value);
     }
 
     public static int signum(Number value) {

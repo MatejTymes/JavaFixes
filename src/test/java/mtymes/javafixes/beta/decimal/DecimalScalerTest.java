@@ -13,6 +13,9 @@ import static mtymes.javafixes.test.Random.*;
 
 public class DecimalScalerTest {
 
+    // add custom proper test
+
+    // todo: move this into reference test
     @Test
     public void shouldBeAbleToDescaleDecimal() {
         List<RoundingMode> usableRoundingModes = removeFrom(RoundingMode.values(), RoundingMode.UNNECESSARY);
@@ -38,6 +41,7 @@ public class DecimalScalerTest {
         }
     }
 
+    // todo: move this into reference test
     @Test
     public void shouldBeAbleToDescaleLongUnscaledValue() {
         List<RoundingMode> usableRoundingModes = removeFrom(RoundingMode.values(), RoundingMode.UNNECESSARY);

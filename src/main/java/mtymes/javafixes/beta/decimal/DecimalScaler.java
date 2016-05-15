@@ -11,6 +11,7 @@ import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
 import static mtymes.javafixes.beta.decimal.PowerMath.downscaleByPowerOf10;
 import static mtymes.javafixes.beta.decimal.PowerMath.upscaleByPowerOf10;
 
+// todo: test it
 class DecimalScaler {
 
     static Decimal descaleTo(Decimal d, int scaleToUse, RoundingMode roundingMode) {

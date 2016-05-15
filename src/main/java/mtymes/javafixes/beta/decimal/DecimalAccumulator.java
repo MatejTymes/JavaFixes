@@ -69,7 +69,7 @@ class DecimalAccumulator {
             if (!canUpscaleLongByPowerOf10(unscaledValueB, (int)scaleDiff)) {
                 return sumOf(BigInteger.valueOf(unscaledValueA), BigInteger.valueOf(unscaledValueB), scaleA, scaleB, scaleToUse, roundingMode);
             }
-            return sumOf(unscaledValueA, unscaledValueB * powerOf10Long((int)-scaleDiff), scaleA, scaleToUse, roundingMode);
+            return sumOf(unscaledValueA, unscaledValueB * powerOf10Long((int)scaleDiff), scaleA, scaleToUse, roundingMode);
         }
     }
 

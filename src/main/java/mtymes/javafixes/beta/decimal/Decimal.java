@@ -165,10 +165,12 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return DecimalNegator.negate(this);
     }
 
+    // todo: comment this out for now
     public final Decimal plus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
         return DecimalAccumulator.add(this, value, scaleToUse, roundingMode);
     }
 
+    // todo: comment this out for now
     public final Decimal plus(Decimal value, int scaleToUse) {
         return plus(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
@@ -177,10 +179,12 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return plus(value, max(this.scale(), value.scale()), UNNECESSARY);
     }
 
+    // todo: comment this out for now
     public final Decimal minus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
         return DecimalAccumulator.subtract(this, value, scaleToUse, roundingMode);
     }
 
+    // todo: comment this out for now
     public final Decimal minus(Decimal value, int scaleToUse) {
         return minus(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }

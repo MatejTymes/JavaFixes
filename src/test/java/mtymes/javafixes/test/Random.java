@@ -132,6 +132,11 @@ public class Random {
     }
 
     @SafeVarargs
+    public static RoundingMode randomRoundingMode(Function<RoundingMode, Boolean>... validityConditions) {
+        return generateValidValue(Random::randomRoundingMode, validityConditions);
+    }
+
+    @SafeVarargs
     public static <T> T pickRandomValue(T... values) {
         return values[randomInt(0, values.length - 1)];
     }
