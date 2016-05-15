@@ -45,6 +45,20 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         public final Long unscaledValue() {
             return unscaledValue;
         }
+
+        // todo: test this
+        public final int precision() {
+            if (unscaledValue > 0) {
+                return (int) Math.log10(unscaledValue) + 1;
+            } else if (unscaledValue < 0) {
+                if (unscaledValue != Long.MIN_VALUE) {
+                    return 19;
+                }
+                return (int) Math.log10(-unscaledValue) + 1;
+            } else {
+                return 1;
+            }
+        }
     }
 
     static final class HugeDecimal extends Decimal {
@@ -158,7 +172,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test this
     public final Decimal abs() {
-        return  (signum() < 0) ? negate() : this;
+        return (signum() < 0) ? negate() : this;
     }
 
     public final Decimal negate() {
