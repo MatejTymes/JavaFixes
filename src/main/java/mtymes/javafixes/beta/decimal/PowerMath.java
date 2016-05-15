@@ -70,7 +70,7 @@ public class PowerMath {
             Long.MIN_VALUE / 100000000000000000L,
             Long.MIN_VALUE / 1000000000000000000L
     };
-    private static final long[] maxUpscaleLimitForPowOf10= {
+    private static final long[] maxUpscaleLimitForPowOf10 = {
             Long.MAX_VALUE / 1L,
             Long.MAX_VALUE / 10L,
             Long.MAX_VALUE / 100L,
@@ -161,15 +161,72 @@ public class PowerMath {
     }
 
     public static int numberOfDigits(long value) {
-        if (value > 0) {
-            return (int) Math.log10(value) + 1;
-        } else if (value < 0) {
+//        if (value > 0) {
+//            return (int) (Math.log10(value) + 1d);
+//        } else if (value < 0) {
+//            if (value == Long.MIN_VALUE) {
+//                return 19;
+//            }
+//            return (int) Math.log10(-value) + 1;
+//        } else {
+//            return 1;
+//        }
+
+        if (value < -1) {
             if (value == Long.MIN_VALUE) {
                 return 19;
             }
-            return (int) Math.log10(-value) + 1;
+            value = -value;
+        }
+
+        if (value <= 99_999_999L) {
+            if (value <= 9_999L) {
+                if (value <= 99L) {
+                    if (value <= 9L) {
+                        return 1;
+                    } else {
+                        return 2;
+                    }
+                } else if (value <= 999L) {
+                    return 3;
+                }
+                return 4;
+            } else if (value <= 999_999L) {
+                if (value <= 99_999L) {
+                    return 5;
+                }
+                return 6;
+            } else if (value <= 9_999_999L) {
+                return 7;
+            }
+            return 8;
+        } else if (value <= 9_999_999_999_999_999L) {
+            if (value <= 999_999_999_999L) {
+                if (value <= 9_999_999_999L) {
+                    if (value <= 999_999_999L) {
+                        return 9;
+                    } else {
+                        return 10;
+                    }
+                } else if (value <= 99_999_999_999L) {
+                    return 11;
+                }
+                return 12;
+            } else if (value <= 99_999_999_999_999L) {
+                if (value <= 9_999_999_999_999L) {
+                    return 13;
+                }
+                return 14;
+            } else if (value <= 999_999_999_999_999L) {
+                return 15;
+            }
+            return 16;
+        } else if (value <= 99_999_999_999_999_999L) {
+            return 17;
+        } else if (value <= 999_999_999_999_999_999L) {
+            return 18;
         } else {
-            return 1;
+            return 19;
         }
     }
 
