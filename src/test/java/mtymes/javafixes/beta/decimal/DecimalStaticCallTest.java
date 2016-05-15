@@ -638,7 +638,7 @@ public class DecimalStaticCallTest {
             Decimal expectedResult = mock(Decimal.class);
             mockStaticCalls(() -> {
                 when(decimalToDivideBy.scale()).thenReturn(otherScale);
-                when(DecimalDivider.divide(decimal, decimalToDivideBy, max(18, max(decimal.scale(), otherScale)), HALF_UP)).thenReturn(expectedResult);
+                when(DecimalDivider.divide(decimal, decimalToDivideBy, max(28, max(decimal.scale(), otherScale)), HALF_UP)).thenReturn(expectedResult);
             });
 
             // When
@@ -647,7 +647,7 @@ public class DecimalStaticCallTest {
             // Then
             assertThat(actualResult, equalTo(expectedResult));
             verifyStaticCalls(() -> {
-                DecimalDivider.divide(decimal, decimalToDivideBy, max(18, max(decimal.scale(), otherScale)), HALF_UP);
+                DecimalDivider.divide(decimal, decimalToDivideBy, max(28, max(decimal.scale(), otherScale)), HALF_UP);
             });
         }
     }

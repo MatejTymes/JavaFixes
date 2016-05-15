@@ -193,10 +193,12 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return minus(value, max(this.scale(), value.scale()), UNNECESSARY);
     }
 
+    // todo: implement with Scale & Precision
     public final Decimal times(Decimal value, int scaleToUse, RoundingMode roundingMode) {
         return DecimalMultiplier.multiply(this, value, scaleToUse, roundingMode);
     }
 
+    // todo: implement with Scale & Precision
     public final Decimal times(Decimal value, int scaleToUse) {
         return times(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
@@ -205,10 +207,12 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return times(value, this.scale() + value.scale(), UNNECESSARY);
     }
 
+    // todo: implement with Scale & Precision
     public final Decimal multiply(Decimal value, int scaleToUse, RoundingMode roundingMode) {
         return DecimalMultiplier.multiply(this, value, scaleToUse, roundingMode);
     }
 
+    // todo: implement with Scale & Precision
     public final Decimal multiply(Decimal value, int scaleToUse) {
         return multiply(value, scaleToUse, DEFAULT_ROUNDING_MODE);
     }
