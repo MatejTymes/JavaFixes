@@ -92,7 +92,6 @@ public class PowerMath {
             Long.MAX_VALUE / 1000000000000000000L
     };
 
-    // todo: test this
     public static int maxLongPowerOf10() {
         return powersOf10L.length - 1;
     }
@@ -102,12 +101,10 @@ public class PowerMath {
         return powersOf10B.length - 1;
     }
 
-    // todo: test this
     public static long powerOf10Long(int n) {
         return powersOf10L[n];
     }
 
-    // todo: test this
     public static BigInteger powerOf10Big(int n) {
         if (n < 0) {
             throw new IllegalArgumentException("n (" + n + ") must be greater or equal to 0");

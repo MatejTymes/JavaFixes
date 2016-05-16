@@ -12,6 +12,34 @@ import static org.junit.Assert.assertThat;
 public class PowerMathTest {
 
     @Test
+    public void shouldFindMaxPowerOf10ForLong() {
+        assertThat(PowerMath.maxLongPowerOf10(), equalTo(18));
+    }
+
+    @Test
+    public void shouldFindPowerOf10ForLongs() {
+        assertThat(powerOf10Long(0), equalTo(1L));
+
+        long expectedValue = 1L;
+        for (int i = 1; i <= 18; i++) {
+            expectedValue *= 10L;
+            assertThat(powerOf10Long(i), equalTo(expectedValue));
+        }
+    }
+
+    @Test
+    public void shouldFindPowerOf10ForBigIntegers() {
+        assertThat(powerOf10Big(0), equalTo(BigInteger.ONE));
+
+        BigInteger expectedValue = BigInteger.ONE;
+        for (int i = 1; i <= 500; i++) {
+            expectedValue = expectedValue.multiply(BigInteger.TEN);
+            assertThat(powerOf10Big(i), equalTo(expectedValue));
+        }
+    }
+
+
+    @Test
     public void shouldFindNumberOfLongDigits() {
         assertThat(PowerMath.numberOfDigits(0L), equalTo(1));
         assertThat(PowerMath.numberOfDigits(1L), equalTo(1));

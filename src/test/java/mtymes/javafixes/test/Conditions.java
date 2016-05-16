@@ -12,8 +12,10 @@ import static mtymes.javafixes.test.CollectionUtil.newSet;
 
 public class Conditions {
 
-    public static <T extends Number> Function<T, Boolean> divisibleBy10() {
-        return value -> mod(value, 10) == 0;
+    @SafeVarargs
+    public static <T> Function<T, Boolean> otherThan(T... values) {
+        Set<T> exclusions = newSet(values);
+        return value -> !exclusions.contains(value);
     }
 
     public static <T extends Number> Function<T, Boolean> notDivisibleBy10() {
@@ -34,12 +36,6 @@ public class Conditions {
 
     public static Function<BigInteger, Boolean> notFitIntoLong() {
         return value -> value.compareTo(BIG_INTEGER_MIN_LONG) < 0 || value.compareTo(BigIntegerUtil.BIG_INTEGER_MIN_LONG) > 0;
-    }
-
-    @SafeVarargs
-    public static <T> Function<T, Boolean> otherThan(T... values) {
-        Set<T> exclusions = newSet(values);
-        return value -> !exclusions.contains(value);
     }
 
     public static int signum(Number value) {
