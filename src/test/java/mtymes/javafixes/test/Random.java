@@ -34,6 +34,8 @@ public class Random {
     }
 
     public static long randomLong(long from, long to) {
+        // todo: both of these produce extremely high numbers - why is it so
+//        return new RandomDataGenerator().nextLong(from, to);
         return ThreadLocalRandom.current().nextLong(from, to) + (long) randomInt(0, 1);
     }
 
