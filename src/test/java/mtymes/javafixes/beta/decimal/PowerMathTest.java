@@ -72,7 +72,6 @@ public class PowerMathTest {
         assertThat(PowerMath.canUpscaleLongByPowerOf10(randomLong(negative()), randomInt(20, Integer.MAX_VALUE)), is(false));
     }
 
-
     @Test
     public void shouldFindNumberOfLongDigits() {
         assertThat(PowerMath.numberOfDigits(0L), equalTo(1));

@@ -4,8 +4,11 @@ package mtymes.javafixes.beta.decimal;
 public final class Scale {
 
     public static final Scale SCALE_0 = scale(0);
+    public static final Scale SCALE_1 = scale(1);
     public static final Scale SCALE_2 = scale(2);
     public static final Scale SCALE_3 = scale(3);
+    public static final Scale SCALE_4 = scale(4);
+    public static final Scale SCALE_5 = scale(5);
 
     public final int value;
 

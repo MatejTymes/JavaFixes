@@ -6,6 +6,9 @@ import static java.lang.Math.min;
 
 public class PowerMath {
 
+    // todo: make private
+    public static final double LOG_2_DIV_LOG_10 = Math.log(2) / Math.log(10);
+
     private static final long[] powersOf10L = {
             1L,                  // 10 ^ 0
             10L,                 // 10 ^ 1
@@ -177,15 +180,30 @@ public class PowerMath {
         return value;
     }
 
-    // unfortunately (int) (Math.log10(value) + 1d) doesn't work - any algorithms faster than this are welcomed
     public static int numberOfDigits(long value) {
-        if (value < -1) {
+        // this is slower than the if-else algorithm
+//        if (value <= 0) {
+//            if (value == Long.MIN_VALUE) {
+//                return 19;
+//            } else if (value == 0) {
+//                return 1;
+//            }
+//            value = -value;
+//        }
+//        // this maye could be optimised
+//        long bitCount = Long.numberOfTrailingZeros(Long.highestOneBit(value)) + 1;
+//        int digitCount = (int) (LOG_2_DIV_LOG_10 * bitCount + 1);
+//        if (digitCount < 19 && powerOf10Long(digitCount-1) >  value) {
+//            digitCount--;
+//        }
+//        return digitCount;
+
+        if (value < 0) {
             if (value == Long.MIN_VALUE) {
                 return 19;
             }
             value = -value;
         }
-
         if (value <= 99_999_999L) {
             if (value <= 9_999L) {
                 if (value <= 99L) {
@@ -243,8 +261,7 @@ public class PowerMath {
         } else if (value.signum() < 1) {
             value = value.negate();
         }
-        double factor = Math.log(2) / Math.log(10);
-        int digitCount = (int) (factor * value.bitLength() + 1);
+        int digitCount = (int) (LOG_2_DIV_LOG_10 * value.bitLength() + 1);
         if (BigInteger.TEN.pow(digitCount - 1).compareTo(value) > 0) {
             return digitCount - 1;
         }
