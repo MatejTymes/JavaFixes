@@ -36,7 +36,8 @@ public class Conditions {
         return value -> value.compareTo(BIG_INTEGER_MIN_LONG) < 0 || value.compareTo(BigIntegerUtil.BIG_INTEGER_MIN_LONG) > 0;
     }
 
-    public static <T> Function<T, Boolean> excluding(T... values) {
+    @SafeVarargs
+    public static <T> Function<T, Boolean> otherThan(T... values) {
         Set<T> exclusions = newSet(values);
         return value -> !exclusions.contains(value);
     }

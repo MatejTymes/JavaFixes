@@ -4,7 +4,6 @@ import java.math.BigInteger;
 
 import static mtymes.javafixes.beta.decimal.DecimalCreator.createDecimal;
 
-// todo: test it
 class DecimalNegator {
 
     static Decimal negate(Decimal d) {
