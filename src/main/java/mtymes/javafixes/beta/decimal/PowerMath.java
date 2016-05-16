@@ -4,7 +4,6 @@ import java.math.BigInteger;
 
 import static java.lang.Math.min;
 
-// todo: test it
 public class PowerMath {
 
     private static final long[] powersOf10L = {
@@ -122,7 +121,6 @@ public class PowerMath {
         return response;
     }
 
-    // todo: test this
     public static boolean canUpscaleLongByPowerOf10(long value, int n) {
         if (n >= 19) {
             return (value == 0); // only zero can be upscaled in this case
@@ -179,6 +177,7 @@ public class PowerMath {
         return value;
     }
 
+    // unfortunately (int) (Math.log10(value) + 1d) doesn't work - any algorithms faster than this are welcomed
     public static int numberOfDigits(long value) {
         if (value < -1) {
             if (value == Long.MIN_VALUE) {

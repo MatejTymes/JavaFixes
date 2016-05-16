@@ -33,11 +33,11 @@ In case you would like to just monitor task submitted to existing scheduled exec
 
 *this feature is currently in a beta / WIP state - although feature complete it still requires more testing, api fine-tuning and tuning of performance for arithmetic operations*
 
-Introducing new class `Decimal`, that should fix the troubles we're currently facing when dealing with `BigDecimal`.
+Introducing new class `Decimal`, that should fix the troubles we're currently facing when dealing with `BigDecimal`. The new class was needed as `BigDecimal`'s behavior can't be changed/patched because of backwards compatibility.
 
 The advantages it provides are:
 
-* `equals` reflects the `compareTo` behavior (plus `hashCode` is fixed respectivelly)
+* `equals` reflects the `compareTo` behavior (plus `hashCode` is fixed respectively)
 
 ```Java
         assertThat(decimal("-1.2").equals(decimal("-1.200")), is(true));
