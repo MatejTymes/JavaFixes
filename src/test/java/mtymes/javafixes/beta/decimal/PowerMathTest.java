@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.math.BigInteger;
 
 import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.ZERO;
 import static mtymes.javafixes.test.Conditions.negative;
 import static mtymes.javafixes.test.Conditions.positive;
 import static mtymes.javafixes.test.Random.randomInt;
@@ -74,9 +75,9 @@ public class PowerMathTest {
 
     @Test
     public void shouldFindNumberOfLongDigits() {
-        assertThat(PowerMath.numberOfDigits(0L), equalTo(1));
-        assertThat(PowerMath.numberOfDigits(1L), equalTo(1));
-        assertThat(PowerMath.numberOfDigits(-1L), equalTo(1));
+        assertThat("wrong number of digits for " + 0L, PowerMath.numberOfDigits(0L), equalTo(1));
+        assertThat("wrong number of digits for " + 1L, PowerMath.numberOfDigits(1L), equalTo(1));
+        assertThat("wrong number of digits for " + -1L, PowerMath.numberOfDigits(-1L), equalTo(1));
 
         for (int n = 1; n < PowerMath.maxLongPowerOf10(); n++) {
             long powerOf10 = PowerMath.powerOf10Long(n);
@@ -91,9 +92,9 @@ public class PowerMathTest {
 
     @Test
     public void shouldFindNumberOfBigIntegerDigits() {
-        assertThat(PowerMath.numberOfDigits(BigInteger.ZERO), equalTo(1));
-        assertThat(PowerMath.numberOfDigits(ONE), equalTo(1));
-        assertThat(PowerMath.numberOfDigits(ONE.negate()), equalTo(1));
+        assertThat("wrong number of digits for " + ZERO, PowerMath.numberOfDigits(ZERO), equalTo(1));
+        assertThat("wrong number of digits for " + ONE, PowerMath.numberOfDigits(ONE), equalTo(1));
+        assertThat("wrong number of digits for " + ONE.negate(), PowerMath.numberOfDigits(ONE.negate()), equalTo(1));
 
         BigInteger powerOf10 = PowerMath.powerOf10Big(0);
         // tested for (n) up to 125_000 digits
