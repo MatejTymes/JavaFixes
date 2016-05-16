@@ -190,10 +190,9 @@ public class PowerMath {
 //            }
 //            value = -value;
 //        }
-//        // this maye could be optimised
-//        long bitCount = Long.numberOfTrailingZeros(Long.highestOneBit(value)) + 1;
-//        int digitCount = (int) (LOG_2_DIV_LOG_10 * bitCount + 1);
-//        if (digitCount < 19 && powerOf10Long(digitCount-1) >  value) {
+//        int bitLength = 64 - Long.numberOfLeadingZeros(value);
+//        int digitCount = (int) (LOG_2_DIV_LOG_10 * bitLength + 1);
+//        if (digitCount < 19 && powersOf10L[digitCount - 1] > value) {
 //            digitCount--;
 //        }
 //        return digitCount;
