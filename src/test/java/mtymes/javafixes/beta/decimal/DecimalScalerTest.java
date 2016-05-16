@@ -1,5 +1,7 @@
 package mtymes.javafixes.beta.decimal;
 
+import mtymes.javafixes.beta.decimal.Decimal.HugeDecimal;
+import mtymes.javafixes.beta.decimal.Decimal.LongDecimal;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -22,20 +24,21 @@ public class DecimalScalerTest {
 
         for (int i = 0; i < 500_000; i++) {
 
-            Decimal original = decimal(randomBigDecimal());
+            BigDecimal bigDecimal = randomBigDecimal();
+            Decimal decimal = decimal(bigDecimal);
             int scaleToUse = randomInt(-10, 10);
             RoundingMode roundingMode = pickRandomValue(usableRoundingModes);
 
-            Decimal decimal = DecimalScaler.descaleTo(original, scaleToUse, roundingMode);
-            BigDecimal referenceValue = original.bigDecimalValue().setScale(scaleToUse, roundingMode);
+            Decimal decimalResult = DecimalScaler.descaleTo(decimal, scaleToUse, roundingMode);
+            BigDecimal bigDecimalResult = bigDecimal.setScale(scaleToUse, roundingMode);
 
-            int comparisonResult = decimal.bigDecimalValue().compareTo(referenceValue);
+            int comparisonResult = decimalResult.bigDecimalValue().compareTo(bigDecimalResult);
             if (comparisonResult != 0) {
                 throw new AssertionError("" +
-                        "got different result for value = " + original + ", scaleToUse = " + scaleToUse + ", roundingMode = " + roundingMode +
-                        "\n original   = " + original +
-                        "\n decimal    = " + decimal.toPlainString() +
-                        "\n bigDecimal = " + referenceValue.toPlainString()
+                        "got different result for value = " + decimal + ", scaleToUse = " + scaleToUse + ", roundingMode = " + roundingMode +
+                        "\n original         = " + decimal +
+                        "\n decimalResult    = " + decimalResult.toPlainString() +
+                        "\n bigDecimalResult = " + bigDecimalResult.toPlainString()
                 );
             }
         }
@@ -60,7 +63,7 @@ public class DecimalScalerTest {
             if (comparisonResult != 0) {
                 throw new AssertionError("" +
                         "got different result for unscaledValue = " + unscaledValue + ", scale = " + scale + ", scaleToUse = " + scaleToUse + ", roundingMode = " + roundingMode +
-                        "\n original   = " + new Decimal.LongDecimal(unscaledValue, scale) +
+                        "\n original   = " + new LongDecimal(unscaledValue, scale) +
                         "\n decimal    = " + decimal.toPlainString() +
                         "\n bigDecimal = " + referenceValue.toPlainString()
                 );
@@ -68,6 +71,7 @@ public class DecimalScalerTest {
         }
     }
 
+    // todo: move this into reference test
     @Test
     public void shouldBeAbleToDescaleBigIntegerUnscaledValue() {
         List<RoundingMode> usableRoundingModes = removeFrom(RoundingMode.values(), RoundingMode.UNNECESSARY);
@@ -86,7 +90,7 @@ public class DecimalScalerTest {
             if (comparisonResult != 0) {
                 throw new AssertionError("" +
                         "got different result for unscaledValue = " + unscaledValue + ", scale = " + scale + ", scaleToUse = " + scaleToUse + ", roundingMode = " + roundingMode +
-                        "\n original   = " + new Decimal.HugeDecimal(unscaledValue, scale) +
+                        "\n original   = " + new HugeDecimal(unscaledValue, scale) +
                         "\n decimal    = " + decimal.toPlainString() +
                         "\n bigDecimal = " + referenceValue.toPlainString()
                 );

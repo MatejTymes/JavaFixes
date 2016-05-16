@@ -81,6 +81,7 @@ class DecimalScaler {
         boolean hasAdditionalRemainder = false;
         BigInteger valueWithRoundingDigit = unscaledValue;
         int n = scaleDiff - 1;
+        // todo: simplify this
         while (n > 0 && valueWithRoundingDigit.signum() != 0) {
             int descaleBy = Math.min(PowerMath.maxBigPowerOf10(), n);
             BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(PowerMath.powerOf10Big(descaleBy));

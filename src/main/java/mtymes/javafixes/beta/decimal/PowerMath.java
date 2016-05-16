@@ -92,22 +92,40 @@ public class PowerMath {
             Long.MAX_VALUE / 1000000000000000000L
     };
 
+    // todo: test this
     public static int maxLongPowerOf10() {
         return powersOf10L.length - 1;
     }
 
+    @Deprecated // todo: remove
     public static int maxBigPowerOf10() {
         return powersOf10B.length - 1;
     }
 
+    // todo: test this
     public static long powerOf10Long(int n) {
         return powersOf10L[n];
     }
 
+    // todo: test this
     public static BigInteger powerOf10Big(int n) {
-        return powersOf10B[n];
+        if (n < 0) {
+            throw new IllegalArgumentException("n (" + n + ") must be greater or equal to 0");
+        }
+
+        int scale = Math.min(powersOf10B.length - 1, n);
+        BigInteger response = powersOf10B[scale];
+        n -= scale;
+
+        while (n > 0) {
+            scale = Math.min(powersOf10B.length - 1, n);
+            response = response.multiply(powerOf10Big(scale));
+            n -= scale;
+        }
+        return response;
     }
 
+    // todo: test this
     public static boolean canUpscaleLongByPowerOf10(long value, int n) {
         if (n >= 19) {
             return (value == 0); // only zero can be upscaled in this case
@@ -115,6 +133,7 @@ public class PowerMath {
         return minUpscaleLimitForPowOf10[n] <= value && value <= maxUpscaleLimitForPowOf10[n];
     }
 
+    // todo: test this
     public static long upscaleByPowerOf10(long value, int n) {
         long newValue = value;
         if (value != 0) {
@@ -131,6 +150,7 @@ public class PowerMath {
         return newValue;
     }
 
+    // todo: test this
     public static long downscaleByPowerOf10(long value, int n) {
         while (n > 0 && value != 0) {
             int scale = min(maxLongPowerOf10(), n);
@@ -140,6 +160,7 @@ public class PowerMath {
         return value;
     }
 
+    // todo: test this
     public static BigInteger upscaleByPowerOf10(BigInteger value, int n) {
         if (value.signum() != 0) {
             while (n > 0) {
@@ -151,6 +172,7 @@ public class PowerMath {
         return value;
     }
 
+    // todo: test this
     public static BigInteger downscaleByPowerOf10(BigInteger value, int n) {
         while (n > 0 && value.signum() != 0) {
             int scale = min(maxBigPowerOf10(), n);
@@ -161,17 +183,6 @@ public class PowerMath {
     }
 
     public static int numberOfDigits(long value) {
-//        if (value > 0) {
-//            return (int) (Math.log10(value) + 1d);
-//        } else if (value < 0) {
-//            if (value == Long.MIN_VALUE) {
-//                return 19;
-//            }
-//            return (int) Math.log10(-value) + 1;
-//        } else {
-//            return 1;
-//        }
-
         if (value < -1) {
             if (value == Long.MIN_VALUE) {
                 return 19;
