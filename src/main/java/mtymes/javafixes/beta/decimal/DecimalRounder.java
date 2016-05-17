@@ -11,8 +11,6 @@ import static mtymes.javafixes.beta.decimal.Constants.*;
 // todo: test it
 class DecimalRounder {
 
-    // todo: division currently doesn't provide flag : hasAdditionalRemainder - which is quite importantly wrong
-
     static int roundingCorrection(int signum, long valueToRound, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) {
         Boolean isDigitToRoundOdd = null;
         if (roundingMode == HALF_EVEN) {
