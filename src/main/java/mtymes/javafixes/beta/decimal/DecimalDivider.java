@@ -28,6 +28,7 @@ class DecimalDivider {
         BigInteger[] divAndMod = remainder.divideAndRemainder(divisor);
         BigInteger result = divAndMod[0];
         remainder = divAndMod[1].multiply(BIG_TEN);
+        // todo: check scale overflow
         int newScale = a.scale() - b.scale();
 
         if (newScale > scaleToUse) {

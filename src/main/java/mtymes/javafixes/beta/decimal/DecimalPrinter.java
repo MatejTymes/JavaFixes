@@ -28,16 +28,19 @@ class DecimalPrinter {
         int currentScale = d.scale();
         int scaleToUse = max(currentScale, max(minScaleToUse, 0));
         if (currentScale < scaleToUse) {
+            // todo: check scale overflow
             sb.append(arrayOfZeroChars(scaleToUse - currentScale));
         }
 
         if (scaleToUse > 0) {
             boolean isNegative = d.signum() < 0;
             int prefixZerosOffset = isNegative ? 1 : 0;
+            // todo: check scale overflow
             int firstDigitScale = scaleToUse - (sb.length() - prefixZerosOffset) + 1;
             if (firstDigitScale > 0) {
                 sb.insert(prefixZerosOffset, arrayOfZeroChars(firstDigitScale));
             }
+            // todo: check scale overflow
             int index = sb.length() - scaleToUse;
             sb.insert(index, '.');
         }
@@ -61,6 +64,7 @@ class DecimalPrinter {
         }
 
         int signOffset = (d.signum() < 0) ? 1 : 0;
+        // todo: check scale overflow
         int exponent = (sb.length() - signOffset) - d.scale() - 1;
 
         if (sb.length() > 1 + signOffset) {

@@ -11,6 +11,12 @@ public class OverflowUtil {
         return ((valueA ^ result) & (valueB ^ result)) < 0;
     }
 
+    // todo: test this
+    public static boolean didOverflowOnAddition(int result, int valueA, int valueB) {
+        // HD 2-12 Overflow iff both arguments have the opposite sign of the result
+        return ((valueA ^ result) & (valueB ^ result)) < 0;
+    }
+
     public static boolean didOverflowOnMultiplication(long result, long valueA, long valueB) {
         long absA = Math.abs(valueA);
         long absB = Math.abs(valueB);

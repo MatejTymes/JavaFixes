@@ -22,17 +22,20 @@ class DecimalMultiplier {
             if (didOverflowOnMultiplication(result, unscaledValueA, unscaledValueB)) {
                 return descaleBigInteger(
                         BigInteger.valueOf(unscaledValueA).multiply(BigInteger.valueOf(unscaledValueB)),
+                        // todo: check scale overflow
                         a.scale() + b.scale(),
                         scaleToUse,
                         roundingMode
                 );
             }
 
+            // todo: check scale overflow
             return descaleLong(result, a.scale() + b.scale(), scaleToUse, roundingMode);
         } else {
             BigInteger unscaledValueA = bigUnscaledValueFrom(a);
             BigInteger unscaledValueB = bigUnscaledValueFrom(b);
 
+            // todo: check scale overflow
             return descaleBigInteger(unscaledValueA.multiply(unscaledValueB), a.scale() + b.scale(), scaleToUse, roundingMode);
         }
     }

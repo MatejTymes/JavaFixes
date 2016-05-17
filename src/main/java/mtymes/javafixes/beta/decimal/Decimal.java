@@ -7,9 +7,8 @@ import java.math.RoundingMode;
 import static java.lang.Math.max;
 import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UNNECESSARY;
+import static mtymes.javafixes.beta.decimal.OverflowUtil.didOverflowOnAddition;
 import static mtymes.javafixes.beta.decimal.PowerMath.numberOfDigits;
-
-// todo: add DecimalContext: ScaleContext, PrecisionContext
 
 // todo: handle scale overflows and underflow
 public abstract class Decimal extends Number implements Comparable<Decimal> {
@@ -222,7 +221,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public final Decimal times(Decimal value) {
-        return times(value, this.scale() + value.scale(), UNNECESSARY);
+        int newScale = this.scale() + value.scale();
+        if (didOverflowOnAddition(newScale, this.scale(), value.scale())) {
+            throw new ArithmeticException("Scale overflow - please provide custom scale value");
+        }
+        return times(value, newScale, UNNECESSARY);
     }
 
     // todo: implement with Scale & Precision
@@ -236,7 +239,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public final Decimal multiply(Decimal value) {
-        return multiply(value, this.scale() + value.scale(), UNNECESSARY);
+        int newScale = this.scale() + value.scale();
+        if (didOverflowOnAddition(newScale, this.scale(), value.scale())) {
+            throw new ArithmeticException("Scale overflow - please provide custom scale value");
+        }
+        return multiply(value, newScale, UNNECESSARY);
     }
 
     public final Decimal div(Decimal value, int scaleToUse, RoundingMode roundingMode) {
@@ -280,6 +287,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         if (currentPrecision <= precisionToUse) {
             return this;
         }
+        // todo: check scale overflow
         long newScale = ((long) scale()) + ((long) precisionToUse - (long) currentPrecision);
         return descaleTo((int) newScale, roundingMode);
     }

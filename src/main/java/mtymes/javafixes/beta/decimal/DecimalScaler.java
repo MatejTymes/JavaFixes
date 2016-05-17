@@ -52,6 +52,7 @@ class DecimalScaler {
 
 
     private static Decimal downscale(long unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
+        // todo: check scale overflow
         int scaleDiff = scale - scaleToUse;
 
         long valueWithRoundingDigit = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
@@ -76,6 +77,7 @@ class DecimalScaler {
     }
 
     private static Decimal downscale(BigInteger unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
+        // todo: check scale overflow
         int scaleDiff = scale - scaleToUse;
 
         boolean hasAdditionalRemainder = false;
