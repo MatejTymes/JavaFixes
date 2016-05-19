@@ -10,31 +10,34 @@ import java.util.function.Function;
 import static mtymes.javafixes.beta.decimal.BigIntegerUtil.BIG_INTEGER_MIN_LONG;
 import static mtymes.javafixes.test.CollectionUtil.newSet;
 
-public class Conditions {
+public interface Condition<T> extends Function<T, Boolean> {
+
+    @Override
+    Boolean apply(T t);
 
     @SafeVarargs
-    public static <T> Function<T, Boolean> otherThan(T... values) {
+    public static <T> Condition<T> otherThan(T... values) {
         Set<T> exclusions = newSet(values);
         return value -> !exclusions.contains(value);
     }
 
-    public static <T extends Number> Function<T, Boolean> notDivisibleBy10() {
+    public static <T extends Number> Condition<T> notDivisibleBy10() {
         return value -> mod(value, 10) != 0;
     }
 
-    public static <T extends Number> Function<T, Boolean> positive() {
+    public static <T extends Number> Condition<T> positive() {
         return value -> signum(value) == 1;
     }
 
-    public static <T extends Number> Function<T, Boolean> negative() {
+    public static <T extends Number> Condition<T> negative() {
         return value -> signum(value) == -1;
     }
 
-    public static Function<BigInteger, Boolean> fitsIntoLong() {
+    public static Condition<BigInteger> fitsIntoLong() {
         return value -> value.compareTo(BIG_INTEGER_MIN_LONG) >= 0 && value.compareTo(BigIntegerUtil.BIG_INTEGER_MAX_LONG) <= 0;
     }
 
-    public static Function<BigInteger, Boolean> notFitIntoLong() {
+    public static Condition<BigInteger> notFitIntoLong() {
         return value -> value.compareTo(BIG_INTEGER_MIN_LONG) < 0 || value.compareTo(BigIntegerUtil.BIG_INTEGER_MIN_LONG) > 0;
     }
 

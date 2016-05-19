@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.math.BigInteger;
 
 import static mtymes.javafixes.beta.decimal.Decimal.decimal;
-import static mtymes.javafixes.test.Conditions.*;
+import static mtymes.javafixes.test.Condition.*;
 import static mtymes.javafixes.test.Random.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;

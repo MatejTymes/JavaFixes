@@ -6,8 +6,8 @@ import java.math.BigInteger;
 
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
-import static mtymes.javafixes.test.Conditions.negative;
-import static mtymes.javafixes.test.Conditions.positive;
+import static mtymes.javafixes.test.Condition.negative;
+import static mtymes.javafixes.test.Condition.positive;
 import static mtymes.javafixes.test.Random.randomInt;
 import static mtymes.javafixes.test.Random.randomLong;
 import static org.hamcrest.CoreMatchers.equalTo;
