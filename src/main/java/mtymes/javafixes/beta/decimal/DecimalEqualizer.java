@@ -12,9 +12,9 @@ import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValueFrom;
 import static mtymes.javafixes.beta.decimal.PowerMath.downscaleByPowerOf10;
 import static mtymes.javafixes.beta.decimal.PowerMath.upscaleByPowerOf10;
 
-// todo: test it
 class DecimalEqualizer {
 
+    // todo: test this
     static int compare(Decimal a, Decimal b) {
 
         int signComparison = Integer.compare(a.signum(), b.signum());
@@ -33,7 +33,6 @@ class DecimalEqualizer {
                 return Long.compare(unscaledA, unscaledB);
             }
 
-            // todo: maybe upscale if possible - shoul result into faster comparison
             int scaleToGet = min(scaleA, scaleB);
 
             // upper part comparison
@@ -104,7 +103,7 @@ class DecimalEqualizer {
 
     private static long upScaleValue(long value, int fromScale, int toScale) {
         return (toScale > fromScale)
-                ? upscaleByPowerOf10(value, toScale - fromScale)
+                ? upscaleByPowerOf10(value, (long) toScale - (long) fromScale)
                 : value;
     }
 }
