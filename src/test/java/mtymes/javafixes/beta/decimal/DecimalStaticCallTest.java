@@ -57,7 +57,7 @@ public class DecimalStaticCallTest {
         });
     }
 
-    // todo: nicer but i'm not able to make it work
+    // nicer but i'm not able to make it work
 //    @Test
 //    public void shouldCreateDecimalFromInt_EasyMock() {
 //        int value = randomInt();

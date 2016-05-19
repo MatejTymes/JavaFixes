@@ -4,7 +4,11 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.util.List;
 
+import static mtymes.javafixes.beta.decimal.Decimal.decimal;
+import static mtymes.javafixes.test.CollectionUtil.removeFrom;
 import static mtymes.javafixes.test.Random.*;
 import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.junit.Assert.assertThat;
@@ -36,6 +40,84 @@ public class DecimalReferenceTest {
             BigDecimal referenceValue = new BigDecimal(unscaledValue, scale);
 
             assertThat(decimal.bigDecimalValue(), comparesEqualTo(referenceValue));
+        }
+    }
+
+    @Test
+    public void shouldBeAbleToDescaleDecimal() {
+        List<RoundingMode> usableRoundingModes = removeFrom(RoundingMode.values(), RoundingMode.UNNECESSARY);
+
+        for (int i = 0; i < 500_000; i++) {
+
+            BigDecimal bigDecimal = randomBigDecimal();
+            Decimal decimal = decimal(bigDecimal);
+            int scaleToUse = randomInt(-10, 10);
+            RoundingMode roundingMode = pickRandomValue(usableRoundingModes);
+
+            Decimal decimalResult = DecimalScaler.descaleTo(decimal, scaleToUse, roundingMode);
+            BigDecimal bigDecimalResult = bigDecimal.setScale(scaleToUse, roundingMode);
+
+            int comparisonResult = decimalResult.bigDecimalValue().compareTo(bigDecimalResult);
+            if (comparisonResult != 0) {
+                throw new AssertionError("" +
+                        "got different result for value = " + decimal + ", scaleToUse = " + scaleToUse + ", roundingMode = " + roundingMode +
+                        "\n original         = " + decimal +
+                        "\n decimalResult    = " + decimalResult.toPlainString() +
+                        "\n bigDecimalResult = " + bigDecimalResult.toPlainString()
+                );
+            }
+        }
+    }
+
+    @Test
+    public void shouldBeAbleToDescaleLongUnscaledValue() {
+        List<RoundingMode> usableRoundingModes = removeFrom(RoundingMode.values(), RoundingMode.UNNECESSARY);
+
+        for (int i = 0; i < 500_000; i++) {
+
+            long unscaledValue = randomLong();
+            int scale = randomInt(-10, 10);
+            int scaleToUse = randomInt(-10, 10);
+            RoundingMode roundingMode = pickRandomValue(usableRoundingModes);
+
+            Decimal decimal = DecimalScaler.descaleLong(unscaledValue, scale, scaleToUse, roundingMode);
+            BigDecimal referenceValue = BigDecimal.valueOf(unscaledValue, scale).setScale(scaleToUse, roundingMode);
+
+            int comparisonResult = decimal.bigDecimalValue().compareTo(referenceValue);
+            if (comparisonResult != 0) {
+                throw new AssertionError("" +
+                        "got different result for unscaledValue = " + unscaledValue + ", scale = " + scale + ", scaleToUse = " + scaleToUse + ", roundingMode = " + roundingMode +
+                        "\n original   = " + new Decimal.LongDecimal(unscaledValue, scale) +
+                        "\n decimal    = " + decimal.toPlainString() +
+                        "\n bigDecimal = " + referenceValue.toPlainString()
+                );
+            }
+        }
+    }
+
+    @Test
+    public void shouldBeAbleToDescaleBigIntegerUnscaledValue() {
+        List<RoundingMode> usableRoundingModes = removeFrom(RoundingMode.values(), RoundingMode.UNNECESSARY);
+
+        for (int i = 0; i < 500_000; i++) {
+
+            BigInteger unscaledValue = randomBigInteger();
+            int scale = randomInt(-10, 10);
+            int scaleToUse = randomInt(-10, 10);
+            RoundingMode roundingMode = pickRandomValue(usableRoundingModes);
+
+            Decimal decimal = DecimalScaler.descaleBigInteger(unscaledValue, scale, scaleToUse, roundingMode);
+            BigDecimal referenceValue = new BigDecimal(unscaledValue, scale).setScale(scaleToUse, roundingMode);
+
+            int comparisonResult = decimal.bigDecimalValue().compareTo(referenceValue);
+            if (comparisonResult != 0) {
+                throw new AssertionError("" +
+                        "got different result for unscaledValue = " + unscaledValue + ", scale = " + scale + ", scaleToUse = " + scaleToUse + ", roundingMode = " + roundingMode +
+                        "\n original   = " + new Decimal.HugeDecimal(unscaledValue, scale) +
+                        "\n decimal    = " + decimal.toPlainString() +
+                        "\n bigDecimal = " + referenceValue.toPlainString()
+                );
+            }
         }
     }
 
