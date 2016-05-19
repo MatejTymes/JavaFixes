@@ -5,13 +5,13 @@ import mtymes.javafixes.beta.decimal.Decimal.LongDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import static java.lang.Math.max;
 import static mtymes.javafixes.beta.decimal.DecimalScaler.descaleBigInteger;
 import static mtymes.javafixes.beta.decimal.DecimalScaler.descaleLong;
 import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValueFrom;
 import static mtymes.javafixes.beta.decimal.OverflowUtil.didOverflowOnLongAddition;
 import static mtymes.javafixes.beta.decimal.OverflowUtil.willNegationOverflow;
-import static mtymes.javafixes.beta.decimal.PowerMath.*;
+import static mtymes.javafixes.beta.decimal.PowerMath.canUpscaleLongByPowerOf10;
+import static mtymes.javafixes.beta.decimal.PowerMath.upscaleByPowerOf10;
 
 // todo: test it
 class DecimalAccumulator {
@@ -61,15 +61,17 @@ class DecimalAccumulator {
         if (scaleDiff == 0) {
             return sumOf(unscaledValueA, unscaledValueB, scaleA, scaleToUse, roundingMode);
         } else if (scaleDiff < 0) {
-            if (!canUpscaleLongByPowerOf10(unscaledValueA, (int)-scaleDiff)) {
+            if (canUpscaleLongByPowerOf10(unscaledValueA, -scaleDiff)) {
+                return sumOf(upscaleByPowerOf10(unscaledValueA, -scaleDiff), unscaledValueB, scaleB, scaleToUse, roundingMode);
+            } else {
                 return sumOf(BigInteger.valueOf(unscaledValueA), BigInteger.valueOf(unscaledValueB), scaleA, scaleB, scaleToUse, roundingMode);
             }
-            return sumOf(unscaledValueA * powerOf10Long((int)-scaleDiff), unscaledValueB, scaleB, scaleToUse, roundingMode);
         } else {
-            if (!canUpscaleLongByPowerOf10(unscaledValueB, (int)scaleDiff)) {
+            if (canUpscaleLongByPowerOf10(unscaledValueB, scaleDiff)) {
+                return sumOf(unscaledValueA, upscaleByPowerOf10(unscaledValueB, scaleDiff), scaleA, scaleToUse, roundingMode);
+            } else {
                 return sumOf(BigInteger.valueOf(unscaledValueA), BigInteger.valueOf(unscaledValueB), scaleA, scaleB, scaleToUse, roundingMode);
             }
-            return sumOf(unscaledValueA, unscaledValueB * powerOf10Long((int)scaleDiff), scaleA, scaleToUse, roundingMode);
         }
     }
 
@@ -85,15 +87,15 @@ class DecimalAccumulator {
     }
 
     private static Decimal sumOf(BigInteger unscaledValueA, BigInteger unscaledValueB, int scaleA, int scaleB, int scaleToUse, RoundingMode roundingMode) {
-        int sumScale = max(scaleA, scaleB);
-        if (scaleA < sumScale) {
-            unscaledValueA = upscaleByPowerOf10(unscaledValueA, sumScale - scaleA);
-        }
-        if (scaleB < sumScale) {
-            unscaledValueB = upscaleByPowerOf10(unscaledValueB, sumScale - scaleB);
-        }
+        long scaleDiff = (long) scaleA - scaleB;
 
-        return sumOf(unscaledValueA, unscaledValueB, sumScale, scaleToUse, roundingMode);
+        if (scaleDiff == 0) {
+            return sumOf(unscaledValueA, unscaledValueB, scaleA, scaleToUse, roundingMode);
+        } else if (scaleDiff < 0) {
+            return sumOf(upscaleByPowerOf10(unscaledValueA, -scaleDiff), unscaledValueB, scaleB, scaleToUse, roundingMode);
+        } else {
+            return sumOf(unscaledValueA, upscaleByPowerOf10(unscaledValueB, scaleDiff), scaleA, scaleToUse, roundingMode);
+        }
     }
 
     private static Decimal sumOf(BigInteger valueA, BigInteger valueB, int sumScale, int scaleToUse, RoundingMode roundingMode) {

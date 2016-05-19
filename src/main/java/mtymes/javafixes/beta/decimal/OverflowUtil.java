@@ -6,6 +6,11 @@ public class OverflowUtil {
         return value == Long.MIN_VALUE;
     }
 
+    // todo: unit test this
+    public static boolean willOverflowOnDivision(long valueA, long valueB) {
+        return valueA == Long.MIN_VALUE && valueB == -1L;
+    }
+
     public static boolean didOverflowOnLongAddition(long result, long valueA, long valueB) {
         // HD 2-12 Overflow iff both arguments have the opposite sign of the result
         return ((valueA ^ result) & (valueB ^ result)) < 0;
