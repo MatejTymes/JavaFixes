@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 import static java.lang.Math.max;
 import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UNNECESSARY;
-import static mtymes.javafixes.beta.decimal.OverflowUtil.didOverflowOnAddition;
+import static mtymes.javafixes.beta.decimal.OverflowUtil.didOverflowOnIntAddition;
 import static mtymes.javafixes.beta.decimal.PowerMath.numberOfDigits;
 
 // todo: handle scale overflows and underflow
@@ -222,7 +222,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     public final Decimal times(Decimal value) {
         int newScale = this.scale() + value.scale();
-        if (didOverflowOnAddition(newScale, this.scale(), value.scale())) {
+        if (didOverflowOnIntAddition(newScale, this.scale(), value.scale())) {
             throw new ArithmeticException("Scale overflow - please provide custom scale value");
         }
         return times(value, newScale, UNNECESSARY);
@@ -240,7 +240,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     public final Decimal multiply(Decimal value) {
         int newScale = this.scale() + value.scale();
-        if (didOverflowOnAddition(newScale, this.scale(), value.scale())) {
+        if (didOverflowOnIntAddition(newScale, this.scale(), value.scale())) {
             throw new ArithmeticException("Scale overflow - please provide custom scale value");
         }
         return multiply(value, newScale, UNNECESSARY);

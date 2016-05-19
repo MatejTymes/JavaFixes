@@ -9,7 +9,7 @@ import static java.lang.Math.max;
 import static mtymes.javafixes.beta.decimal.DecimalScaler.descaleBigInteger;
 import static mtymes.javafixes.beta.decimal.DecimalScaler.descaleLong;
 import static mtymes.javafixes.beta.decimal.DecimalUtil.bigUnscaledValueFrom;
-import static mtymes.javafixes.beta.decimal.OverflowUtil.didOverflowOnAddition;
+import static mtymes.javafixes.beta.decimal.OverflowUtil.didOverflowOnLongAddition;
 import static mtymes.javafixes.beta.decimal.OverflowUtil.willNegationOverflow;
 import static mtymes.javafixes.beta.decimal.PowerMath.*;
 
@@ -77,7 +77,7 @@ class DecimalAccumulator {
     private static Decimal sumOf(long valueA, long valueB, int sumScale, int scaleToUse, RoundingMode roundingMode) {
         long result = valueA + valueB;
 
-        if (didOverflowOnAddition(result, valueA, valueB)) {
+        if (didOverflowOnLongAddition(result, valueA, valueB)) {
             return sumOf(BigInteger.valueOf(valueA), BigInteger.valueOf(valueB), sumScale, scaleToUse, roundingMode);
         }
 

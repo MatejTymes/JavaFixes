@@ -6,13 +6,12 @@ public class OverflowUtil {
         return value == Long.MIN_VALUE;
     }
 
-    public static boolean didOverflowOnAddition(long result, long valueA, long valueB) {
+    public static boolean didOverflowOnLongAddition(long result, long valueA, long valueB) {
         // HD 2-12 Overflow iff both arguments have the opposite sign of the result
         return ((valueA ^ result) & (valueB ^ result)) < 0;
     }
 
-    // todo: test this
-    public static boolean didOverflowOnAddition(int result, int valueA, int valueB) {
+    public static boolean didOverflowOnIntAddition(int result, int valueA, int valueB) {
         // HD 2-12 Overflow iff both arguments have the opposite sign of the result
         return ((valueA ^ result) & (valueB ^ result)) < 0;
     }
