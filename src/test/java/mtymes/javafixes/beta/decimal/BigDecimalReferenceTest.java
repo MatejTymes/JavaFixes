@@ -13,7 +13,7 @@ import static mtymes.javafixes.test.Random.*;
 import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.junit.Assert.assertThat;
 
-public class DecimalReferenceTest {
+public class BigDecimalReferenceTest {
 
     @Test
     public void shouldCreateValueFromLong() {
