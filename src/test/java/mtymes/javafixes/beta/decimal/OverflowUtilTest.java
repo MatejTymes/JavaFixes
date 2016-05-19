@@ -78,8 +78,10 @@ public class OverflowUtilTest {
         assertThat(didOverflowOnMultiplication(Long.MIN_VALUE * Long.MAX_VALUE, Long.MIN_VALUE, Long.MAX_VALUE), is(true));
 
         assertThat(didOverflowOnMultiplication(Long.MAX_VALUE * 1L, Long.MAX_VALUE, 1L), is(false));
-        assertThat(didOverflowOnMultiplication(-1L * Long.MAX_VALUE, -1L, Long.MAX_VALUE), is(false));
+        assertThat(didOverflowOnMultiplication(Long.MAX_VALUE * 0L, Long.MAX_VALUE, 0L), is(false));
+        assertThat(didOverflowOnMultiplication(0L * Long.MAX_VALUE, 0L, Long.MAX_VALUE), is(false));
         assertThat(didOverflowOnMultiplication(1L * Long.MIN_VALUE, 1L, Long.MIN_VALUE), is(false));
+        assertThat(didOverflowOnMultiplication(-1L * Long.MAX_VALUE, -1L, Long.MAX_VALUE), is(false));
         assertThat(didOverflowOnMultiplication(394019L * -9321409L, 394019L, -9321409L), is(false));
     }
 
