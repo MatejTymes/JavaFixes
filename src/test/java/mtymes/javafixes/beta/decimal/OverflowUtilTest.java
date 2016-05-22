@@ -3,6 +3,7 @@ package mtymes.javafixes.beta.decimal;
 import org.junit.Test;
 
 import static mtymes.javafixes.beta.decimal.OverflowUtil.*;
+import static mtymes.javafixes.test.Random.randomInt;
 import static mtymes.javafixes.test.Random.randomLong;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -83,6 +84,20 @@ public class OverflowUtilTest {
         assertThat(didOverflowOnMultiplication(1L * Long.MIN_VALUE, 1L, Long.MIN_VALUE), is(false));
         assertThat(didOverflowOnMultiplication(-1L * Long.MAX_VALUE, -1L, Long.MAX_VALUE), is(false));
         assertThat(didOverflowOnMultiplication(394019L * -9321409L, 394019L, -9321409L), is(false));
+    }
+
+    @Test
+    public void shouldFindIfLongCanBeCastToInt() {
+        assertThat(canCastLongToInt((long) Integer.MIN_VALUE), is(true));
+        assertThat(canCastLongToInt((long) Integer.MAX_VALUE), is(true));
+        assertThat(canCastLongToInt((long) Integer.MAX_VALUE - 1L), is(true));
+        assertThat(canCastLongToInt((long) Integer.MIN_VALUE + 1L), is(true));
+        assertThat(canCastLongToInt((long) randomInt(Integer.MIN_VALUE, Integer.MAX_VALUE)), is(true));
+
+        assertThat(canCastLongToInt((long) Integer.MAX_VALUE + 1L), is(false));
+        assertThat(canCastLongToInt((long) Integer.MIN_VALUE - 1L), is(false));
+        assertThat(canCastLongToInt(randomLong(Long.MIN_VALUE, (long) Integer.MIN_VALUE - 1L)), is(false));
+        assertThat(canCastLongToInt(randomLong((long) Integer.MAX_VALUE +1L, Long.MAX_VALUE)), is(false));
     }
 
 }
