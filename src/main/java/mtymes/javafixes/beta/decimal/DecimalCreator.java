@@ -13,6 +13,7 @@ class DecimalCreator {
                 && ((int) unscaledValue & 1) == 0
                 && unscaledValue % 10 == 0) {
             unscaledValue /= 10;
+            // todo: check scale overflow
             scale--;
         }
 
@@ -26,6 +27,7 @@ class DecimalCreator {
                 break;
             }
             unscaledValue = divAndMod[0];
+            // todo: check scale overflow
             scale--;
         }
 

@@ -6,8 +6,7 @@ import static java.lang.Math.min;
 
 public class PowerMath {
 
-    // todo: make private
-    public static final double LOG_2_DIV_LOG_10 = Math.log(2) / Math.log(10);
+    private static final double LOG_2_DIV_LOG_10 = Math.log(2) / Math.log(10);
 
     private static final long[] powersOf10L = {
             1L,                  // 10 ^ 0

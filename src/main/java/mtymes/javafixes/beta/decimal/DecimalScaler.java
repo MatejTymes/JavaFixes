@@ -52,8 +52,7 @@ class DecimalScaler {
 
 
     private static Decimal downscale(long unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
-        // todo: check scale overflow
-        int scaleDiff = scale - scaleToUse;
+        long scaleDiff = (long) scale - scaleToUse;
 
         long valueWithRoundingDigit = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
         boolean hasAdditionalRemainder = unscaledValue != upscaleByPowerOf10(valueWithRoundingDigit, scaleDiff - 1);
@@ -61,8 +60,8 @@ class DecimalScaler {
             return Decimal.ZERO;
         }
 
-        long rescaledValue = valueWithRoundingDigit / (long) 10;
-        int remainingDigit = (int) (valueWithRoundingDigit - (rescaledValue * 10));
+        long rescaledValue = valueWithRoundingDigit / 10L;
+        int remainingDigit = (int) (valueWithRoundingDigit - (rescaledValue * 10L));
 
         int roundingCorrection = DecimalRounder.roundingCorrection(
                 Long.signum(unscaledValue),

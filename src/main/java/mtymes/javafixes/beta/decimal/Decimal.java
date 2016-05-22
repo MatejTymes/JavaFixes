@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 import static java.lang.Math.max;
 import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UNNECESSARY;
+import static mtymes.javafixes.beta.decimal.OverflowUtil.canCastLongToInt;
 import static mtymes.javafixes.beta.decimal.OverflowUtil.didOverflowOnIntAddition;
 import static mtymes.javafixes.beta.decimal.PowerMath.numberOfDigits;
 
@@ -287,8 +288,12 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         if (currentPrecision <= precisionToUse) {
             return this;
         }
-        // todo: check scale overflow
-        long newScale = ((long) scale()) + ((long) precisionToUse - (long) currentPrecision);
+        long precisionDifference = (long) precisionToUse - currentPrecision;
+        long newScale = (long) scale() + precisionDifference;
+        if (!canCastLongToInt(newScale)) {
+            throw new ArithmeticException("Scale overflow - can't set scale to: " + newScale + ". Please provide a different precision");
+        }
+
         return descaleTo((int) newScale, roundingMode);
     }
 

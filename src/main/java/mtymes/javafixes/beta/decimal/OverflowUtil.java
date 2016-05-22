@@ -35,4 +35,9 @@ public class OverflowUtil {
         }
         return false;
     }
+
+    // TODO: test
+    public static boolean canCastLongToInt(long value) {
+        return value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE;
+    }
 }

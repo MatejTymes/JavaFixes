@@ -56,11 +56,13 @@ class DecimalEqualizer {
             int maxScale = max(scaleA, scaleB);
 
             if (scaleA < maxScale) {
-                unscaledA = upscaleByPowerOf10(unscaledA, maxScale - scaleA);
+                // todo: check there is no scale overflow
+                unscaledA = upscaleByPowerOf10(unscaledA, (long) maxScale - scaleA);
             }
 
             if (scaleB < maxScale) {
-                unscaledB = upscaleByPowerOf10(unscaledB, maxScale - scaleB);
+                // todo: check there is no scale overflow
+                unscaledB = upscaleByPowerOf10(unscaledB, (long) maxScale - scaleB);
             }
 
             return unscaledA.compareTo(unscaledB);
@@ -95,15 +97,19 @@ class DecimalEqualizer {
         return hashCode;
     }
 
+    // todo: inline this
     private static long descaleValue(long value, int fromScale, int toScale) {
         return (toScale < fromScale)
-                ? downscaleByPowerOf10(value, fromScale - toScale)
+                // todo: no need to cast to long in this time
+                ? downscaleByPowerOf10(value, (long) fromScale - toScale)
                 : value;
     }
 
+    // todo: inline this
     private static long upScaleValue(long value, int fromScale, int toScale) {
         return (toScale > fromScale)
-                ? upscaleByPowerOf10(value, (long) toScale - (long) fromScale)
+                // todo: no need to cast to long in this time
+                ? upscaleByPowerOf10(value, (long) toScale - fromScale)
                 : value;
     }
 }
