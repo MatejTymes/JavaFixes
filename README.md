@@ -79,8 +79,8 @@ The advantages it provides are:
 
         d("29_013_943_171.22").deprecisionTo(_7_Significant_Digits);  // = 29_013_940_000
 
-        d("125_455_300").descaleTo(Scale_Of_Thousands);  // = 125_455_000
-        d("125_455_300").descaleTo(Scale_Of_Millions);  // = 125_000_000
+        d("125_455_315").descaleTo(Scale_Of_Thousands);  // = 125_455_000
+        d("125_455_315").descaleTo(Scale_Of_Millions);  // = 125_000_000
 ```
 
 It is possible that you'll miss some math functions. To implement your own you can use these Decimal methods:
