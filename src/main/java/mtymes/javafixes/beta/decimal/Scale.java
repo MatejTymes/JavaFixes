@@ -1,14 +1,19 @@
 package mtymes.javafixes.beta.decimal;
 
-// todo: start using this
 public final class Scale {
 
-    public static final Scale SCALE_0 = scale(0);
-    public static final Scale SCALE_1 = scale(1);
-    public static final Scale SCALE_2 = scale(2);
-    public static final Scale SCALE_3 = scale(3);
-    public static final Scale SCALE_4 = scale(4);
-    public static final Scale SCALE_5 = scale(5);
+    public static final Scale Scale_0 = scale(0); // 0 decimal places
+    public static final Scale Scale_1 = scale(1); // 1 decimal place
+    public static final Scale Scale_2 = scale(2); // 2 decimal places
+    public static final Scale Scale_3 = scale(3); // 3 decimal places
+    public static final Scale Scale_4 = scale(4); // 4 decimal places
+    public static final Scale Scale_5 = scale(5); // 5 decimal places
+    public static final Scale Scale_8 = scale(8); // 8 decimal places
+    public static final Scale Scale_10 = scale(10); // 10 decimal places
+
+    public static final Scale Scale_Of_Hundreds = scale(-2); // number after hundreds will be zero-ed out
+    public static final Scale Scale_Of_Thousands = scale(-3); // number after thousands will be zero-ed out
+    public static final Scale Scale_Of_Millions = scale(-6); // number after millions will be zero-ed out
 
     public final int value;
 

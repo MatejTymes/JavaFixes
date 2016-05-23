@@ -19,7 +19,7 @@ class DecimalDivider {
             return a;
         }
 
-        // todo: although correct (no overflows) currently slow when handling just longs - refactor in the near future
+        // todo: although correct (no unscaledValue overflows) currently slow when handling just longs - refactor in the near future
 
         int finalSign = a.signum() * b.signum();
         BigInteger remainder = bigUnscaledValueFrom(a).abs();

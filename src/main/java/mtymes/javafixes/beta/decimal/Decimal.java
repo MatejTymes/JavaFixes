@@ -183,42 +183,38 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return DecimalNegator.negate(this);
     }
 
-    // todo: comment this out for now
-    public final Decimal plus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        return DecimalAccumulator.add(this, value, scaleToUse, roundingMode);
-    }
+//    public final Decimal plus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
+//        return DecimalAccumulator.add(this, value, scaleToUse, roundingMode);
+//    }
 
-    // todo: comment this out for now
-    public final Decimal plus(Decimal value, int scaleToUse) {
-        return plus(value, scaleToUse, DEFAULT_ROUNDING_MODE);
-    }
+//    public final Decimal plus(Decimal value, int scaleToUse) {
+//        return plus(value, scaleToUse, DEFAULT_ROUNDING_MODE);
+//    }
 
     public final Decimal plus(Decimal value) {
-        return plus(value, max(this.scale(), value.scale()), UNNECESSARY);
+        return DecimalAccumulator.add(this, value, max(this.scale(), value.scale()), UNNECESSARY);
     }
 
-    // todo: comment this out for now
-    public final Decimal minus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        return DecimalAccumulator.subtract(this, value, scaleToUse, roundingMode);
-    }
+//    public final Decimal minus(Decimal value, int scaleToUse, RoundingMode roundingMode) {
+//        return DecimalAccumulator.subtract(this, value, scaleToUse, roundingMode);
+//    }
 
-    // todo: comment this out for now
-    public final Decimal minus(Decimal value, int scaleToUse) {
-        return minus(value, scaleToUse, DEFAULT_ROUNDING_MODE);
-    }
+//    public final Decimal minus(Decimal value, int scaleToUse) {
+//        return minus(value, scaleToUse, DEFAULT_ROUNDING_MODE);
+//    }
 
     public final Decimal minus(Decimal value) {
-        return minus(value, max(this.scale(), value.scale()), UNNECESSARY);
+        return DecimalAccumulator.subtract(this, value, max(this.scale(), value.scale()), UNNECESSARY);
     }
 
-    // todo: implement with Scale & Precision
-    public final Decimal times(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        return DecimalMultiplier.multiply(this, value, scaleToUse, roundingMode);
+    // todo: add Precision based method as well
+    public final Decimal times(Decimal value, Scale scaleToUse, RoundingMode roundingMode) {
+        return DecimalMultiplier.multiply(this, value, scaleToUse.value, roundingMode);
     }
 
-    // todo: implement with Scale & Precision
-    public final Decimal times(Decimal value, int scaleToUse) {
-        return times(value, scaleToUse, DEFAULT_ROUNDING_MODE);
+    // todo: add Precision based method as well
+    public final Decimal times(Decimal value, Scale scaleToUse) {
+        return DecimalMultiplier.multiply(this, value, scaleToUse.value, DEFAULT_ROUNDING_MODE);
     }
 
     public final Decimal times(Decimal value) {
@@ -226,17 +222,17 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         if (didOverflowOnIntAddition(newScale, this.scale(), value.scale())) {
             throw new ArithmeticException("Scale overflow - please provide custom scale value");
         }
-        return times(value, newScale, UNNECESSARY);
+        return DecimalMultiplier.multiply(this, value, newScale, UNNECESSARY);
     }
 
-    // todo: implement with Scale & Precision
-    public final Decimal multiply(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        return DecimalMultiplier.multiply(this, value, scaleToUse, roundingMode);
+    // todo: add Precision based method as well
+    public final Decimal multiply(Decimal value, Scale scaleToUse, RoundingMode roundingMode) {
+        return DecimalMultiplier.multiply(this, value, scaleToUse.value, roundingMode);
     }
 
-    // todo: implement with Scale & Precision
-    public final Decimal multiply(Decimal value, int scaleToUse) {
-        return multiply(value, scaleToUse, DEFAULT_ROUNDING_MODE);
+    // todo: add Precision based method as well
+    public final Decimal multiply(Decimal value, Scale scaleToUse) {
+        return DecimalMultiplier.multiply(this, value, scaleToUse.value, DEFAULT_ROUNDING_MODE);
     }
 
     public final Decimal multiply(Decimal value) {
@@ -244,15 +240,17 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         if (didOverflowOnIntAddition(newScale, this.scale(), value.scale())) {
             throw new ArithmeticException("Scale overflow - please provide custom scale value");
         }
-        return multiply(value, newScale, UNNECESSARY);
+        return DecimalMultiplier.multiply(this, value, newScale, UNNECESSARY);
     }
 
-    public final Decimal div(Decimal value, int scaleToUse, RoundingMode roundingMode) {
-        return DecimalDivider.divide(this, value, scaleToUse, roundingMode);
+    // todo: add Precision based method as well
+    public final Decimal div(Decimal value, Scale scaleToUse, RoundingMode roundingMode) {
+        return DecimalDivider.divide(this, value, scaleToUse.value, roundingMode);
     }
 
-    public final Decimal div(Decimal value, int scaleToUse) {
-        return div(value, scaleToUse, DEFAULT_ROUNDING_MODE);
+    // todo: add Precision based method as well
+    public final Decimal div(Decimal value, Scale scaleToUse) {
+        return DecimalDivider.divide(this, value, scaleToUse.value, DEFAULT_ROUNDING_MODE);
     }
 
     public final Decimal div(Decimal value) {
@@ -266,16 +264,26 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         // int scaleB = this.scale()
         // long scaleToUse = (long) scaleA - (long) scaleB + precisionToUse - 1
 
-        return div(
+        return DecimalDivider.divide(
+                this,
                 value,
-                // todo: make it work in some better way
-                max(28, max(this.scale(), value.scale())),
+                max(28, max(this.scale(), value.scale())), // todo: use Precision.PRECISION_34 instead
                 DEFAULT_ROUNDING_MODE
         );
     }
 
+    // todo: test this
+    public final Decimal descaleTo(Scale scaleToUse, RoundingMode roundingMode) {
+        return DecimalScaler.descaleTo(this, scaleToUse.value, roundingMode);
+    }
+
     public final Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) {
         return DecimalScaler.descaleTo(this, scaleToUse, roundingMode);
+    }
+
+    // todo: test this
+    public final Decimal descaleTo(Scale scaleToUse) {
+        return descaleTo(scaleToUse.value, DEFAULT_ROUNDING_MODE);
     }
 
     public final Decimal descaleTo(int scaleToUse) {
