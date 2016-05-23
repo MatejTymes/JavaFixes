@@ -140,6 +140,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     // todo: add test for this
     abstract public Number unscaledValue();
 
+    // todo: maybe change this into long
     abstract public int precision();
 
     // todo: add intValueExact(), longValueExact(), ...

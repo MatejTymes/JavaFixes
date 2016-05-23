@@ -87,5 +87,6 @@ It is possible that you'll miss some math functions. To implement your own you c
 * `decimal.signum()` - will return -1 for negative value, 0 for zero and 1 for positive value
 * `decimal.scale()` - will return you the number of decimal digits
 * `decimal.unscaledValue()` - will return the unscaled value which can be of these two types: Long or BigInteger
+* `decimal.precision()` - will return the number of significant digits
 
 Also any improvements in forms of patches will be welcomed.
