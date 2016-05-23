@@ -172,4 +172,22 @@ public class Random {
         return value;
     }
 
+//    public static void main(String[] args) {
+//        Map<Integer, Integer> digitsCountDistribution = new TreeMap<>();
+//
+//        for (int i = 0; i < 1_000_000_000; i++) {
+//            int value = randomInt();
+//            int length = Integer.toString(value).length();
+//            if (value < 0) {
+//                length = -(length - 1);
+//            }
+//
+//            int count = digitsCountDistribution.getOrDefault(length, 0);
+//            digitsCountDistribution.put(length, count + 1);
+//        }
+//
+//        for (int digitCount : digitsCountDistribution.keySet()) {
+//            System.out.println(digitCount + " -> " + digitsCountDistribution.get(digitCount));
+//        }
+//    }
 }

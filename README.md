@@ -75,12 +75,12 @@ The advantages it provides are:
 * handy constants - one of the confusing thing about `BigDecimal` for newcomers is what is the difference between scale and precision. To ease the understanding Decimal provides some readable constants on the `Scale` and `Precision` classes:
 
 ```Java
-        d("123.4698").descaleTo(_2_Decimal_Places);  // = 123.46
+        d("123.4698").descaleTo(_2_DECIMAL_PLACES);  // = 123.46
 
-        d("29_013_943_171.22").deprecisionTo(_7_Significant_Digits);  // = 29_013_940_000
+        d("29_013_943_171.22").deprecisionTo(_7_SIGNIFICANT_DIGITS);  // = 29_013_940_000
 
-        d("125_455_315").descaleTo(Scale_Of_Thousands);  // = 125_455_000
-        d("125_455_315").descaleTo(Scale_Of_Millions);  // = 125_000_000
+        d("125_455_315").descaleTo(SCALE_OF_THOUSANDS);  // = 125_455_000
+        d("125_455_315").descaleTo(SCALE_OF_MILLIONS);  // = 125_000_000
 ```
 
 It is possible that you'll miss some math functions. To implement your own you can use these Decimal methods:

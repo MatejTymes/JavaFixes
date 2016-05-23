@@ -2,12 +2,12 @@ package mtymes.javafixes.beta.decimal;
 
 public final class Precision {
 
-    public static final Precision Precision_7 = precision(7);
-    public static final Precision _7_Significant_Digits = precision(7);
-    public static final Precision Precision_16 = precision(16);
-    public static final Precision _16_Significant_Digits = precision(16);
-    public static final Precision Precision_34 = precision(34);
-    public static final Precision _34_Significant_Digits = precision(34);
+    public static final Precision PRECISION_7 = precision(7);
+    public static final Precision _7_SIGNIFICANT_DIGITS = precision(7);
+    public static final Precision PRECISION_16 = precision(16);
+    public static final Precision _16_SIGNIFICANT_DIGITS = precision(16);
+    public static final Precision PRECISION_34 = precision(34);
+    public static final Precision _34_SIGNIFICANT_DIGITS = precision(34);
 
 
 

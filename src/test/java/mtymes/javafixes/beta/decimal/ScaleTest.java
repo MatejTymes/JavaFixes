@@ -13,28 +13,28 @@ public class ScaleTest {
     @Test
     public void shouldProvideCorrectScaleConstants() {
 
-        assertThat(d("123.456789").descaleTo(Scale_0, DOWN), is(d("123.0")));
-        assertThat(d("123.456789").descaleTo(Scale_1, DOWN), is(d("123.4")));
-        assertThat(d("123.456789").descaleTo(Scale_2, DOWN), is(d("123.45")));
-        assertThat(d("123.456789").descaleTo(Scale_3, DOWN), is(d("123.456")));
-        assertThat(d("123.456789").descaleTo(Scale_4, DOWN), is(d("123.4567")));
-        assertThat(d("123.456789").descaleTo(Scale_5, DOWN), is(d("123.45678")));
+        assertThat(d("123.456789").descaleTo(SCALE_0, DOWN), is(d("123.0")));
+        assertThat(d("123.456789").descaleTo(SCALE_1, DOWN), is(d("123.4")));
+        assertThat(d("123.456789").descaleTo(SCALE_2, DOWN), is(d("123.45")));
+        assertThat(d("123.456789").descaleTo(SCALE_3, DOWN), is(d("123.456")));
+        assertThat(d("123.456789").descaleTo(SCALE_4, DOWN), is(d("123.4567")));
+        assertThat(d("123.456789").descaleTo(SCALE_5, DOWN), is(d("123.45678")));
 
-        assertThat(d("1.12345_12345_123").descaleTo(Scale_8, DOWN), is(d("1.12345_123")));
-        assertThat(d("1.12345_12345_123").descaleTo(Scale_10, DOWN), is(d("1.12345_123_45")));
+        assertThat(d("1.12345_12345_123").descaleTo(SCALE_8, DOWN), is(d("1.12345_123")));
+        assertThat(d("1.12345_12345_123").descaleTo(SCALE_10, DOWN), is(d("1.12345_123_45")));
 
-        assertThat(d("123_456_789.123").descaleTo(Scale_Of_Hundreds, DOWN), is(d("123_456_700")));
-        assertThat(d("123_456_789.123").descaleTo(Scale_Of_Thousands, DOWN), is(d("123_456_000")));
-        assertThat(d("123_456_789.123").descaleTo(Scale_Of_Millions, DOWN), is(d("123_000_000")));
+        assertThat(d("123_456_789.123").descaleTo(SCALE_OF_HUNDREDS, DOWN), is(d("123_456_700")));
+        assertThat(d("123_456_789.123").descaleTo(SCALE_OF_THOUSANDS, DOWN), is(d("123_456_000")));
+        assertThat(d("123_456_789.123").descaleTo(SCALE_OF_MILLIONS, DOWN), is(d("123_000_000")));
 
-        assertThat(d("123.456789").descaleTo(_0_Decimal_Places, DOWN), is(d("123.0")));
-        assertThat(d("123.456789").descaleTo(_1_Decimal_Place, DOWN), is(d("123.4")));
-        assertThat(d("123.456789").descaleTo(_2_Decimal_Places, DOWN), is(d("123.45")));
-        assertThat(d("123.456789").descaleTo(_3_Decimal_Places, DOWN), is(d("123.456")));
-        assertThat(d("123.456789").descaleTo(_4_Decimal_Places, DOWN), is(d("123.4567")));
-        assertThat(d("123.456789").descaleTo(_5_Decimal_Places, DOWN), is(d("123.45678")));
+        assertThat(d("123.456789").descaleTo(_0_DECIMAL_PLACES, DOWN), is(d("123.0")));
+        assertThat(d("123.456789").descaleTo(_1_DECIMAL_PLACE, DOWN), is(d("123.4")));
+        assertThat(d("123.456789").descaleTo(_2_DECIMAL_PLACES, DOWN), is(d("123.45")));
+        assertThat(d("123.456789").descaleTo(_3_DECIMAL_PLACES, DOWN), is(d("123.456")));
+        assertThat(d("123.456789").descaleTo(_4_DECIMAL_PLACES, DOWN), is(d("123.4567")));
+        assertThat(d("123.456789").descaleTo(_5_DECIMAL_PLACES, DOWN), is(d("123.45678")));
 
-        assertThat(d("1.12345_12345_123").descaleTo(_8_Decimal_Places, DOWN), is(d("1.12345_123")));
-        assertThat(d("1.12345_12345_123").descaleTo(_10_Decimal_Places, DOWN), is(d("1.12345_123_45")));
+        assertThat(d("1.12345_12345_123").descaleTo(_8_DECIMAL_PLACES, DOWN), is(d("1.12345_123")));
+        assertThat(d("1.12345_12345_123").descaleTo(_10_DECIMAL_PLACES, DOWN), is(d("1.12345_123_45")));
     }
 }
