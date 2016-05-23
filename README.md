@@ -63,13 +63,13 @@ The advantages it provides are:
 ```Groovy
         def monthlyInterest = d("129_550.00") * d("0.03") / d("12");
 
-        def expectedPayment = monthlyInterest.descaleTo(2, RoundingMode.UP)
+        def totalDebt = d("129_550.00") + monthlyInterest * d("36");
 ```
 
 ```Kotlin
         val monthlyInterest = d("129_550.00") * d("0.03") / d("12");
 
-        val expectedPayment = monthlyInterest.descaleTo(2, RoundingMode.UP)
+        val totalDebt = d("129_550.00") + monthlyInterest * d("36");
 ```
 
 * handy constants - one of the confusing thing about `BigDecimal` for newcomers is what is the difference between scale and precision. To ease the understanding Decimal provides some readable constants on the `Scale` and `Precision` classes:
