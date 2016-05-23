@@ -272,22 +272,22 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         );
     }
 
-    // todo: test this
-    public final Decimal descaleTo(Scale scaleToUse, RoundingMode roundingMode) {
-        return DecimalScaler.descaleTo(this, scaleToUse.value, roundingMode);
-    }
-
     public final Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) {
         return DecimalScaler.descaleTo(this, scaleToUse, roundingMode);
     }
 
     // todo: test this
-    public final Decimal descaleTo(Scale scaleToUse) {
-        return descaleTo(scaleToUse.value, DEFAULT_ROUNDING_MODE);
+    public final Decimal descaleTo(Scale scaleToUse, RoundingMode roundingMode) {
+        return DecimalScaler.descaleTo(this, scaleToUse.value, roundingMode);
     }
 
     public final Decimal descaleTo(int scaleToUse) {
         return descaleTo(scaleToUse, DEFAULT_ROUNDING_MODE);
+    }
+
+    // todo: test this
+    public final Decimal descaleTo(Scale scaleToUse) {
+        return descaleTo(scaleToUse.value, DEFAULT_ROUNDING_MODE);
     }
 
     // todo: test
@@ -306,8 +306,18 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     // todo: test
+    public final Decimal deprecisionTo(Precision precisionToUse, RoundingMode roundingMode) {
+        return deprecisionTo(precisionToUse.value, roundingMode);
+    }
+
+    // todo: test
     public final Decimal deprecisionTo(int precisionToUse) {
         return deprecisionTo(precisionToUse, DEFAULT_ROUNDING_MODE);
+    }
+
+    // todo: test
+    public final Decimal deprecisionTo(Precision precisionToUse) {
+        return deprecisionTo(precisionToUse.value, DEFAULT_ROUNDING_MODE);
     }
 
     @Override

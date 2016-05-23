@@ -1,11 +1,10 @@
 package mtymes.javafixes.beta.decimal;
 
-// todo: start using this
 public final class Precision {
 
-    public static final Precision PRECISION_7 = precision(7);
-    public static final Precision PRECISION_16 = precision(16);
-    public static final Precision PRECISION_34 = precision(34);
+    public static final Precision Precision_7 = precision(7);
+    public static final Precision Precision_16 = precision(16);
+    public static final Precision Precision_34 = precision(34);
 
     public final int value;
 
