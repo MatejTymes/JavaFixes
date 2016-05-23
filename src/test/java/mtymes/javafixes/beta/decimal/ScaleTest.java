@@ -26,5 +26,15 @@ public class ScaleTest {
         assertThat(d("123_456_789.123").descaleTo(Scale_Of_Hundreds, DOWN), is(d("123_456_700")));
         assertThat(d("123_456_789.123").descaleTo(Scale_Of_Thousands, DOWN), is(d("123_456_000")));
         assertThat(d("123_456_789.123").descaleTo(Scale_Of_Millions, DOWN), is(d("123_000_000")));
+
+        assertThat(d("123.456789").descaleTo(_0_Decimal_Places, DOWN), is(d("123.0")));
+        assertThat(d("123.456789").descaleTo(_1_Decimal_Place, DOWN), is(d("123.4")));
+        assertThat(d("123.456789").descaleTo(_2_Decimal_Places, DOWN), is(d("123.45")));
+        assertThat(d("123.456789").descaleTo(_3_Decimal_Places, DOWN), is(d("123.456")));
+        assertThat(d("123.456789").descaleTo(_4_Decimal_Places, DOWN), is(d("123.4567")));
+        assertThat(d("123.456789").descaleTo(_5_Decimal_Places, DOWN), is(d("123.45678")));
+
+        assertThat(d("1.12345_12345_123").descaleTo(_8_Decimal_Places, DOWN), is(d("1.12345_123")));
+        assertThat(d("1.12345_12345_123").descaleTo(_10_Decimal_Places, DOWN), is(d("1.12345_123_45")));
     }
 }
