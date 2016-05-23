@@ -72,7 +72,7 @@ The advantages it provides are:
         val expectedPayment = monthlyInterest.descaleTo(2, RoundingMode.UP)
 ```
 
-* handy constants - one of the confusing thing about `BigDecimal` for newcomers is what is the difference between scale and precision. To ease the understanding Decimal provides readable constants on the `Scale` and `Precision` classes:
+* handy constants - one of the confusing thing about `BigDecimal` for newcomers is what is the difference between scale and precision. To ease the understanding Decimal provides some readable constants on the `Scale` and `Precision` classes:
 
 ```Java
         d("123.4698").descaleTo(_2_Decimal_Places);  // = 123.46
