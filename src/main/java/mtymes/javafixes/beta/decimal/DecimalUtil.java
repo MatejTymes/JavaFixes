@@ -5,7 +5,6 @@ import mtymes.javafixes.beta.decimal.Decimal.LongDecimal;
 
 import java.math.BigInteger;
 
-// todo: test this
 class DecimalUtil {
 
     static BigInteger bigUnscaledValueFrom(Decimal d) {
