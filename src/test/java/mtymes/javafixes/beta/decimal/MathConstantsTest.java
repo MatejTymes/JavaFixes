@@ -17,5 +17,11 @@ public class MathConstantsTest {
         assertThat(MathConstants.PI_7, equalTo(reallyLongPi.deprecisionTo(_7_SIGNIFICANT_DIGITS, HALF_UP)));
         assertThat(MathConstants.PI_16, equalTo(reallyLongPi.deprecisionTo(_16_SIGNIFICANT_DIGITS, HALF_UP)));
         assertThat(MathConstants.PI_34, equalTo(reallyLongPi.deprecisionTo(_34_SIGNIFICANT_DIGITS, HALF_UP)));
+
+        Decimal reallyLongE = d("2.71828182845904523536028747135266249775724709369995957497"); // taken from nasa: http://apod.nasa.gov/htmltest/gifcity/e.2mil
+
+        assertThat(MathConstants.E_7, equalTo(reallyLongE.deprecisionTo(_7_SIGNIFICANT_DIGITS, HALF_UP)));
+        assertThat(MathConstants.E_16, equalTo(reallyLongE.deprecisionTo(_16_SIGNIFICANT_DIGITS, HALF_UP)));
+        assertThat(MathConstants.E_34, equalTo(reallyLongE.deprecisionTo(_34_SIGNIFICANT_DIGITS, HALF_UP)));
     }
 }
