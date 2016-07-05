@@ -13,7 +13,11 @@ class DecimalCreator {
                 && ((int) unscaledValue & 1) == 0
                 && unscaledValue % 10 == 0) {
             unscaledValue /= 10;
-            // todo: check scale overflow
+
+            // todo: test this
+            if (scale == Integer.MIN_VALUE) {
+                throw new ArithmeticException("Scale overflow - can't set scale to less than: " + Integer.MIN_VALUE);
+            }
             scale--;
         }
 
@@ -27,7 +31,11 @@ class DecimalCreator {
                 break;
             }
             unscaledValue = divAndMod[0];
-            // todo: check scale overflow
+
+            // todo: test this
+            if (scale == Integer.MIN_VALUE) {
+                throw new ArithmeticException("Scale overflow - can't set scale to less than: " + Integer.MIN_VALUE);
+            }
             scale--;
         }
 
