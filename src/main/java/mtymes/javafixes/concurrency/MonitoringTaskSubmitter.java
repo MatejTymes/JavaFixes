@@ -9,7 +9,7 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  */
 public class MonitoringTaskSubmitter {
 
-    private final Sync sync = new Sync(0);
+    private final Counter counter = new Counter();
     protected final ScheduledExecutorService executor;
 
     public MonitoringTaskSubmitter(ScheduledExecutorService executor) {
@@ -66,7 +66,7 @@ public class MonitoringTaskSubmitter {
 
     public void waitTillDone() {
         try {
-            sync.acquireSharedInterruptibly(1);
+            counter.waitTillCountedDown();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -74,7 +74,7 @@ public class MonitoringTaskSubmitter {
 
     public boolean waitTillDone(long timeout, TimeUnit unit) {
         try {
-            return sync.tryAcquireSharedNanos(1, unit.toNanos(timeout));
+            return counter.waitTillCountedDown(timeout, unit);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -166,19 +166,19 @@ public class MonitoringTaskSubmitter {
     }
 
     private void taskSubmitted() {
-        sync.increment();
+        counter.increment();
     }
 
     private void taskSubmitFailed() {
-        sync.decrement();
+        counter.decrement();
     }
 
     private void taskFinished() {
-        sync.decrement();
+        counter.decrement();
     }
 
     private void taskFailed() {
-        sync.decrement();
+        counter.decrement();
     }
 
     // class based on CountDownLatch.Sync
