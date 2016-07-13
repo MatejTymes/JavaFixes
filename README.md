@@ -27,7 +27,7 @@ Adding some features which would be normally nice to have in Java
 
 ```
 
-In case you would like to just monitor task submitted to existing scheduled executor then use `MonitoringTaskSubmitter` instead.
+In case you would like to monitor task newly submitted to existing scheduled executor use `MonitoringTaskSubmitter` instead.
 
 ## Math
 
