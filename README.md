@@ -6,7 +6,7 @@ Adding some features which would be normally nice to have in Java
 
 ### ReusableCountLatch
 
-`CountDownLatch` is great but I always missed the possibility to countUp and reuse it or use it if initial count is not know upfront. And this is exactly what `ReusableCountLatch` gives you.
+`CountDownLatch` is great but I always missed the possibility to countUp and reuse it or use it if initial count is not know upfront. `Phaser` should fulfil this but is unfortunately limited to 65535. And this is exactly where `ReusableCountLatch` comes in.
 
 ```Java
         ReusableCountLatch latch = new ReusableCountLatch(); // creates latch with initial count 0
@@ -53,7 +53,27 @@ Great if number of scheduled task is not known upfront but you want to wait till
 
 In case you would like to monitor task newly submitted to existing scheduled executor use `MonitoringTaskSubmitter` instead.
 
+## Objects
+
+### Microtype
+
+// todo: add
+
+### DataObject
+
+// todo: add
+
+### Tuple
+
+// todo: add
+
+### Triple
+
+// todo: add
+
 ## Math
+
+### Decimal
 
 *this feature is currently in a beta / WIP state - although feature complete it still requires more testing, api fine-tuning and tuning of performance for arithmetic operations*
 
