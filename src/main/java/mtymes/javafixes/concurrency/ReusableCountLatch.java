@@ -7,17 +7,23 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  * @author mtymes
  * @since 07/10/15 00:10 AM
  */
-// todo: add test
-public class Counter {
+public class ReusableCountLatch {
 
     private final Sync sync;
 
-    public Counter(int initialSize) {
-        this.sync = new Sync(initialSize);
+    public ReusableCountLatch(int initialCount) {
+        if (initialCount < 0) {
+            throw new IllegalArgumentException("negative initial count '" + initialCount + "' is not allowed");
+        }
+        this.sync = new Sync(initialCount);
     }
 
-    public Counter() {
+    public ReusableCountLatch() {
         this(0);
+    }
+
+    public int getCount() {
+        return sync.getCount();
     }
 
     public void increment() {
@@ -28,11 +34,11 @@ public class Counter {
         sync.decrement();
     }
 
-    public void waitTillCountedDown() throws InterruptedException {
+    public void waitTillZero() throws InterruptedException {
         sync.acquireSharedInterruptibly(1);
     }
 
-    public boolean waitTillCountedDown(long timeout, TimeUnit unit) throws InterruptedException {
+    public boolean waitTillZero(long timeout, TimeUnit unit) throws InterruptedException {
         return sync.tryAcquireSharedNanos(1, unit.toNanos(timeout));
     }
 
@@ -42,6 +48,10 @@ public class Counter {
 
         Sync(int count) {
             setState(count);
+        }
+
+        protected int getCount() {
+            return getState();
         }
 
         protected void increment() {
