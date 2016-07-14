@@ -9,18 +9,18 @@ Adding some features which would be normally nice to have in Java
 `CountDownLatch` is great but I always missed the possibility to countUp and reuse it or use it if initial count is not know upfront. `Phaser` should fulfil this but is unfortunately limited to 65535. And this is exactly where `ReusableCountLatch` comes in.
 
 ```Java
-        ReusableCountLatch latch = new ReusableCountLatch(); // creates latch with initial count 0
-        ReusableCountLatch latch = new ReusableCountLatch(10); // creates latch with initial count 10
+    ReusableCountLatch latch = new ReusableCountLatch(); // creates latch with initial count 0
+    ReusableCountLatch latch = new ReusableCountLatch(10); // creates latch with initial count 10
 
-        latch.increment(); // increments counter
+    latch.increment(); // increments counter
 
-        latch.decrement(); // decrement counter
+    latch.decrement(); // decrement counter
 
-        latch.waitTillZero(); // blocks until counts falls to zero
+    latch.waitTillZero(); // blocks until counts falls to zero
 
-        boolean succeeded = latch.waitTillZero(200, MILLISECONDS); // waits for up to 200 milliseconds until count falls to zero
+    boolean succeeded = latch.waitTillZero(200, MILLISECONDS); // waits for up to 200 milliseconds until count falls to zero
 
-        int count = latch.getCount(); // gets actual count
+    int count = latch.getCount(); // gets actual count
 ```
 The `ReusableCountLatch` exposes a method to get its count so you can actually monitor its progress. Important thing to note is that the count can't go bellow 0 and if and attempt is made to initialize it with negative value it throws an exception. Decrementing 0 count will NOT throw an exception but the count will stay on 0 instead.
 
@@ -31,23 +31,23 @@ The `ReusableCountLatch` exposes a method to get its count so you can actually m
 Great if number of scheduled task is not known upfront but you want to wait till all of them finish.
 
 ```Java
-        Runner runner = Runner.runner(numberOfThreads);
+    Runner runner = Runner.runner(numberOfThreads);
 
-        runner.runIn(2, SECONDS, runnable);
-        runner.run(runnable);
-
-
-         // blocks until all tasks are finished (or failed)
-        runner.waitTillDone();
+    runner.runIn(2, SECONDS, runnable);
+    runner.run(runnable);
 
 
-        // and reuse it
+    // blocks until all tasks are finished (or failed)
+    runner.waitTillDone();
 
-        runner.runIn(500, MILLISECONDS, callable);
 
-        runner.waitTillDone();
+    // and reuse it
 
-        runner.shutdownAndAwaitTermination();
+    runner.runIn(500, MILLISECONDS, callable);
+
+    runner.waitTillDone();
+
+    runner.shutdownAndAwaitTermination();
 
 ```
 
@@ -55,11 +55,26 @@ In case you would like to monitor task newly submitted to existing scheduled exe
 
 ## Objects
 
-### Microtype
+### DataObject
 
+Adds `equals`, `hashCode` and `toString` methods to domain objects:
+```Java
+    public class User extends DataObject {
+
+        public final String firstName;
+        public final String lastName;
+
+        public User(String firstName, String lastName) {
+            this.firstName = firstName;
+            this.lastName = lastName;
+        }
+    }
+
+    new User("Terry", "Pratchett").equals(new User("Terry", "Pratchett"))
+```
 // todo: add
 
-### DataObject
+### Microtype
 
 // todo: add
 
@@ -84,8 +99,8 @@ The advantages it provides are:
 * `equals` reflects the `compareTo` behavior (plus `hashCode` is fixed respectively)
 
 ```Java
-        assertThat(decimal("-1.2").equals(decimal("-1.200")), is(true));
-        assertThat(decimal("-1.2").hashCode(), equalTo(decimal("-1.200").hashCode()));
+    assertThat(decimal("-1.2").equals(decimal("-1.200")), is(true));
+    assertThat(decimal("-1.2").hashCode(), equalTo(decimal("-1.200").hashCode()));
 ```
 
 * sensible defaults - using rounding `HALF_UP` (the one we used in school) when doing math operation (this is a default and you can pass in your own value) and max(28, valueA.scale(), valueB.scale()) decimal places when doing division (this will change soon to be defined as precision of 34 - which means number will be rounded after 34 digits - no matter the scale)
@@ -97,34 +112,34 @@ The advantages it provides are:
 * readable - able to use underscores during creation to improve readability (as in Java 7). Also can use short creation method `d(...)`:
 
 ```Java
-        Decimal value = decimal("29_013_903_171.22");
+    Decimal value = decimal("29_013_903_171.22");
 
-        Decimal sum = d("0.456").plus(value);
+    Decimal sum = d("0.456").plus(value);
 ```
 
 * groovy and kotlin operators (sorry scala you have too ugly syntax):
 
 ```Groovy
-        def monthlyInterest = d("129_550.00") * d("0.03") / d("12");
+    def monthlyInterest = d("129_550.00") * d("0.03") / d("12");
 
-        def totalDebt = d("129_550.00") + monthlyInterest * d("36");
+    def totalDebt = d("129_550.00") + monthlyInterest * d("36");
 ```
 
 ```Kotlin
-        val monthlyInterest = d("129_550.00") * d("0.03") / d("12");
+    val monthlyInterest = d("129_550.00") * d("0.03") / d("12");
 
-        val totalDebt = d("129_550.00") + monthlyInterest * d("36");
+    val totalDebt = d("129_550.00") + monthlyInterest * d("36");
 ```
 
 * handy constants - one of the confusing thing about `BigDecimal` for newcomers is what is the difference between scale and precision. To ease the understanding Decimal provides some readable constants on the `Scale` and `Precision` classes:
 
 ```Java
-        d("123.4698").descaleTo(_2_DECIMAL_PLACES);  // = 123.46
+    d("123.4698").descaleTo(_2_DECIMAL_PLACES);  // = 123.46
 
-        d("29_013_943_171.22").deprecisionTo(_7_SIGNIFICANT_DIGITS);  // = 29_013_940_000
+    d("29_013_943_171.22").deprecisionTo(_7_SIGNIFICANT_DIGITS);  // = 29_013_940_000
 
-        d("125_455_315").descaleTo(SCALE_OF_THOUSANDS);  // = 125_455_000
-        d("125_455_315").descaleTo(SCALE_OF_MILLIONS);  // = 125_000_000
+    d("125_455_315").descaleTo(SCALE_OF_THOUSANDS);  // = 125_455_000
+    d("125_455_315").descaleTo(SCALE_OF_MILLIONS);  // = 125_000_000
 ```
 
 It is possible that you'll miss some math functions. To implement your own you can use these Decimal methods:
