@@ -75,7 +75,7 @@ Adds `equals`, `hashCode` and `toString` methods to domain objects:
 
 ### Microtype
 
-Immutable single value holder. Microtypes help you with error-prone multi-parameter methods like for example constructor with 6 Strings parameters, where you can provide typed parameters instead, like: AccountNumber, UserId, Nationality, ...
+Immutable Single value holder. Microtypes help you with error-prone multi-parameter methods like for example constructor with 6 Strings parameters, where you can provide typed parameters instead, like: AccountNumber, UserId, Nationality, ...
 It also implements `equals`, `hashCode` and `toString`.
 ```Java
     public class UserId extends Microtype<String> {
