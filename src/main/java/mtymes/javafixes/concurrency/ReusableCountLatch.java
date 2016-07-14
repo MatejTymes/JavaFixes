@@ -5,7 +5,7 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
 /**
  * @author mtymes
- * @since 07/10/15 00:10 AM
+ * @since 07/10/16 00:10 AM
  */
 public class ReusableCountLatch {
 
