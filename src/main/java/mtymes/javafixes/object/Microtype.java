@@ -5,6 +5,9 @@ public abstract class Microtype<T> {
     private final T value;
 
     protected Microtype(T value) {
+        if (value == null) {
+            throw new IllegalArgumentException("value of a Microtype can't be null");
+        }
         this.value = value;
     }
 
