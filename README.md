@@ -6,7 +6,7 @@ Adding some features which would be normally nice to have in Java
 
 ### ReusableCountLatch
 
-`CountDownLatch` is great but I always missed the possibility to countUp and reuse it or use it if initial count is not know upfront. `Phaser` should fulfil this but is unfortunately limited to 65535. And this is exactly where `ReusableCountLatch` comes in.
+`CountDownLatch` is great but I always missed the possibility to countUp and reuse it or use it if initial count is not know upfront. `Phaser` should fulfil this but can only count up to 65535. And this is exactly where `ReusableCountLatch` comes in to save us.
 
 ```Java
     ReusableCountLatch latch = new ReusableCountLatch(); // creates latch with initial count 0
@@ -72,19 +72,39 @@ Adds `equals`, `hashCode` and `toString` methods to domain objects:
 
     new User("Terry", "Pratchett").equals(new User("Terry", "Pratchett"))
 ```
-// todo: add
 
 ### Microtype
 
-// todo: add
+Immutable single value holder. Microtypes help you with error-prone domain object constructors where for example constructors has 6 Strings parameters, instead of having typed parameters like: AccountNumber, UserId, Nationality, ...
+```Java
+    public class UserId extends Microtype<String> {
+
+        public UserId(String value) {
+            super(value);
+        }
+
+        public static UserId userId(String value) {
+            return (value == null) ? null : new UserId(value);
+        }
+    }
+
+    userId("mtymes").equals(userId("bjohnes"));
+
+    userId("mtymes").value();
+```
 
 ### Tuple
 
-// todo: add
+Immutable Two values holder:
+```Java
+    Tuple<UserId, User> tuple = tuple(
+            new UserId("mtymes"),
+            new User("Matej", "Tymes")
+    );
 
-### Triple
-
-// todo: add
+    UserId userId = tuple.a;
+    User user = tuple.b;
+```
 
 ## Math
 
