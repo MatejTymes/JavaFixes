@@ -6,7 +6,7 @@ Adding some features which would be normally nice to have in Java
 
 ### ReusableCountLatch
 
-`CountDownLatch` is great but I always missed the possibility to countUp and reuse it or us it if initial count is not know upfront. And this is exactly what `ReusableCountLatch` gives you.
+`CountDownLatch` is great but I always missed the possibility to countUp and reuse it or use it if initial count is not know upfront. And this is exactly what `ReusableCountLatch` gives you.
 
 ```Java
         ReusableCountLatch latch = new ReusableCountLatch(); // creates latch with initial count 0
@@ -26,7 +26,7 @@ The `ReusableCountLatch` exposes a method to get its count so you can actually m
 
 ### Runner
 
-`Runner` custom executor that allows you to wait until submitted tasks (of type `Runnable`, `Callable` or `Task`) have finished or failed.
+`Runner` is a custom executor that allows you to wait until submitted tasks (of type `Runnable`, `Callable` or `Task`) have finished or failed.
 
 Great if number of scheduled task is not known upfront but you want to wait till all of them finish.
 
