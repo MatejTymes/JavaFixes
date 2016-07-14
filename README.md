@@ -4,7 +4,31 @@ Adding some features which would be normally nice to have in Java
 
 ## Concurrency
 
-`Runner` custom executor that allows you to wait until submitted tasks (of type `Runnable`, `Callable` or `Task`) have finished or failed
+### ReusableCountLatch
+
+`CountDownLatch` is great but I always missed the possibility to countUp and reuse it or us it if initial count is not know upfront. And this is exactly what `ReusableCountLatch` gives you.
+
+```Java
+        ReusableCountLatch latch = new ReusableCountLatch(); // creates latch with initial count 0
+        ReusableCountLatch latch = new ReusableCountLatch(10); // creates latch with initial count 10
+
+        latch.increment(); // increments counter
+
+        latch.decrement(); // decrement counter
+
+        latch.waitTillZero(); // blocks until counts falls to zero
+
+        boolean succeeded = latch.waitTillZero(200, MILLISECONDS); // waits for up to 200 milliseconds until count falls to zero
+
+        int count = latch.getCount(); // gets actual count
+```
+The `ReusableCountLatch` exposes a method to get its count so you can actually monitor its progress. Important thing to note is that the count can't go bellow 0 and if and attempt is made to initialize it with negative value it throws an exception. Decrementing 0 count will NOT throw an exception but the count will stay on 0 instead.
+
+### Runner
+
+`Runner` custom executor that allows you to wait until submitted tasks (of type `Runnable`, `Callable` or `Task`) have finished or failed.
+
+Great if number of scheduled task is not known upfront but you want to wait till all of them finish.
 
 ```Java
         Runner runner = Runner.runner(numberOfThreads);
