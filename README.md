@@ -108,7 +108,9 @@ Immutable Two values holder. Each Tuple extends `DataObject` so methods `equals`
     User user = tuple.b;
 
     // or map them into something else
-    String message = tuple.map((userId, user) -> user.firstName + " " + user.lastName + "'s is is: " + userId.value());
+    String message = tuple.map(
+        (userId, user) -> user.firstName + " " + user.lastName + "'s ID is: " + userId.value()
+    );
 ```
 
 ## Math
