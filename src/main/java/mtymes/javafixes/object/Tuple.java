@@ -1,5 +1,8 @@
 package mtymes.javafixes.object;
 
+import java.util.Objects;
+import java.util.function.BiFunction;
+
 public class Tuple<A, B> extends DataObject {
 
     public final A a;
@@ -28,5 +31,10 @@ public class Tuple<A, B> extends DataObject {
 
     public B b() {
         return b;
+    }
+
+    public <C> C map(BiFunction<? super A, ? super B, ? extends C> mapper) {
+        Objects.requireNonNull(mapper);
+        return mapper.apply(a, b);
     }
 }

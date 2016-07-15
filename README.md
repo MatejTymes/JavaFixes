@@ -103,8 +103,12 @@ Immutable Two values holder. Each Tuple extends `DataObject` so methods `equals`
             new User("Matej", "Tymes")
     );
 
+    // you can access individual values
     UserId userId = tuple.a;
     User user = tuple.b;
+
+    // or map them into something else
+    String message = tuple.map((userId, user) -> user.firstName + " " + user.lastName + "'s is is: " + userId.value());
 ```
 
 ## Math
