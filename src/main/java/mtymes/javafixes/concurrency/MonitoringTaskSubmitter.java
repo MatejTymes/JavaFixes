@@ -7,6 +7,7 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  * @author mtymes
  * @since 10/22/14 10:41 PM
  */
+// todo: add success and failure counter
 public class MonitoringTaskSubmitter {
 
     private final ReusableCountLatch latch = new ReusableCountLatch();
