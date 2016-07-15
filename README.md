@@ -6,7 +6,7 @@ Adding some features which would be normally nice to have in Java
 
 ### ReusableCountLatch
 
-`CountDownLatch` is great but I always missed the possibility to countUp and reuse it or use it if initial count is not know upfront. `Phaser` should fulfil this but can only count up to 65535. And this is exactly where `ReusableCountLatch` comes in to save us.
+`CountDownLatch` is great but I always missed the possibility to countUp and reuse it or use it if initial count is not know upfront. `Phaser` should fulfil this but can only count up to 65,535. And this is exactly where `ReusableCountLatch` comes in to save us as it can count up to 2,147,483,647.
 
 ```Java
     ReusableCountLatch latch = new ReusableCountLatch(); // creates latch with initial count 0
