@@ -38,18 +38,18 @@ public abstract class Microtype<T> {
 
         Microtype<?> microtype = (Microtype<?>) o;
 
-        return value != null ? value.equals(microtype.value) : microtype.value == null;
+        return value.equals(microtype.value);
 
     }
 
     @Override
     public int hashCode() {
-        return value != null ? value.hashCode() : 0;
+        return value.hashCode();
     }
 
     // todo: test this
     @Override
     public String toString() {
-        return (value == null) ? null : value.toString();
+        return value.toString();
     }
 }
