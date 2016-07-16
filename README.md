@@ -22,7 +22,7 @@ Adding some features which would be normally nice to have in Java
 
     int count = latch.getCount(); // gets actual count
 ```
-The `ReusableCountLatch` exposes a method to get its count so you can actually monitor its progress. Important thing to note is that the count can't go bellow 0 and if and attempt is made to initialize it with negative value it throws an exception. Decrementing 0 count will NOT throw an exception but the count will stay on 0 instead.
+The `ReusableCountLatch` exposes a method to get its count so you can monitor its progress. Important thing to note is that the count can't go bellow 0 and if and attempt is made to initialize it with negative value it throws an exception. Decrementing 0 count will NOT throw an exception but the count will stay on 0 instead.
 
 ### Runner
 

@@ -13,7 +13,6 @@ package mtymes.javafixes.concurrency;
  * {@link mtymes.javafixes.concurrency.Runner} and
  * {@link mtymes.javafixes.concurrency.MonitoringTaskSubmitter}.
  *
- *
  * @author mtymes
  * @since 10/22/14 11:07 PM
  */
@@ -24,9 +23,8 @@ public interface Task {
      * Executes a task or throws an exception if unable to do so.
      *
      * @throws Exception if unable to execute task
-     *
-     * @see     mtymes.javafixes.concurrency.Runner
-     * @see     mtymes.javafixes.concurrency.MonitoringTaskSubmitter
+     * @see mtymes.javafixes.concurrency.Runner
+     * @see mtymes.javafixes.concurrency.MonitoringTaskSubmitter
      */
     void run() throws Exception;
 }
