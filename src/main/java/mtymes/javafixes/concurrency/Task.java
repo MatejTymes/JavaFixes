@@ -20,5 +20,13 @@ package mtymes.javafixes.concurrency;
 @FunctionalInterface
 public interface Task {
 
+    /**
+     * Executes a task or throws an exception if unable to do so.
+     *
+     * @throws Exception if unable to execute task
+     *
+     * @see     mtymes.javafixes.concurrency.Runner
+     * @see     mtymes.javafixes.concurrency.MonitoringTaskSubmitter
+     */
     void run() throws Exception;
 }
