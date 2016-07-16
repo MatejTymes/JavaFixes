@@ -1,8 +1,12 @@
 package mtymes.javafixes.object;
 
-import java.util.Objects;
 import java.util.function.BiFunction;
 
+/**
+ * @author mtymes
+ * @since 07/13/16 8:53 PM
+ */
+// todo: javadoc
 public class Tuple<A, B> extends DataObject {
 
     public final A a;
@@ -34,7 +38,9 @@ public class Tuple<A, B> extends DataObject {
     }
 
     public <C> C map(BiFunction<? super A, ? super B, ? extends C> mapper) {
-        Objects.requireNonNull(mapper);
+        if (mapper == null) {
+            throw new IllegalArgumentException("Tuple mapper can't be null");
+        }
         return mapper.apply(a, b);
     }
 }

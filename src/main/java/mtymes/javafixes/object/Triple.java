@@ -1,5 +1,12 @@
 package mtymes.javafixes.object;
 
+import mtymes.javafixes.common.TriFunction;
+
+/**
+ * @author mtymes
+ * @since 07/14/16 8:16 PM
+ */
+// todo: javadoc
 public class Triple<A, B, C> extends DataObject {
 
     public final A a;
@@ -38,5 +45,12 @@ public class Triple<A, B, C> extends DataObject {
 
     public C c() {
         return c;
+    }
+
+    public <D> D map(TriFunction<? super A, ? super B, ? super C, ? extends D> mapper) {
+        if (mapper == null) {
+            throw new IllegalArgumentException("Triple mapper can't be null");
+        }
+        return mapper.apply(a, b, c);
     }
 }

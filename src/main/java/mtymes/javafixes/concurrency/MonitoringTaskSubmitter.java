@@ -1,7 +1,6 @@
 package mtymes.javafixes.concurrency;
 
 import java.util.concurrent.*;
-import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
 /**
  * @author mtymes
@@ -181,48 +180,5 @@ public class MonitoringTaskSubmitter {
 
     private void taskFailed() {
         latch.decrement();
-    }
-
-    // class based on CountDownLatch.Sync
-    private static final class Sync extends AbstractQueuedSynchronizer {
-        private static final long serialVersionUID = 4982264981922014374L;
-
-        Sync(int count) {
-            setState(count);
-        }
-
-        protected void increment() {
-            for (; ; ) {
-                int oldCount = getState();
-                int newCount = oldCount + 1;
-                if (compareAndSetState(oldCount, newCount)) {
-                    return;
-                }
-            }
-        }
-
-        protected void decrement() {
-            releaseShared(1);
-        }
-
-        @Override
-        protected int tryAcquireShared(int acquires) {
-            return (getState() == 0) ? 1 : -1;
-        }
-
-        @Override
-        protected boolean tryReleaseShared(int releases) {
-            // Decrement count; signal when transition to zero
-            for (; ; ) {
-                int oldCount = getState();
-                if (oldCount == 0) {
-                    return false;
-                }
-                int newCount = oldCount - 1;
-                if (compareAndSetState(oldCount, newCount)) {
-                    return newCount == 0;
-                }
-            }
-        }
     }
 }

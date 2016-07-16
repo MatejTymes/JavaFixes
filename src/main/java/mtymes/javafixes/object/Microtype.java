@@ -1,5 +1,8 @@
 package mtymes.javafixes.object;
 
+import java.util.function.Function;
+
+// todo: javadoc
 public abstract class Microtype<T> {
 
     private final T value;
@@ -11,14 +14,23 @@ public abstract class Microtype<T> {
         this.value = value;
     }
 
-    public T getValue() {
-        return value;
-    }
-
     public T value() {
         return value;
     }
 
+    public T getValue() {
+        return value;
+    }
+
+    // todo: test this
+    public <T2> T2 map(Function<? super T, ? extends T2> mapper) {
+        if (mapper == null) {
+            throw new IllegalArgumentException("Microtype mapper can't be null");
+        }
+        return mapper.apply(value);
+    }
+
+    // todo: test this
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -35,6 +47,7 @@ public abstract class Microtype<T> {
         return value != null ? value.hashCode() : 0;
     }
 
+    // todo: test this
     @Override
     public String toString() {
         return (value == null) ? null : value.toString();
