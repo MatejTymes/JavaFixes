@@ -9,6 +9,19 @@ import static org.junit.Assert.fail;
 public class TupleTest {
 
     @Test
+    public void shouldBeAbleToGetValues() {
+        Tuple<String, Integer> tuple = Tuple.tuple("Peter Smith", 42);
+
+        assertThat(tuple.a, equalTo("Peter Smith"));
+        assertThat(tuple.a(), equalTo("Peter Smith"));
+        assertThat(tuple.getA(), equalTo("Peter Smith"));
+
+        assertThat(tuple.b, equalTo(42));
+        assertThat(tuple.b(), equalTo(42));
+        assertThat(tuple.getB(), equalTo(42));
+    }
+
+    @Test
     public void shouldFailOnNullMapper() {
         Tuple<String, Integer> tuple = Tuple.tuple("Peter Smith", 42);
 
