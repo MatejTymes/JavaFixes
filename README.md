@@ -92,7 +92,10 @@ It also implements `equals`, `hashCode` and `toString`.
     userId("mtymes").equals(userId("bjohnes"));
 
     userId("mtymes").value();
+
+    String surname = userId("mtymes").map(value -> value.substring(1));
 ```
+`Microtype` can't contain a `null` value and initialization with `null` value will throw an `IllegalArgumentException`
 
 ### Tuple
 
@@ -112,6 +115,7 @@ Immutable Two values holder. Each Tuple extends `DataObject` so methods `equals`
         (userId, user) -> user.firstName + " " + user.lastName + "'s ID is: " + userId.value()
     );
 ```
+`Tuple` can contain `null` values.
 
 ## Math
 
