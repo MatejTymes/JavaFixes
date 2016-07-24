@@ -1,13 +1,18 @@
 package mtymes.javafixes.concurrency;
 
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author mtymes
  * @since 10/22/14 10:41 PM
  */
-// todo: add success and failure counter
+// todo: add javadoc
 public class MonitoringTaskSubmitter {
+
+    private final AtomicInteger failedToSubmit = new AtomicInteger();
+    private final AtomicInteger succeeded = new AtomicInteger();
+    private final AtomicInteger failed = new AtomicInteger();
 
     private final ReusableCountLatch latch = new ReusableCountLatch();
 
@@ -63,6 +68,33 @@ public class MonitoringTaskSubmitter {
 
     public ScheduledFuture<Void> runTaskIn(long delay, TimeUnit unit, Task task) {
         return runIn(delay, unit, task);
+    }
+
+    public int inProgressCount() {
+        return latch.getCount();
+    }
+
+    public int failedSubmissionCount() {
+        return failedToSubmit.get();
+    }
+
+    public int succeededCount() {
+        return succeeded.get();
+    }
+
+    public int failedCount() {
+        return failed.get();
+    }
+
+    /**
+     * Resets failedSubmission, succeeded and failed counter.
+     * It doesn't reset the inProgress counter though as it is derived from the number of unfinished tasks.
+     */
+    // todo: test this
+    public void resetCounters() {
+        failedToSubmit.set(0);
+        succeeded.set(0);
+        failed.set(0);
     }
 
     public void waitTillDone() {
@@ -171,14 +203,17 @@ public class MonitoringTaskSubmitter {
     }
 
     private void taskSubmitFailed() {
+        failedToSubmit.incrementAndGet();
         latch.decrement();
     }
 
     private void taskFinished() {
+        succeeded.incrementAndGet();
         latch.decrement();
     }
 
     private void taskFailed() {
+        failed.incrementAndGet();
         latch.decrement();
     }
 }
