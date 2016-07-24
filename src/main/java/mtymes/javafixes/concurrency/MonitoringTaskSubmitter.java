@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * A wrapper around {@link java.util.concurrent.ScheduledExecutorService ScheduledExecutorService}
  * that allows you to monitor the number of submitted, failed and succeeded task, plus has the
- * ability to wait until all tasks scheduled trough {@code MonitoringTaskSubmitter} are finished
+ * ability to wait until all tasks scheduled trough {@code MonitoringTaskSubmitter} are completed
  * = there are no scheduled or running tasks.
  *
  * @author mtymes

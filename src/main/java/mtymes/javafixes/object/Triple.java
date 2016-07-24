@@ -35,7 +35,7 @@ public class Triple<A, B, C> extends DataObject {
     }
 
     /**
-     * Factory method to create Triple.
+     * Factory method to create {@code Triple}.
      *
      * @param a   first value
      * @param b   second value
@@ -43,7 +43,7 @@ public class Triple<A, B, C> extends DataObject {
      * @param <A> first value type
      * @param <B> second value type
      * @param <C> third value type
-     * @return new Triple
+     * @return new {@code Triple}
      */
     public static <A, B, C> Triple<A, B, C> triple(A a, B b, C c) {
         return new Triple<>(a, b, c);

@@ -31,13 +31,13 @@ public class Tuple<A, B> extends DataObject {
     }
 
     /**
-     * Factory method to create Tuple.
+     * Factory method to create {@code Tuple}.
      *
      * @param a   first value
      * @param b   second value
      * @param <A> first value type
      * @param <B> second value type
-     * @return new Tuple
+     * @return new {@code Tuple}
      */
     public static <A, B> Tuple<A, B> tuple(A a, B b) {
         return new Tuple<>(a, b);
