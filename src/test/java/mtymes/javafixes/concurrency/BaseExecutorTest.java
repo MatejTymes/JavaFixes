@@ -34,7 +34,7 @@ public abstract class BaseExecutorTest {
 
         assertThat(executor().failedCount(), equalTo(0));
         assertThat(executor().succeededCount(), equalTo(0));
-        assertThat(executor().inProgressCount(), equalTo(0));
+        assertThat(executor().toBeCompletedCount(), equalTo(0));
         assertThat(executor().failedSubmissionCount(), equalTo(0));
 
         executor().runRunnable(() -> {
@@ -60,14 +60,14 @@ public abstract class BaseExecutorTest {
 
         assertThat(executor().failedCount(), equalTo(6));
         assertThat(executor().succeededCount(), equalTo(0));
-        assertThat(executor().inProgressCount(), equalTo(0));
+        assertThat(executor().toBeCompletedCount(), equalTo(0));
         assertThat(executor().failedSubmissionCount(), equalTo(0));
 
         executor().resetCounters();
 
         assertThat(executor().failedCount(), equalTo(0));
         assertThat(executor().succeededCount(), equalTo(0));
-        assertThat(executor().inProgressCount(), equalTo(0));
+        assertThat(executor().toBeCompletedCount(), equalTo(0));
         assertThat(executor().failedSubmissionCount(), equalTo(0));
     }
 
@@ -76,7 +76,7 @@ public abstract class BaseExecutorTest {
 
         assertThat(executor().succeededCount(), equalTo(0));
         assertThat(executor().failedCount(), equalTo(0));
-        assertThat(executor().inProgressCount(), equalTo(0));
+        assertThat(executor().toBeCompletedCount(), equalTo(0));
         assertThat(executor().failedSubmissionCount(), equalTo(0));
 
         executor().runRunnable(() -> {
@@ -94,21 +94,21 @@ public abstract class BaseExecutorTest {
 
         assertThat(executor().succeededCount(), equalTo(6));
         assertThat(executor().failedCount(), equalTo(0));
-        assertThat(executor().inProgressCount(), equalTo(0));
+        assertThat(executor().toBeCompletedCount(), equalTo(0));
         assertThat(executor().failedSubmissionCount(), equalTo(0));
 
         executor().resetCounters();
 
         assertThat(executor().succeededCount(), equalTo(0));
         assertThat(executor().failedCount(), equalTo(0));
-        assertThat(executor().inProgressCount(), equalTo(0));
+        assertThat(executor().toBeCompletedCount(), equalTo(0));
         assertThat(executor().failedSubmissionCount(), equalTo(0));
     }
 
     @Test
-    public void shouldCountNumberOfInProgressTasks() {
+    public void shouldCountNumberOfToBeCompletedTasks() {
 
-        assertThat(executor().inProgressCount(), equalTo(0));
+        assertThat(executor().toBeCompletedCount(), equalTo(0));
         assertThat(executor().succeededCount(), equalTo(0));
         assertThat(executor().failedCount(), equalTo(0));
         assertThat(executor().failedSubmissionCount(), equalTo(0));
@@ -125,28 +125,28 @@ public abstract class BaseExecutorTest {
         executor().runTaskIn(500, TimeUnit.MILLISECONDS, () -> {
         });
 
-        assertThat(executor().inProgressCount(), equalTo(6));
+        assertThat(executor().toBeCompletedCount(), equalTo(6));
         assertThat(executor().succeededCount(), equalTo(0));
         assertThat(executor().failedCount(), equalTo(0));
         assertThat(executor().failedSubmissionCount(), equalTo(0));
 
         executor().resetCounters();
 
-        assertThat(executor().inProgressCount(), equalTo(6));
+        assertThat(executor().toBeCompletedCount(), equalTo(6));
         assertThat(executor().succeededCount(), equalTo(0));
         assertThat(executor().failedCount(), equalTo(0));
         assertThat(executor().failedSubmissionCount(), equalTo(0));
 
         executor().waitTillDone();
 
-        assertThat(executor().inProgressCount(), equalTo(0));
+        assertThat(executor().toBeCompletedCount(), equalTo(0));
         assertThat(executor().succeededCount(), equalTo(6));
         assertThat(executor().failedCount(), equalTo(0));
         assertThat(executor().failedSubmissionCount(), equalTo(0));
 
         executor().resetCounters();
 
-        assertThat(executor().inProgressCount(), equalTo(0));
+        assertThat(executor().toBeCompletedCount(), equalTo(0));
         assertThat(executor().succeededCount(), equalTo(0));
         assertThat(executor().failedCount(), equalTo(0));
         assertThat(executor().failedSubmissionCount(), equalTo(0));
@@ -158,7 +158,7 @@ public abstract class BaseExecutorTest {
         shutdownExecutor();
 
         assertThat(executor().failedSubmissionCount(), equalTo(0));
-        assertThat(executor().inProgressCount(), equalTo(0));
+        assertThat(executor().toBeCompletedCount(), equalTo(0));
         assertThat(executor().succeededCount(), equalTo(0));
         assertThat(executor().failedCount(), equalTo(0));
 
@@ -205,14 +205,14 @@ public abstract class BaseExecutorTest {
         }
 
         assertThat(executor().failedSubmissionCount(), equalTo(6));
-        assertThat(executor().inProgressCount(), equalTo(0));
+        assertThat(executor().toBeCompletedCount(), equalTo(0));
         assertThat(executor().succeededCount(), equalTo(0));
         assertThat(executor().failedCount(), equalTo(0));
 
         executor().resetCounters();
 
         assertThat(executor().failedSubmissionCount(), equalTo(0));
-        assertThat(executor().inProgressCount(), equalTo(0));
+        assertThat(executor().toBeCompletedCount(), equalTo(0));
         assertThat(executor().succeededCount(), equalTo(0));
         assertThat(executor().failedCount(), equalTo(0));
     }
