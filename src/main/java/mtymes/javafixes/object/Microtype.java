@@ -49,7 +49,7 @@ public abstract class Microtype<T> {
      * @return wrapped value
      */
     public T getValue() {
-        return value;
+        return value();
     }
 
     /**
@@ -63,11 +63,11 @@ public abstract class Microtype<T> {
         if (mapper == null) {
             throw new IllegalArgumentException("Microtype mapper can't be null");
         }
-        return mapper.apply(value);
+        return mapper.apply(value());
     }
 
     /**
-     * Equals if class to compare is of the same Microtype class and the wrapped
+     * Evaluates if object to compare is of the same Microtype type and the wrapped
      * values are equal
      *
      * @param other value to compare to
@@ -81,7 +81,7 @@ public abstract class Microtype<T> {
 
         Microtype<?> microtype = (Microtype<?>) other;
 
-        return value.equals(microtype.value);
+        return value().equals(microtype.value());
 
     }
 
@@ -92,7 +92,7 @@ public abstract class Microtype<T> {
      */
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return value().hashCode();
     }
 
     /**
@@ -102,6 +102,6 @@ public abstract class Microtype<T> {
      */
     @Override
     public String toString() {
-        return value.toString();
+        return value().toString();
     }
 }
