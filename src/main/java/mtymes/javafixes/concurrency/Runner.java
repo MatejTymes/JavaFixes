@@ -13,7 +13,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  *
  * @author mtymes
  */
-// todo: javadoc
 public class Runner extends MonitoringTaskSubmitter {
 
     /**
