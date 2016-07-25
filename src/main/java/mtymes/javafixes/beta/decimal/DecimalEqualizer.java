@@ -97,18 +97,14 @@ class DecimalEqualizer {
         return hashCode;
     }
 
-    // todo: inline this
     private static long descaleValue(long value, int fromScale, int toScale) {
         return (toScale < fromScale)
-                // todo: no need to cast to long in this time
                 ? downscaleByPowerOf10(value, (long) fromScale - toScale)
                 : value;
     }
 
-    // todo: inline this
     private static long upScaleValue(long value, int fromScale, int toScale) {
         return (toScale > fromScale)
-                // todo: no need to cast to long in this time
                 ? upscaleByPowerOf10(value, (long) toScale - fromScale)
                 : value;
     }
