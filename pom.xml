@@ -1,6 +1,9 @@
-<project>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>mtymes</groupId>
     <artifactId>javafixes</artifactId>
     <version>1.0</version>
@@ -19,7 +22,9 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/MatejTymes/JavaFixes</url>
+        <connection>scm:git:git://github.com/MatejTymes/JavaFixes.git</connection>
+        <developerConnection>scm:git:ssh://github.com:MatejTymes/JavaFixes.git</developerConnection>
+        <url>https://github.com/MatejTymes/JavaFixes/tree/master</url>
     </scm>
 
     <dependencies>
@@ -72,6 +77,7 @@
     <developers>
         <developer>
             <name>Matej Tymes</name>
+            <url>https://github.com/MatejTymes</url>
         </developer>
     </developers>
 
