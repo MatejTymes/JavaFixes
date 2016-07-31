@@ -69,4 +69,10 @@
 
     </dependencies>
 
+    <developers>
+        <developer>
+            <name>Matej Tymes</name>
+        </developer>
+    </developers>
+
 </project>
