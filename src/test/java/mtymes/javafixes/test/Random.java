@@ -157,6 +157,8 @@ public class Random {
     private static <T> T generateValidValue(Supplier<T> generator, Function<T, Boolean>... validityConditions) {
         T value;
 
+        int infiniteCycleCounter = 0;
+
         boolean valid;
         do {
             valid = true;
@@ -166,6 +168,10 @@ public class Random {
                     valid = false;
                     break;
                 }
+            }
+
+            if (infiniteCycleCounter++ == 1_000) {
+                throw new IllegalStateException("Possibly reached infinite cycle - unable to generate value after 1000 attempts.");
             }
         } while (!valid);
 
