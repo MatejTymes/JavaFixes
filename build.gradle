@@ -1,8 +1,14 @@
 apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 repositories {
     mavenCentral()
 }
+
+group = "com.github.matejtymes"
+archivesBaseName = "javafixes"
+version = "1.0-SNAPSHOT"
 
 dependencies {
 
@@ -27,10 +33,59 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
-    from javadoc.destinationDir
+    from javadoc
 }
 
 artifacts {
     archives sourcesJar
     archives javadocJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Java Fixes'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'Things I would like to have in Java by default'
+                url 'https://github.com/MatejTymes/JavaFixes'
+
+                scm {
+                    connection 'scm:git:git://github.com/MatejTymes/JavaFixes.git'
+                    developerConnection 'scm:git:ssh://github.com:MatejTymes/JavaFixes.git'
+                    url 'https://github.com/MatejTymes/JavaFixes/tree/master'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'mtymes'
+                        name 'Matej Tymes'
+                        url 'https://github.com/MatejTymes'
+                    }
+                }
+            }
+        }
+    }
 }
