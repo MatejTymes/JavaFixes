@@ -10,7 +10,7 @@ repositories {
 
 group = "com.github.matejtymes"
 archivesBaseName = "javafixes"
-version = "1.0"
+version = "1.1-SNAPSHOT"
 
 dependencies {
 
