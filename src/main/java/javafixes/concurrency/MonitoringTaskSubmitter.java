@@ -255,15 +255,17 @@ public class MonitoringTaskSubmitter {
      * then {@link RuntimeException} wrapping an {@link InterruptedException} is thrown
      * and the current thread's interrupted status is cleared.
      *
+     * @return this {@code MonitoringTaskSubmitter} instance
      * @throws RuntimeException wrapping a {@link InterruptedException} if the current thread
      *                          is interrupted while waiting
      */
-    public void waitTillDone() {
+    public MonitoringTaskSubmitter waitTillDone() {
         try {
             latch.waitTillZero();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        return this;
     }
 
     /**

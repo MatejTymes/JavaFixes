@@ -34,6 +34,12 @@ public class Runner extends MonitoringTaskSubmitter {
         return new Runner(threadCount);
     }
 
+    @Override
+    public Runner waitTillDone() {
+        super.waitTillDone();
+        return this;
+    }
+
     /**
      * Sends a shutdown signal to the runner.
      *
