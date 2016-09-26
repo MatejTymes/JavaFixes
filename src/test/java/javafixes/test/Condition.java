@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static javafixes.beta.decimal.BigIntegerUtil.BIG_INTEGER_MIN_LONG;
-import static javafixes.test.CollectionUtil.newSet;
+import static javafixes.common.CollectionUtil.newSet;
 
 public interface Condition<T> extends Function<T, Boolean> {
 
