@@ -2,6 +2,7 @@ package javafixes.common;
 
 import java.util.*;
 
+// todo: use better package
 // todo: add javadoc
 public class CollectionUtil {
 

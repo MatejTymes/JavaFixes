@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+// todo: use better package
 // todo: add javadoc
 public class StreamUtil {
 
