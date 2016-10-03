@@ -28,7 +28,7 @@ public class DecimalCreatorTest {
     }
 
     @Test
-    public void shouldCreateDecimalFromBigInteger() {
+    public void shouldCreateHugeDecimalFromBigInteger() {
         BigInteger unscaledValue = randomBigInteger(notFitIntoLong(), notDivisibleBy10());
         int scale = randomInt();
 

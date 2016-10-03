@@ -703,7 +703,7 @@ public class DecimalStaticCallTest {
 
             Decimal otherDecimal = mock(Decimal.class);
 
-            int expectedResult = pickRandomValue(-1, 0, -1);
+            int expectedResult = pickRandomValue(-1, 0, 1);
             mockStaticCalls(() -> {
                 when(DecimalEqualizer.compare(decimal, otherDecimal)).thenReturn(expectedResult);
             });

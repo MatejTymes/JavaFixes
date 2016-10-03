@@ -10,6 +10,7 @@ repositories {
 
 group = "com.github.matejtymes"
 archivesBaseName = "javafixes"
+// todo: add changelog
 version = "1.1.1-SNAPSHOT"
 
 dependencies {

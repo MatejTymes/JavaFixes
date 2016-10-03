@@ -2,6 +2,7 @@ package javafixes.common;
 
 import java.util.*;
 
+// todo: add javadoc
 public class CollectionUtil {
 
     @SafeVarargs
