@@ -22,6 +22,10 @@ public interface Condition<T> extends Function<T, Boolean> {
         return value -> mod(value, 10) != 0;
     }
 
+    static <T extends Number> Condition<T> notZero() {
+        return value -> signum(value) != 0;
+    }
+
     static <T extends Number> Condition<T> positive() {
         return value -> signum(value) == 1;
     }

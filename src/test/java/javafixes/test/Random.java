@@ -35,10 +35,13 @@ public class Random {
         return generateValidValue(Random::randomInt, validityCondition);
     }
 
-    public static long randomLong(long from, long to) {
-        // todo: both of these produce extremely high numbers - why is it so
-//        return new RandomDataGenerator().nextLong(from, to);
-        return ThreadLocalRandom.current().nextLong(from, to) + (long) randomInt(0, 1);
+    @SafeVarargs
+    public static long randomLong(long from, long to, Function<Long, Boolean>... validityConditions) {
+        return generateValidValue(
+//                () -> new RandomDataGenerator().nextLong(from, to),
+                () -> ThreadLocalRandom.current().nextLong(from, to) + (long) randomInt(0, 1),
+                validityConditions
+        );
     }
 
     public static long randomLong() {

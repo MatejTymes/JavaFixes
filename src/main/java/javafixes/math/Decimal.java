@@ -2,6 +2,7 @@ package javafixes.math;
 
 import java.math.BigInteger;
 
+// todo: extend Number
 public abstract class Decimal {
 
     private Decimal() {
@@ -50,7 +51,17 @@ public abstract class Decimal {
     }
 
     public static Decimal decimal(long unscaledValue, int scale) {
-        // todo: improve
+        while (unscaledValue != 0
+                && ((int) unscaledValue & 1) == 0
+                && unscaledValue % 10 == 0) {
+            unscaledValue /= 10;
+
+            if (scale == Integer.MIN_VALUE) {
+                throw new ArithmeticException("Scale overflow - can't set scale to less than: " + Integer.MIN_VALUE);
+            }
+            scale--;
+        }
+
         return new LongDecimal(unscaledValue, scale);
     }
 
@@ -59,7 +70,7 @@ public abstract class Decimal {
     }
 
     public static Decimal decimal(BigInteger unscaledValue, int scale) {
-        // todo: improve
+        // todo: strip trailing zeros
         return new HugeDecimal(unscaledValue, scale);
     }
 
