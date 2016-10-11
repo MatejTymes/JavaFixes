@@ -40,6 +40,7 @@ class DecimalParser {
                     unscaledValueB = unscaledValueB.multiply(TEN).add(BigInteger.valueOf(digitToAdd));
                 }
                 if (foundDecimalPoint) {
+                    // todo: check for scale overflow
                     ++scale;
                 }
             } else if (c == '.') {

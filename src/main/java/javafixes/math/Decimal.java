@@ -5,11 +5,13 @@ import java.math.BigInteger;
 import static javafixes.math.util.BigIntegerUtil.TEN_AS_BIG_INTEGER;
 import static javafixes.math.util.BigIntegerUtil.canConvertToLong;
 
+// todo: add javadoc
 // todo: extend Number
 public abstract class Decimal {
 
     private Decimal() {
     }
+
 
     static final class LongDecimal extends Decimal {
 
@@ -52,6 +54,7 @@ public abstract class Decimal {
             return scale;
         }
     }
+
 
     public static Decimal decimal(long unscaledValue, int scale) {
         while (unscaledValue != 0
@@ -97,6 +100,7 @@ public abstract class Decimal {
     public static Decimal d(BigInteger unscaledValue, int scale) {
         return decimal(unscaledValue, scale);
     }
+
 
     abstract public Number unscaledValue();
 
