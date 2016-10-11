@@ -1,14 +1,14 @@
 package javafixes.test;
 
-import javafixes.beta.decimal.BigIntegerUtil;
+import javafixes.math.util.BigIntegerUtil;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Set;
 import java.util.function.Function;
 
-import static javafixes.beta.decimal.BigIntegerUtil.BIG_INTEGER_MIN_LONG;
 import static javafixes.common.CollectionUtil.newSet;
+import static javafixes.math.util.BigIntegerUtil.MIN_LONG_AS_BIG_INTEGER;
 
 public interface Condition<T> extends Function<T, Boolean> {
 
@@ -35,11 +35,11 @@ public interface Condition<T> extends Function<T, Boolean> {
     }
 
     static Condition<BigInteger> fitsIntoLong() {
-        return value -> value.compareTo(BIG_INTEGER_MIN_LONG) >= 0 && value.compareTo(BigIntegerUtil.BIG_INTEGER_MAX_LONG) <= 0;
+        return value -> value.compareTo(MIN_LONG_AS_BIG_INTEGER) >= 0 && value.compareTo(BigIntegerUtil.MAX_LONG_AS_BIG_INTEGER) <= 0;
     }
 
     static Condition<BigInteger> notFitIntoLong() {
-        return value -> value.compareTo(BIG_INTEGER_MIN_LONG) < 0 || value.compareTo(BigIntegerUtil.BIG_INTEGER_MIN_LONG) > 0;
+        return value -> value.compareTo(MIN_LONG_AS_BIG_INTEGER) < 0 || value.compareTo(BigIntegerUtil.MIN_LONG_AS_BIG_INTEGER) > 0;
     }
 
     static int signum(Number value) {

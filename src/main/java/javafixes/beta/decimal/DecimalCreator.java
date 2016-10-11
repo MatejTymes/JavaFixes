@@ -2,8 +2,8 @@ package javafixes.beta.decimal;
 
 import java.math.BigInteger;
 
-import static javafixes.beta.decimal.BigIntegerUtil.canConvertToLong;
 import static javafixes.beta.decimal.Constants.BIG_TEN;
+import static javafixes.math.util.BigIntegerUtil.canConvertToLong;
 
 // todo: make part of the Decimal
 class DecimalCreator {

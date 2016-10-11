@@ -2,6 +2,9 @@ package javafixes.math;
 
 import java.math.BigInteger;
 
+import static javafixes.math.util.BigIntegerUtil.TEN_AS_BIG_INTEGER;
+import static javafixes.math.util.BigIntegerUtil.canConvertToLong;
+
 // todo: extend Number
 public abstract class Decimal {
 
@@ -70,11 +73,27 @@ public abstract class Decimal {
     }
 
     public static Decimal decimal(BigInteger unscaledValue, int scale) {
-        // todo: strip trailing zeros
-        return new HugeDecimal(unscaledValue, scale);
+        while (unscaledValue.signum() != 0) {
+            BigInteger[] divAndMod = unscaledValue.divideAndRemainder(TEN_AS_BIG_INTEGER);
+            if (divAndMod[1].signum() != 0) {
+                break;
+            }
+            unscaledValue = divAndMod[0];
+
+            if (scale == Integer.MIN_VALUE) {
+                throw new ArithmeticException("Scale overflow - can't set scale to less than: " + Integer.MIN_VALUE);
+            }
+            scale--;
+        }
+
+        if (canConvertToLong(unscaledValue)) {
+            long longUnscaledValue = unscaledValue.longValue();
+            return new LongDecimal(longUnscaledValue, longUnscaledValue == 0 ? 0 : scale);
+        } else {
+            return new HugeDecimal(unscaledValue, unscaledValue.signum() == 0 ? 0 : scale);
+        }
     }
 
-    // todo: test this
     public static Decimal d(BigInteger unscaledValue, int scale) {
         return decimal(unscaledValue, scale);
     }
