@@ -21,7 +21,6 @@ public abstract class Decimal {
 
         private LongDecimal(long unscaledValue, int scale) {
             this.unscaledValue = unscaledValue;
-            // todo: test this
             this.scale = (unscaledValue == 0) ? 0 : scale;
         }
 

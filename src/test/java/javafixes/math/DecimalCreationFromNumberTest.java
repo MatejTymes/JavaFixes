@@ -186,4 +186,27 @@ public class DecimalCreationFromNumberTest {
             // expected
         }
     }
+
+    @Test
+    public void shouldHaveZeroScaleForZeroValue() {
+        Decimal decimal = Decimal.decimal(0, randomInt(notZero()));
+        assertThat(decimal, instanceOf(Decimal.LongDecimal.class));
+        assertThat(decimal.unscaledValue(), equalTo(0L));
+        assertThat(decimal.scale(), equalTo(0));
+
+        decimal = Decimal.d(0, randomInt(notZero()));
+        assertThat(decimal, instanceOf(Decimal.LongDecimal.class));
+        assertThat(decimal.unscaledValue(), equalTo(0L));
+        assertThat(decimal.scale(), equalTo(0));
+
+        decimal = Decimal.decimal(BigInteger.ZERO, randomInt(notZero()));
+        assertThat(decimal, instanceOf(Decimal.LongDecimal.class));
+        assertThat(decimal.unscaledValue(), equalTo(0L));
+        assertThat(decimal.scale(), equalTo(0));
+
+        decimal = Decimal.d(BigInteger.ZERO, randomInt(notZero()));
+        assertThat(decimal, instanceOf(Decimal.LongDecimal.class));
+        assertThat(decimal.unscaledValue(), equalTo(0L));
+        assertThat(decimal.scale(), equalTo(0));
+    }
 }
