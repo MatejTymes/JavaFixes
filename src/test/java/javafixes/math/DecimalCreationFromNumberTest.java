@@ -13,7 +13,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class DecimalTest {
+public class DecimalCreationFromNumberTest {
 
     @Test
     public void shouldCreateLongDecimalFromLong() {
