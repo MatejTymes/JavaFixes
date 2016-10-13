@@ -13,7 +13,6 @@ public abstract class Decimal {
     private Decimal() {
     }
 
-
     static final class LongDecimal extends Decimal {
 
         transient final long unscaledValue;
@@ -22,6 +21,11 @@ public abstract class Decimal {
         private LongDecimal(long unscaledValue, int scale) {
             this.unscaledValue = unscaledValue;
             this.scale = (unscaledValue == 0) ? 0 : scale;
+        }
+
+        @Override
+        public final int signum() {
+            return Long.signum(unscaledValue);
         }
 
         @Override
@@ -43,6 +47,11 @@ public abstract class Decimal {
         private HugeDecimal(BigInteger unscaledValue, int scale) {
             this.unscaledValue = unscaledValue;
             this.scale = scale;
+        }
+
+        @Override
+        public final int signum() {
+            return unscaledValue.signum();
         }
 
         @Override
@@ -176,6 +185,7 @@ public abstract class Decimal {
         return decimal(stringValue);
     }
 
+    abstract public int signum();
 
     abstract public Number unscaledValue();
 
