@@ -311,6 +311,14 @@ public class MonitoringTaskSubmitter {
         }
     }
 
+    protected void onWorkException(Exception e) {
+        e.printStackTrace();
+    }
+
+    protected void onWorkThrowable(Throwable t) {
+        t.printStackTrace();
+    }
+
     /* =========================== */
     /* ---   private methods   --- */
     /* =========================== */
@@ -325,9 +333,11 @@ public class MonitoringTaskSubmitter {
                     return result;
                 } catch (Exception e) {
                     taskFailed();
+                    onWorkException(e);
                     throw e;
                 } catch (Throwable t) {
                     taskFailed();
+                    onWorkThrowable(t);
                     throw new RuntimeException(t);
                 }
             }
@@ -344,9 +354,11 @@ public class MonitoringTaskSubmitter {
                     return null;
                 } catch (Exception e) {
                     taskFailed();
+                    onWorkException(e);
                     throw e;
                 } catch (Throwable t) {
                     taskFailed();
+                    onWorkThrowable(t);
                     throw new RuntimeException(t);
                 }
             }
@@ -363,9 +375,11 @@ public class MonitoringTaskSubmitter {
                     return null;
                 } catch (Exception e) {
                     taskFailed();
+                    onWorkException(e);
                     throw e;
                 } catch (Throwable t) {
                     taskFailed();
+                    onWorkThrowable(t);
                     throw new RuntimeException(t);
                 }
             }
@@ -380,6 +394,7 @@ public class MonitoringTaskSubmitter {
 
         } catch (RuntimeException e) {
             taskSubmitFailed();
+            onWorkException(e);
             throw e;
         }
     }
@@ -392,6 +407,7 @@ public class MonitoringTaskSubmitter {
 
         } catch (RuntimeException e) {
             taskSubmitFailed();
+            onWorkException(e);
             throw e;
         }
     }
