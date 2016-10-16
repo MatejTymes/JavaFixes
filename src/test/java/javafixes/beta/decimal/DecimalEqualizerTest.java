@@ -11,7 +11,7 @@ import static javafixes.beta.decimal.Decimal.decimal;
 import static javafixes.test.Condition.otherThan;
 import static javafixes.test.Random.randomInt;
 import static javafixes.test.Random.randomLong;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class DecimalEqualizerTest {

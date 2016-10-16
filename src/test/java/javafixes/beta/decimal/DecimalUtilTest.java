@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.math.BigInteger;
 
 import static javafixes.test.Random.*;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class DecimalUtilTest {

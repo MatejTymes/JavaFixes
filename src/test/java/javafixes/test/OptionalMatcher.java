@@ -6,7 +6,7 @@ import org.hamcrest.TypeSafeMatcher;
 
 import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.equalTo;
 
 // todo: create new maven artifact with this javafixes-test
 public class OptionalMatcher<T> extends TypeSafeMatcher<Optional<T>> {

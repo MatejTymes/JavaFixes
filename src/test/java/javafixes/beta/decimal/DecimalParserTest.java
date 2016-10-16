@@ -9,8 +9,8 @@ import java.math.BigInteger;
 
 import static javafixes.test.Condition.*;
 import static javafixes.test.Random.*;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 

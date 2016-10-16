@@ -8,8 +8,8 @@ import java.math.BigInteger;
 
 import static javafixes.beta.decimal.Decimal.d;
 import static javafixes.beta.decimal.Decimal.decimal;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
 // todo: add BigDecimal comparison test - check all operations

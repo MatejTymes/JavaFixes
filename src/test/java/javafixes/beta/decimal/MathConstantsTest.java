@@ -5,7 +5,7 @@ import org.junit.Test;
 import static java.math.RoundingMode.HALF_UP;
 import static javafixes.beta.decimal.Decimal.d;
 import static javafixes.beta.decimal.Precision.*;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class MathConstantsTest {

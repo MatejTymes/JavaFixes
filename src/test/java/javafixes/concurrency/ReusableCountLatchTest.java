@@ -10,10 +10,7 @@ import static javafixes.test.Condition.negative;
 import static javafixes.test.Condition.positive;
 import static javafixes.test.Random.randomBoolean;
 import static javafixes.test.Random.randomInt;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
