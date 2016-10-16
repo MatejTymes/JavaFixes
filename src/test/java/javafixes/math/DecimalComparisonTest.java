@@ -137,7 +137,7 @@ public class DecimalComparisonTest {
     private static int randomScaleInt(Function<Integer, Boolean>... validityConditions) {
         // todo: uncomment - comparison of extreme scale difference for HugeDecimals is currently extremely slow
 //        return randomInt();
-        return randomInt(-1_000, 1_000);
+        return randomInt(-1_000, 1_000, validityConditions);
     }
 
     private BigInteger powerOf10(long scale) {
