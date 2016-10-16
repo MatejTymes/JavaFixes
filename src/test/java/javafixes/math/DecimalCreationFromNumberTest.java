@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.math.BigInteger;
 
 import static java.lang.Math.pow;
-import static javafixes.math.util.BigIntegerUtil.TEN_AS_BIG_INTEGER;
+import static javafixes.math.BigIntegerUtil.TEN_AS_BIG_INTEGER;
 import static javafixes.test.Condition.*;
 import static javafixes.test.Random.*;
 import static org.hamcrest.CoreMatchers.equalTo;

@@ -56,12 +56,10 @@ class DecimalEqualizer {
             int maxScale = max(scaleA, scaleB);
 
             if (scaleA < maxScale) {
-                // todo: check there is no scale overflow
                 unscaledA = upscaleByPowerOf10(unscaledA, (long) maxScale - scaleA);
             }
 
             if (scaleB < maxScale) {
-                // todo: check there is no scale overflow
                 unscaledB = upscaleByPowerOf10(unscaledB, (long) maxScale - scaleB);
             }
 

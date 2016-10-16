@@ -4,7 +4,6 @@ import java.math.BigInteger;
 
 import static java.lang.Math.min;
 
-// todo: test this first
 class PowerUtil {
 
     public static long upscaleByPowerOf10(long value, long n) {
@@ -36,6 +35,7 @@ class PowerUtil {
     }
 
     public static BigInteger upscaleByPowerOf10(BigInteger value, long n) {
+        // todo: speed up for large n
         if (value.signum() != 0) {
             while (n > 0) {
                 int scale = (int) min(maxBigPowerOf10(), n);

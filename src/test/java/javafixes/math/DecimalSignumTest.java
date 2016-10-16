@@ -9,7 +9,7 @@ import static javafixes.test.Random.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class DecimalTest {
+public class DecimalSignumTest {
 
     @Test
     public void shouldProvideProperSignum() {

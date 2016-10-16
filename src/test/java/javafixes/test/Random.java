@@ -21,9 +21,13 @@ public class Random {
         return pickRandomValue(true, false);
     }
 
-    public static int randomInt(int from, int to) {
-        // typecast it to long as otherwise we could get int overflow
-        return (int) ((long) (Math.random() * ((long) to - (long) from + 1L)) + (long) from);
+    @SafeVarargs
+    public static int randomInt(int from, int to, Function<Integer, Boolean>... validityConditions) {
+        return generateValidValue(
+                // typecast it to long as otherwise we could get int overflow
+                () -> (int) ((long) (Math.random() * ((long) to - (long) from + 1L)) + (long) from),
+                validityConditions
+        );
     }
 
     public static int randomInt() {
@@ -31,8 +35,8 @@ public class Random {
     }
 
     @SafeVarargs
-    public static int randomInt(Function<Integer, Boolean>... validityCondition) {
-        return generateValidValue(Random::randomInt, validityCondition);
+    public static int randomInt(Function<Integer, Boolean>... validityConditions) {
+        return generateValidValue(Random::randomInt, validityConditions);
     }
 
     @SafeVarargs

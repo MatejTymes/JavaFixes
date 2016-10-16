@@ -2,16 +2,24 @@ package javafixes.math;
 
 import java.math.BigInteger;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.math.BigInteger.TEN;
-import static javafixes.math.util.BigIntegerUtil.TEN_AS_BIG_INTEGER;
-import static javafixes.math.util.BigIntegerUtil.canConvertToLong;
+import static javafixes.math.BigIntegerUtil.TEN_AS_BIG_INTEGER;
+import static javafixes.math.BigIntegerUtil.canConvertToLong;
+import static javafixes.math.PowerUtil.downscaleByPowerOf10;
+import static javafixes.math.PowerUtil.upscaleByPowerOf10;
 
 // todo: add javadoc
 // todo: extend Number
-public abstract class Decimal {
+public abstract class Decimal implements Comparable<Decimal> {
 
     private Decimal() {
     }
+
+    /* =========================== */
+    /* ---   implementations   --- */
+    /* =========================== */
 
     static final class LongDecimal extends Decimal {
 
@@ -65,6 +73,9 @@ public abstract class Decimal {
         }
     }
 
+    /* ========================== */
+    /* ---   static methods   --- */
+    /* ========================== */
 
     public static Decimal decimal(long unscaledValue, int scale) throws ArithmeticException {
         while (unscaledValue != 0
@@ -185,11 +196,101 @@ public abstract class Decimal {
         return decimal(stringValue);
     }
 
+    /* ========================== */
+    /* ---   public methods   --- */
+    /* ========================== */
+
     abstract public int signum();
 
     abstract public Number unscaledValue();
 
     abstract public int scale();
+
+    @Override
+    public int compareTo(Decimal other) {
+        return compare(this, other);
+    }
+
+    /* ================================== */
+    /* ---   private static methods   --- */
+    /* ================================== */
+
+    private static int compare(Decimal a, Decimal b) {
+
+        int signComparison = Integer.compare(a.signum(), b.signum());
+        if (signComparison != 0) {
+            return signComparison;
+        }
+
+        int scaleA = a.scale();
+        int scaleB = b.scale();
+
+        if (a instanceof LongDecimal && b instanceof LongDecimal) {
+            long unscaledA = ((LongDecimal) a).unscaledValue;
+            long unscaledB = ((LongDecimal) b).unscaledValue;
+
+            if (scaleA == scaleB) {
+                return Long.compare(unscaledA, unscaledB);
+            }
+
+            int scaleToGet = min(scaleA, scaleB);
+
+            // upper part comparison
+            long rescaledA = descaleValue(unscaledA, scaleA, scaleToGet);
+            long rescaledB = descaleValue(unscaledB, scaleB, scaleToGet);
+
+            int topComparison = Long.compare(rescaledA, rescaledB);
+            if (topComparison != 0) {
+                return topComparison;
+            } else {
+                // remainder comparison
+                long remainderA = unscaledA - upScaleValue(rescaledA, scaleToGet, scaleA);
+                long remainderB = unscaledB - upScaleValue(rescaledB, scaleToGet, scaleB);
+
+                return Long.compare(remainderA, remainderB);
+            }
+        } else {
+            // todo: make this more performant for huge scale differences
+            BigInteger unscaledA = bigUnscaledValueFrom(a);
+            BigInteger unscaledB = bigUnscaledValueFrom(b);
+
+            int maxScale = max(scaleA, scaleB);
+
+            if (scaleA < maxScale) {
+                unscaledA = upscaleByPowerOf10(unscaledA, (long) maxScale - scaleA);
+            }
+
+            if (scaleB < maxScale) {
+                unscaledB = upscaleByPowerOf10(unscaledB, (long) maxScale - scaleB);
+            }
+
+            return unscaledA.compareTo(unscaledB);
+        }
+    }
+
+    private static BigInteger bigUnscaledValueFrom(Decimal d) {
+        BigInteger unscaledValue;
+        if (d instanceof LongDecimal) {
+            unscaledValue = BigInteger.valueOf(((LongDecimal) d).unscaledValue);
+        } else if (d instanceof HugeDecimal) {
+            unscaledValue = ((HugeDecimal) d).unscaledValue;
+        } else {
+            throw new UnsupportedDecimalTypeException(d);
+        }
+        return unscaledValue;
+    }
+
+    private static long descaleValue(long value, int fromScale, int toScale) {
+        return (toScale < fromScale)
+                ? downscaleByPowerOf10(value, (long) fromScale - toScale)
+                : value;
+    }
+
+    private static long upScaleValue(long value, int fromScale, int toScale) {
+        return (toScale > fromScale)
+                ? upscaleByPowerOf10(value, (long) toScale - fromScale)
+                : value;
+    }
 
     private static final long SAFE_TO_MULTIPLY_BY_10_BOUND = Long.MAX_VALUE / 10;
     private static final long SAFE_TO_ADD_DIGIT_BOUND = (Long.MAX_VALUE - 9) / 10;

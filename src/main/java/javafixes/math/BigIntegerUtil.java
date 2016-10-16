@@ -1,7 +1,8 @@
-package javafixes.math.util;
+package javafixes.math;
 
 import java.math.BigInteger;
 
+// todo: make class protected
 public class BigIntegerUtil {
 
     public static final BigInteger TEN_AS_BIG_INTEGER = BigInteger.TEN;
