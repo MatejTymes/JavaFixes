@@ -218,13 +218,11 @@ public abstract class Decimal implements Comparable<Decimal> {
         return (abs(scale()) < 19) ? toPlainString() : toScientificNotation();
     }
 
-    // todo: test
     public String toPlainString() {
         return toPlainString(0);
     }
 
-
-    // todo: test
+    // todo: add method with Scale parameter as well
     public String toPlainString(int minScaleToUse) {
         StringBuilder sb = new StringBuilder(unscaledValue().toString());
 

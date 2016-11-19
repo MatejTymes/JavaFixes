@@ -6,6 +6,7 @@ import java.math.BigInteger;
 
 import static java.lang.Long.MAX_VALUE;
 import static java.lang.Long.MIN_VALUE;
+import static javafixes.math.Decimal.d;
 import static javafixes.math.Decimal.decimal;
 import static javafixes.test.Condition.*;
 import static javafixes.test.Random.*;
@@ -13,6 +14,85 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class DecimalToStringTest {
+
+    @Test
+    public void shouldPrintDecimalAsPlainString() {
+        assertThat(d(123, 0).toPlainString(), equalTo("123"));
+        assertThat(d(-123, 0).toPlainString(), equalTo("-123"));
+
+        assertThat(d(456, 1).toPlainString(), equalTo("45.6"));
+        assertThat(d(-456, 1).toPlainString(), equalTo("-45.6"));
+        assertThat(d(456, 2).toPlainString(), equalTo("4.56"));
+        assertThat(d(-456, 2).toPlainString(), equalTo("-4.56"));
+        assertThat(d(456, 3).toPlainString(), equalTo("0.456"));
+        assertThat(d(-456, 3).toPlainString(), equalTo("-0.456"));
+        assertThat(d(456, 4).toPlainString(), equalTo("0.0456"));
+        assertThat(d(-456, 4).toPlainString(), equalTo("-0.0456"));
+
+        assertThat(d(456, -1).toPlainString(), equalTo("4560"));
+        assertThat(d(456, -4).toPlainString(), equalTo("4560000"));
+
+        assertThat(d(new BigInteger("12345678901234567890123456789"), 0).toPlainString(), equalTo("12345678901234567890123456789"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), 0).toPlainString(), equalTo("-12345678901234567890123456789"));
+        assertThat(d(new BigInteger("12345678901234567890123456789"), 1).toPlainString(), equalTo("1234567890123456789012345678.9"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), 1).toPlainString(), equalTo("-1234567890123456789012345678.9"));
+        assertThat(d(new BigInteger("12345678901234567890123456789"), 28).toPlainString(), equalTo("1.2345678901234567890123456789"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), 28).toPlainString(), equalTo("-1.2345678901234567890123456789"));
+        assertThat(d(new BigInteger("12345678901234567890123456789"), 29).toPlainString(), equalTo("0.12345678901234567890123456789"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), 29).toPlainString(), equalTo("-0.12345678901234567890123456789"));
+        assertThat(d(new BigInteger("12345678901234567890123456789"), 30).toPlainString(), equalTo("0.012345678901234567890123456789"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), 30).toPlainString(), equalTo("-0.012345678901234567890123456789"));
+
+        assertThat(d(789, 0).toPlainString(0), equalTo("789"));
+        assertThat(d(-789, 0).toPlainString(0), equalTo("-789"));
+        assertThat(d(789, 0).toPlainString(1), equalTo("789.0"));
+        assertThat(d(-789, 0).toPlainString(1), equalTo("-789.0"));
+        assertThat(d(789, 0).toPlainString(2), equalTo("789.00"));
+        assertThat(d(-789, 0).toPlainString(2), equalTo("-789.00"));
+        assertThat(d(789, 0).toPlainString(-1), equalTo("789"));
+        assertThat(d(-789, 0).toPlainString(-1), equalTo("-789"));
+        assertThat(d(789, 0).toPlainString(-2), equalTo("789"));
+        assertThat(d(-789, 0).toPlainString(-2), equalTo("-789"));
+
+        assertThat(d(123, 2).toPlainString(2), equalTo("1.23"));
+        assertThat(d(-123, 2).toPlainString(2), equalTo("-1.23"));
+        assertThat(d(123, 2).toPlainString(3), equalTo("1.230"));
+        assertThat(d(-123, 2).toPlainString(3), equalTo("-1.230"));
+        assertThat(d(123, 2).toPlainString(1), equalTo("1.23"));
+        assertThat(d(-123, 2).toPlainString(1), equalTo("-1.23"));
+
+        assertThat(d(456, -1).toPlainString(-1), equalTo("4560"));
+        assertThat(d(-456, -1).toPlainString(-1), equalTo("-4560"));
+        assertThat(d(456, -1).toPlainString(-2), equalTo("4560"));
+        assertThat(d(-456, -1).toPlainString(-2), equalTo("-4560"));
+        assertThat(d(456, -1).toPlainString(0), equalTo("4560"));
+        assertThat(d(-456, -1).toPlainString(0), equalTo("-4560"));
+        assertThat(d(456, -1).toPlainString(1), equalTo("4560.0"));
+        assertThat(d(-456, -1).toPlainString(1), equalTo("-4560.0"));
+
+        assertThat(d(new BigInteger("12345678901234567890123456789"), 0).toPlainString(-1), equalTo("12345678901234567890123456789"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), 0).toPlainString(-1), equalTo("-12345678901234567890123456789"));
+        assertThat(d(new BigInteger("12345678901234567890123456789"), 0).toPlainString(0), equalTo("12345678901234567890123456789"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), 0).toPlainString(0), equalTo("-12345678901234567890123456789"));
+        assertThat(d(new BigInteger("12345678901234567890123456789"), 0).toPlainString(1), equalTo("12345678901234567890123456789.0"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), 0).toPlainString(1), equalTo("-12345678901234567890123456789.0"));
+
+        assertThat(d(new BigInteger("12345678901234567890123456789"), 2).toPlainString(1), equalTo("123456789012345678901234567.89"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), 2).toPlainString(1), equalTo("-123456789012345678901234567.89"));
+        assertThat(d(new BigInteger("12345678901234567890123456789"), 2).toPlainString(2), equalTo("123456789012345678901234567.89"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), 2).toPlainString(2), equalTo("-123456789012345678901234567.89"));
+        assertThat(d(new BigInteger("12345678901234567890123456789"), 2).toPlainString(3), equalTo("123456789012345678901234567.890"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), 2).toPlainString(3), equalTo("-123456789012345678901234567.890"));
+
+        assertThat(d(new BigInteger("12345678901234567890123456789"), -1).toPlainString(-2), equalTo("123456789012345678901234567890"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), -1).toPlainString(-2), equalTo("-123456789012345678901234567890"));
+        assertThat(d(new BigInteger("12345678901234567890123456789"), -1).toPlainString(-1), equalTo("123456789012345678901234567890"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), -1).toPlainString(-1), equalTo("-123456789012345678901234567890"));
+        assertThat(d(new BigInteger("12345678901234567890123456789"), -1).toPlainString(0), equalTo("123456789012345678901234567890"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), -1).toPlainString(0), equalTo("-123456789012345678901234567890"));
+        assertThat(d(new BigInteger("12345678901234567890123456789"), -1).toPlainString(1), equalTo("123456789012345678901234567890.0"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), -1).toPlainString(1), equalTo("-123456789012345678901234567890.0"));
+    }
 
     @Test
     public void shouldPrintLongDecimalInScientificNotation() {
