@@ -38,7 +38,9 @@ class PowerUtil {
         // todo: speed up for large n
         if (value.signum() != 0) {
             while (n > 0) {
-                int scale = (int) min(maxBigPowerOf10(), n);
+                int scale = (n > Integer.MAX_VALUE)
+                        ? Integer.MAX_VALUE
+                        : (int) n;
                 value = value.multiply(powerOf10Big(scale));
                 n -= scale;
             }
@@ -71,16 +73,11 @@ class PowerUtil {
             throw new IllegalArgumentException("n (" + n + ") must be greater or equal to 0");
         }
 
-        int scale = Math.min(powersOf10B.length - 1, n);
-        BigInteger response = powersOf10B[scale];
-        n -= scale;
-
-        while (n > 0) {
-            scale = Math.min(powersOf10B.length - 1, n);
-            response = response.multiply(powerOf10Big(scale));
-            n -= scale;
+        if (n < powersOf10B.length) {
+            return powersOf10B[n];
+        } else {
+            return BigInteger.TEN.pow(n);
         }
-        return response;
     }
 
     private static final long[] powersOf10L = {

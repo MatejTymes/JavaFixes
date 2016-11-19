@@ -1,9 +1,9 @@
 package javafixes.math;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
+import static java.lang.Math.*;
 import static java.math.BigInteger.TEN;
 import static javafixes.math.BigIntegerUtil.TEN_AS_BIG_INTEGER;
 import static javafixes.math.BigIntegerUtil.canConvertToLong;
@@ -206,9 +206,60 @@ public abstract class Decimal implements Comparable<Decimal> {
 
     abstract public int scale();
 
+    // todo: too slow - speed up
     @Override
     public int compareTo(Decimal other) {
         return compare(this, other);
+    }
+
+    // todo: test
+    @Override
+    public String toString() {
+        return (abs(scale()) < 19) ? toPlainString() : toScientificNotation();
+    }
+
+    // todo: test
+    public String toPlainString() {
+        return toPlainString(0);
+    }
+
+
+    // todo: test
+    public String toPlainString(int minScaleToUse) {
+        StringBuilder sb = new StringBuilder(unscaledValue().toString());
+
+        int currentScale = scale();
+        int scaleToUse = max(currentScale, max(minScaleToUse, 0));
+        if (currentScale < scaleToUse) {
+            sb.append(arrayOfZeroChars((long) scaleToUse - currentScale));
+        }
+
+        if (scaleToUse > 0) {
+            boolean isNegative = signum() < 0;
+            int prefixZerosOffset = isNegative ? 1 : 0;
+            int firstDigitScale = scaleToUse - (sb.length() - prefixZerosOffset) + 1;
+            if (firstDigitScale > 0) {
+                sb.insert(prefixZerosOffset, arrayOfZeroChars(firstDigitScale));
+            }
+            int index = sb.length() - scaleToUse;
+            sb.insert(index, '.');
+        }
+
+        return sb.toString();
+    }
+
+    public String toScientificNotation() {
+        StringBuilder sb = new StringBuilder(unscaledValue().toString());
+
+        int signOffset = (signum() < 0) ? 1 : 0;
+        long exponent = ((long) sb.length() - signOffset) - scale() - 1;
+
+        if (sb.length() > 1 + signOffset) {
+            sb.insert(1 + signOffset, '.');
+        }
+        sb.append("e").append(exponent);
+
+        return sb.toString();
     }
 
     /* ================================== */
@@ -250,7 +301,7 @@ public abstract class Decimal implements Comparable<Decimal> {
                 return Long.compare(remainderA, remainderB);
             }
         } else {
-            // todo: make this more performant for huge scale differences
+            // todo: make this faster for huge scale differences - currently its extremely slow
             BigInteger unscaledA = bigUnscaledValueFrom(a);
             BigInteger unscaledB = bigUnscaledValueFrom(b);
 
@@ -290,6 +341,15 @@ public abstract class Decimal implements Comparable<Decimal> {
         return (toScale > fromScale)
                 ? upscaleByPowerOf10(value, (long) toScale - fromScale)
                 : value;
+    }
+
+    private static char[] arrayOfZeroChars(long size) {
+        if (size > Integer.MAX_VALUE) {
+            throw new IllegalStateException("unable to create String with " + size + " characters");
+        }
+        char[] zeros = new char[(int) size];
+        Arrays.fill(zeros, '0');
+        return zeros;
     }
 
     private static final long SAFE_TO_MULTIPLY_BY_10_BOUND = Long.MAX_VALUE / 10;
