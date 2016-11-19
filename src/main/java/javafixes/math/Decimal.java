@@ -212,7 +212,6 @@ public abstract class Decimal implements Comparable<Decimal> {
         return compare(this, other);
     }
 
-    // todo: test
     @Override
     public String toString() {
         return (abs(scale()) < 19) ? toPlainString() : toScientificNotation();

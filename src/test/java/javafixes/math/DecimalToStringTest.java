@@ -148,6 +148,36 @@ public class DecimalToStringTest {
         assertThat(decimal(unscaledValueB, scale).toScientificNotation(), equalTo(expectedScientificNotation));
     }
 
+    @Test
+    public void shouldPrintDecimalAsString() {
+        long unscaledValueL = randomLong(notDivisibleBy10());
+        BigInteger unscaledValueB = randomBigInteger(notDivisibleBy10(), notFitIntoLong());
+
+        for (int scale = -18; scale < 19; scale++) {
+            Decimal decimalL = decimal(unscaledValueL, scale);
+            assertThat(decimalL.toString(), equalTo(decimalL.toPlainString()));
+
+            Decimal decimalB = decimal(unscaledValueB, scale);
+            assertThat(decimalB.toString(), equalTo(decimalB.toPlainString()));
+        }
+
+        for (int scale = -100; scale <= -19; scale++) {
+            Decimal decimalL = decimal(unscaledValueL, scale);
+            assertThat(decimalL.toString(), equalTo(decimalL.toScientificNotation()));
+
+            Decimal decimalB = decimal(unscaledValueB, scale);
+            assertThat(decimalB.toString(), equalTo(decimalB.toScientificNotation()));
+        }
+
+        for (int scale = 19; scale <= 100; scale++) {
+            Decimal decimalL = decimal(unscaledValueL, scale);
+            assertThat(decimalL.toString(), equalTo(decimalL.toScientificNotation()));
+
+            Decimal decimalB = decimal(unscaledValueB, scale);
+            assertThat(decimalB.toString(), equalTo(decimalB.toScientificNotation()));
+        }
+    }
+
 
     private int numberOfDigits(Number number) {
         return (int) number.toString().chars().filter(Character::isDigit).count();
