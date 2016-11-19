@@ -1,5 +1,6 @@
 package javafixes.beta.decimal;
 
+// todo: extends Limit or Size
 public final class Precision {
 
     public static final Precision PRECISION_7 = precision(7);

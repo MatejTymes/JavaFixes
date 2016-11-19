@@ -1,5 +1,6 @@
 package javafixes.beta.decimal;
 
+// todo: extends Limit or Size
 public final class Scale {
 
     public static final Scale SCALE_0 = scale(0); // 0 decimal places
