@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import static javafixes.test.Random.randomInt;
 import static javafixes.test.Random.randomLong;
 
+// todo: remove from git
 public class PlaygroundTest {
 
     @Test
@@ -66,6 +67,7 @@ public class PlaygroundTest {
     @Test
     public void shouldPrintDecimal() {
         System.out.println(BigDecimal.valueOf(123, Integer.MAX_VALUE).toPlainString());
+        System.out.println(Decimal.decimal(123, Integer.MAX_VALUE).toPlainString());
     }
 
 }
