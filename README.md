@@ -3,13 +3,13 @@
 Adding some features which would be normally nice to have in Java
 
 You can get it via Gradle:
-`compile 'com.github.matejtymes:javafixes:1.1.0'`
+`compile 'com.github.matejtymes:javafixes:1.1.1'`
 or Maven
 ```Xml
 <dependency>
     <groupId>com.github.matejtymes</groupId>
     <artifactId>javafixes</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 </dependency>
 ```
 
@@ -132,7 +132,7 @@ Immutable Two values holder. Each Tuple extends `DataObject` so methods `equals`
 
 ### Decimal
 
-*this feature is currently in a beta / WIP state - although feature complete it still requires more testing, api fine-tuning and tuning of performance for arithmetic operations*
+*this feature is currently in WIP state and is NOT part of the maven release - ANY HELP IS WELCOMED - although a spike implementation was already implemented a polished version will still require quite a lot of work*
 
 Introducing new class `Decimal`, that should fix the troubles we're currently facing when dealing with `BigDecimal`. The new class was needed as `BigDecimal`'s behavior can't be changed/patched because of backwards compatibility.
 
