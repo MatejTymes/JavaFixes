@@ -1,5 +1,8 @@
 package javafixes.concurrency;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -13,6 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 10/22/14 10:41 PM
  */
 public class MonitoringTaskSubmitter {
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final AtomicInteger failedToSubmit = new AtomicInteger();
     private final AtomicInteger succeeded = new AtomicInteger();
@@ -311,14 +316,12 @@ public class MonitoringTaskSubmitter {
         }
     }
 
-    // todo: provide exception handler
     protected void onWorkException(Exception e) {
-        e.printStackTrace();
+        logger.error("Exception while running an async process", e);
     }
 
-    // todo: provide exception handler
     protected void onWorkThrowable(Throwable t) {
-        t.printStackTrace();
+        logger.error("Throwable while running an async process", t);
     }
 
     /* =========================== */
