@@ -235,7 +235,6 @@ public abstract class Decimal implements Comparable<Decimal> {
         return compare(this, other);
     }
 
-    // todo: test
     @Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -246,7 +245,6 @@ public abstract class Decimal implements Comparable<Decimal> {
         return this.compareTo((Decimal) other) == 0;
     }
 
-    // todo: test
     @Override
     public int hashCode() {
         // its important that this starts as zero - this way we'll ignore trailing zeros
@@ -282,7 +280,6 @@ public abstract class Decimal implements Comparable<Decimal> {
         return toPlainString(0);
     }
 
-    // todo: add method with Scale parameter as well
     public String toPlainString(int minScaleToUse) {
         StringBuilder sb = new StringBuilder(unscaledValue().toString());
 
