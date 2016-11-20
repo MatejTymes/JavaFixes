@@ -2,6 +2,7 @@ package javafixes.math;
 
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.function.Function;
 
@@ -103,9 +104,6 @@ public class DecimalComparisonTest {
         int scaleA = randomScaleInt();
         int scaleB = randomScaleInt(otherThan(scaleA));
 
-        BigInteger adjustedPowerOf10A = powerOf10((long) Math.max(scaleA, scaleB) - (long) scaleA);
-        BigInteger adjustedPowerOf10B = powerOf10((long) Math.max(scaleA, scaleB) - (long) scaleB);
-
         long unscaledValueL1 = randomLong();
         long unscaledValueL2 = randomLong(otherThan(unscaledValueL1));
         BigInteger unscaledValueB1 = randomBigInteger(notFitIntoLong(), notDivisibleBy10());
@@ -114,22 +112,22 @@ public class DecimalComparisonTest {
         assertThat(
                 decimal(unscaledValueL1, scaleA)
                         .compareTo(decimal(unscaledValueL2, scaleB)),
-                equalTo(BigInteger.valueOf(unscaledValueL1).multiply(adjustedPowerOf10A)
-                        .compareTo(BigInteger.valueOf(unscaledValueL2).multiply(adjustedPowerOf10B)))
+                equalTo(BigDecimal.valueOf(unscaledValueL1, scaleA).compareTo(
+                        BigDecimal.valueOf(unscaledValueL2, scaleB)))
         );
 
         assertThat(
                 decimal(unscaledValueL1, scaleA).compareTo(
                         decimal(unscaledValueB1, scaleB)),
-                equalTo(BigInteger.valueOf(unscaledValueL1).multiply(adjustedPowerOf10A).compareTo(
-                        unscaledValueB1.multiply(adjustedPowerOf10B)))
+                equalTo(BigDecimal.valueOf(unscaledValueL1, scaleA).compareTo(
+                        new BigDecimal(unscaledValueB1, scaleB)))
         );
 
         assertThat(
                 decimal(unscaledValueB1, scaleA).compareTo(
                         decimal(unscaledValueB2, scaleB)),
-                equalTo(unscaledValueB1.multiply(adjustedPowerOf10A).compareTo(
-                        unscaledValueB2.multiply(adjustedPowerOf10B)))
+                equalTo(new BigDecimal(unscaledValueB1, scaleA).compareTo(
+                        new BigDecimal(unscaledValueB2, scaleB)))
         );
     }
 
@@ -138,20 +136,5 @@ public class DecimalComparisonTest {
         // todo: uncomment - comparison of extreme scale difference for HugeDecimals is currently extremely slow
 //        return randomInt();
         return randomInt(-1_000, 1_000, validityConditions);
-    }
-
-    private BigInteger powerOf10(long scale) {
-        long remainingScale = scale;
-        BigInteger result = BigInteger.ONE;
-        while (remainingScale > 0) {
-            if (remainingScale < Integer.MAX_VALUE) {
-                result = result.multiply(BigInteger.TEN.pow((int) remainingScale));
-                remainingScale = 0;
-            } else {
-                result = result.multiply(BigInteger.TEN.pow(Integer.MAX_VALUE));
-                remainingScale -= Integer.MAX_VALUE;
-            }
-        }
-        return result;
     }
 }
