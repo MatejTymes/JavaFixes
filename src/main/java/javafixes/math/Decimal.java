@@ -8,8 +8,7 @@ import static java.lang.Math.min;
 import static java.math.BigInteger.TEN;
 import static javafixes.math.BigIntegerUtil.TEN_AS_BIG_INTEGER;
 import static javafixes.math.BigIntegerUtil.canConvertToLong;
-import static javafixes.math.PowerUtil.downscaleByPowerOf10;
-import static javafixes.math.PowerUtil.upscaleByPowerOf10;
+import static javafixes.math.PowerUtil.*;
 
 // todo: add javadoc
 // todo: extend Number
@@ -48,6 +47,11 @@ public abstract class Decimal implements Comparable<Decimal> {
         }
 
         @Override
+        public int precision() {
+            return numberOfDigits(unscaledValue);
+        }
+
+        @Override
         public Decimal negate() {
             if (unscaledValue != Long.MIN_VALUE) {
                 return new LongDecimal(-unscaledValue, scale);
@@ -80,6 +84,11 @@ public abstract class Decimal implements Comparable<Decimal> {
         @Override
         public final int scale() {
             return scale;
+        }
+
+        @Override
+        public int precision() {
+            return numberOfDigits(unscaledValue);
         }
 
         @Override
@@ -221,7 +230,7 @@ public abstract class Decimal implements Comparable<Decimal> {
 
     abstract public int scale();
 
-    // todo: add precision();
+    abstract public int precision();
 
     abstract public Decimal negate();
 
