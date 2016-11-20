@@ -3,7 +3,8 @@ package javafixes.math;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import static java.lang.Math.*;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.math.BigInteger.TEN;
 import static javafixes.math.BigIntegerUtil.TEN_AS_BIG_INTEGER;
 import static javafixes.math.BigIntegerUtil.canConvertToLong;
@@ -45,6 +46,15 @@ public abstract class Decimal implements Comparable<Decimal> {
         public final int scale() {
             return scale;
         }
+
+        @Override
+        public Decimal negate() {
+            if (unscaledValue != Long.MIN_VALUE) {
+                return new LongDecimal(-unscaledValue, scale);
+            } else {
+                return new HugeDecimal(BigInteger.valueOf(unscaledValue).negate(), scale);
+            }
+        }
     }
 
     static final class HugeDecimal extends Decimal {
@@ -70,6 +80,11 @@ public abstract class Decimal implements Comparable<Decimal> {
         @Override
         public final int scale() {
             return scale;
+        }
+
+        @Override
+        public Decimal negate() {
+            return new HugeDecimal(unscaledValue.negate(), scale);
         }
     }
 
@@ -206,15 +221,36 @@ public abstract class Decimal implements Comparable<Decimal> {
 
     abstract public int scale();
 
+    abstract public Decimal negate();
+
+    // todo: test this
+    public Decimal abs() {
+        return (signum() < 0) ? negate() : this;
+    }
+
     // todo: too slow - speed up
     @Override
     public int compareTo(Decimal other) {
         return compare(this, other);
     }
 
+    // todo: test
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        //  we only check "other" is instance of Decimal and not check concrete class
+        //  as this allows us to have subclassing
+        if (other == null || !(other instanceof Decimal)) return false;
+
+        return this.compareTo((Decimal) other) == 0;
+    }
+
+    // todo: add hashCode()
+
     @Override
     public String toString() {
-        return (abs(scale()) < 19) ? toPlainString() : toScientificNotation();
+        // todo: verify can't have scale overflow on abs?
+        return (Math.abs(scale()) < 19) ? toPlainString() : toScientificNotation();
     }
 
     public String toPlainString() {
