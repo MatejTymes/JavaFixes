@@ -244,7 +244,31 @@ public abstract class Decimal implements Comparable<Decimal> {
         return this.compareTo((Decimal) other) == 0;
     }
 
-    // todo: add hashCode()
+    // todo: test
+    @Override
+    public int hashCode() {
+        // its important that this starts as zero - this way we'll ignore trailing zeros
+        int hashCode = 0;
+
+        if (this instanceof LongDecimal) {
+            long remainder = ((LongDecimal) this).unscaledValue;
+            while (remainder != 0) {
+                hashCode = (hashCode * 5) + (int) (remainder % 10);
+                remainder /= 10;
+            }
+        } else if (this instanceof HugeDecimal) {
+            BigInteger remainder = ((HugeDecimal) this).unscaledValue;
+            while (remainder.signum() != 0) {
+                BigInteger[] divAndMod = remainder.divideAndRemainder(BigInteger.TEN);
+                remainder = divAndMod[0];
+                hashCode = (hashCode * 5) + divAndMod[1].intValue();
+            }
+        } else {
+            throw new UnsupportedDecimalTypeException(this);
+        }
+
+        return hashCode;
+    }
 
     @Override
     public String toString() {
