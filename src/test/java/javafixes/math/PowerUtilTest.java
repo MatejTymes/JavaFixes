@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import java.math.BigInteger;
 
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.ZERO;
 import static javafixes.test.Condition.negative;
 import static javafixes.test.Condition.positive;
 import static javafixes.test.Random.randomBigInteger;
@@ -167,6 +169,46 @@ public class PowerUtilTest {
 
             value = randomBigInteger(negative());
             assertThat(PowerUtil.upscaleByPowerOf10(value, n), equalTo(value.multiply(powerOf10)));
+        }
+    }
+
+    @Test
+    public void shouldFindNumberOfLongDigits() {
+        assertThat("wrong number of digits for " + 0L, PowerUtil.numberOfDigits(0L), equalTo(1));
+        assertThat("wrong number of digits for " + 1L, PowerUtil.numberOfDigits(1L), equalTo(1));
+        assertThat("wrong number of digits for " + -1L, PowerUtil.numberOfDigits(-1L), equalTo(1));
+
+        assertThat("wrong number of digits for " + Long.MAX_VALUE, PowerUtil.numberOfDigits(Long.MAX_VALUE), equalTo(19));
+        assertThat("wrong number of digits for " + Long.MIN_VALUE, PowerUtil.numberOfDigits(Long.MIN_VALUE), equalTo(19));
+
+        for (int n = 1; n < 19; n++) {
+            long powerOf10 = (long) Math.pow(10, n);
+            assertThat("wrong number of digits for " + powerOf10, PowerUtil.numberOfDigits(powerOf10), equalTo(n + 1));
+            assertThat("wrong number of digits for " + -powerOf10, PowerUtil.numberOfDigits(-powerOf10), equalTo(n + 1));
+            assertThat("wrong number of digits for " + (powerOf10 - 1), PowerUtil.numberOfDigits(powerOf10 - 1), equalTo(n));
+            assertThat("wrong number of digits for " + (-powerOf10 + 1), PowerUtil.numberOfDigits(-powerOf10 + 1), equalTo(n));
+            assertThat("wrong number of digits for " + (powerOf10 + 1), PowerUtil.numberOfDigits(powerOf10 + 1), equalTo(n + 1));
+            assertThat("wrong number of digits for " + (-powerOf10 - 1), PowerUtil.numberOfDigits(-powerOf10 - 1), equalTo(n + 1));
+        }
+    }
+
+    @Test
+    public void shouldFindNumberOfBigIntegerDigits() {
+        assertThat("wrong number of digits for " + ZERO, PowerUtil.numberOfDigits(ZERO), equalTo(1));
+        assertThat("wrong number of digits for " + ONE, PowerUtil.numberOfDigits(ONE), equalTo(1));
+        assertThat("wrong number of digits for " + ONE.negate(), PowerUtil.numberOfDigits(ONE.negate()), equalTo(1));
+
+        BigInteger powerOf10 = BigInteger.ONE;
+        // tested for (n) up to 125_000 digits
+        for (int n = 1; n < 1_000; n++) {
+            powerOf10 = powerOf10.multiply(BigInteger.TEN);
+            assertThat("wrong number of digits for " + powerOf10, PowerUtil.numberOfDigits(powerOf10), equalTo(n + 1));
+            BigInteger negativePowerOf10 = powerOf10.negate();
+            assertThat("wrong number of digits for " + negativePowerOf10, PowerUtil.numberOfDigits(negativePowerOf10), equalTo(n + 1));
+            assertThat("wrong number of digits for " + powerOf10.subtract(ONE), PowerUtil.numberOfDigits(powerOf10.subtract(ONE)), equalTo(n));
+            assertThat("wrong number of digits for " + negativePowerOf10.add(ONE), PowerUtil.numberOfDigits(negativePowerOf10.add(ONE)), equalTo(n));
+            assertThat("wrong number of digits for " + powerOf10.add(ONE), PowerUtil.numberOfDigits(powerOf10.add(ONE)), equalTo(n + 1));
+            assertThat("wrong number of digits for " + negativePowerOf10.subtract(ONE), PowerUtil.numberOfDigits(negativePowerOf10.subtract(ONE)), equalTo(n + 1));
         }
     }
 }

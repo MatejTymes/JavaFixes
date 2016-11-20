@@ -48,6 +48,93 @@ class PowerUtil {
         return value;
     }
 
+    public static int numberOfDigits(long value) {
+        // this is slower than the if-else algorithm
+//        if (value <= 0) {
+//            if (value == Long.MIN_VALUE) {
+//                return 19;
+//            } else if (value == 0) {
+//                return 1;
+//            }
+//            value = -value;
+//        }
+//        int bitLength = 64 - Long.numberOfLeadingZeros(value);
+//        int digitCount = (int) (LOG_2_DIV_LOG_10 * bitLength + 1);
+//        if (digitCount < 19 && powersOf10L[digitCount - 1] > value) {
+//            digitCount--;
+//        }
+//        return digitCount;
+
+        if (value < 0) {
+            if (value == Long.MIN_VALUE) {
+                return 19;
+            }
+            value = -value;
+        }
+        if (value <= 99_999_999L) {
+            if (value <= 9_999L) {
+                if (value <= 99L) {
+                    if (value <= 9L) {
+                        return 1;
+                    } else {
+                        return 2;
+                    }
+                } else if (value <= 999L) {
+                    return 3;
+                }
+                return 4;
+            } else if (value <= 999_999L) {
+                if (value <= 99_999L) {
+                    return 5;
+                }
+                return 6;
+            } else if (value <= 9_999_999L) {
+                return 7;
+            }
+            return 8;
+        } else if (value <= 9_999_999_999_999_999L) {
+            if (value <= 999_999_999_999L) {
+                if (value <= 9_999_999_999L) {
+                    if (value <= 999_999_999L) {
+                        return 9;
+                    } else {
+                        return 10;
+                    }
+                } else if (value <= 99_999_999_999L) {
+                    return 11;
+                }
+                return 12;
+            } else if (value <= 99_999_999_999_999L) {
+                if (value <= 9_999_999_999_999L) {
+                    return 13;
+                }
+                return 14;
+            } else if (value <= 999_999_999_999_999L) {
+                return 15;
+            }
+            return 16;
+        } else if (value <= 99_999_999_999_999_999L) {
+            return 17;
+        } else if (value <= 999_999_999_999_999_999L) {
+            return 18;
+        } else {
+            return 19;
+        }
+    }
+
+    public static int numberOfDigits(BigInteger value) {
+        if (value.signum() == 0) {
+            return 1;
+        } else if (value.signum() < 1) {
+            value = value.negate();
+        }
+        int digitCount = (int) (LOG_2_DIV_LOG_10 * value.bitLength() + 1);
+        if (BigInteger.TEN.pow(digitCount - 1).compareTo(value) > 0) {
+            return digitCount - 1;
+        }
+        return digitCount;
+    }
+
 
     private static int maxLongPowerOf10() {
         return powersOf10L.length - 1;
@@ -164,4 +251,6 @@ class PowerUtil {
             Long.MAX_VALUE / 100000000000000000L,
             Long.MAX_VALUE / 1000000000000000000L
     };
+
+    private static final double LOG_2_DIV_LOG_10 = Math.log(2) / Math.log(10);
 }
