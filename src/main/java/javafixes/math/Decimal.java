@@ -223,7 +223,6 @@ public abstract class Decimal implements Comparable<Decimal> {
 
     abstract public Decimal negate();
 
-    // todo: test this
     public Decimal abs() {
         return (signum() < 0) ? negate() : this;
     }
