@@ -221,6 +221,8 @@ public abstract class Decimal implements Comparable<Decimal> {
 
     abstract public int scale();
 
+    // todo: add precision();
+
     abstract public Decimal negate();
 
     public Decimal abs() {
@@ -272,8 +274,8 @@ public abstract class Decimal implements Comparable<Decimal> {
 
     @Override
     public String toString() {
-        // todo: verify can't have scale overflow on abs?
-        return (Math.abs(scale()) < 19) ? toPlainString() : toScientificNotation();
+        int scale = scale();
+        return (scale > -19 && scale < 19) ? toPlainString() : toScientificNotation();
     }
 
     public String toPlainString() {
