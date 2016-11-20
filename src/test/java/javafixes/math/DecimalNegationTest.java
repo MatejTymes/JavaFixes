@@ -1,4 +1,4 @@
-package javafixes.beta.decimal;
+package javafixes.math;
 
 import org.junit.Test;
 
