@@ -1,11 +1,16 @@
 package javafixes.math;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.Arrays;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.lang.String.format;
 import static java.math.BigInteger.TEN;
+import static java.math.RoundingMode.*;
 import static javafixes.math.BigIntegerUtil.TEN_AS_BIG_INTEGER;
 import static javafixes.math.BigIntegerUtil.canConvertToLong;
 import static javafixes.math.PowerUtil.*;
@@ -13,6 +18,8 @@ import static javafixes.math.PowerUtil.*;
 // todo: add javadoc
 // todo: extend Number
 public abstract class Decimal implements Comparable<Decimal> {
+
+    public static final Decimal ZERO = decimal(0, 0);
 
     private Decimal() {
     }
@@ -49,6 +56,36 @@ public abstract class Decimal implements Comparable<Decimal> {
         @Override
         public int precision() {
             return numberOfDigits(unscaledValue);
+        }
+
+        @Override
+        public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) {
+            // todo: refactor
+            if (scaleToUse >= scale) {
+                return this;
+            }
+
+            long scaleDiff = (long) scale - scaleToUse;
+
+            long valueWithRoundingDigit = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
+            boolean hasAdditionalRemainder = unscaledValue != upscaleByPowerOf10(valueWithRoundingDigit, scaleDiff - 1);
+            if (valueWithRoundingDigit == 0 && !hasAdditionalRemainder) {
+                return Decimal.ZERO;
+            }
+
+            long rescaledValue = valueWithRoundingDigit / 10L;
+            int remainingDigit = (int) (valueWithRoundingDigit - (rescaledValue * 10L));
+
+            int roundingCorrection = roundingCorrection(
+                    Long.signum(unscaledValue),
+                    rescaledValue,
+                    remainingDigit,
+                    hasAdditionalRemainder,
+                    roundingMode
+            );
+            rescaledValue += roundingCorrection;
+
+            return decimal(rescaledValue, scaleToUse);
         }
 
         @Override
@@ -89,6 +126,16 @@ public abstract class Decimal implements Comparable<Decimal> {
         @Override
         public int precision() {
             return numberOfDigits(unscaledValue);
+        }
+
+        // todo: test
+        @Override
+        public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) {
+            if (scaleToUse >= scale) {
+                return this;
+            }
+             // todo: implement
+            throw new NotImplementedException("implement me");
         }
 
         @Override
@@ -231,6 +278,9 @@ public abstract class Decimal implements Comparable<Decimal> {
     abstract public int scale();
 
     abstract public int precision();
+
+    // todo: test
+    abstract public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode);
 
     abstract public Decimal negate();
 
@@ -414,6 +464,58 @@ public abstract class Decimal implements Comparable<Decimal> {
         char[] zeros = new char[(int) size];
         Arrays.fill(zeros, '0');
         return zeros;
+    }
+
+    private static int roundingCorrection(int signum, long valueToRound, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) {
+        Boolean isDigitToRoundOdd = null;
+        if (roundingMode == HALF_EVEN) {
+            isDigitToRoundOdd = ((int) valueToRound & 1) == 1;
+        }
+        return roundingCorrection(signum, isDigitToRoundOdd, Math.abs(roundingDigit), hasAdditionalRemainder, roundingMode);
+    }
+
+    private static int roundingCorrection(int signum, Boolean isDigitToRoundOdd, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) {
+        if (signum < -1 || signum > 1) {
+            throw new IllegalArgumentException(format("Invalid signum (%d). Should be between -1 and 1", signum));
+        } else if (roundingDigit < 0 || roundingDigit > 9) {
+            throw new IllegalArgumentException(format("Invalid rounding digit (%d). Should be between 0 and 9", roundingDigit));
+        }
+
+        int roundingCorrection = 0;
+
+        if (roundingDigit != 0 || hasAdditionalRemainder) {
+            if (roundingMode == HALF_UP) {
+                if (roundingDigit >= 5) {
+                    roundingCorrection = (signum == -1) ? -1 : 1;
+                }
+            } else if (roundingMode == UP) {
+                if (roundingDigit > 0 || hasAdditionalRemainder) {
+                    roundingCorrection = (signum == -1) ? -1 : 1;
+                }
+            } else if (roundingMode == DOWN) {
+                // do nothing
+            } else if (roundingMode == CEILING) {
+                if ((roundingDigit > 0 || hasAdditionalRemainder) && signum >= 0) {
+                    roundingCorrection = 1;
+                }
+            } else if (roundingMode == FLOOR) {
+                if ((roundingDigit > 0 || hasAdditionalRemainder) && signum == -1) {
+                    roundingCorrection = -1;
+                }
+            } else if (roundingMode == HALF_DOWN) {
+                if (roundingDigit > 5 || (roundingDigit == 5 && hasAdditionalRemainder)) {
+                    roundingCorrection = (signum == -1) ? -1 : 1;
+                }
+            } else if (roundingMode == HALF_EVEN) {
+                if (roundingDigit > 5 || (roundingDigit == 5 && (hasAdditionalRemainder || isDigitToRoundOdd))) {
+                    roundingCorrection = (signum == -1) ? -1 : 1;
+                }
+            } else if (roundingMode == UNNECESSARY) {
+                throw new ArithmeticException("Rounding necessary");
+            }
+        }
+
+        return roundingCorrection;
     }
 
     private static final long SAFE_TO_MULTIPLY_BY_10_BOUND = Long.MAX_VALUE / 10;
