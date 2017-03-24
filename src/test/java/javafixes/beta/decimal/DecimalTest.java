@@ -19,7 +19,7 @@ public class DecimalTest {
         assertThat(decimal("+73000").intValue(), equalTo(73000));
         assertThat(decimal("0.0035").intValue(), equalTo(0));
         assertThat(decimal("13800000.00").intValue(), equalTo(13800000));
-        // todo: should throw numer overflow exception
+        // todo: should throw number overflow exception
 //        assertThat(decimal("123456789012345679012345678901234567890").intValue(), equalTo(1.2345679E38f));
     }
 
@@ -32,7 +32,7 @@ public class DecimalTest {
         assertThat(decimal("13800000.00").longValue(), equalTo(13800000L));
         assertThat(decimal(Long.MAX_VALUE).longValue(), equalTo(Long.MAX_VALUE));
         assertThat(decimal(Long.MIN_VALUE).longValue(), equalTo(Long.MIN_VALUE));
-        // todo: should throw numer overflow exception
+        // todo: should throw number overflow exception
 //        assertThat(decimal("123456789012345679012345678901234567890").longValue(), equalTo(1.2345679E38f));
     }
 

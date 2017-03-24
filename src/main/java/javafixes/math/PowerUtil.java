@@ -6,7 +6,7 @@ import static java.lang.Math.min;
 
 class PowerUtil {
 
-    public static long upscaleByPowerOf10(long value, long n) {
+    static long upscaleByPowerOf10(long value, long n) {
         long newValue = value;
         if (value != 0) {
             long newN = n;
@@ -22,7 +22,7 @@ class PowerUtil {
         return newValue;
     }
 
-    public static long downscaleByPowerOf10(long value, long n) {
+    static long downscaleByPowerOf10(long value, long n) {
         if (n >= 19) {
             return 0;
         }
@@ -34,7 +34,7 @@ class PowerUtil {
         return value;
     }
 
-    public static BigInteger upscaleByPowerOf10(BigInteger value, long n) {
+    static BigInteger upscaleByPowerOf10(BigInteger value, long n) {
         // todo: speed up for large n
         if (value.signum() != 0) {
             while (n > 0) {
@@ -48,7 +48,7 @@ class PowerUtil {
         return value;
     }
 
-    public static int numberOfDigits(long value) {
+    static int numberOfDigits(long value) {
         // this is slower than the if-else algorithm
 //        if (value <= 0) {
 //            if (value == Long.MIN_VALUE) {
@@ -122,7 +122,7 @@ class PowerUtil {
         }
     }
 
-    public static int numberOfDigits(BigInteger value) {
+    static int numberOfDigits(BigInteger value) {
         if (value.signum() == 0) {
             return 1;
         } else if (value.signum() < 1) {
@@ -135,13 +135,25 @@ class PowerUtil {
         return digitCount;
     }
 
+    static BigInteger powerOf10Big(int n) {
+        if (n < 0) {
+            throw new IllegalArgumentException("n (" + n + ") must be greater or equal to 0");
+        }
+
+        if (n < powersOf10B.length) {
+            return powersOf10B[n];
+        } else {
+            return BigInteger.TEN.pow(n);
+        }
+    }
+
+    static int maxCachedBigPowerOf10() {
+        return powersOf10B.length - 1;
+    }
+
 
     private static int maxLongPowerOf10() {
         return powersOf10L.length - 1;
-    }
-
-    private static int maxBigPowerOf10() {
-        return powersOf10B.length - 1;
     }
 
     private static boolean canUpscaleLongByPowerOf10(long value, long n) {
@@ -153,18 +165,6 @@ class PowerUtil {
 
     private static long powerOf10Long(int n) {
         return powersOf10L[n];
-    }
-
-    private static BigInteger powerOf10Big(int n) {
-        if (n < 0) {
-            throw new IllegalArgumentException("n (" + n + ") must be greater or equal to 0");
-        }
-
-        if (n < powersOf10B.length) {
-            return powersOf10B[n];
-        } else {
-            return BigInteger.TEN.pow(n);
-        }
     }
 
     private static final long[] powersOf10L = {

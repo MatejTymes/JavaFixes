@@ -1,7 +1,5 @@
 package javafixes.math;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Arrays;
@@ -60,10 +58,11 @@ public abstract class Decimal implements Comparable<Decimal> {
 
         @Override
         public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) {
-            // todo: refactor
             if (scaleToUse >= scale) {
                 return this;
             }
+
+            // todo: refactor
 
             long scaleDiff = (long) scale - scaleToUse;
 
@@ -134,8 +133,51 @@ public abstract class Decimal implements Comparable<Decimal> {
             if (scaleToUse >= scale) {
                 return this;
             }
-             // todo: implement
-            throw new NotImplementedException("implement me");
+
+            // todo: refactor
+
+            // todo: check scale overflow
+            int scaleDiff = scale - scaleToUse;
+
+            boolean hasAdditionalRemainder = false;
+            BigInteger valueWithRoundingDigit = unscaledValue;
+            int n = scaleDiff - 1;
+            // todo: simplify this
+            while (n > 0 && valueWithRoundingDigit.signum() != 0) {
+                int descaleBy = Math.min(maxCachedBigPowerOf10(), n);
+                BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(powerOf10Big(descaleBy));
+                valueWithRoundingDigit = divAndMod[0];
+                if (divAndMod[1].signum() != 0) {
+                    hasAdditionalRemainder = true;
+                }
+                n -= descaleBy;
+            }
+
+            if (valueWithRoundingDigit.signum() == 0 && !hasAdditionalRemainder) {
+                return ZERO;
+            }
+
+            BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(BigInteger.TEN);
+            BigInteger rescaledValue = divAndMod[0];
+            int remainingDigit = divAndMod[1].intValue();
+            if (unscaledValue.signum() < 0 && remainingDigit > 0) {
+                remainingDigit -= 10;
+            }
+
+            int roundingCorrection = roundingCorrection(
+                    unscaledValue.signum(),
+                    rescaledValue,
+                    remainingDigit,
+                    hasAdditionalRemainder,
+                    roundingMode
+            );
+            if (roundingCorrection == 1) {
+                rescaledValue = rescaledValue.add(BigInteger.ONE);
+            } else if (roundingCorrection == -1) {
+                rescaledValue = rescaledValue.subtract(BigInteger.ONE);
+            }
+
+            return decimal(rescaledValue, scaleToUse);
         }
 
         @Override
@@ -470,6 +512,14 @@ public abstract class Decimal implements Comparable<Decimal> {
         Boolean isDigitToRoundOdd = null;
         if (roundingMode == HALF_EVEN) {
             isDigitToRoundOdd = ((int) valueToRound & 1) == 1;
+        }
+        return roundingCorrection(signum, isDigitToRoundOdd, Math.abs(roundingDigit), hasAdditionalRemainder, roundingMode);
+    }
+
+    private static int roundingCorrection(int signum, BigInteger valueToRound, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) {
+        Boolean isDigitToRoundOdd = null;
+        if (roundingMode == HALF_EVEN) {
+            isDigitToRoundOdd = (valueToRound.intValue() & 1) == 1;
         }
         return roundingCorrection(signum, isDigitToRoundOdd, Math.abs(roundingDigit), hasAdditionalRemainder, roundingMode);
     }

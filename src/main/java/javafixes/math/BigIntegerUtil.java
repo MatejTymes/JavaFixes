@@ -2,15 +2,14 @@ package javafixes.math;
 
 import java.math.BigInteger;
 
-// todo: make class protected
-public class BigIntegerUtil {
+class BigIntegerUtil {
 
-    public static final BigInteger TEN_AS_BIG_INTEGER = BigInteger.TEN;
+    static final BigInteger TEN_AS_BIG_INTEGER = BigInteger.TEN;
 
-    public static final BigInteger MIN_LONG_AS_BIG_INTEGER = BigInteger.valueOf(Long.MIN_VALUE);
-    public static final BigInteger MAX_LONG_AS_BIG_INTEGER = BigInteger.valueOf(Long.MAX_VALUE);
+    private static final BigInteger MIN_LONG_AS_BIG_INTEGER = BigInteger.valueOf(Long.MIN_VALUE);
+    private static final BigInteger MAX_LONG_AS_BIG_INTEGER = BigInteger.valueOf(Long.MAX_VALUE);
 
-    public static boolean canConvertToLong(BigInteger unscaledValue) {
+    static boolean canConvertToLong(BigInteger unscaledValue) {
         return unscaledValue.compareTo(MAX_LONG_AS_BIG_INTEGER) <= 0 && unscaledValue.compareTo(MIN_LONG_AS_BIG_INTEGER) >= 0;
     }
 }

@@ -7,10 +7,11 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static javafixes.common.CollectionUtil.newSet;
-import static javafixes.math.BigIntegerUtil.MAX_LONG_AS_BIG_INTEGER;
-import static javafixes.math.BigIntegerUtil.MIN_LONG_AS_BIG_INTEGER;
 
 public interface Condition<T> extends Function<T, Boolean> {
+
+    BigInteger MIN_LONG_AS_BIG_INTEGER = BigInteger.valueOf(Long.MIN_VALUE);
+    BigInteger MAX_LONG_AS_BIG_INTEGER = BigInteger.valueOf(Long.MAX_VALUE);
 
     @SafeVarargs
     static <T> Condition<T> otherThan(T... values) {

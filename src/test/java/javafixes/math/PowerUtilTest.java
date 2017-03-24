@@ -8,9 +8,9 @@ import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
 import static javafixes.test.Condition.negative;
 import static javafixes.test.Condition.positive;
-import static javafixes.test.Random.randomBigInteger;
-import static javafixes.test.Random.randomLong;
+import static javafixes.test.Random.*;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -211,4 +211,43 @@ public class PowerUtilTest {
             assertThat("wrong number of digits for " + negativePowerOf10.subtract(ONE), PowerUtil.numberOfDigits(negativePowerOf10.subtract(ONE)), equalTo(n + 1));
         }
     }
+
+    @Test
+    public void shouldProvidePositiveMaxCachedBigPowerOf10() {
+        assertThat(PowerUtil.maxCachedBigPowerOf10(), greaterThan(0));
+    }
+
+    @Test
+    public void shouldFindBigIntegerPowerOf10() {
+        BigInteger expectedPowerOf10 = BigInteger.ONE;
+
+        assertThat(PowerUtil.powerOf10Big(0), equalTo(expectedPowerOf10));
+
+        for (int i = 1; i < 200; i++) {
+            expectedPowerOf10 = expectedPowerOf10.multiply(BigInteger.TEN);
+            assertThat(PowerUtil.powerOf10Big(i), equalTo(expectedPowerOf10));
+        }
+
+        try {
+            PowerUtil.powerOf10Big(-1);
+            fail("should fail with IllegalArgumentException");
+        } catch (IllegalArgumentException expected) {
+            // expected
+        }
+
+        try {
+            PowerUtil.powerOf10Big(Integer.MIN_VALUE);
+            fail("should fail with IllegalArgumentException");
+        } catch (IllegalArgumentException expected) {
+            // expected
+        }
+
+        try {
+            PowerUtil.powerOf10Big(randomInt(Integer.MIN_VALUE + 1, -2));
+            fail("should fail with IllegalArgumentException");
+        } catch (IllegalArgumentException expected) {
+            // expected
+        }
+    }
+
 }
