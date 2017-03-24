@@ -1,5 +1,6 @@
 package javafixes.math;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -9,6 +10,7 @@ import static javafixes.test.Random.randomInt;
 import static javafixes.test.Random.randomLong;
 
 // todo: remove from git
+@Ignore
 public class PlaygroundTest {
 
     @Test
