@@ -45,13 +45,9 @@ public class DecimalComparisonTest {
         long unscaledValueL;
         BigInteger unscaledValueB;
 
-        // todo: uncomment - comparison of extreme scale difference for HugeDecimals is currently extremely slow
-//        int scale = randomInt(Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1);
-//        int greaterScale = randomInt(scale + 1, Integer.MAX_VALUE);
-//        int lowerScale = randomInt(Integer.MIN_VALUE, scale - 1);
-        int scale = randomInt(-1_000, 1_000);
-        int lowerScale = randomInt(scale - 1_000, scale - 1);
-        int greaterScale = randomInt(scale + 1, scale + 1_000);
+        int scale = randomInt(Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1);
+        int greaterScale = randomInt(scale + 1, Integer.MAX_VALUE);
+        int lowerScale = randomInt(Integer.MIN_VALUE, scale - 1);
 
         unscaledValueL = randomLong(positive());
         assertThat(decimal(unscaledValueL, scale), comparesEqualTo(decimal(unscaledValueL, scale)));
@@ -133,8 +129,6 @@ public class DecimalComparisonTest {
 
     @SafeVarargs
     private static int randomScaleInt(Function<Integer, Boolean>... validityConditions) {
-        // todo: uncomment - comparison of extreme scale difference for HugeDecimals is currently extremely slow
-//        return randomInt();
-        return randomInt(-1_000, 1_000, validityConditions);
+        return randomInt();
     }
 }

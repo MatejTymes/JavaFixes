@@ -127,7 +127,6 @@ public abstract class Decimal implements Comparable<Decimal> {
             return numberOfDigits(unscaledValue);
         }
 
-        // todo: test
         @Override
         public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) {
             if (scaleToUse >= scale) {
@@ -309,9 +308,9 @@ public abstract class Decimal implements Comparable<Decimal> {
         return decimal(stringValue);
     }
 
-    /* ========================== */
-    /* ---   public methods   --- */
-    /* ========================== */
+    /* ======================= */
+    /* ---   api methods   --- */
+    /* ======================= */
 
     abstract public int signum();
 
@@ -321,7 +320,6 @@ public abstract class Decimal implements Comparable<Decimal> {
 
     abstract public int precision();
 
-    // todo: test
     abstract public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode);
 
     abstract public Decimal negate();
@@ -330,7 +328,6 @@ public abstract class Decimal implements Comparable<Decimal> {
         return (signum() < 0) ? negate() : this;
     }
 
-    // todo: too slow - speed up
     @Override
     public int compareTo(Decimal other) {
         return compare(this, other);
@@ -424,13 +421,23 @@ public abstract class Decimal implements Comparable<Decimal> {
 
     private static int compare(Decimal a, Decimal b) {
 
-        int signComparison = Integer.compare(a.signum(), b.signum());
+        int signumA = a.signum();
+        int signumB = b.signum();
+        int signComparison = Integer.compare(signumA, signumB);
         if (signComparison != 0) {
             return signComparison;
         }
 
         int scaleA = a.scale();
         int scaleB = b.scale();
+
+        long highestDigitA = ((long) a.precision()) - ((long) scaleA);
+        long highestDigitB = ((long) b.precision()) - ((long) scaleB);
+        if (highestDigitA > highestDigitB) {
+            return (signumA >= 0) ? 1 : -1;
+        } else if (highestDigitA < highestDigitB) {
+            return (signumA >= 0) ? -1 : 1;
+        }
 
         if (a instanceof LongDecimal && b instanceof LongDecimal) {
             long unscaledA = ((LongDecimal) a).unscaledValue;
