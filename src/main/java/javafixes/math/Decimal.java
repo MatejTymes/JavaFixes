@@ -7,7 +7,6 @@ import java.util.Arrays;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.String.format;
-import static java.math.BigInteger.TEN;
 import static java.math.RoundingMode.*;
 import static javafixes.math.BigIntegerUtil.TEN_AS_BIG_INTEGER;
 import static javafixes.math.BigIntegerUtil.canConvertToLong;
@@ -18,6 +17,8 @@ import static javafixes.math.PowerUtil.*;
 public abstract class Decimal implements Comparable<Decimal> {
 
     public static final Decimal ZERO = decimal(0, 0);
+    public static final Decimal ONE = decimal(1, 0);
+    public static final Decimal TEN = decimal(10, 0);
 
     private Decimal() {
     }
@@ -135,15 +136,15 @@ public abstract class Decimal implements Comparable<Decimal> {
 
             // todo: refactor
 
-            // todo: check scale overflow
-            int scaleDiff = scale - scaleToUse;
+            // todo: quick descale: if scaleDiff > precision => return 0, -1 or 1
+            long scaleDiff = (long) scale - (long) scaleToUse;
 
             boolean hasAdditionalRemainder = false;
             BigInteger valueWithRoundingDigit = unscaledValue;
-            int n = scaleDiff - 1;
+            long n = scaleDiff - 1;
             // todo: simplify this
             while (n > 0 && valueWithRoundingDigit.signum() != 0) {
-                int descaleBy = Math.min(maxCachedBigPowerOf10(), n);
+                int descaleBy = (int) Math.min((long) maxCachedBigPowerOf10(), n);
                 BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(powerOf10Big(descaleBy));
                 valueWithRoundingDigit = divAndMod[0];
                 if (divAndMod[1].signum() != 0) {
@@ -156,7 +157,7 @@ public abstract class Decimal implements Comparable<Decimal> {
                 return ZERO;
             }
 
-            BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(BigInteger.TEN);
+            BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(TEN_AS_BIG_INTEGER);
             BigInteger rescaledValue = divAndMod[0];
             int remainingDigit = divAndMod[1].intValue();
             if (unscaledValue.signum() < 0 && remainingDigit > 0) {
@@ -260,11 +261,11 @@ public abstract class Decimal implements Comparable<Decimal> {
                                 unscaledValueB = BigInteger.valueOf(unscaledValueL).add(BigInteger.valueOf(digitToAdd));
                             }
                         } else {
-                            unscaledValueB = BigInteger.valueOf(unscaledValueL).multiply(TEN).add(BigInteger.valueOf(digitToAdd));
+                            unscaledValueB = BigInteger.valueOf(unscaledValueL).multiply(TEN_AS_BIG_INTEGER).add(BigInteger.valueOf(digitToAdd));
                         }
                     }
                 } else {
-                    unscaledValueB = unscaledValueB.multiply(TEN).add(BigInteger.valueOf(digitToAdd));
+                    unscaledValueB = unscaledValueB.multiply(TEN_AS_BIG_INTEGER).add(BigInteger.valueOf(digitToAdd));
                 }
                 if (foundDecimalPoint) {
                     // this currently can't happen and is untestable as we can't create char array with so many elements
@@ -357,7 +358,7 @@ public abstract class Decimal implements Comparable<Decimal> {
         } else if (this instanceof HugeDecimal) {
             BigInteger remainder = ((HugeDecimal) this).unscaledValue;
             while (remainder.signum() != 0) {
-                BigInteger[] divAndMod = remainder.divideAndRemainder(BigInteger.TEN);
+                BigInteger[] divAndMod = remainder.divideAndRemainder(TEN_AS_BIG_INTEGER);
                 remainder = divAndMod[0];
                 hashCode = (hashCode * 5) + divAndMod[1].intValue();
             }
@@ -464,7 +465,7 @@ public abstract class Decimal implements Comparable<Decimal> {
                 return Long.compare(remainderA, remainderB);
             }
         } else {
-            // todo: make this faster for huge scale differences - currently its extremely slow
+            // todo: slow for huge scale differences
             BigInteger unscaledA = bigUnscaledValueFrom(a);
             BigInteger unscaledB = bigUnscaledValueFrom(b);
 

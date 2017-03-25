@@ -418,4 +418,19 @@ public class DecimalDescaleTest {
             }
         });
     }
+//
+//    @Test
+//    public void shouldQuicklyDescaleHugeDecimals() {
+//        Decimal decimal = decimal("0.0012345678901234567890123456789012345678901234567890123456789");
+//
+//        assertThat(decimal.descaleTo(0, RoundingMode.UP), equalTo(decimal("1")));
+//        assertThat(decimal.descaleTo(0, RoundingMode.DOWN), equalTo(decimal("0")));
+//        assertThat(decimal.descaleTo(0, RoundingMode.CEILING), equalTo(decimal("1")));
+//        assertThat(decimal.descaleTo(0, RoundingMode.FLOOR), equalTo(decimal("0")));
+//        assertThat(decimal.descaleTo(0, RoundingMode.HALF_UP), equalTo(decimal("0")));
+//        assertThat(decimal.descaleTo(0, RoundingMode.HALF_DOWN), equalTo(decimal("0")));
+//        assertThat(decimal.descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("0")));
+//        assertThat(decimal.descaleTo(0, RoundingMode.UNNECESSARY), equalTo(decimal("0")));
+//    }
+//
 }
