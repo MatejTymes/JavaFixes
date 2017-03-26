@@ -37,7 +37,6 @@ public final class Precision {
         Precision precision = (Precision) o;
 
         return value == precision.value;
-
     }
 
     @Override

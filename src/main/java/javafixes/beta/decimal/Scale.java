@@ -49,7 +49,6 @@ public final class Scale {
         Scale scale = (Scale) o;
 
         return value == scale.value;
-
     }
 
     @Override
