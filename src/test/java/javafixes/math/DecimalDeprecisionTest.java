@@ -433,38 +433,43 @@ public class DecimalDeprecisionTest {
         Decimal zeroLongDecimal = Decimal.ZERO;
 
         for (RoundingMode roundingMode : RoundingMode.values()) {
-            for (int precision : newList(-1, Integer.MIN_VALUE, randomInt(Integer.MIN_VALUE + 1, -2))) {
+            for (int negativePrecision : newList(-1, Integer.MIN_VALUE, randomInt(Integer.MIN_VALUE + 1, -2))) {
                 try {
-                    assertThat(positiveHugeDecimal.deprecisionTo(precision, roundingMode), equalTo(Decimal.ZERO));
-                    fail("should fail for " + precision + " as negative precision is not allowed");
+                    positiveHugeDecimal.deprecisionTo(negativePrecision, roundingMode);
+
+                    fail("should fail for " + negativePrecision + " as negative precision is not allowed");
                 } catch (IllegalArgumentException expected) {
                     // expected
                 }
 
                 try {
-                    assertThat(negativeHugeDecimal.deprecisionTo(precision, roundingMode), equalTo(Decimal.ZERO));
-                    fail("should fail for " + precision + " as negative precision is not allowed");
+                    negativeHugeDecimal.deprecisionTo(negativePrecision, roundingMode);
+
+                    fail("should fail for " + negativePrecision + " as negative precision is not allowed");
                 } catch (IllegalArgumentException expected) {
                     // expected
                 }
 
                 try {
-                    assertThat(positiveLongDecimal.deprecisionTo(precision, roundingMode), equalTo(Decimal.ZERO));
-                    fail("should fail for " + precision + " as negative precision is not allowed");
+                    positiveLongDecimal.deprecisionTo(negativePrecision, roundingMode);
+
+                    fail("should fail for " + negativePrecision + " as negative precision is not allowed");
                 } catch (IllegalArgumentException expected) {
                     // expected
                 }
 
                 try {
-                    assertThat(negativeLongDecimal.deprecisionTo(precision, roundingMode), equalTo(Decimal.ZERO));
-                    fail("should fail for " + precision + " as negative precision is not allowed");
+                    negativeLongDecimal.deprecisionTo(negativePrecision, roundingMode);
+
+                    fail("should fail for " + negativePrecision + " as negative precision is not allowed");
                 } catch (IllegalArgumentException expected) {
                     // expected
                 }
 
                 try {
-                    assertThat(zeroLongDecimal.deprecisionTo(precision, roundingMode), equalTo(Decimal.ZERO));
-                    fail("should fail for " + precision + " as negative precision is not allowed");
+                    zeroLongDecimal.deprecisionTo(negativePrecision, roundingMode);
+
+                    fail("should fail for " + negativePrecision + " as negative precision is not allowed");
                 } catch (IllegalArgumentException expected) {
                     // expected
                 }
