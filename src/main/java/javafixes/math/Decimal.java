@@ -10,6 +10,7 @@ import static java.lang.String.format;
 import static java.math.RoundingMode.*;
 import static javafixes.math.BigIntegerUtil.TEN_AS_BIG_INTEGER;
 import static javafixes.math.BigIntegerUtil.canConvertToLong;
+import static javafixes.math.LongUtil.canFitIntoInt;
 import static javafixes.math.PowerUtil.*;
 
 // todo: add javadoc
@@ -322,6 +323,27 @@ public abstract class Decimal implements Comparable<Decimal> {
     abstract public int precision();
 
     abstract public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode);
+
+    public Decimal deprecisionTo(int precisionToUse, RoundingMode roundingMode) {
+        if (precisionToUse == 0) {
+            return ZERO;
+        } else if (precisionToUse < 0) {
+            throw new IllegalArgumentException(format("Invalid precision (%d). Should be 0 or greater", precisionToUse));
+        }
+
+        int precision = precision();
+        if (precisionToUse >= precision) {
+            return this;
+        }
+
+        long scaleToUse = ((long) scale()) - ((long) precision - (long) precisionToUse);
+        if (!canFitIntoInt(scaleToUse)) {
+            // todo: test this
+            throw new ArithmeticException(format("Scale overflow - can't set precision to %d as it would resolve into non-integer scale %d", precisionToUse, scaleToUse));
+        }
+
+        return descaleTo((int) scaleToUse, roundingMode);
+    }
 
     abstract public Decimal negate();
 
