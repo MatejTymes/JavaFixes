@@ -322,8 +322,12 @@ public abstract class Decimal implements Comparable<Decimal> {
 
     abstract public int precision();
 
+    // todo: add method without rounding mode
+    // todo: start using Scale class
     abstract public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode);
 
+    // todo: add method without rounding mode
+    // todo: start using Precision class
     public Decimal deprecisionTo(int precisionToUse, RoundingMode roundingMode) {
         if (precisionToUse == 0) {
             return ZERO;
@@ -338,7 +342,6 @@ public abstract class Decimal implements Comparable<Decimal> {
 
         long scaleToUse = ((long) scale()) - ((long) precision - (long) precisionToUse);
         if (!canFitIntoInt(scaleToUse)) {
-            // todo: test this
             throw new ArithmeticException(format("Scale overflow - can't set precision to %d as it would resolve into non-integer scale %d", precisionToUse, scaleToUse));
         }
 
@@ -454,11 +457,11 @@ public abstract class Decimal implements Comparable<Decimal> {
         int scaleA = a.scale();
         int scaleB = b.scale();
 
-        long highestDigitA = ((long) a.precision()) - ((long) scaleA);
-        long highestDigitB = ((long) b.precision()) - ((long) scaleB);
-        if (highestDigitA > highestDigitB) {
+        long highestDigitPositionA = ((long) a.precision()) - ((long) scaleA);
+        long highestDigitPositionB = ((long) b.precision()) - ((long) scaleB);
+        if (highestDigitPositionA > highestDigitPositionB) {
             return (signumA >= 0) ? 1 : -1;
-        } else if (highestDigitA < highestDigitB) {
+        } else if (highestDigitPositionA < highestDigitPositionB) {
             return (signumA >= 0) ? -1 : 1;
         }
 

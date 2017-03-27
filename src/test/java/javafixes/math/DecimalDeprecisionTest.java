@@ -476,4 +476,48 @@ public class DecimalDeprecisionTest {
             }
         }
     }
+
+    @Test
+    public void shouldCheckIfNewScaleCanFitIntoInt() {
+        long unscaledValue = 1212121212121212L;
+
+        int precision = Long.toString(unscaledValue).length();
+        int scale = Integer.MIN_VALUE + randomInt(1, precision - 1);
+        Decimal decimal = decimal(unscaledValue, scale);
+
+//        newScale = scale + newPrecision - precision
+        int stillOkPrecision = Integer.MIN_VALUE + precision - scale;
+        int okPrecision = stillOkPrecision + 1;
+        int notOkPrecision = stillOkPrecision - 1;
+
+        Decimal newDecimal;
+
+        for (RoundingMode roundingMode : RoundingMode.values()) {
+            if (roundingMode == RoundingMode.UNNECESSARY) {
+                continue;
+            }
+
+            // When
+            newDecimal = decimal.deprecisionTo(okPrecision, RoundingMode.HALF_UP);
+            // Then
+            assertThat(newDecimal.scale(), equalTo(Integer.MIN_VALUE + 1));
+            assertThat(newDecimal.precision(), equalTo(okPrecision));
+
+            // When
+            newDecimal = decimal.deprecisionTo(stillOkPrecision, RoundingMode.HALF_UP);
+            // Then
+            assertThat(newDecimal.scale(), equalTo(Integer.MIN_VALUE));
+            assertThat(newDecimal.precision(), equalTo(stillOkPrecision));
+
+            try {
+                // When
+                decimal.deprecisionTo(notOkPrecision, RoundingMode.HALF_UP);
+
+                // Then
+                fail("should fail with ArithmeticException");
+            } catch (ArithmeticException expected) {
+                // expected
+            }
+        }
+    }
 }
