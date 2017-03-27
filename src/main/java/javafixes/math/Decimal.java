@@ -21,6 +21,7 @@ public abstract class Decimal implements Comparable<Decimal> {
     public static final Decimal ONE = decimal(1, 0);
     public static final Decimal TEN = decimal(10, 0);
 
+    // private constructor so it is non-extendible
     private Decimal() {
     }
 
@@ -137,7 +138,7 @@ public abstract class Decimal implements Comparable<Decimal> {
 
             // todo: refactor
 
-            // todo: quick descale: if scaleDiff > precision => return 0, -1 or 1
+            // todo: quick descale: if scaleDiff > precision
             long scaleDiff = (long) scale - (long) scaleToUse;
 
             boolean hasAdditionalRemainder = false;
@@ -326,13 +327,10 @@ public abstract class Decimal implements Comparable<Decimal> {
     // todo: start using Scale class
     abstract public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode);
 
-    // todo: add method without rounding mode
-    // todo: start using Precision class
+    // todo: add methods without rounding mode
     public Decimal deprecisionTo(int precisionToUse, RoundingMode roundingMode) {
-        if (precisionToUse == 0) {
-            return ZERO;
-        } else if (precisionToUse < 0) {
-            throw new IllegalArgumentException(format("Invalid precision (%d). Should be 0 or greater", precisionToUse));
+        if (precisionToUse <= 0) {
+            throw new IllegalArgumentException(format("Invalid precision '%d'. Should be greater than 0.", precisionToUse));
         }
 
         int precision = precision();
@@ -346,6 +344,10 @@ public abstract class Decimal implements Comparable<Decimal> {
         }
 
         return descaleTo((int) scaleToUse, roundingMode);
+    }
+
+    public Decimal deprecisionTo(Precision precisionToUse, RoundingMode roundingMode) {
+        return deprecisionTo(precisionToUse.value, roundingMode);
     }
 
     abstract public Decimal negate();

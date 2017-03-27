@@ -406,7 +406,7 @@ public class DecimalDeprecisionTest {
     }
 
     @Test
-    public void shouldBeAbleToUseZeroPrecision() {
+    public void shouldFailWhenUsingZeroPrecision() {
         Decimal positiveHugeDecimal = d(randomBigInteger(positive(), notFitIntoLong(), notDivisibleBy10()), randomInt());
         Decimal negativeHugeDecimal = d(randomBigInteger(negative(), notFitIntoLong(), notDivisibleBy10()), randomInt());
 
@@ -415,11 +415,45 @@ public class DecimalDeprecisionTest {
         Decimal zeroLongDecimal = Decimal.ZERO;
 
         for (RoundingMode roundingMode : RoundingMode.values()) {
-            assertThat(positiveHugeDecimal.deprecisionTo(0, roundingMode), equalTo(Decimal.ZERO));
-            assertThat(negativeHugeDecimal.deprecisionTo(0, roundingMode), equalTo(Decimal.ZERO));
-            assertThat(positiveLongDecimal.deprecisionTo(0, roundingMode), equalTo(Decimal.ZERO));
-            assertThat(negativeLongDecimal.deprecisionTo(0, roundingMode), equalTo(Decimal.ZERO));
-            assertThat(zeroLongDecimal.deprecisionTo(0, roundingMode), equalTo(Decimal.ZERO));
+            try {
+                positiveHugeDecimal.deprecisionTo(0, roundingMode);
+
+                fail("should fail as zero precision is not allowed");
+            } catch (IllegalArgumentException expected) {
+                // expected
+            }
+
+            try {
+                negativeHugeDecimal.deprecisionTo(0, roundingMode);
+
+                fail("should fail as zero precision is not allowed");
+            } catch (IllegalArgumentException expected) {
+                // expected
+            }
+
+            try {
+                positiveLongDecimal.deprecisionTo(0, roundingMode);
+
+                fail("should fail as zero precision is not allowed");
+            } catch (IllegalArgumentException expected) {
+                // expected
+            }
+
+            try {
+                negativeLongDecimal.deprecisionTo(0, roundingMode);
+
+                fail("should fail as zero precision is not allowed");
+            } catch (IllegalArgumentException expected) {
+                // expected
+            }
+
+            try {
+                zeroLongDecimal.deprecisionTo(0, roundingMode);
+
+                fail("should fail as zero precision is not allowed");
+            } catch (IllegalArgumentException expected) {
+                // expected
+            }
         }
     }
 
