@@ -12,7 +12,7 @@ import static javafixes.test.Random.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class DecimalToBigDecimalTest {
+public class DecimalBigDecimalTest {
 
     private List<Integer> scales = newList(
             0,
@@ -25,7 +25,16 @@ public class DecimalToBigDecimalTest {
     );
 
     @Test
-    public void shouldBeAbleToTransformLongDecimalToBigDecimal() {
+    public void shouldBeAbleToTransformLongDecimalToBigDecimalAndBack() {
+
+        BigDecimal zeroBigDecimal = Decimal.ZERO.bigDecimalValue();
+        assertThat(zeroBigDecimal.unscaledValue(), equalTo(BigInteger.ZERO));
+        assertThat(zeroBigDecimal.scale(), equalTo(0));
+
+        assertThat(Decimal.decimal(zeroBigDecimal), equalTo(Decimal.ZERO));
+        assertThat(Decimal.decimal(zeroBigDecimal).unscaledValue(), equalTo(0L));
+        assertThat(Decimal.decimal(zeroBigDecimal).scale(), equalTo(0));
+
         List<Long> unscaledValues = newList(
                 1L,
                 -1L,
@@ -35,9 +44,6 @@ public class DecimalToBigDecimalTest {
                 randomLong(2L, Long.MAX_VALUE - 1, notDivisibleBy10())
         );
 
-        assertThat(Decimal.ZERO.bigDecimalValue().unscaledValue(), equalTo(BigInteger.ZERO));
-        assertThat(Decimal.ZERO.bigDecimalValue().scale(), equalTo(0));
-
         for (int scale : scales) {
             for (long unscaledValue : unscaledValues) {
                 Decimal decimal = Decimal.decimal(unscaledValue, scale);
@@ -45,12 +51,17 @@ public class DecimalToBigDecimalTest {
 
                 assertThat(bigDecimal.unscaledValue(), equalTo(BigInteger.valueOf(unscaledValue)));
                 assertThat(bigDecimal.scale(), equalTo(scale));
+
+                Decimal newDecimal = Decimal.decimal(bigDecimal);
+                assertThat(newDecimal, equalTo(decimal));
+                assertThat(newDecimal.unscaledValue(), equalTo(unscaledValue));
+                assertThat(newDecimal.scale(), equalTo(scale));
             }
         }
     }
 
     @Test
-    public void shouldBeAbleToTransformHugeDecimalToBigDecimal() {
+    public void shouldBeAbleToTransformHugeDecimalToBigDecimalAndBack() {
         List<BigInteger> unscaledValues = newList(
                 BigInteger.valueOf(Long.MIN_VALUE).subtract(BigInteger.ONE),
                 BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE),
@@ -65,6 +76,11 @@ public class DecimalToBigDecimalTest {
 
                 assertThat(bigDecimal.unscaledValue(), equalTo(unscaledValue));
                 assertThat(bigDecimal.scale(), equalTo(scale));
+
+                Decimal newDecimal = Decimal.decimal(bigDecimal);
+                assertThat(newDecimal, equalTo(decimal));
+                assertThat(newDecimal.unscaledValue(), equalTo(unscaledValue));
+                assertThat(newDecimal.scale(), equalTo(scale));
             }
         }
     }
