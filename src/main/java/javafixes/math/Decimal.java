@@ -1,5 +1,6 @@
 package javafixes.math;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import static javafixes.math.LongUtil.canFitIntoInt;
 import static javafixes.math.PowerUtil.*;
 
 // todo: add javadoc
+// todo: add formatter
 // todo: extend Number
 public abstract class Decimal implements Comparable<Decimal> {
 
@@ -59,6 +61,11 @@ public abstract class Decimal implements Comparable<Decimal> {
         @Override
         public int precision() {
             return numberOfDigits(unscaledValue);
+        }
+
+        @Override
+        public BigDecimal bigDecimalValue() {
+            return BigDecimal.valueOf(unscaledValue, scale);
         }
 
         @Override
@@ -131,6 +138,11 @@ public abstract class Decimal implements Comparable<Decimal> {
         @Override
         public int precision() {
             return numberOfDigits(unscaledValue);
+        }
+
+        @Override
+        public BigDecimal bigDecimalValue() {
+            return new BigDecimal(unscaledValue, scale);
         }
 
         @Override
@@ -325,6 +337,8 @@ public abstract class Decimal implements Comparable<Decimal> {
     abstract public int scale();
 
     abstract public int precision();
+
+    abstract public BigDecimal bigDecimalValue();
 
     // todo: add methods without rounding mode
     abstract public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode);
