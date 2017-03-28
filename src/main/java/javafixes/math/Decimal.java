@@ -29,8 +29,10 @@ public abstract class Decimal implements Comparable<Decimal> {
     /* ---   implementations   --- */
     /* =========================== */
 
+    // todo: make this class private
     static final class LongDecimal extends Decimal {
 
+        // todo: don't allow Long.MIN_VALUE to be stored in here - it will make the handling of the class easier
         transient final long unscaledValue;
         transient final int scale;
 
@@ -100,6 +102,7 @@ public abstract class Decimal implements Comparable<Decimal> {
         }
     }
 
+    // todo: make this class private
     static final class HugeDecimal extends Decimal {
 
         transient final BigInteger unscaledValue;
@@ -323,9 +326,12 @@ public abstract class Decimal implements Comparable<Decimal> {
 
     abstract public int precision();
 
-    // todo: add method without rounding mode
-    // todo: start using Scale class
+    // todo: add methods without rounding mode
     abstract public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode);
+
+    public Decimal descaleTo(Scale scaleToUse, RoundingMode roundingMode) {
+        return descaleTo(scaleToUse.value, roundingMode);
+    }
 
     // todo: add methods without rounding mode
     public Decimal deprecisionTo(int precisionToUse, RoundingMode roundingMode) {

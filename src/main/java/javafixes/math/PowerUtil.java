@@ -143,6 +143,7 @@ class PowerUtil {
         if (n < powersOf10B.length) {
             return powersOf10B[n];
         } else {
+            // todo: should we maybe reuse principle from BigDecimal.bigTenToThe(int n) - it could become memory heavy
             return BigInteger.TEN.pow(n);
         }
     }
