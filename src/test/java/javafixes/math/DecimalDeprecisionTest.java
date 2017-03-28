@@ -3,6 +3,7 @@ package javafixes.math;
 import org.junit.Test;
 
 import java.math.RoundingMode;
+import java.util.List;
 
 import static javafixes.common.CollectionUtil.newList;
 import static javafixes.math.Decimal.d;
@@ -403,6 +404,50 @@ public class DecimalDeprecisionTest {
                 assertThat(decimal(value).deprecisionTo(randomInt(31, Integer.MAX_VALUE - 1), roundingMode), equalTo(decimal(value)));
             }
         });
+    }
+
+    @Test
+    public void shouldWorkForDerivedMethods() {
+        List<Decimal> longNumbers = newList(
+                d("5.5"), d("2.5"), d("1.6"), d("1.1"), d("1.0"), d("-1.0"),
+                d("-1.1"), d("-1.6"), d("-2.5"), d("-5.5"), d("5.501"), d("2.501"),
+                d("1.001"), d("-1.001"), d("-2.501"), d("-5.501")
+        );
+
+        for (Decimal number : longNumbers) {
+            for (RoundingMode roundingMode : RoundingMode.values()) {
+                if (roundingMode == RoundingMode.UNNECESSARY && number.precision() != 1) {
+                    try { number.deprecisionTo(Precision.of(1), roundingMode); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+                } else {
+                    assertThat(number.deprecisionTo(Precision.of(1), roundingMode), equalTo(number.deprecisionTo(1, roundingMode)));
+                }
+            }
+
+            assertThat(number.deprecisionTo(1), equalTo(number.deprecisionTo(1, RoundingMode.HALF_UP)));
+            assertThat(number.deprecisionTo(Precision.of(1)), equalTo(number.deprecisionTo(1, RoundingMode.HALF_UP)));
+        }
+
+        List<Decimal> hugeNumbers = newList(
+                d("100000000000000000000000005.5"), d("100000000000000000000000002.5"), d("100000000000000000000000001.6"),
+                d("100000000000000000000000001.1"), d("100000000000000000000000001.0"), d("-100000000000000000000000001.0"),
+                d("-100000000000000000000000001.1"), d("-100000000000000000000000001.6"), d("-100000000000000000000000002.5"),
+                d("-100000000000000000000000005.5"), d("100000000000000000000000005.501"), d("100000000000000000000000002.501"),
+                d("100000000000000000000000001.001"), d("100000000000000000000000000.001"), d("-100000000000000000000000000.001"),
+                d("-100000000000000000000000001.001"), d("-100000000000000000000000002.501"), d("-100000000000000000000000005.501")
+        );
+
+        for (Decimal number : hugeNumbers) {
+            for (RoundingMode roundingMode : RoundingMode.values()) {
+                if (roundingMode == RoundingMode.UNNECESSARY && number.precision() != 1) {
+                    try { number.deprecisionTo(Precision.of(1), roundingMode); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+                } else {
+                    assertThat(number.deprecisionTo(Precision.of(1), roundingMode), equalTo(number.deprecisionTo(1, roundingMode)));
+                }
+            }
+
+            assertThat(number.deprecisionTo(1), equalTo(number.deprecisionTo(1, RoundingMode.HALF_UP)));
+            assertThat(number.deprecisionTo(Precision.of(1)), equalTo(number.deprecisionTo(1, RoundingMode.HALF_UP)));
+        }
     }
 
     @Test

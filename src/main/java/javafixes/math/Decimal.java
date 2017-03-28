@@ -250,12 +250,18 @@ public abstract class Decimal implements Comparable<Decimal> {
         return decimal(unscaledValue, scale);
     }
 
-    // todo: test this
+    public static Decimal decimal(int value) {
+        return decimal(value, 0);
+    }
+
+    public static Decimal d(int value) {
+        return decimal(value, 0);
+    }
+
     public static Decimal decimal(long value) {
         return decimal(value, 0);
     }
 
-    // todo: test this
     public static Decimal d(long value) {
         return decimal(value, 0);
     }
@@ -265,7 +271,7 @@ public abstract class Decimal implements Comparable<Decimal> {
     }
 
     public static Decimal d(BigDecimal bigDecimal) {
-        return decimal(bigDecimal);
+        return decimal(bigDecimal.unscaledValue(), bigDecimal.scale());
     }
 
     // todo: add ability to parse scientific notation (1e20)
@@ -370,7 +376,6 @@ public abstract class Decimal implements Comparable<Decimal> {
         return descaleTo(scaleToUse.value, DEFAULT_ROUNDING);
     }
 
-    // todo: add methods without rounding mode
     public Decimal deprecisionTo(int precisionToUse, RoundingMode roundingMode) {
         if (precisionToUse <= 0) {
             throw new IllegalArgumentException(format("Invalid precision '%d'. Should be greater than 0.", precisionToUse));
@@ -391,6 +396,14 @@ public abstract class Decimal implements Comparable<Decimal> {
 
     public Decimal deprecisionTo(Precision precisionToUse, RoundingMode roundingMode) {
         return deprecisionTo(precisionToUse.value, roundingMode);
+    }
+
+    public Decimal deprecisionTo(int precisionToUse) {
+        return deprecisionTo(precisionToUse, DEFAULT_ROUNDING);
+    }
+
+    public Decimal deprecisionTo(Precision precisionToUse) {
+        return deprecisionTo(precisionToUse.value, DEFAULT_ROUNDING);
     }
 
     abstract public Decimal negate();

@@ -3,8 +3,10 @@ package javafixes.math;
 import org.junit.Test;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import static java.lang.Math.pow;
+import static javafixes.common.CollectionUtil.newList;
 import static javafixes.math.BigIntegerUtil.TEN_AS_BIG_INTEGER;
 import static javafixes.test.Condition.*;
 import static javafixes.test.Random.*;
@@ -13,6 +15,25 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class DecimalCreationFromNumberTest {
+
+    @Test
+    public void shouldCreateDecimalFromInt() {
+        List<Integer> values = newList(
+                0,
+                1,
+                -1,
+                Integer.MIN_VALUE,
+                Integer.MAX_VALUE,
+                randomInt(2, Integer.MAX_VALUE - 1, notDivisibleBy10()),
+                randomInt(Integer.MIN_VALUE + 1, -2, notDivisibleBy10())
+        );
+
+        for (int value : values) {
+            assertThat(Decimal.decimal(value), equalTo(Decimal.decimal((long) value, 0)));
+            assertThat(Decimal.d(value), equalTo(Decimal.decimal((long) value, 0)));
+        }
+    }
+
 
     @Test
     public void shouldCreateLongDecimalFromLong() {
@@ -32,6 +53,10 @@ public class DecimalCreationFromNumberTest {
         // Then
         assertThat(decimal.unscaledValue(), equalTo(unscaledValue));
         assertThat(decimal.scale(), equalTo(scale));
+
+        // When
+        assertThat(Decimal.decimal(unscaledValue), equalTo(Decimal.decimal(unscaledValue, 0)));
+        assertThat(Decimal.d(unscaledValue), equalTo(Decimal.decimal(unscaledValue, 0)));
     }
 
     @Test
