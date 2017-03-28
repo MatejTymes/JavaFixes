@@ -345,12 +345,12 @@ public abstract class Decimal implements Comparable<Decimal> {
                             throw new NumberFormatException("Illegal value. Scale won't fit into Integer");
                         }
                     } else if (c == '-') {
-                        if (foundExponentValue || signum != 0) {
+                        if (foundExponentValue || exponentSignum != 0) {
                             throw new NumberFormatException("Illegal value. Unexpected sign symbol '" + c + "'");
                         }
                         exponentSignum = -1;
                     } else if (c == '+') {
-                        if (foundExponentValue || signum != 0) {
+                        if (foundExponentValue || exponentSignum != 0) {
                             throw new NumberFormatException("Illegal value. Unexpected sign symbol '" + c + "'");
                         }
                         exponentSignum = 1;

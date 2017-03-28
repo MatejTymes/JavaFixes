@@ -35,6 +35,15 @@ public class DecimalCreationFromStringTest {
         assertStringFailsParsing("+_._");
         assertStringFailsParsing("-_._");
         assertStringFailsParsing("abc");
+        assertStringFailsParsing("1e1+");
+        assertStringFailsParsing("1e1-");
+        assertStringFailsParsing("1e0+1");
+        assertStringFailsParsing("1e0-1");
+        assertStringFailsParsing("1e++1");
+        assertStringFailsParsing("1e+-1");
+        assertStringFailsParsing("1e-+1");
+        assertStringFailsParsing("1e--1");
+        assertStringFailsParsing("1e-1.2");
     }
 
     @Test
@@ -49,7 +58,9 @@ public class DecimalCreationFromStringTest {
                 ".0",
                 "+.0",
                 "-.0",
-                "0."
+                "0.",
+                "1_e_-_3_",
+                "1_e_+_3_"
         );
 
         for (String stringValue : stringValues) {
@@ -241,14 +252,6 @@ public class DecimalCreationFromStringTest {
         } catch (NumberFormatException e) {
             // expected
         }
-    }
-
-    private void shouldFindUnscaledValueOnStringPermutations(String text, long expectedUnscaledValue) {
-        shouldFindUnscaledValueOnStringPermutations(text, expectedUnscaledValue);
-    }
-
-    private void shouldFindUnscaledValueOnStringPermutations(String text, BigInteger expectedUnscaledValue) {
-        shouldFindUnscaledValueOnStringPermutations(text, expectedUnscaledValue);
     }
 
     private String nZeros(int n) {
