@@ -4,7 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import java.math.BigInteger;
+import java.util.List;
 
+import static javafixes.common.CollectionUtil.newList;
 import static javafixes.test.Condition.*;
 import static javafixes.test.Random.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -37,23 +39,23 @@ public class DecimalCreationFromStringTest {
 
     @Test
     public void shouldPassOnValidString() {
-        Decimal.decimal("0");
-        Decimal.decimal("+_1_000");
-        Decimal.decimal("-_1_000.00_");
-        Decimal.decimal("___+1_000");
-        Decimal.decimal("___-1_000");
-        Decimal.decimal("0.0");
-        Decimal.decimal(".0");
-        Decimal.decimal("0.");
+        List<String> stringValues = newList(
+                "0",
+                "+_1_000",
+                "-_1_000.00_",
+                "___+1_000",
+                "___-1_000",
+                "0.0",
+                ".0",
+                "+.0",
+                "-.0",
+                "0."
+        );
 
-        Decimal.d("0");
-        Decimal.d("+_1_000");
-        Decimal.d("-_1_000.00_");
-        Decimal.d("___+1_000");
-        Decimal.d("___-1_000");
-        Decimal.d("0.0");
-        Decimal.d(".0");
-        Decimal.d("0.");
+        for (String stringValue : stringValues) {
+            Decimal.decimal(stringValue);
+            Decimal.d(stringValue);
+        }
     }
 
     @Test
@@ -81,6 +83,21 @@ public class DecimalCreationFromStringTest {
         value = randomBigInteger(negative(), notDivisibleBy10(), notFitIntoLong());
         shouldFindUnscaledValueOnStringPermutations(value.toString(), value);
     }
+
+    @Test
+    public void shouldParseScientificNotation() {
+
+        // todo: can use '_' in exponent as well
+        assertThat(Decimal.d("123.45e0"), equalTo(Decimal.d("123.45")));
+        assertThat(Decimal.d("123.45e-1"), equalTo(Decimal.d("12.345")));
+        assertThat(Decimal.d("123.45e+1"), equalTo(Decimal.d("1234.5")));
+        assertThat(Decimal.d("123.45e1"), equalTo(Decimal.d("1234.5")));
+
+//        System.out.println(new BigDecimal("123.45e0"));
+//        System.out.println(new BigDecimal("123.45e-1"));
+//        System.out.println(new BigDecimal("123.45e+1"));
+    }
+
 
     /* ========================== */
     /* ---   helper methods   --- */

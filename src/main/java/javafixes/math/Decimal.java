@@ -274,7 +274,6 @@ public abstract class Decimal implements Comparable<Decimal> {
         return decimal(bigDecimal.unscaledValue(), bigDecimal.scale());
     }
 
-    // todo: add ability to parse scientific notation (1e20)
     public static Decimal decimal(String stringValue) throws ArithmeticException, NumberFormatException {
         int scale = 0;
         long unscaledValueL = 0;
@@ -330,6 +329,44 @@ public abstract class Decimal implements Comparable<Decimal> {
                     throw new NumberFormatException("Illegal value. Unexpected sign symbol '" + c + "'");
                 }
                 signum = 1;
+            } else if (c == 'e' || c == 'E') {
+                // todo: test this
+                i++;
+                boolean foundExponentValue = false;
+                int exponentSignum = 0;
+                long exponent = 0;
+                for (; i < stringValue.length(); i++) {
+                    c = stringValue.charAt(i);
+                    if (c >= '0' && c <= '9') {
+                        foundExponentValue = true;
+                        byte digitToAdd = (byte) (c - '0');
+                        exponent = exponent * 10 + digitToAdd;
+                        if (exponent > DOABLE_EXPONENT) {
+                            throw new NumberFormatException("Illegal value. Scale won't fit into Integer");
+                        }
+                    } else if (c == '-') {
+                        if (foundExponentValue || signum != 0) {
+                            throw new NumberFormatException("Illegal value. Unexpected sign symbol '" + c + "'");
+                        }
+                        exponentSignum = -1;
+                    } else if (c == '+') {
+                        if (foundExponentValue || signum != 0) {
+                            throw new NumberFormatException("Illegal value. Unexpected sign symbol '" + c + "'");
+                        }
+                        exponentSignum = 1;
+                    } else if (c == '_') {
+                        // ignore
+                    } else {
+                        throw new NumberFormatException("Illegal value. Invalid character '" + c + "'");
+                    }
+                }
+
+                exponent = (exponentSignum != -1) ? exponent : -exponent;
+                exponent = (long) scale - exponent;
+                if (!LongUtil.canFitIntoInt(exponent)) {
+                    throw new NumberFormatException("Illegal value. Scale '" + exponent + "' won't fit into Integer");
+                }
+                scale = (int) exponent;
             } else {
                 throw new NumberFormatException("Illegal value. Invalid character '" + c + "'");
             }
@@ -661,4 +698,5 @@ public abstract class Decimal implements Comparable<Decimal> {
 
     private static final long SAFE_TO_MULTIPLY_BY_10_BOUND = Long.MAX_VALUE / 10;
     private static final long SAFE_TO_ADD_DIGIT_BOUND = (Long.MAX_VALUE - 9) / 10;
+    private static final long DOABLE_EXPONENT = -(2L * (long) Integer.MIN_VALUE);
 }
