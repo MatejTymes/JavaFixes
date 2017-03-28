@@ -3,8 +3,10 @@ package javafixes.math;
 import org.junit.Test;
 
 import java.math.RoundingMode;
+import java.util.List;
 
 import static javafixes.common.CollectionUtil.newList;
+import static javafixes.math.Decimal.d;
 import static javafixes.math.Decimal.decimal;
 import static javafixes.test.Random.randomInt;
 import static org.hamcrest.Matchers.equalTo;
@@ -418,6 +420,36 @@ public class DecimalDescaleTest {
             }
         });
     }
+
+    @Test
+    public void shouldWorkForDerivedMethods() {
+        List<Decimal> numbers = newList(
+                d("5.5"), d("2.5"), d("1.6"), d("1.1"), d("1.0"), d("-1.0"),
+                d("-1.1"), d("-1.6"), d("-2.5"), d("-5.5"), d("5.501"), d("2.501"),
+                d("1.001"), d("0.001"), d("-0.001"), d("-1.001"), d("-2.501"), d("-5.501"),
+
+                d("100000000000000000000000005.5"), d("100000000000000000000000002.5"), d("100000000000000000000000001.6"),
+                d("100000000000000000000000001.1"), d("100000000000000000000000001.0"), d("-100000000000000000000000001.0"),
+                d("-100000000000000000000000001.1"), d("-100000000000000000000000001.6"), d("-100000000000000000000000002.5"),
+                d("-100000000000000000000000005.5"), d("100000000000000000000000005.501"), d("100000000000000000000000002.501"),
+                d("100000000000000000000000001.001"), d("100000000000000000000000000.001"), d("-100000000000000000000000000.001"),
+                d("-100000000000000000000000001.001"), d("-100000000000000000000000002.501"), d("-100000000000000000000000005.501")
+        );
+
+        for (Decimal number : numbers) {
+            for (RoundingMode roundingMode : RoundingMode.values()) {
+                if (roundingMode == RoundingMode.UNNECESSARY && number.scale() != 0) {
+                    try { number.descaleTo(Scale._0_DECIMAL_PLACES, roundingMode); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+                } else {
+                    assertThat(number.descaleTo(Scale._0_DECIMAL_PLACES, roundingMode), equalTo(number.descaleTo(0, roundingMode)));
+                }
+            }
+
+            assertThat(number.descaleTo(0), equalTo(number.descaleTo(0, RoundingMode.HALF_UP)));
+            assertThat(number.descaleTo(Scale._0_DECIMAL_PLACES), equalTo(number.descaleTo(0, RoundingMode.HALF_UP)));
+        }
+    }
+
 //
 //    @Test
 //    public void shouldQuicklyDescaleHugeDecimals() {

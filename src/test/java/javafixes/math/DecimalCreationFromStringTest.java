@@ -8,7 +8,6 @@ import java.math.BigInteger;
 import static javafixes.test.Condition.*;
 import static javafixes.test.Random.*;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -87,16 +86,14 @@ public class DecimalCreationFromStringTest {
     /* ---   helper methods   --- */
     /* ========================== */
 
-    private void shouldFindUnscaledValueOnStringPermutations(String text, Class<? extends Decimal> decimalClass, Number expectedUnscaledValue) {
+    private void shouldFindUnscaledValueOnStringPermutations(String text, Number expectedUnscaledValue) {
 
         boolean expectsZero = signum(expectedUnscaledValue) == 0;
 
         Decimal decimal = Decimal.decimal(text);
         Decimal d = Decimal.d(text);
-        assertThat(decimal, instanceOf(decimalClass));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(0));
-        assertThat(d, instanceOf(decimalClass));
         assertThat(d.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(d.scale(), equalTo(0));
 
@@ -107,20 +104,16 @@ public class DecimalCreationFromStringTest {
         String newText = text + nZeros(zerosCount);
         decimal = Decimal.decimal(newText);
         d = Decimal.d(newText);
-        assertThat(decimal, instanceOf(decimalClass));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(expectsZero ? 0 : -zerosCount));
-        assertThat(d, instanceOf(decimalClass));
         assertThat(d.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(d.scale(), equalTo(expectsZero ? 0 : -zerosCount));
 
         newText = addUnderscores(newText);
         decimal = Decimal.decimal(newText);
         d = Decimal.d(newText);
-        assertThat(decimal, instanceOf(decimalClass));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(expectsZero ? 0 : -zerosCount));
-        assertThat(d, instanceOf(decimalClass));
         assertThat(d.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(d.scale(), equalTo(expectsZero ? 0 : -zerosCount));
 
@@ -128,20 +121,16 @@ public class DecimalCreationFromStringTest {
         newText = text + ".";
         decimal = Decimal.decimal(newText);
         d = Decimal.d(newText);
-        assertThat(decimal, instanceOf(decimalClass));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(0));
-        assertThat(d, instanceOf(decimalClass));
         assertThat(d.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(d.scale(), equalTo(0));
 
         newText = addUnderscores(newText);
         decimal = Decimal.decimal(newText);
         d = Decimal.d(newText);
-        assertThat(decimal, instanceOf(decimalClass));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(0));
-        assertThat(d, instanceOf(decimalClass));
         assertThat(d.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(d.scale(), equalTo(0));
 
@@ -149,20 +138,16 @@ public class DecimalCreationFromStringTest {
         newText = text + "." + nZeros(zerosCount);
         decimal = Decimal.decimal(newText);
         d = Decimal.d(newText);
-        assertThat(decimal, instanceOf(decimalClass));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(0));
-        assertThat(d, instanceOf(decimalClass));
         assertThat(d.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(d.scale(), equalTo(0));
 
         newText = addUnderscores(newText);
         decimal = Decimal.decimal(newText);
         d = Decimal.d(newText);
-        assertThat(decimal, instanceOf(decimalClass));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(0));
-        assertThat(d, instanceOf(decimalClass));
         assertThat(d.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(d.scale(), equalTo(0));
 
@@ -170,20 +155,16 @@ public class DecimalCreationFromStringTest {
         newText = sign(text) + "0." + nZeros(zerosCount) + valueAfterSign(text);
         decimal = Decimal.decimal(newText);
         d = Decimal.d(newText);
-        assertThat(decimal, instanceOf(decimalClass));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(expectsZero ? 0 : zerosCount + numberOfDigits(text)));
-        assertThat(d, instanceOf(decimalClass));
         assertThat(d.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(d.scale(), equalTo(expectsZero ? 0 : zerosCount + numberOfDigits(text)));
 
         newText = addUnderscores(newText);
         decimal = Decimal.decimal(newText);
         d = Decimal.d(newText);
-        assertThat(decimal, instanceOf(decimalClass));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(expectsZero ? 0 : zerosCount + numberOfDigits(text)));
-        assertThat(d, instanceOf(decimalClass));
         assertThat(d.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(d.scale(), equalTo(expectsZero ? 0 : zerosCount + numberOfDigits(text)));
 
@@ -191,20 +172,16 @@ public class DecimalCreationFromStringTest {
         newText = sign(text) + "." + nZeros(zerosCount) + valueAfterSign(text);
         decimal = Decimal.decimal(newText);
         d = Decimal.d(newText);
-        assertThat(decimal, instanceOf(decimalClass));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(expectsZero ? 0 : zerosCount + numberOfDigits(text)));
-        assertThat(d, instanceOf(decimalClass));
         assertThat(d.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(d.scale(), equalTo(expectsZero ? 0 : zerosCount + numberOfDigits(text)));
 
         newText = addUnderscores(newText);
         decimal = Decimal.decimal(newText);
         d = Decimal.d(newText);
-        assertThat(decimal, instanceOf(decimalClass));
         assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(decimal.scale(), equalTo(expectsZero ? 0 : zerosCount + numberOfDigits(text)));
-        assertThat(d, instanceOf(decimalClass));
         assertThat(d.unscaledValue(), equalTo(expectedUnscaledValue));
         assertThat(d.scale(), equalTo(expectsZero ? 0 : zerosCount + numberOfDigits(text)));
 
@@ -214,20 +191,16 @@ public class DecimalCreationFromStringTest {
             newText = text.substring(0, text.length() - scaleTo) + "." + text.substring(text.length() - scaleTo);
             decimal = Decimal.decimal(newText);
             d = Decimal.d(newText);
-            assertThat(decimal, instanceOf(decimalClass));
             assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
             assertThat(decimal.scale(), equalTo(scaleTo));
-            assertThat(d, instanceOf(decimalClass));
             assertThat(d.unscaledValue(), equalTo(expectedUnscaledValue));
             assertThat(d.scale(), equalTo(scaleTo));
 
             newText = addUnderscores(newText);
             decimal = Decimal.decimal(newText);
             d = Decimal.d(newText);
-            assertThat(decimal, instanceOf(decimalClass));
             assertThat(decimal.unscaledValue(), equalTo(expectedUnscaledValue));
             assertThat(decimal.scale(), equalTo(scaleTo));
-            assertThat(d, instanceOf(decimalClass));
             assertThat(d.unscaledValue(), equalTo(expectedUnscaledValue));
             assertThat(d.scale(), equalTo(scaleTo));
         }
@@ -254,11 +227,11 @@ public class DecimalCreationFromStringTest {
     }
 
     private void shouldFindUnscaledValueOnStringPermutations(String text, long expectedUnscaledValue) {
-        shouldFindUnscaledValueOnStringPermutations(text, Decimal.LongDecimal.class, expectedUnscaledValue);
+        shouldFindUnscaledValueOnStringPermutations(text, expectedUnscaledValue);
     }
 
     private void shouldFindUnscaledValueOnStringPermutations(String text, BigInteger expectedUnscaledValue) {
-        shouldFindUnscaledValueOnStringPermutations(text, Decimal.HugeDecimal.class, expectedUnscaledValue);
+        shouldFindUnscaledValueOnStringPermutations(text, expectedUnscaledValue);
     }
 
     private String nZeros(int n) {

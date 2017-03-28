@@ -14,10 +14,10 @@ import static javafixes.math.BigIntegerUtil.canConvertToLong;
 import static javafixes.math.LongUtil.canFitIntoInt;
 import static javafixes.math.PowerUtil.*;
 
-// todo: add javadoc
-// todo: add formatter
-// todo: extend Number
+// todo: add javadoc, formatter and extend Number class
 public abstract class Decimal implements Comparable<Decimal> {
+
+    private static final RoundingMode DEFAULT_ROUNDING = RoundingMode.HALF_UP;
 
     public static final Decimal ZERO = decimal(0, 0);
     public static final Decimal ONE = decimal(1, 0);
@@ -31,8 +31,7 @@ public abstract class Decimal implements Comparable<Decimal> {
     /* ---   implementations   --- */
     /* =========================== */
 
-    // todo: make this class private
-    static final class LongDecimal extends Decimal {
+    private static final class LongDecimal extends Decimal {
 
         // todo: don't allow Long.MIN_VALUE to be stored in here - it will make the handling of the class easier
         transient final long unscaledValue;
@@ -109,8 +108,7 @@ public abstract class Decimal implements Comparable<Decimal> {
         }
     }
 
-    // todo: make this class private
-    static final class HugeDecimal extends Decimal {
+    private static final class HugeDecimal extends Decimal {
 
         transient final BigInteger unscaledValue;
         transient final int scale;
@@ -252,6 +250,24 @@ public abstract class Decimal implements Comparable<Decimal> {
         return decimal(unscaledValue, scale);
     }
 
+    // todo: test this
+    public static Decimal decimal(long value) {
+        return decimal(value, 0);
+    }
+
+    // todo: test this
+    public static Decimal d(long value) {
+        return decimal(value, 0);
+    }
+
+    public static Decimal decimal(BigDecimal bigDecimal) {
+        return decimal(bigDecimal.unscaledValue(), bigDecimal.scale());
+    }
+
+    public static Decimal d(BigDecimal bigDecimal) {
+        return decimal(bigDecimal);
+    }
+
     // todo: add ability to parse scientific notation (1e20)
     public static Decimal decimal(String stringValue) throws ArithmeticException, NumberFormatException {
         int scale = 0;
@@ -326,14 +342,6 @@ public abstract class Decimal implements Comparable<Decimal> {
         return decimal(stringValue);
     }
 
-    public static Decimal decimal(BigDecimal bigDecimal) {
-        return decimal(bigDecimal.unscaledValue(), bigDecimal.scale());
-    }
-
-    public static Decimal d(BigDecimal bigDecimal) {
-        return decimal(bigDecimal);
-    }
-
     /* ======================= */
     /* ---   api methods   --- */
     /* ======================= */
@@ -348,11 +356,18 @@ public abstract class Decimal implements Comparable<Decimal> {
 
     abstract public BigDecimal bigDecimalValue();
 
-    // todo: add methods without rounding mode
     abstract public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode);
 
     public Decimal descaleTo(Scale scaleToUse, RoundingMode roundingMode) {
         return descaleTo(scaleToUse.value, roundingMode);
+    }
+
+    public Decimal descaleTo(int scaleToUse) {
+        return descaleTo(scaleToUse, DEFAULT_ROUNDING);
+    }
+
+    public Decimal descaleTo(Scale scaleToUse) {
+        return descaleTo(scaleToUse.value, DEFAULT_ROUNDING);
     }
 
     // todo: add methods without rounding mode

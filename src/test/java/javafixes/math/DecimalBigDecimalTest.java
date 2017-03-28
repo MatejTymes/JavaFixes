@@ -56,6 +56,8 @@ public class DecimalBigDecimalTest {
                 assertThat(newDecimal, equalTo(decimal));
                 assertThat(newDecimal.unscaledValue(), equalTo(unscaledValue));
                 assertThat(newDecimal.scale(), equalTo(scale));
+
+                assertThat(Decimal.decimal(bigDecimal), equalTo(Decimal.d(bigDecimal)));
             }
         }
     }
@@ -81,6 +83,8 @@ public class DecimalBigDecimalTest {
                 assertThat(newDecimal, equalTo(decimal));
                 assertThat(newDecimal.unscaledValue(), equalTo(unscaledValue));
                 assertThat(newDecimal.scale(), equalTo(scale));
+
+                assertThat(Decimal.decimal(bigDecimal), equalTo(Decimal.d(bigDecimal)));
             }
         }
     }

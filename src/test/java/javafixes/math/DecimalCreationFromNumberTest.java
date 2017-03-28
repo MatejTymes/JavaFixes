@@ -9,7 +9,6 @@ import static javafixes.math.BigIntegerUtil.TEN_AS_BIG_INTEGER;
 import static javafixes.test.Condition.*;
 import static javafixes.test.Random.*;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -24,7 +23,6 @@ public class DecimalCreationFromNumberTest {
         Decimal decimal = Decimal.decimal(unscaledValue, scale);
 
         // Then
-        assertThat(decimal, instanceOf(Decimal.LongDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(unscaledValue));
         assertThat(decimal.scale(), equalTo(scale));
 
@@ -32,7 +30,6 @@ public class DecimalCreationFromNumberTest {
         decimal = Decimal.d(unscaledValue, scale);
 
         // Then
-        assertThat(decimal, instanceOf(Decimal.LongDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(unscaledValue));
         assertThat(decimal.scale(), equalTo(scale));
     }
@@ -49,7 +46,6 @@ public class DecimalCreationFromNumberTest {
         Decimal decimal = Decimal.decimal(unscaledValue, scale);
 
         // Then
-        assertThat(decimal, instanceOf(Decimal.LongDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(valueWithoutTrailingZeros));
         assertThat(decimal.scale(), equalTo(scale - trailingZerosCount));
 
@@ -57,7 +53,6 @@ public class DecimalCreationFromNumberTest {
         decimal = Decimal.d(unscaledValue, scale);
 
         // Then
-        assertThat(decimal, instanceOf(Decimal.LongDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(valueWithoutTrailingZeros));
         assertThat(decimal.scale(), equalTo(scale - trailingZerosCount));
     }
@@ -100,7 +95,6 @@ public class DecimalCreationFromNumberTest {
         Decimal decimal = Decimal.decimal(unscaledValue, scale);
 
         // Then
-        assertThat(decimal, instanceOf(Decimal.LongDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(unscaledValue.longValue()));
         assertThat(decimal.scale(), equalTo(scale));
 
@@ -108,7 +102,6 @@ public class DecimalCreationFromNumberTest {
         decimal = Decimal.d(unscaledValue, scale);
 
         // Then
-        assertThat(decimal, instanceOf(Decimal.LongDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(unscaledValue.longValue()));
         assertThat(decimal.scale(), equalTo(scale));
     }
@@ -122,7 +115,6 @@ public class DecimalCreationFromNumberTest {
         Decimal decimal = Decimal.decimal(unscaledValue, scale);
 
         // Then
-        assertThat(decimal, instanceOf(Decimal.HugeDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(unscaledValue));
         assertThat(decimal.scale(), equalTo(scale));
 
@@ -130,7 +122,6 @@ public class DecimalCreationFromNumberTest {
         decimal = Decimal.d(unscaledValue, scale);
 
         // Then
-        assertThat(decimal, instanceOf(Decimal.HugeDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(unscaledValue));
         assertThat(decimal.scale(), equalTo(scale));
     }
@@ -146,7 +137,6 @@ public class DecimalCreationFromNumberTest {
         Decimal decimal = Decimal.decimal(unscaledValue, scale);
 
         // Then
-        assertThat(decimal, instanceOf(Decimal.HugeDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(valueWithoutTrailingZeros));
         assertThat(decimal.scale(), equalTo(scale - trailingZerosCount));
 
@@ -154,7 +144,6 @@ public class DecimalCreationFromNumberTest {
         decimal = Decimal.d(unscaledValue, scale);
 
         // Then
-        assertThat(decimal, instanceOf(Decimal.HugeDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(valueWithoutTrailingZeros));
         assertThat(decimal.scale(), equalTo(scale - trailingZerosCount));
     }
@@ -190,22 +179,18 @@ public class DecimalCreationFromNumberTest {
     @Test
     public void shouldHaveZeroScaleForZeroValue() {
         Decimal decimal = Decimal.decimal(0, randomInt(notZero()));
-        assertThat(decimal, instanceOf(Decimal.LongDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(0L));
         assertThat(decimal.scale(), equalTo(0));
 
         decimal = Decimal.d(0, randomInt(notZero()));
-        assertThat(decimal, instanceOf(Decimal.LongDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(0L));
         assertThat(decimal.scale(), equalTo(0));
 
         decimal = Decimal.decimal(BigInteger.ZERO, randomInt(notZero()));
-        assertThat(decimal, instanceOf(Decimal.LongDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(0L));
         assertThat(decimal.scale(), equalTo(0));
 
         decimal = Decimal.d(BigInteger.ZERO, randomInt(notZero()));
-        assertThat(decimal, instanceOf(Decimal.LongDecimal.class));
         assertThat(decimal.unscaledValue(), equalTo(0L));
         assertThat(decimal.scale(), equalTo(0));
     }
