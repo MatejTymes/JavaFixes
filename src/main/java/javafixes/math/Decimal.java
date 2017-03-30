@@ -14,8 +14,8 @@ import static javafixes.math.BigIntegerUtil.canConvertToLong;
 import static javafixes.math.LongUtil.canFitIntoInt;
 import static javafixes.math.PowerUtil.*;
 
-// todo: add javadoc, formatter and extend Number class
-public abstract class Decimal implements Comparable<Decimal> {
+// todo: add javadoc, formatter and make Serializable
+public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     private static final RoundingMode DEFAULT_ROUNDING = RoundingMode.HALF_UP;
 
@@ -395,6 +395,34 @@ public abstract class Decimal implements Comparable<Decimal> {
     abstract public int scale();
 
     abstract public int precision();
+
+    // todo: test this
+    @Override
+    public int intValue() {
+        // todo: add faster implementation
+        return Integer.parseInt(toScientificNotation());
+    }
+
+    // todo: test this
+    @Override
+    public long longValue() {
+        // todo: add faster implementation
+        return Long.parseLong(toScientificNotation());
+    }
+
+    // todo: test this
+    @Override
+    public float floatValue() {
+        // todo: add faster implementation
+        return Float.parseFloat(toScientificNotation());
+    }
+
+    // todo: test this
+    @Override
+    public double doubleValue() {
+        // todo: add faster implementation
+        return Double.parseDouble(toScientificNotation());
+    }
 
     abstract public BigDecimal bigDecimalValue();
 
