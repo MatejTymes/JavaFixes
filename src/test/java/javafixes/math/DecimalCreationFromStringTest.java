@@ -173,6 +173,21 @@ public class DecimalCreationFromStringTest {
                     } catch (NumberFormatException expected) {
                         assertThat(expected.getMessage(), equalTo("Illegal value. Scale '" + ((long) Integer.MIN_VALUE - 1L) + "' won't fit into Integer"));
                     }
+
+
+                    try {
+                        Decimal.decimal(numberPart + exponentSign + Long.MIN_VALUE);
+                        fail("expecting NumberFormatException as scale can't fit into int");
+                    } catch (NumberFormatException expected) {
+                        assertThat(expected.getMessage(), equalTo("Illegal value. Scale won't fit into Integer"));
+                    }
+
+                    try {
+                        Decimal.decimal(numberPart + exponentSign + Long.MAX_VALUE);
+                        fail("expecting NumberFormatException as scale can't fit into int");
+                    } catch (NumberFormatException expected) {
+                        assertThat(expected.getMessage(), equalTo("Illegal value. Scale won't fit into Integer"));
+                    }
                 }
             }
         }
