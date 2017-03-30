@@ -145,9 +145,7 @@ The advantages it provides are:
     assertThat(decimal("-1.2").hashCode(), equalTo(decimal("-1.200").hashCode()));
 ```
 
-* sensible defaults - using rounding `HALF_UP` (the one we used in school) when doing math operation (this is a default and you can pass in your own value) and max(28, valueA.scale(), valueB.scale()) decimal places when doing division (this will change soon to be defined as precision of 34 - which means number will be rounded after 34 digits - no matter the scale)
-
-* extendible (although not by you :D ) - `Decimal` is an abstract class, and currently supports two subtypes `LongDecimal` (for number with precision up to 19 digits - backed by `long`) and `HugeDecimal` for everything else (backed by `BigInteger`). The library handles the transitions between them seamlessly when doing math operation and always uses the least memory consuming type. There are plans the introduce additional types `InfinityDecimal` and `NANDecimal` (that will be disabled by default)
+* sensible defaults - using rounding `HALF_UP` (the one we used in school) when doing math operation (this is the default but you can pass in your own rounding mode) and precision of 34 digits no matter the scale (once again you can provide your own setting)
 
 * can evolve without affecting you - creation using only static factory methods doesn't expose defined types (you always refer to them as `Decimal`), so that the library can evolve without any changes needed on the users/client side.
 
@@ -159,7 +157,7 @@ The advantages it provides are:
     Decimal sum = d("0.456").plus(value);
 ```
 
-* groovy and kotlin operators (sorry scala you have too ugly syntax):
+* groovy and kotlin operators:
 
 ```Groovy
     def monthlyInterest = d("129_550.00") * d("0.03") / d("12");
@@ -173,7 +171,7 @@ The advantages it provides are:
     val totalDebt = d("129_550.00") + monthlyInterest * d("36");
 ```
 
-* handy constants - one of the confusing thing about `BigDecimal` for newcomers is what is the difference between scale and precision. To ease the understanding Decimal provides some readable constants on the `Scale` and `Precision` classes:
+* handy constants - one of the confusing thing about `BigDecimal` for newcomers is what is the difference between scale and precision. To ease the understanding `Decimal` provides readable constants on the `Scale` and `Precision` classes:
 
 ```Java
     d("123.4698").descaleTo(_2_DECIMAL_PLACES);  // = 123.47
@@ -182,6 +180,39 @@ The advantages it provides are:
 
     d("125_455_315").descaleTo(SCALE_OF_THOUSANDS);  // = 125_455_000
     d("125_455_315").descaleTo(SCALE_OF_MILLIONS);  // = 125_000_000
+```
+
+* extendible (although not by you :D ) - `Decimal` is an abstract class, and currently supports two subtypes `LongDecimal` (for number with precision up to 19 digits - backed by `long`) and `HugeDecimal` for everything else (backed by `BigInteger`). The library handles the transitions between them seamlessly when doing math operation and always uses the least memory consuming type. There are plans the introduce additional types `InfinityDecimal` and `NANDecimal` (that will be disabled by default)
+
+* non-confusing creation - `BigDecimal` sometimes uses constructor and sometimes factory method when creating its instance. `Decimal` always uses factory methods:
+ 
+```Java
+    // BigDecimal creation
+
+    new BigDecimal(intValue);
+    new BigDecimal(longValue);
+    BigDecimal.valueOf(longValue, scale);
+    new BigDecimal(bigIntegerValue);
+    new BigDecimal(bigIntegerValue, scale);
+    new BigDecimal(stringValue);
+
+    // Decimal creation
+
+    decimal(intValue);
+    decimal(longValue);
+    decimal(longValue, scale);
+    decimal(bigIntegerValue);
+    decimal(bigIntegerValue, scale);
+    decimal(stringValue);
+
+    // Decimal creation - short syntax
+
+    d(intValue);
+    d(longValue);
+    d(longValue, scale);
+    d(bigIntegerValue);
+    d(bigIntegerValue, scale);
+    d(stringValue);
 ```
 
 It is possible that you'll miss some math functions. To implement your own you can use these Decimal methods:

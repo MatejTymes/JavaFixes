@@ -266,6 +266,14 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return decimal(value, 0);
     }
 
+    public static Decimal decimal(BigInteger value) {
+        return decimal(value, 0);
+    }
+
+    public static Decimal d(BigInteger value) {
+        return decimal(value, 0);
+    }
+
     public static Decimal decimal(BigDecimal bigDecimal) {
         return decimal(bigDecimal.unscaledValue(), bigDecimal.scale());
     }

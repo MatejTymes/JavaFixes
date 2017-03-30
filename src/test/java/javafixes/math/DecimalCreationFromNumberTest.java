@@ -148,6 +148,20 @@ public class DecimalCreationFromNumberTest {
         // Then
         assertThat(decimal.unscaledValue(), equalTo(unscaledValue));
         assertThat(decimal.scale(), equalTo(scale));
+
+        // When
+        decimal = Decimal.decimal(unscaledValue);
+
+        // Then
+        assertThat(decimal.unscaledValue(), equalTo(unscaledValue));
+        assertThat(decimal.scale(), equalTo(0));
+
+        // When
+        decimal = Decimal.d(unscaledValue);
+
+        // Then
+        assertThat(decimal.unscaledValue(), equalTo(unscaledValue));
+        assertThat(decimal.scale(), equalTo(0));
     }
 
     @Test
