@@ -129,7 +129,7 @@ public class DecimalComparisonTest {
 
     // todo: add this test and check the operations are fast
 //    @Test
-//    public void shouldCompareDecimalsWithHugeScaleDifferences() {
+//    public void shouldQuicklyCompareDecimalsWithHugeScaleDifferences() {
 ////        Decimal decimalA = Decimal.decimal("1e10_000");
 ////        Decimal decimalB = decimalA.plus(Decimal.ONE);
 //
