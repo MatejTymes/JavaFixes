@@ -127,6 +127,23 @@ public class DecimalComparisonTest {
         );
     }
 
+    // todo: add this test and check the operations are fast
+//    @Test
+//    public void shouldCompareDecimalsWithHugeScaleDifferences() {
+////        Decimal decimalA = Decimal.decimal("1e10_000");
+////        Decimal decimalB = decimalA.plus(Decimal.ONE);
+//
+//        System.out.println("a");
+//        BigDecimal bigDecimalA = new BigDecimal("1e10000");
+//        System.out.println("b");
+//        BigDecimal bigDecimalB = bigDecimalA.add(BigDecimal.ONE);
+//
+//        System.out.println("c");
+//        assertThat(bigDecimalA, Matchers.lessThan(bigDecimalB));
+//        System.out.println("d");
+//    }
+
+
     @SafeVarargs
     private static int randomScaleInt(Function<Integer, Boolean>... validityConditions) {
         return randomInt();
