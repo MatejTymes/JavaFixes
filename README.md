@@ -184,18 +184,9 @@ The advantages it provides are:
 
 * extendible (although not by you :D ) - `Decimal` is an abstract class, and currently supports two subtypes `LongDecimal` (for number with precision up to 19 digits - backed by `long`) and `HugeDecimal` for everything else (backed by `BigInteger`). The library handles the transitions between them seamlessly when doing math operation and always uses the least memory consuming type. There are plans the introduce additional types `InfinityDecimal` and `NANDecimal` (that will be disabled by default)
 
-* non-confusing creation - `BigDecimal` sometimes uses constructor and sometimes factory method when creating its instance. `Decimal` always uses factory methods:
+* non-confusing creation - `Decimal` always uses factory methods for creation, while `BigDecimal` sometimes uses constructor and sometimes factory method:
  
 ```Java
-    // BigDecimal creation
-
-    new BigDecimal(intValue);
-    new BigDecimal(longValue);
-    BigDecimal.valueOf(longValue, scale);
-    new BigDecimal(bigIntegerValue);
-    new BigDecimal(bigIntegerValue, scale);
-    new BigDecimal(stringValue);
-
     // Decimal creation
 
     decimal(intValue);
@@ -213,6 +204,15 @@ The advantages it provides are:
     d(bigIntegerValue);
     d(bigIntegerValue, scale);
     d(stringValue);
+
+    // BigDecimal creation
+
+    new BigDecimal(intValue);
+    new BigDecimal(longValue);
+    BigDecimal.valueOf(longValue, scale);
+    new BigDecimal(bigIntegerValue);
+    new BigDecimal(bigIntegerValue, scale);
+    new BigDecimal(stringValue);
 ```
 
 It is possible that you'll miss some math functions. To implement your own you can use these Decimal methods:
