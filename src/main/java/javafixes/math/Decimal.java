@@ -9,7 +9,6 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.String.format;
 import static java.math.RoundingMode.*;
-import static javafixes.math.BigIntegerUtil.TEN_AS_BIG_INTEGER;
 import static javafixes.math.BigIntegerUtil.canConvertToLong;
 import static javafixes.math.LongUtil.canFitIntoInt;
 import static javafixes.math.PowerUtil.*;
@@ -172,7 +171,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                 return ZERO;
             }
 
-            BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(TEN_AS_BIG_INTEGER);
+            BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(BigInteger.TEN);
             BigInteger rescaledValue = divAndMod[0];
             int remainingDigit = divAndMod[1].intValue();
             if (unscaledValue.signum() < 0 && remainingDigit > 0) {
@@ -226,7 +225,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     public static Decimal decimal(BigInteger unscaledValue, int scale) throws ArithmeticException {
         while (unscaledValue.signum() != 0) {
-            BigInteger[] divAndMod = unscaledValue.divideAndRemainder(TEN_AS_BIG_INTEGER);
+            BigInteger[] divAndMod = unscaledValue.divideAndRemainder(BigInteger.TEN);
             if (divAndMod[1].signum() != 0) {
                 break;
             }
@@ -299,11 +298,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                                 unscaledValueB = BigInteger.valueOf(unscaledValueL).add(BigInteger.valueOf(digitToAdd));
                             }
                         } else {
-                            unscaledValueB = BigInteger.valueOf(unscaledValueL).multiply(TEN_AS_BIG_INTEGER).add(BigInteger.valueOf(digitToAdd));
+                            unscaledValueB = BigInteger.valueOf(unscaledValueL).multiply(BigInteger.TEN).add(BigInteger.valueOf(digitToAdd));
                         }
                     }
                 } else {
-                    unscaledValueB = unscaledValueB.multiply(TEN_AS_BIG_INTEGER).add(BigInteger.valueOf(digitToAdd));
+                    unscaledValueB = unscaledValueB.multiply(BigInteger.TEN).add(BigInteger.valueOf(digitToAdd));
                 }
                 if (foundDecimalPoint) {
                     // this currently can't happen and is untestable as we can't create char array with so many elements
@@ -501,7 +500,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         } else if (this instanceof HugeDecimal) {
             BigInteger remainder = ((HugeDecimal) this).unscaledValue;
             while (remainder.signum() != 0) {
-                BigInteger[] divAndMod = remainder.divideAndRemainder(TEN_AS_BIG_INTEGER);
+                BigInteger[] divAndMod = remainder.divideAndRemainder(BigInteger.TEN);
                 remainder = divAndMod[0];
                 hashCode = (hashCode * 5) + divAndMod[1].intValue();
             }

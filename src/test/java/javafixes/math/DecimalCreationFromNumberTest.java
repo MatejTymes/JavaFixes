@@ -7,7 +7,6 @@ import java.util.List;
 
 import static java.lang.Math.pow;
 import static javafixes.common.CollectionUtil.newList;
-import static javafixes.math.BigIntegerUtil.TEN_AS_BIG_INTEGER;
 import static javafixes.test.Condition.*;
 import static javafixes.test.Random.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -155,7 +154,7 @@ public class DecimalCreationFromNumberTest {
     public void shouldCreateHugeDecimalFromBigIntegerAndStripTrailingZeros() {
         int trailingZerosCount = randomInt(1, 1_000);
         BigInteger valueWithoutTrailingZeros = randomBigInteger(notFitIntoLong(), notDivisibleBy10(), notZero());
-        BigInteger unscaledValue = valueWithoutTrailingZeros.multiply(TEN_AS_BIG_INTEGER.pow(trailingZerosCount));
+        BigInteger unscaledValue = valueWithoutTrailingZeros.multiply(BigInteger.TEN.pow(trailingZerosCount));
         int scale = randomInt(Integer.MIN_VALUE + trailingZerosCount, Integer.MAX_VALUE);
 
         // When
@@ -177,7 +176,7 @@ public class DecimalCreationFromNumberTest {
     public void shouldFailToCreateHugeDecimalIfThereIsAScaleOverflowWhileStrippingTrailingZeros() {
         int trailingZerosCount = randomInt(1, 1_000);
         BigInteger valueWithoutTrailingZeros = randomBigInteger(notFitIntoLong(), notDivisibleBy10(), notZero());
-        BigInteger unscaledValue = valueWithoutTrailingZeros.multiply(TEN_AS_BIG_INTEGER.pow(trailingZerosCount));
+        BigInteger unscaledValue = valueWithoutTrailingZeros.multiply(BigInteger.TEN.pow(trailingZerosCount));
         int scale = randomInt(Integer.MIN_VALUE, Integer.MIN_VALUE + trailingZerosCount - 1);
 
         try {
