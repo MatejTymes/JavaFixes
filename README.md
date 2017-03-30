@@ -147,8 +147,6 @@ The advantages it provides are:
 
 * sensible defaults - using rounding `HALF_UP` (the one we used in school) when doing math operation (this is the default but you can pass in your own rounding mode) and precision of 34 digits no matter the scale (once again you can provide your own setting)
 
-* can evolve without affecting you - creation using only static factory methods doesn't expose defined types (you always refer to them as `Decimal`), so that the library can evolve without any changes needed on the users/client side.
-
 * readable - able to use underscores during creation to improve readability (as in Java 7). Also can use short creation method `d(...)`:
 
 ```Java
@@ -182,8 +180,6 @@ The advantages it provides are:
     d("125_455_315").descaleTo(SCALE_OF_MILLIONS);  // = 125_000_000
 ```
 
-* extendible (although not by you :D ) - `Decimal` is an abstract class, and currently supports two subtypes `LongDecimal` (for number with precision up to 19 digits - backed by `long`) and `HugeDecimal` for everything else (backed by `BigInteger`). The library handles the transitions between them seamlessly when doing math operation and always uses the least memory consuming type. There are plans the introduce additional types `InfinityDecimal` and `NANDecimal` (that will be disabled by default)
-
 * non-confusing creation - `Decimal` always uses factory methods for creation, while `BigDecimal` sometimes uses constructor and sometimes factory method:
  
 ```Java
@@ -214,6 +210,10 @@ The advantages it provides are:
     new BigDecimal(bigIntegerValue, scale);
     new BigDecimal(stringValue);
 ```
+
+* can evolve without affecting you - creation using only static factory methods doesn't expose defined types (you always refer to them as `Decimal`), so that the library can evolve without any changes needed on the users/client side.
+
+* extendible (although not by you :D ) - `Decimal` is an abstract class, and currently supports two subtypes `LongDecimal` (for number with precision up to 19 digits - backed by `long`) and `HugeDecimal` for everything else (backed by `BigInteger`). The library handles the transitions between them seamlessly when doing math operation and always uses the least memory consuming type. There are plans the introduce additional types `InfinityDecimal` and `NANDecimal` (that will be disabled by default)
 
 It is possible that you'll miss some math functions. To implement your own you can use these Decimal methods:
 * `decimal.signum()` - will return -1 for negative value, 0 for zero and 1 for positive value
