@@ -73,7 +73,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                 return this;
             }
 
-            // todo: refactor
+            // todo: refactor, but good for now
 
             long scaleDiff = (long) scale - scaleToUse;
 
@@ -149,15 +149,15 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                 return this;
             }
 
-            // todo: refactor
+            // todo: refactor, but good for now
 
-            // todo: quick descale: if scaleDiff > precision
+            // todo: quick descale: if scaleDiff > precision, but good for now
             long scaleDiff = (long) scale - (long) scaleToUse;
 
             boolean hasAdditionalRemainder = false;
             BigInteger valueWithRoundingDigit = unscaledValue;
             long n = scaleDiff - 1;
-            // todo: simplify this
+            // todo: simplify this, but good for now
             while (n > 0 && valueWithRoundingDigit.signum() != 0) {
                 int descaleBy = (int) Math.min((long) maxCachedBigPowerOf10(), n);
                 BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(powerOf10Big(descaleBy));
@@ -400,25 +400,25 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     @Override
     public int intValue() {
-        // todo: cheating - fix this
+        // todo: cheating, but good for now - fix this
         return bigDecimalValue().intValue();
     }
 
     @Override
     public long longValue() {
-        // todo: cheating - fix this
+        // todo: cheating, but good for now - fix this
         return bigDecimalValue().longValue();
     }
 
     @Override
     public float floatValue() {
-        // todo: add faster implementation
+        // todo: add faster implementation, but good for now
         return Float.parseFloat(toScientificNotation());
     }
 
     @Override
     public double doubleValue() {
-        // todo: add faster implementation
+        // todo: add faster implementation, but good for now
         return Double.parseDouble(toScientificNotation());
     }
 
