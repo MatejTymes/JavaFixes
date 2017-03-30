@@ -60,7 +60,8 @@ public class DecimalCreationFromStringTest {
                 "-.0",
                 "0.",
                 "1_e_-_3_",
-                "1_e_+_3_"
+                "1_e_+_3_",
+                "1E5"
         );
 
         for (String stringValue : stringValues) {
@@ -98,17 +99,84 @@ public class DecimalCreationFromStringTest {
     @Test
     public void shouldParseScientificNotation() {
 
-        // todo: can use '_' in exponent as well
         assertThat(Decimal.d("123.45e0"), equalTo(Decimal.d("123.45")));
         assertThat(Decimal.d("123.45e-1"), equalTo(Decimal.d("12.345")));
         assertThat(Decimal.d("123.45e+1"), equalTo(Decimal.d("1234.5")));
         assertThat(Decimal.d("123.45e1"), equalTo(Decimal.d("1234.5")));
 
-//        System.out.println(new BigDecimal("123.45e0"));
-//        System.out.println(new BigDecimal("123.45e-1"));
-//        System.out.println(new BigDecimal("123.45e+1"));
-    }
+        List<BigInteger> beforeDecimalPointNumbers = newList(
+                BigInteger.valueOf(0),
+                BigInteger.valueOf(1),
+                BigInteger.valueOf(-1),
+                BigInteger.valueOf(Long.MAX_VALUE),
+                BigInteger.valueOf(Long.MIN_VALUE),
+                BigInteger.valueOf(randomLong(Long.MIN_VALUE + 1, -2, notDivisibleBy10())),
+                BigInteger.valueOf(randomLong(2, Long.MAX_VALUE - 1, notDivisibleBy10())),
+                randomBigInteger(positive(), notFitIntoLong(), notDivisibleBy10()),
+                randomBigInteger(negative(), notFitIntoLong(), notDivisibleBy10())
+        );
 
+        List<Integer> afterDecimalPointNumbers = newList(
+                0,
+                randomInt(1, 9),
+                randomInt(10, 99, notDivisibleBy10()),
+                randomInt(100, 999, notDivisibleBy10()),
+                randomInt(1000, 9999, notDivisibleBy10())
+        );
+
+        for (BigInteger beforeDecimalPointNumber : beforeDecimalPointNumbers) {
+            for (Integer afterDecimalPointNumber : afterDecimalPointNumbers) {
+                String numberPart = beforeDecimalPointNumber.toString();
+                if (afterDecimalPointNumber != 0) {
+                    numberPart = numberPart + "." + afterDecimalPointNumber;
+                }
+                int numberScale = (afterDecimalPointNumber == 0) ? 0 : afterDecimalPointNumber.toString().length();
+
+                long bottomLimitExponent = (long) numberScale - (long) Integer.MAX_VALUE;
+                long topLimitExponent = (long) numberScale - (long) Integer.MIN_VALUE;
+                List<Long> exponents = newList(
+                        0L,
+                        -1L,
+                        1L,
+                        bottomLimitExponent,
+                        topLimitExponent
+                );
+
+                for (String exponentSign : newList("e", "E")) {
+                    for (Long exponent : exponents) {
+                        String number = numberPart + exponentSign + exponent;
+
+                        Decimal decimal = Decimal.decimal(number);
+
+                        BigInteger expectedUnscaledValue = beforeDecimalPointNumber.multiply(BigInteger.TEN.pow(numberScale))
+                                .add(BigInteger.valueOf(afterDecimalPointNumber).multiply(beforeDecimalPointNumber.signum() != -1 ? BigInteger.ONE : BigInteger.ONE.negate()));
+                        assertThat(asBigInteger(decimal.unscaledValue()), equalTo(expectedUnscaledValue));
+
+                        if ("0".equals(numberPart)) {
+                            assertThat(decimal.scale(), equalTo(0));
+                        } else {
+                            Long expectedScale = (long) numberScale - exponent;
+                            assertThat(Long.valueOf(decimal.scale()), equalTo(expectedScale));
+                        }
+                    }
+
+                    try {
+                        Decimal.decimal(numberPart + exponentSign + (bottomLimitExponent - 1L));
+                        fail("expecting NumberFormatException as scale can't fit into int");
+                    } catch (NumberFormatException expected) {
+                        assertThat(expected.getMessage(), equalTo("Illegal value. Scale '" + ((long) Integer.MAX_VALUE + 1L) + "' won't fit into Integer"));
+                    }
+
+                    try {
+                        Decimal.decimal(numberPart + exponentSign + (topLimitExponent + 1L));
+                        fail("expecting NumberFormatException as scale can't fit into int");
+                    } catch (NumberFormatException expected) {
+                        assertThat(expected.getMessage(), equalTo("Illegal value. Scale '" + ((long) Integer.MIN_VALUE - 1L) + "' won't fit into Integer"));
+                    }
+                }
+            }
+        }
+    }
 
     /* ========================== */
     /* ---   helper methods   --- */
@@ -281,5 +349,13 @@ public class DecimalCreationFromStringTest {
             sb.insert(randomInt(0, sb.length()), "_");
         }
         return sb.toString();
+    }
+
+    private BigInteger asBigInteger(Number number) {
+        if (number instanceof BigInteger) {
+            return (BigInteger) number;
+        } else {
+            return BigInteger.valueOf((long) number);
+        }
     }
 }

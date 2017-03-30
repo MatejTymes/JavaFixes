@@ -330,7 +330,6 @@ public abstract class Decimal implements Comparable<Decimal> {
                 }
                 signum = 1;
             } else if (c == 'e' || c == 'E') {
-                // todo: test this
                 i++;
                 boolean foundExponentValue = false;
                 int exponentSignum = 0;
