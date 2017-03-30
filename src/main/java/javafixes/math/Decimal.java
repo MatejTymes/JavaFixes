@@ -396,35 +396,31 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     abstract public int precision();
 
-    // todo: test this
+    abstract public BigDecimal bigDecimalValue();
+
     @Override
     public int intValue() {
-        // todo: add faster implementation
-        return Integer.parseInt(toScientificNotation());
+        // todo: cheating - fix this
+        return bigDecimalValue().intValue();
     }
 
-    // todo: test this
     @Override
     public long longValue() {
-        // todo: add faster implementation
-        return Long.parseLong(toScientificNotation());
+        // todo: cheating - fix this
+        return bigDecimalValue().longValue();
     }
 
-    // todo: test this
     @Override
     public float floatValue() {
         // todo: add faster implementation
         return Float.parseFloat(toScientificNotation());
     }
 
-    // todo: test this
     @Override
     public double doubleValue() {
         // todo: add faster implementation
         return Double.parseDouble(toScientificNotation());
     }
-
-    abstract public BigDecimal bigDecimalValue();
 
     abstract public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode);
 
@@ -526,6 +522,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return toPlainString(0);
     }
 
+    // scale lower than 0 will be ignored and 0 will be used instead
     public String toPlainString(int minScaleToUse) {
         StringBuilder sb = new StringBuilder(unscaledValue().toString());
 
