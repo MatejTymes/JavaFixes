@@ -35,7 +35,7 @@ public class DecimalNumberTest {
             assertThat(Decimal.decimal(unscaledValue, 0).floatValue(), equalTo(new BigDecimal(unscaledValue, 0).floatValue()));
             assertThat(Decimal.decimal(unscaledValue, 0).doubleValue(), equalTo(new BigDecimal(unscaledValue, 0).doubleValue()));
 
-            for (int scale = 1; scale < 100; scale++) {
+            for (int scale = 1; scale < 1000; scale++) {
                 BigInteger scaler = BigInteger.TEN.pow(scale);
 
                 assertThat(Decimal.decimal(unscaledValue, scale).intValue(), equalTo(unscaledValue.divide(scaler).intValue()));

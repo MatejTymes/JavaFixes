@@ -13,6 +13,7 @@ import static javafixes.math.BigIntegerUtil.canConvertToLong;
 import static javafixes.math.LongUtil.canFitIntoInt;
 import static javafixes.math.PowerUtil.*;
 
+// todo: first make it work, then make it fast
 // todo: add javadoc, formatter and make Serializable
 public abstract class Decimal extends Number implements Comparable<Decimal> {
 
