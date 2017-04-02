@@ -2,6 +2,7 @@ package javafixes.math;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Arrays;
 
@@ -17,6 +18,7 @@ import static javafixes.math.PowerUtil.*;
 // todo: add javadoc, formatter and make Serializable
 public abstract class Decimal extends Number implements Comparable<Decimal> {
 
+    private static final Precision DEFAULT_PRECISION = Precision._34_SIGNIFICANT_DIGITS;
     private static final RoundingMode DEFAULT_ROUNDING = RoundingMode.HALF_UP;
 
     public static final Decimal ZERO = decimal(0, 0);
@@ -480,6 +482,61 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return (signum() < 0) ? negate() : this;
     }
 
+    // todo: test this
+    public Decimal plus(Decimal value) {
+        // todo: cheating, but good for now - fix this
+        return decimal(
+                this.bigDecimalValue().add(value.bigDecimalValue())
+        );
+    }
+
+    // todo: test this
+    public Decimal minus(Decimal value) {
+        // todo: cheating, but good for now - fix this
+        return decimal(
+                this.bigDecimalValue().subtract(value.bigDecimalValue())
+        );
+    }
+
+    // todo: test this
+    public Decimal times(Decimal value) {
+        // todo: cheating, but good for now - fix this
+        return decimal(
+                this.bigDecimalValue().multiply(value.bigDecimalValue())
+        );
+    }
+
+    // todo: test this
+    public Decimal div(Decimal value, Precision precision, RoundingMode roundingMode) {
+        // todo: cheating, but good for now - fix this
+        return decimal(
+                this.bigDecimalValue().divide(value.bigDecimalValue(), new MathContext(precision.value, roundingMode))
+        );
+    }
+
+    // todo: test this
+    public Decimal div(Decimal value, Scale scale, RoundingMode roundingMode) {
+        // todo: cheating, but good for now - fix this
+        return decimal(
+                this.bigDecimalValue().divide(value.bigDecimalValue(), scale.value, roundingMode)
+        );
+    }
+
+    // todo: test this
+    public Decimal div(Decimal value, Precision precision) {
+        return div(value, precision, DEFAULT_ROUNDING);
+    }
+
+    // todo: test this
+    public Decimal div(Decimal value, Scale scale) {
+        return div(value, scale, DEFAULT_ROUNDING);
+    }
+
+    // todo: test this
+    public Decimal div(Decimal value) {
+        return div(value, DEFAULT_PRECISION, DEFAULT_ROUNDING);
+    }
+
     @Override
     public int compareTo(Decimal other) {
         return compare(this, other);
@@ -527,7 +584,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public String toPlainString() {
-        return toPlainString(0);
+        return toPlainString(1);
     }
 
     // scale lower than 0 will be ignored and 0 will be used instead

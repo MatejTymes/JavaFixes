@@ -17,8 +17,10 @@ public class DecimalToStringTest {
 
     @Test
     public void shouldPrintDecimalAsPlainString() {
-        assertThat(d(123, 0).toPlainString(), equalTo("123"));
-        assertThat(d(-123, 0).toPlainString(), equalTo("-123"));
+        assertThat(d(123, -1).toPlainString(), equalTo("1230.0"));
+        assertThat(d(-123, -1).toPlainString(), equalTo("-1230.0"));
+        assertThat(d(123, 0).toPlainString(), equalTo("123.0"));
+        assertThat(d(-123, 0).toPlainString(), equalTo("-123.0"));
 
         assertThat(d(456, 1).toPlainString(), equalTo("45.6"));
         assertThat(d(-456, 1).toPlainString(), equalTo("-45.6"));
@@ -29,11 +31,11 @@ public class DecimalToStringTest {
         assertThat(d(456, 4).toPlainString(), equalTo("0.0456"));
         assertThat(d(-456, 4).toPlainString(), equalTo("-0.0456"));
 
-        assertThat(d(456, -1).toPlainString(), equalTo("4560"));
-        assertThat(d(456, -4).toPlainString(), equalTo("4560000"));
+        assertThat(d(456, -1).toPlainString(), equalTo("4560.0"));
+        assertThat(d(456, -4).toPlainString(), equalTo("4560000.0"));
 
-        assertThat(d(new BigInteger("12345678901234567890123456789"), 0).toPlainString(), equalTo("12345678901234567890123456789"));
-        assertThat(d(new BigInteger("-12345678901234567890123456789"), 0).toPlainString(), equalTo("-12345678901234567890123456789"));
+        assertThat(d(new BigInteger("12345678901234567890123456789"), 0).toPlainString(), equalTo("12345678901234567890123456789.0"));
+        assertThat(d(new BigInteger("-12345678901234567890123456789"), 0).toPlainString(), equalTo("-12345678901234567890123456789.0"));
         assertThat(d(new BigInteger("12345678901234567890123456789"), 1).toPlainString(), equalTo("1234567890123456789012345678.9"));
         assertThat(d(new BigInteger("-12345678901234567890123456789"), 1).toPlainString(), equalTo("-1234567890123456789012345678.9"));
         assertThat(d(new BigInteger("12345678901234567890123456789"), 28).toPlainString(), equalTo("1.2345678901234567890123456789"));
@@ -101,9 +103,10 @@ public class DecimalToStringTest {
         int scale = randomInt();
 
         int expectedExponent = numberOfDigits(unscaledPositiveValue) - scale - 1;
-
         String expectedPositiveString = addDecimalPoint(unscaledPositiveValue) + "e" + expectedExponent;
         assertThat(decimal(unscaledPositiveValue, scale).toScientificNotation(), equalTo(expectedPositiveString));
+
+        expectedExponent = numberOfDigits(unscaledNegativeValue) - scale - 1;
         String expectedNegativeString = addDecimalPoint(unscaledNegativeValue) + "e" + expectedExponent;
         assertThat(decimal(unscaledNegativeValue, scale).toScientificNotation(), equalTo(expectedNegativeString));
 
@@ -123,9 +126,10 @@ public class DecimalToStringTest {
         int scale = randomInt();
 
         int expectedExponent = numberOfDigits(unscaledPositiveValue) - scale - 1;
-
         String expectedPositiveString = addDecimalPoint(unscaledPositiveValue) + "e" + expectedExponent;
         assertThat(decimal(unscaledPositiveValue, scale).toScientificNotation(), equalTo(expectedPositiveString));
+
+        expectedExponent = numberOfDigits(unscaledNegativeValue) - scale - 1;
         String expectedNegativeString = addDecimalPoint(unscaledNegativeValue) + "e" + expectedExponent;
         assertThat(decimal(unscaledNegativeValue, scale).toScientificNotation(), equalTo(expectedNegativeString));
     }
@@ -135,14 +139,14 @@ public class DecimalToStringTest {
         long expectedExponent = Integer.MAX_VALUE + 1L;
 
         long unscaledValueL = randomLong(notDivisibleBy10());
-        int scale =(int) (numberOfDigits(unscaledValueL) - expectedExponent - 1L);
+        int scale = (int) (numberOfDigits(unscaledValueL) - expectedExponent - 1L);
 
         String expectedScientificNotation = addDecimalPoint(unscaledValueL) + "e" + expectedExponent;
         assertThat(decimal(unscaledValueL, scale).toScientificNotation(), equalTo(expectedScientificNotation));
 
 
         BigInteger unscaledValueB = randomBigInteger(notDivisibleBy10(), notFitIntoLong());
-        scale =(int) (numberOfDigits(unscaledValueB) - expectedExponent - 1L);
+        scale = (int) (numberOfDigits(unscaledValueB) - expectedExponent - 1L);
 
         expectedScientificNotation = addDecimalPoint(unscaledValueB) + "e" + expectedExponent;
         assertThat(decimal(unscaledValueB, scale).toScientificNotation(), equalTo(expectedScientificNotation));
