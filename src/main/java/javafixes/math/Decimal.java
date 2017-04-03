@@ -12,6 +12,7 @@ import static java.lang.String.format;
 import static java.math.RoundingMode.*;
 import static javafixes.math.BigIntegerUtil.canConvertToLong;
 import static javafixes.math.LongUtil.canFitIntoInt;
+import static javafixes.math.OverflowUtil.didOverflowOnLongAddition;
 import static javafixes.math.PowerUtil.*;
 
 // todo: first make it work, then make it fast
@@ -52,6 +53,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         @Override
         public final Long unscaledValue() {
             return unscaledValue;
+        }
+
+        @Override
+        protected BigInteger unscaledValueAsBigInteger() {
+            return BigInteger.valueOf(unscaledValue);
         }
 
         @Override
@@ -127,6 +133,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
         @Override
         public final BigInteger unscaledValue() {
+            return unscaledValue;
+        }
+
+        @Override
+        protected BigInteger unscaledValueAsBigInteger() {
             return unscaledValue;
         }
 
@@ -214,7 +225,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
             unscaledValue /= 10;
 
             if (scale == Integer.MIN_VALUE) {
-                throw new ArithmeticException("Scale overflow - can't set scale to less than: " + Integer.MIN_VALUE);
+                throw new ArithmeticException("Scale underflow - can't set scale to less than: " + Integer.MIN_VALUE);
             }
             scale--;
         }
@@ -235,7 +246,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
             unscaledValue = divAndMod[0];
 
             if (scale == Integer.MIN_VALUE) {
-                throw new ArithmeticException("Scale overflow - can't set scale to less than: " + Integer.MIN_VALUE);
+                throw new ArithmeticException("Scale underflow - can't set scale to less than: " + Integer.MIN_VALUE);
             }
             scale--;
         }
@@ -484,6 +495,27 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test this
     public Decimal plus(Decimal value) {
+        int scaleA = this.scale();
+        int scaleB = this.scale();
+
+        if (this instanceof LongDecimal && value instanceof LongDecimal) {
+            if (scaleA == scaleB) {
+                return sumOf(
+                        ((LongDecimal) this).unscaledValue,
+                        ((LongDecimal) value).unscaledValue,
+                        scaleA
+                );
+            }
+        } else {
+            if (scaleA == scaleB) {
+                return sumOf(
+                        this.unscaledValueAsBigInteger(),
+                        value.unscaledValueAsBigInteger(),
+                        scaleA
+                );
+            }
+        }
+
         // todo: cheating, but good for now - fix this
         return decimal(
                 this.bigDecimalValue().add(value.bigDecimalValue())
@@ -624,6 +656,12 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
         return sb.toString();
     }
+
+    /* ==================================== */
+    /* ---   protected helper methods   --- */
+    /* ==================================== */
+
+    protected abstract BigInteger unscaledValueAsBigInteger();
 
     /* ================================== */
     /* ---   private static methods   --- */
@@ -783,6 +821,18 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
 
         return roundingCorrection;
+    }
+
+    private static Decimal sumOf(long valueA, long valueB, int scale) {
+        long sum = valueA + valueB;
+        if (didOverflowOnLongAddition(sum, valueA, valueB)) {
+            return sumOf(BigInteger.valueOf(valueA), BigInteger.valueOf(valueB), scale);
+        }
+        return decimal(sum, scale);
+    }
+
+    private static Decimal sumOf(BigInteger valueA, BigInteger valueB, int scale) {
+        return decimal(valueA.add(valueB), scale);
     }
 
     private static final long SAFE_TO_MULTIPLY_BY_10_BOUND = Long.MAX_VALUE / 10;
