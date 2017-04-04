@@ -16,7 +16,7 @@ import static javafixes.math.OverflowUtil.didOverflowOnLongAddition;
 import static javafixes.math.OverflowUtil.willNegationOverflow;
 import static javafixes.math.PowerUtil.*;
 
-// todo: first make it work, then make it fast
+// todo: first make it work, then make it faster
 // todo: add javadoc, formatter and make Serializable
 public abstract class Decimal extends Number implements Comparable<Decimal> {
 
@@ -25,7 +25,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     public static final Decimal ZERO = decimal(0, 0);
     public static final Decimal ONE = decimal(1, 0);
-    public static final Decimal TEN = decimal(10, 0);
+    public static final Decimal TEN = decimal(1, -1);
 
     // private constructor so it is non-extendible
     private Decimal() {
@@ -421,13 +421,13 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     @Override
     public int intValue() {
-        // todo: cheating, but good for now - fix this
+        // todo: cheating, but good for now - fix this later
         return bigDecimalValue().intValue();
     }
 
     @Override
     public long longValue() {
-        // todo: cheating, but good for now - fix this
+        // todo: cheating, but good for now - fix this later
         return bigDecimalValue().longValue();
     }
 
