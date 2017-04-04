@@ -36,7 +36,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     private static final class LongDecimal extends Decimal {
 
-        // todo: don't allow Long.MIN_VALUE to be stored in here - it will make the handling of the class easier
         transient final long unscaledValue;
         transient final int scale;
 
@@ -495,31 +494,21 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test this
     public Decimal plus(Decimal value) {
-        int scaleA = this.scale();
-        int scaleB = this.scale();
-
         if (this instanceof LongDecimal && value instanceof LongDecimal) {
-            if (scaleA == scaleB) {
-                return sumOf(
-                        ((LongDecimal) this).unscaledValue,
-                        ((LongDecimal) value).unscaledValue,
-                        scaleA
-                );
-            }
+            return sumOf(
+                    ((LongDecimal) this).unscaledValue,
+                    ((LongDecimal) value).unscaledValue,
+                    ((LongDecimal) this).scale,
+                    ((LongDecimal) value).scale
+            );
         } else {
-            if (scaleA == scaleB) {
-                return sumOf(
-                        this.unscaledValueAsBigInteger(),
-                        value.unscaledValueAsBigInteger(),
-                        scaleA
-                );
-            }
+            return sumOf(
+                    this.unscaledValueAsBigInteger(),
+                    value.unscaledValueAsBigInteger(),
+                    this.scale(),
+                    this.scale()
+            );
         }
-
-        // todo: cheating, but good for now - fix this
-        return decimal(
-                this.bigDecimalValue().add(value.bigDecimalValue())
-        );
     }
 
     // todo: test this
@@ -821,6 +810,68 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
 
         return roundingCorrection;
+    }
+
+    private static Decimal sumOf(long unscaledValueA, long unscaledValueB, int scaleA, int scaleB) {
+        if (scaleA == scaleB) {
+            return sumOf(unscaledValueA, unscaledValueB, scaleA);
+        } else {
+            long scaleDiff = (long) scaleA - (long) scaleB;
+            if (scaleDiff < 0) {
+                if (canUpscaleLongByPowerOf10(unscaledValueA, -scaleDiff)) {
+                    return sumOf(
+                            upscaleByPowerOf10(unscaledValueA, -scaleDiff),
+                            unscaledValueB,
+                            scaleB
+                    );
+                } else {
+                    return sumOf(
+                            upscaleByPowerOf10(BigInteger.valueOf(unscaledValueA), -scaleDiff),
+                            BigInteger.valueOf(unscaledValueB),
+                            scaleB
+                    );
+                }
+            } else {
+                if (canUpscaleLongByPowerOf10(unscaledValueB, scaleDiff)) {
+                    return sumOf(
+                            unscaledValueA,
+                            upscaleByPowerOf10(unscaledValueB, scaleDiff),
+                            scaleA
+                    );
+                } else {
+                    return sumOf(
+                            BigInteger.valueOf(unscaledValueA),
+                            upscaleByPowerOf10(BigInteger.valueOf(unscaledValueB), scaleDiff),
+                            scaleA
+                    );
+                }
+            }
+        }
+    }
+
+    private static Decimal sumOf(BigInteger unscaledValueA, BigInteger unscaledValueB, int scaleA, int scaleB) {
+        if (scaleA == scaleB) {
+            return sumOf(
+                    unscaledValueA,
+                    unscaledValueB,
+                    scaleA
+            );
+        } else {
+            long scaleDiff = (long) scaleA - (long) scaleB;
+            if (scaleDiff < 0) {
+                return sumOf(
+                        upscaleByPowerOf10(unscaledValueA, -scaleDiff),
+                        unscaledValueB,
+                        scaleB
+                );
+            } else {
+                return sumOf(
+                        unscaledValueA,
+                        upscaleByPowerOf10(unscaledValueB, scaleDiff),
+                        scaleA
+                );
+            }
+        }
     }
 
     private static Decimal sumOf(long valueA, long valueB, int scale) {

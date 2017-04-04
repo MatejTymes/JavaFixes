@@ -6,6 +6,13 @@ import static java.lang.Math.min;
 
 class PowerUtil {
 
+    static boolean canUpscaleLongByPowerOf10(long value, long n) {
+        if (n >= 19) {
+            return (value == 0); // only zero can be upscaled in this case
+        }
+        return minUpscaleLimitForPowOf10[(int) n] <= value && value <= maxUpscaleLimitForPowOf10[(int) n];
+    }
+
     static long upscaleByPowerOf10(long value, long n) {
         long newValue = value;
         if (value != 0) {
@@ -155,13 +162,6 @@ class PowerUtil {
 
     private static int maxLongPowerOf10() {
         return powersOf10L.length - 1;
-    }
-
-    private static boolean canUpscaleLongByPowerOf10(long value, long n) {
-        if (n >= 19) {
-            return (value == 0); // only zero can be upscaled in this case
-        }
-        return minUpscaleLimitForPowOf10[(int) n] <= value && value <= maxUpscaleLimitForPowOf10[(int) n];
     }
 
     private static long powerOf10Long(int n) {

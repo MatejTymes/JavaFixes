@@ -9,12 +9,41 @@ import static java.math.BigInteger.ZERO;
 import static javafixes.test.Condition.negative;
 import static javafixes.test.Condition.positive;
 import static javafixes.test.Random.*;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class PowerUtilTest {
+
+    @Test
+    public void shouldFindIfLongValueCanBeUpscaledByPowerOf10() {
+        assertThat(PowerUtil.canUpscaleLongByPowerOf10(Long.MAX_VALUE, 0), is(true));
+        assertThat(PowerUtil.canUpscaleLongByPowerOf10(Long.MIN_VALUE, 0), is(true));
+        assertThat(PowerUtil.canUpscaleLongByPowerOf10(randomLong(Long.MIN_VALUE, Long.MAX_VALUE), 0), is(true));
+
+        for (int n = 1; n <= 18; n++) {
+            long nPow10 = (long) Math.pow(10, n);
+
+            assertThat(PowerUtil.canUpscaleLongByPowerOf10(Long.MAX_VALUE / nPow10, n), is(true));
+            assertThat(PowerUtil.canUpscaleLongByPowerOf10(Long.MIN_VALUE / nPow10, n), is(true));
+            assertThat(PowerUtil.canUpscaleLongByPowerOf10(randomLong(Long.MIN_VALUE / nPow10, Long.MAX_VALUE / nPow10), n), is(true));
+
+            assertThat(PowerUtil.canUpscaleLongByPowerOf10(Long.MAX_VALUE / nPow10 + 1, n), is(false));
+            assertThat(PowerUtil.canUpscaleLongByPowerOf10(Long.MIN_VALUE / nPow10 - 1, n), is(false));
+            assertThat(PowerUtil.canUpscaleLongByPowerOf10(randomLong(Long.MIN_VALUE, Long.MIN_VALUE / nPow10 - 1), n), is(false));
+            assertThat(PowerUtil.canUpscaleLongByPowerOf10(randomLong(Long.MAX_VALUE / nPow10 + 1, Long.MAX_VALUE), n), is(false));
+        }
+
+        for (int n = 0; n <= 100; n++) {
+            assertThat(PowerUtil.canUpscaleLongByPowerOf10(0L, n), is(true));
+        }
+
+        assertThat(PowerUtil.canUpscaleLongByPowerOf10(randomLong(positive()), 19), is(false));
+        assertThat(PowerUtil.canUpscaleLongByPowerOf10(randomLong(negative()), 19), is(false));
+
+        assertThat(PowerUtil.canUpscaleLongByPowerOf10(randomLong(positive()), randomInt(20, Integer.MAX_VALUE)), is(false));
+        assertThat(PowerUtil.canUpscaleLongByPowerOf10(randomLong(negative()), randomInt(20, Integer.MAX_VALUE)), is(false));
+    }
 
     @Test
     public void shouldUpscaleLongByPowerOf10() {
