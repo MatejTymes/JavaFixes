@@ -13,6 +13,7 @@ import static java.math.RoundingMode.*;
 import static javafixes.math.BigIntegerUtil.canConvertToLong;
 import static javafixes.math.LongUtil.canFitIntoInt;
 import static javafixes.math.OverflowUtil.didOverflowOnLongAddition;
+import static javafixes.math.OverflowUtil.willNegationOverflow;
 import static javafixes.math.PowerUtil.*;
 
 // todo: first make it work, then make it fast
@@ -510,12 +511,32 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
     }
 
-    // todo: test this
     public Decimal minus(Decimal value) {
-        // todo: cheating, but good for now - fix this
-        return decimal(
-                this.bigDecimalValue().subtract(value.bigDecimalValue())
-        );
+        if (this instanceof LongDecimal && value instanceof LongDecimal) {
+            long unscaledValueB = ((LongDecimal) value).unscaledValue;
+            if (willNegationOverflow(unscaledValueB)) {
+                return sumOf(
+                        this.unscaledValueAsBigInteger(),
+                        BigInteger.valueOf(unscaledValueB).negate(),
+                        ((LongDecimal) this).scale,
+                        ((LongDecimal) value).scale
+                );
+            } else {
+                return sumOf(
+                        ((LongDecimal) this).unscaledValue,
+                        -unscaledValueB,
+                        ((LongDecimal) this).scale,
+                        ((LongDecimal) value).scale
+                );
+            }
+        } else {
+            return sumOf(
+                    this.unscaledValueAsBigInteger(),
+                    value.unscaledValueAsBigInteger().negate(),
+                    this.scale(),
+                    value.scale()
+            );
+        }
     }
 
     // todo: test this

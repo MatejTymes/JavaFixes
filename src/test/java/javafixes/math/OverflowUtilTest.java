@@ -3,10 +3,25 @@ package javafixes.math;
 import org.junit.Test;
 
 import static javafixes.beta.decimal.OverflowUtil.didOverflowOnLongAddition;
+import static javafixes.beta.decimal.OverflowUtil.willNegationOverflow;
+import static javafixes.test.Random.randomLong;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class OverflowUtilTest {
+
+    @Test
+    public void shouldFindIfNegationWillOverflow() {
+        assertThat(willNegationOverflow(Long.MIN_VALUE), is(true));
+
+        assertThat(willNegationOverflow(Long.MIN_VALUE + 1), is(false));
+        assertThat(willNegationOverflow(Long.MAX_VALUE), is(false));
+        assertThat(willNegationOverflow(1L), is(false));
+        assertThat(willNegationOverflow(-1L), is(false));
+        assertThat(willNegationOverflow(0L), is(false));
+
+        assertThat(willNegationOverflow(randomLong(Long.MIN_VALUE + 1, Long.MAX_VALUE)), is(false));
+    }
 
     @Test
     public void shouldFindIfAdditionOfLongsHasOverflown() {
