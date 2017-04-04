@@ -5,13 +5,30 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
+import static javafixes.math.Decimal.d;
 import static javafixes.test.Random.randomInt;
 import static javafixes.test.Random.randomLong;
 
 // todo: remove from git
 @Ignore
 public class PlaygroundTest {
+
+    // todo: remove
+    @Test
+    public void thinkingAboutToString() {
+        int scale = 5000;
+        System.out.println(
+                d("1.23").div(d("7.12"), Scale.of(scale)).doubleValue()
+        );
+        System.out.println(
+                d("1.23").div(d("7.12"), Scale.of(scale))
+        );
+        System.out.println(
+                new BigDecimal("1.23").divide(new BigDecimal("7.12"), scale, RoundingMode.HALF_UP)
+        );
+    }
 
     @Test
     public void shouldQuicklyCalculatePowerOf10() {

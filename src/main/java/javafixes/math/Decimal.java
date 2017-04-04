@@ -621,6 +621,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     @Override
     public String toString() {
         int scale = scale();
+        // todo: rethink this - won't be able to change it once its there
         return (scale > -19 && scale < 19) ? toPlainString() : toScientificNotation();
     }
 
