@@ -492,7 +492,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return (signum() < 0) ? negate() : this;
     }
 
-    // todo: test this
     public Decimal plus(Decimal value) {
         if (this instanceof LongDecimal && value instanceof LongDecimal) {
             return sumOf(
@@ -506,7 +505,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                     this.unscaledValueAsBigInteger(),
                     value.unscaledValueAsBigInteger(),
                     this.scale(),
-                    this.scale()
+                    value.scale()
             );
         }
     }
@@ -818,6 +817,9 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         } else {
             long scaleDiff = (long) scaleA - (long) scaleB;
             if (scaleDiff < 0) {
+                if (unscaledValueB == 0L) {
+                    return decimal(unscaledValueA, scaleA);
+                }
                 if (canUpscaleLongByPowerOf10(unscaledValueA, -scaleDiff)) {
                     return sumOf(
                             upscaleByPowerOf10(unscaledValueA, -scaleDiff),
@@ -832,6 +834,9 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                     );
                 }
             } else {
+                if (unscaledValueA == 0L) {
+                    return decimal(unscaledValueB, scaleB);
+                }
                 if (canUpscaleLongByPowerOf10(unscaledValueB, scaleDiff)) {
                     return sumOf(
                             unscaledValueA,
@@ -859,12 +864,18 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         } else {
             long scaleDiff = (long) scaleA - (long) scaleB;
             if (scaleDiff < 0) {
+                if (unscaledValueB.signum() == 0) {
+                    return decimal(unscaledValueA, scaleA);
+                }
                 return sumOf(
                         upscaleByPowerOf10(unscaledValueA, -scaleDiff),
                         unscaledValueB,
                         scaleB
                 );
             } else {
+                if (unscaledValueA.signum() == 0) {
+                    return decimal(unscaledValueB, scaleB);
+                }
                 return sumOf(
                         unscaledValueA,
                         upscaleByPowerOf10(unscaledValueB, scaleDiff),
