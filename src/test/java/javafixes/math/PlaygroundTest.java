@@ -15,7 +15,6 @@ import static javafixes.test.Random.randomLong;
 @Ignore
 public class PlaygroundTest {
 
-    // todo: remove
     @Test
     public void thinkingAboutToString() {
         int scale = 5000;
@@ -27,6 +26,7 @@ public class PlaygroundTest {
         );
         System.out.println(
                 new BigDecimal("1.23").divide(new BigDecimal("7.12"), scale, RoundingMode.HALF_UP)
+//                new BigDecimal("1.23").divide(new BigDecimal("7.12"))
         );
     }
 

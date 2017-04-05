@@ -136,7 +136,7 @@ class PowerUtil {
             value = value.negate();
         }
         int digitCount = (int) (LOG_2_DIV_LOG_10 * value.bitLength() + 1);
-        if (BigInteger.TEN.pow(digitCount - 1).compareTo(value) > 0) {
+        if (powerOf10Big(digitCount - 1).compareTo(value) > 0) {
             return digitCount - 1;
         }
         return digitCount;

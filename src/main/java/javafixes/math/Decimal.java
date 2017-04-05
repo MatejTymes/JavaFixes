@@ -419,6 +419,8 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     abstract public BigDecimal bigDecimalValue();
 
+    // todo: add int/long/float/double Exact()
+
     @Override
     public int intValue() {
         // todo: cheating, but good for now - fix this later
@@ -621,7 +623,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     @Override
     public String toString() {
         int scale = scale();
-        // todo: rethink this - won't be able to change it once its there
+        // todo: rethink this - won't be able to change it once its published
         return (scale > -19 && scale < 19) ? toPlainString() : toScientificNotation();
     }
 
