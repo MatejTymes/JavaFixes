@@ -361,7 +361,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                         foundExponentValue = true;
                         byte digitToAdd = (byte) (c - '0');
                         exponent = exponent * 10 + digitToAdd;
-                        if (exponent > DOABLE_EXPONENT) {
+                        if (exponent > DOABLE_SCALE) {
                             throw new NumberFormatException("Illegal value. Scale won't fit into Integer");
                         }
                     } else if (c == '-') {
@@ -923,5 +923,5 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     private static final long SAFE_TO_MULTIPLY_BY_10_BOUND = Long.MAX_VALUE / 10;
     private static final long SAFE_TO_ADD_DIGIT_BOUND = (Long.MAX_VALUE - 9) / 10;
-    private static final long DOABLE_EXPONENT = -(2L * (long) Integer.MIN_VALUE);
+    private static final long DOABLE_SCALE = -(2L * (long) Integer.MIN_VALUE);
 }
