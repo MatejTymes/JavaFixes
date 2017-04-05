@@ -155,6 +155,7 @@ public class DecimalAdditionAndSubtractionTest {
                     PowerUtil.upscaleByPowerOf10(unscaledValueA, (long) scaleB - scaleA)
             );
         }
+
         while (expectedUnscaledValueSum.signum() != 0 && mod(expectedUnscaledValueSum, 10) == 0) {
             expectedUnscaledValueSum = expectedUnscaledValueSum.divide(BigInteger.TEN);
             expectedScale--;

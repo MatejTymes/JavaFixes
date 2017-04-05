@@ -561,7 +561,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
     }
 
-    // todo: test this
     public Decimal times(Decimal value) {
         if (this.isZero() || value.isZero()) {
             return ZERO;
@@ -574,14 +573,13 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         } else {
             return multiply(
                     this.unscaledValueAsBigInteger(),
-                    this.unscaledValueAsBigInteger(),
+                    value.unscaledValueAsBigInteger(),
                     (long) this.scale() + (long) value.scale()
             );
         }
     }
 
     // todo: do we really want this - only reason it is here is because of groovy
-    // todo: test this
     public Decimal multiply(Decimal value) {
         return times(value);
     }
