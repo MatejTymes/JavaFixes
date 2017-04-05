@@ -17,6 +17,17 @@ public class PlaygroundTest {
 
     @Test
     public void thinkingAboutToString() {
+
+//        System.out.println(d("     100_000_000.0"));
+        System.out.println(d("_____100_000_000.0"));
+        System.out.println(d("__12_300_000_000.0"));
+        System.out.println(d("___1_000_000_000.0"));
+        System.out.println(d("_123_000_000_000.0"));
+        System.out.println(d("_______________0.000_000_001"));
+        System.out.println(d("_______________0.000_000_001_23"));
+        System.out.println(d("_______________0.000_000_000_1"));
+        System.out.println(d("_______________0.000_000_000_123"));
+
         int scale = 5000;
         System.out.println(
                 d("1.23").div(d("7.12"), Scale.of(scale)).doubleValue()

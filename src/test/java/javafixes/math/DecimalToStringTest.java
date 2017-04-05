@@ -157,15 +157,20 @@ public class DecimalToStringTest {
         long unscaledValueL = randomLong(notDivisibleBy10());
         BigInteger unscaledValueB = randomBigInteger(notDivisibleBy10(), notFitIntoLong());
 
-        for (int scale = -18; scale < 19; scale++) {
+        int numberOfDigitsL = numberOfDigits(unscaledValueL);
+        int numberOfDigitsB = numberOfDigits(unscaledValueB);
+
+        for (int scale = -8; scale < 9 - numberOfDigitsL; scale++) {
             Decimal decimalL = decimal(unscaledValueL, scale);
             assertThat(decimalL.toString(), equalTo(decimalL.toPlainString()));
+        }
 
+        for (int scale = -8; scale < 9 - numberOfDigitsB; scale++) {
             Decimal decimalB = decimal(unscaledValueB, scale);
             assertThat(decimalB.toString(), equalTo(decimalB.toPlainString()));
         }
 
-        for (int scale = -100; scale <= -19; scale++) {
+        for (int scale = -100; scale <= -9; scale++) {
             Decimal decimalL = decimal(unscaledValueL, scale);
             assertThat(decimalL.toString(), equalTo(decimalL.toScientificNotation()));
 
@@ -173,13 +178,24 @@ public class DecimalToStringTest {
             assertThat(decimalB.toString(), equalTo(decimalB.toScientificNotation()));
         }
 
-        for (int scale = 19; scale <= 100; scale++) {
+        for (int scale = 9 + numberOfDigitsL; scale <= 100; scale++) {
             Decimal decimalL = decimal(unscaledValueL, scale);
             assertThat(decimalL.toString(), equalTo(decimalL.toScientificNotation()));
+        }
 
+        for (int scale = 9 + numberOfDigitsB; scale <= 100; scale++) {
             Decimal decimalB = decimal(unscaledValueB, scale);
             assertThat(decimalB.toString(), equalTo(decimalB.toScientificNotation()));
         }
+
+        assertThat((d("_____100_000_000")).toString(), equalTo("100000000.0"));
+        assertThat((d("__12_300_000_000")).toString(), equalTo("12300000000.0"));
+        assertThat((d("___1_000_000_000")).toString(), equalTo("1e9"));
+        assertThat((d("_123_000_000_000")).toString(), equalTo("1.23e11"));
+        assertThat((d("_______________0.000_000_001")).toString(), equalTo("0.000000001"));
+        assertThat((d("_______________0.000_000_001_23")).toString(), equalTo("0.00000000123"));
+        assertThat((d("_______________0.000_000_000_1")).toString(), equalTo("1e-10"));
+        assertThat((d("_______________0.000_000_000_123")).toString(), equalTo("1.23e-10"));
     }
 
 
