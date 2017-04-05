@@ -56,11 +56,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
 
         @Override
-        protected BigInteger unscaledValueAsBigInteger() {
-            return BigInteger.valueOf(unscaledValue);
-        }
-
-        @Override
         public final int scale() {
             return scale;
         }
@@ -114,6 +109,16 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                 return new HugeDecimal(BigInteger.valueOf(unscaledValue).negate(), scale);
             }
         }
+
+        @Override
+        protected boolean isZero() {
+            return unscaledValue == 0L;
+        }
+
+        @Override
+        protected BigInteger unscaledValueAsBigInteger() {
+            return BigInteger.valueOf(unscaledValue);
+        }
     }
 
     private static final class HugeDecimal extends Decimal {
@@ -133,11 +138,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
         @Override
         public final BigInteger unscaledValue() {
-            return unscaledValue;
-        }
-
-        @Override
-        protected BigInteger unscaledValueAsBigInteger() {
             return unscaledValue;
         }
 
@@ -211,6 +211,16 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         @Override
         public Decimal negate() {
             return new HugeDecimal(unscaledValue.negate(), scale);
+        }
+
+        @Override
+        protected boolean isZero() {
+            return signum() == 0;
+        }
+
+        @Override
+        protected BigInteger unscaledValueAsBigInteger() {
+            return unscaledValue;
         }
     }
 
@@ -496,7 +506,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public Decimal plus(Decimal value) {
-        if (this instanceof LongDecimal && value instanceof LongDecimal) {
+        if (this.isZero()) {
+            return value;
+        } else if (value.isZero()) {
+            return this;
+        } else if (this instanceof LongDecimal && value instanceof LongDecimal) {
             return sumOf(
                     ((LongDecimal) this).unscaledValue,
                     ((LongDecimal) value).unscaledValue,
@@ -514,7 +528,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public Decimal minus(Decimal value) {
-        if (this instanceof LongDecimal && value instanceof LongDecimal) {
+        if (this.isZero()) {
+            return value.negate();
+        } else if (value.isZero()) {
+            return this;
+        } else if (this instanceof LongDecimal && value instanceof LongDecimal) {
             long unscaledValueB = ((LongDecimal) value).unscaledValue;
             if (willNegationOverflow(unscaledValueB)) {
                 return sumOf(
@@ -672,6 +690,8 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     /* ==================================== */
     /* ---   protected helper methods   --- */
     /* ==================================== */
+
+    protected abstract boolean isZero();
 
     protected abstract BigInteger unscaledValueAsBigInteger();
 
@@ -841,9 +861,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         } else {
             long scaleDiff = (long) scaleA - (long) scaleB;
             if (scaleDiff < 0) {
-                if (unscaledValueB == 0L) {
-                    return decimal(unscaledValueA, scaleA);
-                }
                 if (canUpscaleLongByPowerOf10(unscaledValueA, -scaleDiff)) {
                     return sumOf(
                             upscaleByPowerOf10(unscaledValueA, -scaleDiff),
@@ -858,9 +875,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                     );
                 }
             } else {
-                if (unscaledValueA == 0L) {
-                    return decimal(unscaledValueB, scaleB);
-                }
                 if (canUpscaleLongByPowerOf10(unscaledValueB, scaleDiff)) {
                     return sumOf(
                             unscaledValueA,
@@ -888,18 +902,12 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         } else {
             long scaleDiff = (long) scaleA - (long) scaleB;
             if (scaleDiff < 0) {
-                if (unscaledValueB.signum() == 0) {
-                    return decimal(unscaledValueA, scaleA);
-                }
                 return sumOf(
                         upscaleByPowerOf10(unscaledValueA, -scaleDiff),
                         unscaledValueB,
                         scaleB
                 );
             } else {
-                if (unscaledValueA.signum() == 0) {
-                    return decimal(unscaledValueB, scaleB);
-                }
                 return sumOf(
                         unscaledValueA,
                         upscaleByPowerOf10(unscaledValueB, scaleDiff),
