@@ -10,12 +10,14 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.String.format;
 import static java.math.RoundingMode.*;
+import static javafixes.beta.decimal.OverflowUtil.didOverflowOnMultiplication;
 import static javafixes.math.BigIntegerUtil.canConvertToLong;
 import static javafixes.math.LongUtil.canFitIntoInt;
 import static javafixes.math.OverflowUtil.didOverflowOnLongAddition;
 import static javafixes.math.OverflowUtil.willNegationOverflow;
 import static javafixes.math.PowerUtil.*;
 
+// todo: add ArithmeticException to all methods that could resolve into it
 // todo: first make it work, then make it faster
 // todo: add javadoc, formatter and make Serializable
 public abstract class Decimal extends Number implements Comparable<Decimal> {
@@ -372,7 +374,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                         byte digitToAdd = (byte) (c - '0');
                         exponent = exponent * 10 + digitToAdd;
                         if (exponent > DOABLE_SCALE) {
-                            throw new NumberFormatException("Illegal value. Scale won't fit into Integer");
+                            throw new ArithmeticException("Illegal value. Scale won't fit into Integer");
                         }
                     } else if (c == '-') {
                         if (foundExponentValue || exponentSignum != 0) {
@@ -394,7 +396,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                 exponent = (exponentSignum != -1) ? exponent : -exponent;
                 exponent = (long) scale - exponent;
                 if (!LongUtil.canFitIntoInt(exponent)) {
-                    throw new NumberFormatException("Illegal value. Scale '" + exponent + "' won't fit into Integer");
+                    throw new ArithmeticException("Illegal value. Scale '" + exponent + "' won't fit into Integer");
                 }
                 scale = (int) exponent;
             } else {
@@ -561,10 +563,27 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test this
     public Decimal times(Decimal value) {
-        // todo: cheating, but good for now - fix this
-        return decimal(
-                this.bigDecimalValue().multiply(value.bigDecimalValue())
-        );
+        if (this.isZero() || value.isZero()) {
+            return ZERO;
+        } else if (this instanceof LongDecimal && value instanceof LongDecimal) {
+            return multiply(
+                    ((LongDecimal) this).unscaledValue,
+                    ((LongDecimal) value).unscaledValue,
+                    (long) ((LongDecimal) this).scale + (long) ((LongDecimal) value).scale
+            );
+        } else {
+            return multiply(
+                    this.unscaledValueAsBigInteger(),
+                    this.unscaledValueAsBigInteger(),
+                    (long) this.scale() + (long) value.scale()
+            );
+        }
+    }
+
+    // todo: do we really want this - only reason it is here is because of groovy
+    // todo: test this
+    public Decimal multiply(Decimal value) {
+        return times(value);
     }
 
     // todo: test this
@@ -930,6 +949,27 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     private static Decimal sumOf(BigInteger valueA, BigInteger valueB, int scale) {
         return decimal(valueA.add(valueB), scale);
+    }
+
+    private static Decimal multiply(long valueA, long valueB, long scale) {
+        if (!canFitIntoInt(scale)) {
+            throw new ArithmeticException("Illegal result. Scale '" + scale + "' won't fit into Integer");
+        }
+
+        long result = valueA * valueB;
+        if (didOverflowOnMultiplication(result, valueA, valueB)) {
+            return multiply(BigInteger.valueOf(valueA), BigInteger.valueOf(valueB), scale);
+        }
+        return decimal(result, (int) scale);
+    }
+
+    private static Decimal multiply(BigInteger valueA, BigInteger valueB, long scale) {
+        if (!canFitIntoInt(scale)) {
+            throw new ArithmeticException("Illegal result. Scale '" + scale + "' won't fit into Integer");
+        }
+
+        BigInteger result = valueA.multiply(valueB);
+        return decimal(result, (int) scale);
     }
 
     private static final long SAFE_TO_MULTIPLY_BY_10_BOUND = Long.MAX_VALUE / 10;
