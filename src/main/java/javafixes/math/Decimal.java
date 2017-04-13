@@ -592,57 +592,40 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
             return ZERO;
         }
 
-        long powerIncrease = (long) precisionToUse.value - this.precision() + value.precision() + 1;
+        long powerIncrease = max(0L, (long) precisionToUse.value - this.precision() + value.precision() + 1);
         if (!canFitIntoInt(powerIncrease)) {
-            if (powerIncrease > Integer.MAX_VALUE) {
-                throw new ArithmeticException("Integer Overflow while dividing decimals");
-            } else {
-                throw new ArithmeticException("Integer Underflow while dividing decimals");
-            }
+            throw new ArithmeticException("Integer Overflow while dividing decimals");
         }
 
         BigInteger[] divAndRemainder = this
                 .unscaledValueAsBigInteger()
-                .multiply(PowerUtil.powerOf10Big((int) powerIncrease))
+                .multiply(powerOf10Big((int) powerIncrease))
                 .divideAndRemainder(value.unscaledValueAsBigInteger());
         BigInteger result = divAndRemainder[0];
         boolean hasAdditionalRemainder = (divAndRemainder[1].signum() != 0);
         int currentPrecision = numberOfDigits(result);
 
-        int scale;
-        int roundingDigit;
-        if (precisionToUse.value == (currentPrecision - 1)) {
-            long longScale = (long) this.scale() - value.scale() + powerIncrease - 1;
-            if (!canFitIntoInt(longScale)) {
-                if (longScale > Integer.MAX_VALUE) {
-                    throw new ArithmeticException(format("Scale overflow - can't set precision to %d as it would resolve into non-integer scale %d", precisionToUse.value, longScale));
-                } else {
-                    throw new ArithmeticException(format("Scale underflow - can't set precision to %d as it would resolve into non-integer scale %d", precisionToUse.value, longScale));
-                }
-            }
-            scale = (int)longScale;
-
-            divAndRemainder = result.divideAndRemainder(BigInteger.TEN);
+        long longScale = (long) this.scale() - value.scale() + powerIncrease;
+        if (currentPrecision - 1 > precisionToUse.value) {
+            int precisionDiff = currentPrecision - 1 - precisionToUse.value;
+            divAndRemainder = result.divideAndRemainder(powerOf10Big(precisionDiff));
             result = divAndRemainder[0];
-            roundingDigit = divAndRemainder[1].intValue();
-        } else {
-            // todo: mtymes - 12345 / 1 - precision 2 - incorrect
-            long longScale = (long) this.scale() - value.scale() + powerIncrease - 2;
-            if (!canFitIntoInt(longScale)) {
-                if (longScale > Integer.MAX_VALUE) {
-                    throw new ArithmeticException(format("Scale overflow - can't set precision to %d as it would resolve into non-integer scale %d", precisionToUse.value, longScale));
-                } else {
-                    throw new ArithmeticException(format("Scale underflow - can't set precision to %d as it would resolve into non-integer scale %d", precisionToUse.value, longScale));
-                }
-            }
-            scale = (int)longScale;
-
-            divAndRemainder = result.divideAndRemainder(BIG_INTEGER_100);
-            result = divAndRemainder[0];
-            roundingDigit = divAndRemainder[1].intValue();
-            hasAdditionalRemainder = hasAdditionalRemainder | (roundingDigit % 10 != 0);
-            roundingDigit = roundingDigit / 10;
+            hasAdditionalRemainder |= (divAndRemainder[1].signum() != 0);
+            longScale -= precisionDiff;
         }
+
+        if (!canFitIntoInt(longScale - 1)) {
+            if (longScale > Integer.MAX_VALUE) {
+                throw new ArithmeticException(format("Scale overflow - can't set precision to %d as it would resolve into non-integer scale %d", precisionToUse.value, longScale));
+            } else {
+                throw new ArithmeticException(format("Scale underflow - can't set precision to %d as it would resolve into non-integer scale %d", precisionToUse.value, longScale));
+            }
+        }
+
+        divAndRemainder = result.divideAndRemainder(BigInteger.TEN);
+        int scale = (int) (longScale - 1);
+        result = divAndRemainder[0];
+        int roundingDigit = divAndRemainder[1].intValue();
 
         int correction = roundingCorrection(result.signum(), result, Math.abs(roundingDigit), hasAdditionalRemainder, roundingMode);
         BigInteger roundingCorrection = (correction == 1) ? BIG_INTEGER_ONE : (correction == -1) ? BIG_INTEGER_MINUS_ONE : BigInteger.ZERO;

@@ -189,27 +189,34 @@ class PowerUtil {
             100000000000000000L, // 10 ^ 17
             1000000000000000000L // 10 ^ 18
     };
-    private static final BigInteger[] powersOf10B = {
-            BigInteger.ONE,                          // 10 ^ 0
-            BigInteger.TEN,                          // 10 ^ 1
-            BigInteger.valueOf(100L),                // 10 ^ 2
-            BigInteger.valueOf(1000L),               // 10 ^ 3
-            BigInteger.valueOf(10000L),              // 10 ^ 4
-            BigInteger.valueOf(100000L),             // 10 ^ 5
-            BigInteger.valueOf(1000000L),            // 10 ^ 6
-            BigInteger.valueOf(10000000L),           // 10 ^ 7
-            BigInteger.valueOf(100000000L),          // 10 ^ 8
-            BigInteger.valueOf(1000000000L),         // 10 ^ 9
-            BigInteger.valueOf(10000000000L),        // 10 ^ 10
-            BigInteger.valueOf(100000000000L),       // 10 ^ 11
-            BigInteger.valueOf(1000000000000L),      // 10 ^ 12
-            BigInteger.valueOf(10000000000000L),     // 10 ^ 13
-            BigInteger.valueOf(100000000000000L),    // 10 ^ 14
-            BigInteger.valueOf(1000000000000000L),   // 10 ^ 15
-            BigInteger.valueOf(10000000000000000L),  // 10 ^ 16
-            BigInteger.valueOf(100000000000000000L), // 10 ^ 17
-            BigInteger.valueOf(1000000000000000000L) // 10 ^ 18
-    };
+    private static final BigInteger[] powersOf10B;
+    static {
+        BigInteger[] tempPowOf10B = new BigInteger[50];
+        tempPowOf10B[0] = BigInteger.ONE;                            // 10 ^ 0
+        tempPowOf10B[1] = BigInteger.TEN;                            // 10 ^ 1
+        tempPowOf10B[2] = BigInteger.valueOf(100L);                  // 10 ^ 2
+        tempPowOf10B[3] = BigInteger.valueOf(1000L);                 // 10 ^ 3
+        tempPowOf10B[4] = BigInteger.valueOf(10000L);                // 10 ^ 4
+        tempPowOf10B[5] = BigInteger.valueOf(100000L);               // 10 ^ 5
+        tempPowOf10B[6] = BigInteger.valueOf(1000000L);              // 10 ^ 6
+        tempPowOf10B[7] = BigInteger.valueOf(10000000L);             // 10 ^ 7
+        tempPowOf10B[8] = BigInteger.valueOf(100000000L);            // 10 ^ 8
+        tempPowOf10B[9] = BigInteger.valueOf(1000000000L);           // 10 ^ 9
+        tempPowOf10B[10] = BigInteger.valueOf(10000000000L);         // 10 ^ 10
+        tempPowOf10B[11] = BigInteger.valueOf(100000000000L);        // 10 ^ 11
+        tempPowOf10B[12] = BigInteger.valueOf(1000000000000L);       // 10 ^ 12
+        tempPowOf10B[13] = BigInteger.valueOf(10000000000000L);      // 10 ^ 13
+        tempPowOf10B[14] = BigInteger.valueOf(100000000000000L);     // 10 ^ 14
+        tempPowOf10B[15] = BigInteger.valueOf(1000000000000000L);    // 10 ^ 15
+        tempPowOf10B[16] = BigInteger.valueOf(10000000000000000L);   // 10 ^ 16
+        tempPowOf10B[17] = BigInteger.valueOf(100000000000000000L);  // 10 ^ 17
+        tempPowOf10B[18] = BigInteger.valueOf(1000000000000000000L); // 10 ^ 18
+        for (int i = 19; i < tempPowOf10B.length; i++) {
+            tempPowOf10B[i] = tempPowOf10B[i - 1].multiply(BigInteger.TEN);
+        }
+        powersOf10B = tempPowOf10B;
+    }
+
     private static final long[] minUpscaleLimitForPowOf10 = {
             Long.MIN_VALUE / 1L,
             Long.MIN_VALUE / 10L,
