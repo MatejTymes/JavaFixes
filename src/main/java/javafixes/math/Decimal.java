@@ -2,7 +2,6 @@ package javafixes.math;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Arrays;
 
@@ -11,12 +10,13 @@ import static java.lang.Math.min;
 import static java.lang.String.format;
 import static java.math.RoundingMode.*;
 import static javafixes.beta.decimal.OverflowUtil.didOverflowOnMultiplication;
-import static javafixes.math.BigIntegerUtil.canConvertToLong;
+import static javafixes.math.BigIntegerUtil.*;
 import static javafixes.math.LongUtil.canFitIntoInt;
 import static javafixes.math.OverflowUtil.didOverflowOnLongAddition;
 import static javafixes.math.OverflowUtil.willNegationOverflow;
 import static javafixes.math.PowerUtil.*;
 
+// todo: unify underflow and overflow exceptions
 // todo: add ArithmeticException to all methods that could resolve into it
 // todo: first make it work, then make it faster
 // todo: add javadoc, formatter and make Serializable
@@ -585,29 +585,94 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     // todo: test this
-    public Decimal div(Decimal value, Precision precision, RoundingMode roundingMode) {
+    public Decimal div(Decimal value, Precision precisionToUse, RoundingMode roundingMode) {
+        if (value.isZero()) {
+            throw new ArithmeticException("Division by zero not allowed");
+        } else if (this.isZero()) {
+            return ZERO;
+        }
+
+        long powerIncrease = (long) precisionToUse.value - this.precision() + value.precision() + 1;
+        if (!canFitIntoInt(powerIncrease)) {
+            if (powerIncrease > Integer.MAX_VALUE) {
+                throw new ArithmeticException("Integer Overflow while dividing decimals");
+            } else {
+                throw new ArithmeticException("Integer Underflow while dividing decimals");
+            }
+        }
+
+        BigInteger[] divAndRemainder = this
+                .unscaledValueAsBigInteger()
+                .multiply(PowerUtil.powerOf10Big((int) powerIncrease))
+                .divideAndRemainder(value.unscaledValueAsBigInteger());
+        BigInteger result = divAndRemainder[0];
+        boolean hasAdditionalRemainder = (divAndRemainder[1].signum() != 0);
+        int currentPrecision = numberOfDigits(result);
+
+        int scale;
+        int roundingDigit;
+        if (precisionToUse.value == (currentPrecision - 1)) {
+            long longScale = (long) this.scale() - value.scale() + powerIncrease - 1;
+            if (!canFitIntoInt(longScale)) {
+                if (longScale > Integer.MAX_VALUE) {
+                    throw new ArithmeticException(format("Scale overflow - can't set precision to %d as it would resolve into non-integer scale %d", precisionToUse.value, longScale));
+                } else {
+                    throw new ArithmeticException(format("Scale underflow - can't set precision to %d as it would resolve into non-integer scale %d", precisionToUse.value, longScale));
+                }
+            }
+            scale = (int)longScale;
+
+            divAndRemainder = result.divideAndRemainder(BigInteger.TEN);
+            result = divAndRemainder[0];
+            roundingDigit = divAndRemainder[1].intValue();
+        } else {
+            // todo: mtymes - 12345 / 1 - precision 2 - incorrect
+            long longScale = (long) this.scale() - value.scale() + powerIncrease - 2;
+            if (!canFitIntoInt(longScale)) {
+                if (longScale > Integer.MAX_VALUE) {
+                    throw new ArithmeticException(format("Scale overflow - can't set precision to %d as it would resolve into non-integer scale %d", precisionToUse.value, longScale));
+                } else {
+                    throw new ArithmeticException(format("Scale underflow - can't set precision to %d as it would resolve into non-integer scale %d", precisionToUse.value, longScale));
+                }
+            }
+            scale = (int)longScale;
+
+            divAndRemainder = result.divideAndRemainder(BIG_INTEGER_100);
+            result = divAndRemainder[0];
+            roundingDigit = divAndRemainder[1].intValue();
+            hasAdditionalRemainder = hasAdditionalRemainder | (roundingDigit % 10 != 0);
+            roundingDigit = roundingDigit / 10;
+        }
+
+        int correction = roundingCorrection(result.signum(), result, Math.abs(roundingDigit), hasAdditionalRemainder, roundingMode);
+        BigInteger roundingCorrection = (correction == 1) ? BIG_INTEGER_ONE : (correction == -1) ? BIG_INTEGER_MINUS_ONE : BigInteger.ZERO;
+        result = result.add(roundingCorrection);
+
+        return decimal(result, scale);
+    }
+
+    // todo: test this
+    public Decimal div(Decimal value, Scale scaleToUse, RoundingMode roundingMode) {
+        if (value.isZero()) {
+            throw new ArithmeticException("Division by zero not allowed");
+        } else if (this.isZero()) {
+            return ZERO;
+        }
+
         // todo: cheating, but good for now - fix this
         return decimal(
-                this.bigDecimalValue().divide(value.bigDecimalValue(), new MathContext(precision.value, roundingMode))
+                this.bigDecimalValue().divide(value.bigDecimalValue(), scaleToUse.value, roundingMode)
         );
     }
 
     // todo: test this
-    public Decimal div(Decimal value, Scale scale, RoundingMode roundingMode) {
-        // todo: cheating, but good for now - fix this
-        return decimal(
-                this.bigDecimalValue().divide(value.bigDecimalValue(), scale.value, roundingMode)
-        );
+    public Decimal div(Decimal value, Precision precisionToUse) {
+        return div(value, precisionToUse, DEFAULT_ROUNDING);
     }
 
     // todo: test this
-    public Decimal div(Decimal value, Precision precision) {
-        return div(value, precision, DEFAULT_ROUNDING);
-    }
-
-    // todo: test this
-    public Decimal div(Decimal value, Scale scale) {
-        return div(value, scale, DEFAULT_ROUNDING);
+    public Decimal div(Decimal value, Scale scaleToUse) {
+        return div(value, scaleToUse, DEFAULT_ROUNDING);
     }
 
     // todo: test this
