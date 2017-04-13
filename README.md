@@ -145,7 +145,7 @@ The advantages it provides are:
     assertThat(decimal("-1.2").hashCode(), equalTo(decimal("-1.200").hashCode()));
 ```
 
-* sensible defaults - in case rounding is needed (division, number de-scaling and de-precisioninig) `Decimal` uses rounding `HALF_UP` (the one we used in school) as default (you can pass in your own rounding mode). Also the division produces by default results with precision of maximum 34 significant digits (but you can pass your own limit, or define limit in number of decimal digits) 
+* sensible defaults - in case rounding is needed (division, number de-scaling and de-precisioninig) `Decimal` uses rounding `HALF_UP` (the one we used in school) as default (but you can pass in your own rounding mode in case you want different result). Also the division produces by default results with precision of maximum 34 significant digits (once again you can pass your own limit, or define limit in number of decimal digits) 
 
 * readable - able to use underscores during creation to improve readability (as in Java 7). Also can use short creation method `d(...)`:
 
