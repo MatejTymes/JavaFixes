@@ -132,7 +132,7 @@ Immutable Two values holder. Each Tuple extends `DataObject` so methods `equals`
 
 ### Decimal
 
-*this feature is currently in WIP state and is NOT part of the maven release - ANY HELP IS WELCOMED - although a spike implementation was already implemented a polished version will still require quite a lot of work*
+* this will be part of next maven release - just finishing division tests
 
 Introducing new class `Decimal`, that should fix the troubles we're currently facing when dealing with `BigDecimal`. The new class was needed as `BigDecimal`'s behavior can't be changed/patched because of backwards compatibility.
 
