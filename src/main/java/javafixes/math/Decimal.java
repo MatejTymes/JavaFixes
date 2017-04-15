@@ -584,7 +584,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return times(value);
     }
 
-    // todo: test this
     public Decimal div(Decimal value, Precision precisionToUse, RoundingMode roundingMode) {
         if (value.isZero()) {
             throw new ArithmeticException("Division by zero not allowed");
@@ -597,10 +596,12 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
             throw new ArithmeticException("Integer Overflow while dividing decimals");
         }
 
-        BigInteger[] divAndRemainder = this
-                .unscaledValueAsBigInteger()
-                .multiply(powerOf10Big((int) powerIncrease))
-                .divideAndRemainder(value.unscaledValueAsBigInteger());
+        BigInteger poweredUpValueA = this.unscaledValueAsBigInteger();
+        if (powerIncrease > 0L) {
+            poweredUpValueA = poweredUpValueA.multiply(powerOf10Big((int) powerIncrease));
+        }
+
+        BigInteger[] divAndRemainder = poweredUpValueA.divideAndRemainder(value.unscaledValueAsBigInteger());
         BigInteger result = divAndRemainder[0];
         boolean hasAdditionalRemainder = (divAndRemainder[1].signum() != 0);
         int currentPrecision = numberOfDigits(result);
@@ -627,14 +628,14 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         result = divAndRemainder[0];
         int roundingDigit = divAndRemainder[1].intValue();
 
-        int correction = roundingCorrection(result.signum(), result, Math.abs(roundingDigit), hasAdditionalRemainder, roundingMode);
+        int resultSign = this.signum() * value.signum();
+        int correction = roundingCorrection(resultSign, result, Math.abs(roundingDigit), hasAdditionalRemainder, roundingMode);
         BigInteger roundingCorrection = (correction == 1) ? BIG_INTEGER_ONE : (correction == -1) ? BIG_INTEGER_MINUS_ONE : BigInteger.ZERO;
         result = result.add(roundingCorrection);
 
         return decimal(result, scale);
     }
 
-    // todo: test this
     public Decimal div(Decimal value, Scale scaleToUse, RoundingMode roundingMode) {
         if (value.isZero()) {
             throw new ArithmeticException("Division by zero not allowed");
@@ -642,10 +643,43 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
             return ZERO;
         }
 
-        // todo: cheating, but good for now - fix this
-        return decimal(
-                this.bigDecimalValue().divide(value.bigDecimalValue(), scaleToUse.value, roundingMode)
-        );
+        long powerIncrease = max(0L, scaleToUse.value + value.scale() - this.scale() + 1);
+        if (!canFitIntoInt(powerIncrease)) {
+            throw new ArithmeticException("Integer Overflow while dividing decimals");
+        }
+
+        BigInteger poweredUpValueA = this.unscaledValueAsBigInteger();
+        if (powerIncrease > 0L) {
+            poweredUpValueA = poweredUpValueA.multiply(powerOf10Big((int) powerIncrease));
+        }
+
+        BigInteger[] divAndRemainder = poweredUpValueA.divideAndRemainder(value.unscaledValueAsBigInteger());
+        BigInteger result = divAndRemainder[0];
+        boolean hasAdditionalRemainder = (divAndRemainder[1].signum() != 0);
+
+        long longScale = (long) this.scale() - value.scale() + powerIncrease;
+        if (longScale - 1 > scaleToUse.value) {
+            long scaleDiff = longScale - 1 - scaleToUse.value;
+            if (!canFitIntoInt(scaleDiff)) {
+                throw new ArithmeticException("Integer Overflow while dividing decimals");
+            }
+            divAndRemainder = result.divideAndRemainder(powerOf10Big((int) scaleDiff));
+            result = divAndRemainder[0];
+            hasAdditionalRemainder |= (divAndRemainder[1].signum() != 0);
+            longScale -= scaleDiff;
+        }
+
+        divAndRemainder = result.divideAndRemainder(BigInteger.TEN);
+        int scale = (int) (longScale - 1);
+        result = divAndRemainder[0];
+        int roundingDigit = divAndRemainder[1].intValue();
+
+        int resultSign = this.signum() * value.signum();
+        int correction = roundingCorrection(resultSign, result, Math.abs(roundingDigit), hasAdditionalRemainder, roundingMode);
+        BigInteger roundingCorrection = (correction == 1) ? BIG_INTEGER_ONE : (correction == -1) ? BIG_INTEGER_MINUS_ONE : BigInteger.ZERO;
+        result = result.add(roundingCorrection);
+
+        return decimal(result, scale);
     }
 
     // todo: test this
