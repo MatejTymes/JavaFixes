@@ -682,17 +682,14 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return decimal(result, scale);
     }
 
-    // todo: test this
     public Decimal div(Decimal value, Precision precisionToUse) {
         return div(value, precisionToUse, DEFAULT_ROUNDING);
     }
 
-    // todo: test this
     public Decimal div(Decimal value, Scale scaleToUse) {
         return div(value, scaleToUse, DEFAULT_ROUNDING);
     }
 
-    // todo: test this
     public Decimal div(Decimal value) {
         return div(value, DEFAULT_PRECISION, DEFAULT_ROUNDING);
     }
