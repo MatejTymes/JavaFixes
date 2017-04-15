@@ -9,12 +9,11 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.String.format;
 import static java.math.RoundingMode.*;
-import static javafixes.beta.decimal.OverflowUtil.didOverflowOnMultiplication;
 import static javafixes.math.BigIntegerUtil.*;
 import static javafixes.math.LongUtil.canFitIntoInt;
-import static javafixes.math.OverflowUtil.didOverflowOnLongAddition;
-import static javafixes.math.OverflowUtil.willNegationOverflow;
+import static javafixes.math.OverflowUtil.*;
 import static javafixes.math.PowerUtil.*;
+import static javafixes.math.Scale._0_DECIMAL_PLACES;
 
 // todo: unify underflow and overflow exceptions
 // todo: add ArithmeticException to all methods that could resolve into it
@@ -435,14 +434,32 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     @Override
     public int intValue() {
-        // todo: cheating, but good for now - fix this later
-        return bigDecimalValue().intValue();
+        if (scale() == 0) {
+            return unscaledValue().intValue();
+        }
+
+        // todo: add faster implementation, but good for now
+        Decimal trimmedDecimal = descaleTo(_0_DECIMAL_PLACES, DOWN);
+        BigInteger trimmedValue = trimmedDecimal.unscaledValueAsBigInteger();
+        if (trimmedDecimal.scale() != 0) {
+            trimmedValue = upscaleByPowerOf10(trimmedValue, -trimmedDecimal.scale());
+        }
+        return trimmedValue.intValue();
     }
 
     @Override
     public long longValue() {
-        // todo: cheating, but good for now - fix this later
-        return bigDecimalValue().longValue();
+        if (scale() == 0) {
+            return unscaledValue().longValue();
+        }
+
+        // todo: add faster implementation, but good for now
+        Decimal trimmedDecimal = descaleTo(_0_DECIMAL_PLACES, DOWN);
+        BigInteger trimmedValue = trimmedDecimal.unscaledValueAsBigInteger();
+        if (trimmedDecimal.scale() != 0) {
+            trimmedValue = upscaleByPowerOf10(trimmedValue, -trimmedDecimal.scale());
+        }
+        return trimmedValue.longValue();
     }
 
     @Override
