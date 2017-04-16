@@ -1,5 +1,7 @@
-package javafixes.math;
+package javafixes.temp;
 
+import javafixes.math.Decimal;
+import javafixes.math.Scale;
 import org.junit.Ignore;
 import org.junit.Test;
 
