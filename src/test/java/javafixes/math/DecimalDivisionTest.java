@@ -177,33 +177,4 @@ public class DecimalDivisionTest {
             assertThat(expected.getMessage(), equalTo("Division by zero not allowed"));
         }
     }
-
-
-    //    @Test
-//    public void temp() {
-//        Decimal valueA = d("3.52e22");
-//        Decimal valueB = d("-8.8e21");
-//
-//        RoundingMode roundingMode = RoundingMode.UP;
-//
-//
-//        Scale scaleToUse = Scale.of(-20);
-//
-//        Decimal actual = valueA.div(valueB, scaleToUse, roundingMode);
-//        Decimal expected = d(valueA.bigDecimalValue().divide(valueB.bigDecimalValue(), scaleToUse.value, roundingMode));
-//
-//        assertThat(actual, equalTo(expected));
-//
-//
-//        for (int precision = 1; precision < 20; precision++) {
-//            Precision precisionToUse = Precision.of(precision);
-//
-//            actual = valueA.div(valueB, precisionToUse, roundingMode);
-//            expected = d(valueA.bigDecimalValue().divide(valueB.bigDecimalValue(), new MathContext(precisionToUse.value, roundingMode)));
-//
-//            assertThat(actual, equalTo(expected));
-//            System.out.println(actual);
-//        }
-//    }
-
 }
