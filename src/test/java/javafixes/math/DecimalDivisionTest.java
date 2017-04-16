@@ -9,16 +9,17 @@ import java.util.List;
 
 import static java.math.RoundingMode.HALF_UP;
 import static javafixes.common.CollectionUtil.newList;
+import static javafixes.math.Decimal.ZERO;
 import static javafixes.math.Decimal.d;
 import static javafixes.math.Precision._34_SIGNIFICANT_DIGITS;
 import static javafixes.math.Precision.precision;
 import static javafixes.math.Scale.scale;
 import static javafixes.test.Condition.notDivisibleBy10;
 import static javafixes.test.Condition.notFitIntoLong;
-import static javafixes.test.Random.randomBigInteger;
-import static javafixes.test.Random.randomLong;
+import static javafixes.test.Random.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class DecimalDivisionTest {
 
@@ -109,10 +110,76 @@ public class DecimalDivisionTest {
         }
     }
 
+    @Test
+    public void shouldFailOnDivisionByZero() {
+        try {
+            d(randomLong(notDivisibleBy10()), randomInt()).div(ZERO);
+            fail("Division by zero - expected ArithmeticException");
+        } catch (ArithmeticException expected) {
+            assertThat(expected.getMessage(), equalTo("Division by zero not allowed"));
+        }
+        try {
+            d(randomBigInteger(notDivisibleBy10()), randomInt()).div(ZERO);
+            fail("Division by zero - expected ArithmeticException");
+        } catch (ArithmeticException expected) {
+            assertThat(expected.getMessage(), equalTo("Division by zero not allowed"));
+        }
 
-    // todo: add division by zero test
+        try {
+            d(randomLong(notDivisibleBy10()), randomInt()).div(ZERO, Scale.of(randomInt()));
+            fail("Division by zero - expected ArithmeticException");
+        } catch (ArithmeticException expected) {
+            assertThat(expected.getMessage(), equalTo("Division by zero not allowed"));
+        }
+        try {
+            d(randomBigInteger(notDivisibleBy10()), randomInt()).div(ZERO, Scale.of(randomInt()));
+            fail("Division by zero - expected ArithmeticException");
+        } catch (ArithmeticException expected) {
+            assertThat(expected.getMessage(), equalTo("Division by zero not allowed"));
+        }
 
-//    @Test
+        try {
+            d(randomLong(notDivisibleBy10()), randomInt()).div(ZERO, Precision.of(randomInt(1, Integer.MAX_VALUE)));
+            fail("Division by zero - expected ArithmeticException");
+        } catch (ArithmeticException expected) {
+            assertThat(expected.getMessage(), equalTo("Division by zero not allowed"));
+        }
+        try {
+            d(randomBigInteger(notDivisibleBy10()), randomInt()).div(ZERO, Precision.of(randomInt(1, Integer.MAX_VALUE)));
+            fail("Division by zero - expected ArithmeticException");
+        } catch (ArithmeticException expected) {
+            assertThat(expected.getMessage(), equalTo("Division by zero not allowed"));
+        }
+
+        try {
+            d(randomLong(notDivisibleBy10()), randomInt()).div(ZERO, Scale.of(randomInt()), pickRandomValue(RoundingMode.values()));
+            fail("Division by zero - expected ArithmeticException");
+        } catch (ArithmeticException expected) {
+            assertThat(expected.getMessage(), equalTo("Division by zero not allowed"));
+        }
+        try {
+            d(randomBigInteger(notDivisibleBy10()), randomInt()).div(ZERO, Scale.of(randomInt()), pickRandomValue(RoundingMode.values()));
+            fail("Division by zero - expected ArithmeticException");
+        } catch (ArithmeticException expected) {
+            assertThat(expected.getMessage(), equalTo("Division by zero not allowed"));
+        }
+
+        try {
+            d(randomLong(notDivisibleBy10()), randomInt()).div(ZERO, Precision.of(randomInt(1, Integer.MAX_VALUE)), pickRandomValue(RoundingMode.values()));
+            fail("Division by zero - expected ArithmeticException");
+        } catch (ArithmeticException expected) {
+            assertThat(expected.getMessage(), equalTo("Division by zero not allowed"));
+        }
+        try {
+            d(randomBigInteger(notDivisibleBy10()), randomInt()).div(ZERO, Precision.of(randomInt(1, Integer.MAX_VALUE)), pickRandomValue(RoundingMode.values()));
+            fail("Division by zero - expected ArithmeticException");
+        } catch (ArithmeticException expected) {
+            assertThat(expected.getMessage(), equalTo("Division by zero not allowed"));
+        }
+    }
+
+
+    //    @Test
 //    public void temp() {
 //        Decimal valueA = d("3.52e22");
 //        Decimal valueB = d("-8.8e21");

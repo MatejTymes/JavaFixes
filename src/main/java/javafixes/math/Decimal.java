@@ -16,7 +16,7 @@ import static javafixes.math.PowerUtil.*;
 import static javafixes.math.Scale._0_DECIMAL_PLACES;
 
 // todo: unify underflow and overflow exceptions
-// todo: add ArithmeticException to all methods that could resolve into it
+// todo: add ArithmeticException annotation to all methods that could resolve into it
 // todo: first make it work, then make it faster
 // todo: add javadoc, formatter and make Serializable
 public abstract class Decimal extends Number implements Comparable<Decimal> {
