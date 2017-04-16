@@ -1,7 +1,5 @@
 package javafixes.test;
 
-import javafixes.beta.decimal.Scale;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -145,10 +143,6 @@ public class Random {
     @SafeVarargs
     public static RoundingMode randomRoundingMode(Function<RoundingMode, Boolean>... validityConditions) {
         return generateValidValue(Random::randomRoundingMode, validityConditions);
-    }
-
-    public static Scale randomScale() {
-        return Scale.of(randomInt());
     }
 
     @SafeVarargs

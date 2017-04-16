@@ -23,11 +23,7 @@ dependencies {
 //    testCompile 'org.apache.commons:commons-math3:3.2'
     testCompile 'ch.qos.logback:logback-classic:1.1.7'
 
-    testCompile 'org.powermock:powermock-module-junit4:1.6.5'
-
     testCompile 'org.mockito:mockito-all:1.10.19'
-    testCompile 'org.powermock:powermock-api-mockito:1.6.5'
-
 }
 
 
