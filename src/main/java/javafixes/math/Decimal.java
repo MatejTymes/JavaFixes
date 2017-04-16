@@ -13,7 +13,6 @@ import static javafixes.math.BigIntegerUtil.*;
 import static javafixes.math.LongUtil.canFitIntoInt;
 import static javafixes.math.OverflowUtil.*;
 import static javafixes.math.PowerUtil.*;
-import static javafixes.math.Scale._0_DECIMAL_PLACES;
 
 // todo: unify underflow and overflow exceptions
 // todo: add ArithmeticException annotation to all methods that could resolve into it
@@ -77,29 +76,10 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                 return this;
             }
 
-            // todo: refactor, but good for now
-
-            long scaleDiff = (long) scale - scaleToUse;
-
-            long valueWithRoundingDigit = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
-            boolean hasAdditionalRemainder = unscaledValue != upscaleByPowerOf10(valueWithRoundingDigit, scaleDiff - 1);
-            if (valueWithRoundingDigit == 0 && !hasAdditionalRemainder) {
-                return Decimal.ZERO;
-            }
-
-            long rescaledValue = valueWithRoundingDigit / 10L;
-            int remainingDigit = (int) (valueWithRoundingDigit - (rescaledValue * 10L));
-
-            int roundingCorrection = roundingCorrection(
-                    Long.signum(unscaledValue),
-                    rescaledValue,
-                    remainingDigit,
-                    hasAdditionalRemainder,
-                    roundingMode
+            return decimal(
+                    descaleValue(unscaledValue, scale, scaleToUse, roundingMode),
+                    scaleToUse
             );
-            rescaledValue += roundingCorrection;
-
-            return decimal(rescaledValue, scaleToUse);
         }
 
         @Override
@@ -163,50 +143,10 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                 return this;
             }
 
-            // todo: refactor, but good for now
-
-            // todo: quick descale: if scaleDiff > precision, but good for now
-            long scaleDiff = (long) scale - (long) scaleToUse;
-
-            boolean hasAdditionalRemainder = false;
-            BigInteger valueWithRoundingDigit = unscaledValue;
-            long n = scaleDiff - 1;
-            // todo: simplify this, but good for now
-            while (n > 0 && valueWithRoundingDigit.signum() != 0) {
-                int descaleBy = (int) Math.min((long) maxCachedBigPowerOf10(), n);
-                BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(powerOf10Big(descaleBy));
-                valueWithRoundingDigit = divAndMod[0];
-                if (divAndMod[1].signum() != 0) {
-                    hasAdditionalRemainder = true;
-                }
-                n -= descaleBy;
-            }
-
-            if (valueWithRoundingDigit.signum() == 0 && !hasAdditionalRemainder) {
-                return ZERO;
-            }
-
-            BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(BigInteger.TEN);
-            BigInteger rescaledValue = divAndMod[0];
-            int remainingDigit = divAndMod[1].intValue();
-            if (unscaledValue.signum() < 0 && remainingDigit > 0) {
-                remainingDigit -= 10;
-            }
-
-            int roundingCorrection = roundingCorrection(
-                    unscaledValue.signum(),
-                    rescaledValue,
-                    remainingDigit,
-                    hasAdditionalRemainder,
-                    roundingMode
+            return decimal(
+                    descaleValue(unscaledValue, scale, scaleToUse, roundingMode),
+                    scaleToUse
             );
-            if (roundingCorrection == 1) {
-                rescaledValue = rescaledValue.add(BigInteger.ONE);
-            } else if (roundingCorrection == -1) {
-                rescaledValue = rescaledValue.subtract(BigInteger.ONE);
-            }
-
-            return decimal(rescaledValue, scaleToUse);
         }
 
         @Override
@@ -434,32 +374,54 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     @Override
     public int intValue() {
-        if (scale() == 0) {
+        int scale = scale();
+        if (scale == 0) {
             return unscaledValue().intValue();
         }
 
-        // todo: add faster implementation, but good for now
-        Decimal trimmedDecimal = descaleTo(_0_DECIMAL_PLACES, DOWN);
-        BigInteger trimmedValue = trimmedDecimal.unscaledValueAsBigInteger();
-        if (trimmedDecimal.scale() != 0) {
-            trimmedValue = upscaleByPowerOf10(trimmedValue, -trimmedDecimal.scale());
+        if (unscaledValue() instanceof Long) {
+            long unscaledValue = (Long) unscaledValue();
+            if (scale > 0) {
+                return (int) descaleValue(unscaledValue, scale, 0, DOWN);
+            } else {
+                if (canUpscaleLongByPowerOf10(unscaledValue, -scale)) {
+                    return (int) upscaleByPowerOf10(unscaledValue, -scale);
+                }
+            }
         }
-        return trimmedValue.intValue();
+
+        BigInteger unscaledValue = unscaledValueAsBigInteger();
+        if (scale > 0) {
+            return descaleValue(unscaledValue, scale, 0, DOWN).intValue();
+        } else {
+            return upscaleByPowerOf10(unscaledValue, -scale).intValue();
+        }
     }
 
     @Override
     public long longValue() {
-        if (scale() == 0) {
+        int scale = scale();
+        if (scale == 0) {
             return unscaledValue().longValue();
         }
 
-        // todo: add faster implementation, but good for now
-        Decimal trimmedDecimal = descaleTo(_0_DECIMAL_PLACES, DOWN);
-        BigInteger trimmedValue = trimmedDecimal.unscaledValueAsBigInteger();
-        if (trimmedDecimal.scale() != 0) {
-            trimmedValue = upscaleByPowerOf10(trimmedValue, -trimmedDecimal.scale());
+        if (unscaledValue() instanceof Long) {
+            long unscaledValue = (Long) unscaledValue();
+            if (scale > 0) {
+                return descaleValue(unscaledValue, scale, 0, DOWN);
+            } else {
+                if (canUpscaleLongByPowerOf10(unscaledValue, -scale)) {
+                    return upscaleByPowerOf10(unscaledValue, -scale);
+                }
+            }
         }
-        return trimmedValue.longValue();
+
+        BigInteger unscaledValue = unscaledValueAsBigInteger();
+        if (scale > 0) {
+            return descaleValue(unscaledValue, scale, 0, DOWN).longValue();
+        } else {
+            return upscaleByPowerOf10(unscaledValue, -scale).longValue();
+        }
     }
 
     @Override
@@ -900,6 +862,76 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return (toScale > fromScale)
                 ? upscaleByPowerOf10(value, (long) toScale - fromScale)
                 : value;
+    }
+
+    private static long descaleValue(long unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
+        // todo: refactor this, but good for now
+        long scaleDiff = (long) scale - scaleToUse;
+
+        long valueWithRoundingDigit = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
+        boolean hasAdditionalRemainder = unscaledValue != upscaleByPowerOf10(valueWithRoundingDigit, scaleDiff - 1);
+        if (valueWithRoundingDigit == 0 && !hasAdditionalRemainder) {
+            return 0;
+        }
+
+        long rescaledValue = valueWithRoundingDigit / 10L;
+        int remainingDigit = (int) (valueWithRoundingDigit - (rescaledValue * 10L));
+
+        int roundingCorrection = roundingCorrection(
+                Long.signum(unscaledValue),
+                rescaledValue,
+                remainingDigit,
+                hasAdditionalRemainder,
+                roundingMode
+        );
+        rescaledValue += roundingCorrection;
+
+        return rescaledValue;
+    }
+
+    private static BigInteger descaleValue(BigInteger unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
+        // todo: quick descale: if scaleDiff > precision, but good for now
+        long scaleDiff = (long) scale - (long) scaleToUse;
+
+        boolean hasAdditionalRemainder = false;
+        BigInteger valueWithRoundingDigit = unscaledValue;
+        long n = scaleDiff - 1;
+        // todo: refactor this, but good for now
+        while (n > 0 && valueWithRoundingDigit.signum() != 0) {
+            int descaleBy = (int) Math.min((long) maxCachedBigPowerOf10(), n);
+            BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(powerOf10Big(descaleBy));
+            valueWithRoundingDigit = divAndMod[0];
+            if (divAndMod[1].signum() != 0) {
+                hasAdditionalRemainder = true;
+            }
+            n -= descaleBy;
+        }
+
+        if (valueWithRoundingDigit.signum() == 0 && !hasAdditionalRemainder) {
+            return BigInteger.ZERO;
+        }
+
+        BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(BigInteger.TEN);
+        BigInteger rescaledValue = divAndMod[0];
+        int remainingDigit = divAndMod[1].intValue();
+        if (unscaledValue.signum() < 0 && remainingDigit > 0) {
+            remainingDigit -= 10;
+        }
+
+        int roundingCorrection = roundingCorrection(
+                unscaledValue.signum(),
+                rescaledValue,
+                remainingDigit,
+                hasAdditionalRemainder,
+                roundingMode
+        );
+        if (roundingCorrection == 1) {
+            rescaledValue = rescaledValue.add(BigInteger.ONE);
+        } else if (roundingCorrection == -1) {
+            rescaledValue = rescaledValue.subtract(BigInteger.ONE);
+        }
+
+        return rescaledValue;
     }
 
     private static char[] arrayOfZeroChars(long size) {

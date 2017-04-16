@@ -13,7 +13,7 @@ import static javafixes.test.Random.randomLong;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class DecimalNumberTest {
+public class DecimalNumberConversionTest {
 
     @Test
     public void shouldTransformDecimalIntoPrimitiveType() {
