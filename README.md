@@ -132,7 +132,7 @@ Immutable Two values holder. Each Tuple extends `DataObject` so methods `equals`
 
 ### Decimal
 
-* You can get as release candidate (the api should not change, just need to add some javadocs) via Gradle:
+* You can get it from release candidate (the api should not change, just need to add some javadocs) via Gradle:
 `compile 'com.github.matejtymes:javafixes:1.2.0.rc1'`
 or Maven
 ```Xml
