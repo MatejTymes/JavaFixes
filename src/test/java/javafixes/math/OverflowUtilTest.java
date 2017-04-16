@@ -2,9 +2,7 @@ package javafixes.math;
 
 import org.junit.Test;
 
-import static javafixes.beta.decimal.OverflowUtil.didOverflowOnLongAddition;
-import static javafixes.beta.decimal.OverflowUtil.willNegationOverflow;
-import static javafixes.math.OverflowUtil.didOverflowOnMultiplication;
+import static javafixes.math.OverflowUtil.*;
 import static javafixes.test.Random.randomLong;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
