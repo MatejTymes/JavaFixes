@@ -132,7 +132,16 @@ Immutable Two values holder. Each Tuple extends `DataObject` so methods `equals`
 
 ### Decimal
 
-* this will be part of next maven release - just finishing division tests
+* You can get as release candidate (the api should not change, just need to add some javadocs) via Gradle:
+`compile 'com.github.matejtymes:javafixes:1.2.0.rc1'`
+or Maven
+```Xml
+<dependency>
+    <groupId>com.github.matejtymes</groupId>
+    <artifactId>javafixes</artifactId>
+    <version>1.2.0.rc1</version>
+</dependency>
+```
 
 Introducing new class `Decimal`, that should fix the troubles we're currently facing when dealing with `BigDecimal`. The new class was needed as `BigDecimal`'s behavior can't be changed/patched because of backwards compatibility.
 
