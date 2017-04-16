@@ -15,6 +15,7 @@ import static javafixes.test.Random.randomLong;
 @Ignore
 public class PlaygroundTest {
 
+
     @Test
     public void thinkingAboutToString() {
 
@@ -39,6 +40,46 @@ public class PlaygroundTest {
                 new BigDecimal("1.23").divide(new BigDecimal("7.12"), scale, RoundingMode.HALF_UP)
 //                new BigDecimal("1.23").divide(new BigDecimal("7.12"))
         );
+    }
+
+    @Test
+    public void powerOf10() {
+        long power = 1;
+        BigInteger value = BigInteger.TEN;
+        System.out.println(power);
+//            System.out.println(power + " - " + value);
+
+        long startTime;
+        long duration;
+
+        while (power < Integer.MAX_VALUE) {
+            power *= 2;
+
+            System.out.println(power);
+
+            startTime = System.currentTimeMillis();
+            value = value.multiply(value);
+            duration = System.currentTimeMillis() - startTime;
+            System.out.println("- smart duration: " + duration + "ms");
+
+            startTime = System.currentTimeMillis();
+            BigInteger standard = BigInteger.TEN.pow((int) power);
+            duration = System.currentTimeMillis() - startTime;
+            System.out.println("- standard duration: " + duration + "ms");
+
+            if (!value.equals(standard)) {
+                System.out.println("wow, difference");
+            }
+//            System.out.println(power + " - " + value);
+        }
+    }
+
+    @Test
+    public void divisionTest() {
+        BigDecimal valueA = new BigDecimal("3.14");
+        BigDecimal valueB = new BigDecimal("3182");
+
+        System.out.println(valueA.divide(valueB, 30, RoundingMode.HALF_UP));
     }
 
     @Test
