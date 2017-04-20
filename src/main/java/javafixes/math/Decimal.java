@@ -673,6 +673,23 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return div(value, DEFAULT_PRECISION, DEFAULT_ROUNDING);
     }
 
+    // todo: test
+    public Decimal pow(int n) {
+        long resultScale = (long) scale() * (long) scale();
+        if (!canFitIntoInt(resultScale)) {
+            if (resultScale > Integer.MAX_VALUE) {
+                throw new ArithmeticException(format("Scale overflow - can't calculate power of %d as it would resolve into non-integer scale %d", n, resultScale));
+            } else {
+                throw new ArithmeticException(format("Scale underflow - can't calculate power of %d as it would resolve into non-integer scale %d", n, resultScale));
+            }
+        }
+
+        return decimal(
+                unscaledValueAsBigInteger().pow(n),
+                (int) resultScale
+        );
+    }
+
     @Override
     public int compareTo(Decimal other) {
         return compare(this, other);
@@ -996,7 +1013,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                     roundingCorrection = (signum == -1) ? -1 : 1;
                 }
             } else if (roundingMode == UNNECESSARY) {
-                throw new ArithmeticException("Rounding necessary");
+                throw new IllegalArgumentException("Rounding necessary");
             }
         }
 

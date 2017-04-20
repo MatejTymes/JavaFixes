@@ -158,25 +158,25 @@ public class DecimalDescaleTest {
         assertThat(decimal("-2.501").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-3")));
         assertThat(decimal("-5.501").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-6")));
 
-        try { decimal("5.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("2.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("1.6").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("1.1").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("5.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("2.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("1.6").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("1.1").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
         assertThat(decimal("1.0").descaleTo(0, RoundingMode.UNNECESSARY), equalTo(decimal("1")));
         assertThat(decimal("-1.0").descaleTo(0, RoundingMode.UNNECESSARY), equalTo(decimal("-1")));
-        try { decimal("-1.1").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-1.6").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-2.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-5.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("-1.1").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-1.6").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-2.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-5.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
 
-        try { decimal("5.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("2.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("1.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("0.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-0.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-1.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-2.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-5.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("5.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("2.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("1.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("0.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-0.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-1.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-2.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-5.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
     }
 
     @Test
@@ -361,25 +361,25 @@ public class DecimalDescaleTest {
         assertThat(decimal("-100000000000000000000000002.501").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-100000000000000000000000003")));
         assertThat(decimal("-100000000000000000000000005.501").descaleTo(0, RoundingMode.HALF_EVEN), equalTo(decimal("-100000000000000000000000006")));
 
-        try { decimal("100000000000000000000000005.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("100000000000000000000000002.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("100000000000000000000000001.6").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("100000000000000000000000001.1").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("100000000000000000000000005.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("100000000000000000000000002.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("100000000000000000000000001.6").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("100000000000000000000000001.1").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
         assertThat(decimal("100000000000000000000000001.0").descaleTo(0, RoundingMode.UNNECESSARY), equalTo(decimal("100000000000000000000000001")));
         assertThat(decimal("-100000000000000000000000001.0").descaleTo(0, RoundingMode.UNNECESSARY), equalTo(decimal("-100000000000000000000000001")));
-        try { decimal("-100000000000000000000000001.1").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-100000000000000000000000001.6").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-100000000000000000000000002.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-100000000000000000000000005.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("-100000000000000000000000001.1").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-100000000000000000000000001.6").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-100000000000000000000000002.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-100000000000000000000000005.5").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
 
-        try { decimal("100000000000000000000000005.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("100000000000000000000000002.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("100000000000000000000000001.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("100000000000000000000000000.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-100000000000000000000000000.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-100000000000000000000000001.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-100000000000000000000000002.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-100000000000000000000000005.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("100000000000000000000000005.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("100000000000000000000000002.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("100000000000000000000000001.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("100000000000000000000000000.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-100000000000000000000000000.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-100000000000000000000000001.001").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-100000000000000000000000002.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-100000000000000000000000005.501").descaleTo(0, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
     }
 
     @Test
@@ -439,7 +439,7 @@ public class DecimalDescaleTest {
         for (Decimal number : numbers) {
             for (RoundingMode roundingMode : RoundingMode.values()) {
                 if (roundingMode == RoundingMode.UNNECESSARY && number.scale() != 0) {
-                    try { number.descaleTo(Scale._0_DECIMAL_PLACES, roundingMode); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+                    try { number.descaleTo(Scale._0_DECIMAL_PLACES, roundingMode); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
                 } else {
                     assertThat(number.descaleTo(Scale._0_DECIMAL_PLACES, roundingMode), equalTo(number.descaleTo(0, roundingMode)));
                 }

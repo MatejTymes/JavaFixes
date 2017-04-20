@@ -145,23 +145,23 @@ public class DecimalDeprecisionTest {
         assertThat(decimal("-2.501").deprecisionTo(1, RoundingMode.HALF_EVEN), equalTo(decimal("-3")));
         assertThat(decimal("-5.501").deprecisionTo(1, RoundingMode.HALF_EVEN), equalTo(decimal("-6")));
 
-        try { decimal("5.5").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("2.5").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("1.6").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("1.1").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("5.5").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("2.5").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("1.6").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("1.1").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
         assertThat(decimal("1.0").deprecisionTo(1, RoundingMode.UNNECESSARY), equalTo(decimal("1")));
         assertThat(decimal("-1.0").deprecisionTo(1, RoundingMode.UNNECESSARY), equalTo(decimal("-1")));
-        try { decimal("-1.1").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-1.6").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-2.5").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-5.5").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("-1.1").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-1.6").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-2.5").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-5.5").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
 
-        try { decimal("5.501").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("2.501").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("1.001").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-1.001").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-2.501").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-5.501").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("5.501").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("2.501").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("1.001").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-1.001").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-2.501").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-5.501").deprecisionTo(1, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
     }
 
     @Test
@@ -346,25 +346,25 @@ public class DecimalDeprecisionTest {
         assertThat(decimal("-100000000000000000000000002.501").deprecisionTo(27, RoundingMode.HALF_EVEN), equalTo(decimal("-100000000000000000000000003")));
         assertThat(decimal("-100000000000000000000000005.501").deprecisionTo(27, RoundingMode.HALF_EVEN), equalTo(decimal("-100000000000000000000000006")));
 
-        try { decimal("100000000000000000000000005.5").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("100000000000000000000000002.5").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("100000000000000000000000001.6").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("100000000000000000000000001.1").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("100000000000000000000000005.5").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("100000000000000000000000002.5").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("100000000000000000000000001.6").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("100000000000000000000000001.1").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
         assertThat(decimal("100000000000000000000000001.0").deprecisionTo(27, RoundingMode.UNNECESSARY), equalTo(decimal("100000000000000000000000001")));
         assertThat(decimal("-100000000000000000000000001.0").deprecisionTo(27, RoundingMode.UNNECESSARY), equalTo(decimal("-100000000000000000000000001")));
-        try { decimal("-100000000000000000000000001.1").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-100000000000000000000000001.6").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-100000000000000000000000002.5").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-100000000000000000000000005.5").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("-100000000000000000000000001.1").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-100000000000000000000000001.6").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-100000000000000000000000002.5").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-100000000000000000000000005.5").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
 
-        try { decimal("100000000000000000000000005.501").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("100000000000000000000000002.501").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("100000000000000000000000001.001").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("100000000000000000000000000.001").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-100000000000000000000000000.001").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-100000000000000000000000001.001").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-100000000000000000000000002.501").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
-        try { decimal("-100000000000000000000000005.501").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+        try { decimal("100000000000000000000000005.501").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("100000000000000000000000002.501").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("100000000000000000000000001.001").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("100000000000000000000000000.001").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-100000000000000000000000000.001").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-100000000000000000000000001.001").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-100000000000000000000000002.501").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
+        try { decimal("-100000000000000000000000005.501").deprecisionTo(27, RoundingMode.UNNECESSARY); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
     }
 
     @Test
@@ -417,7 +417,7 @@ public class DecimalDeprecisionTest {
         for (Decimal number : longNumbers) {
             for (RoundingMode roundingMode : RoundingMode.values()) {
                 if (roundingMode == RoundingMode.UNNECESSARY && number.precision() != 1) {
-                    try { number.deprecisionTo(Precision.of(1), roundingMode); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+                    try { number.deprecisionTo(Precision.of(1), roundingMode); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
                 } else {
                     assertThat(number.deprecisionTo(Precision.of(1), roundingMode), equalTo(number.deprecisionTo(1, roundingMode)));
                 }
@@ -439,7 +439,7 @@ public class DecimalDeprecisionTest {
         for (Decimal number : hugeNumbers) {
             for (RoundingMode roundingMode : RoundingMode.values()) {
                 if (roundingMode == RoundingMode.UNNECESSARY && number.precision() != 1) {
-                    try { number.deprecisionTo(Precision.of(1), roundingMode); fail("expected ArithmeticException"); } catch (ArithmeticException expected) { }
+                    try { number.deprecisionTo(Precision.of(1), roundingMode); fail("expected IllegalArgumentException"); } catch (IllegalArgumentException expected) { }
                 } else {
                     assertThat(number.deprecisionTo(Precision.of(1), roundingMode), equalTo(number.deprecisionTo(1, roundingMode)));
                 }
