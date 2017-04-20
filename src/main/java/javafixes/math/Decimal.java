@@ -675,7 +675,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     // todo: test
     public Decimal pow(int n) {
-        long resultScale = (long) scale() * (long) scale();
+        long resultScale = (long) scale() * (long) n;
         if (!canFitIntoInt(resultScale)) {
             if (resultScale > Integer.MAX_VALUE) {
                 throw new ArithmeticException(format("Scale overflow - can't calculate power of %d as it would resolve into non-integer scale %d", n, resultScale));
