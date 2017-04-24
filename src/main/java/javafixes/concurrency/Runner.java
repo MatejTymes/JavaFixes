@@ -126,4 +126,8 @@ public class Runner extends MonitoringTaskSubmitter {
     public Runner shutdownNowAndAwaitTermination() {
         return shutdownNowAndAwaitTermination(5, SECONDS);
     }
+
+    protected void finalize() {
+        this.shutdownNow();
+    }
 }
