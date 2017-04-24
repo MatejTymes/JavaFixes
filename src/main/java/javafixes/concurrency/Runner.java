@@ -127,7 +127,11 @@ public class Runner extends MonitoringTaskSubmitter {
         return shutdownNowAndAwaitTermination(5, SECONDS);
     }
 
-    protected void finalize() {
-        this.shutdownNow();
+    protected void finalize() throws Throwable {
+        try {
+            this.shutdownNow();
+        } finally {
+            super.finalize();
+        }
     }
 }
