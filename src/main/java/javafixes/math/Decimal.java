@@ -16,7 +16,6 @@ import static javafixes.math.PowerUtil.*;
 
 // todo: unify underflow and overflow exceptions
 // todo: add ArithmeticException annotation to all methods that could resolve into it
-// todo: first make it work, then make it faster
 // todo: add javadoc, formatter and make Serializable
 public abstract class Decimal extends Number implements Comparable<Decimal> {
 
@@ -368,6 +367,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     abstract public int precision();
 
+    // todo: maybe reuse the toString logic
     abstract public BigDecimal bigDecimalValue();
 
     // todo: add int/long/float/double Exact()
@@ -849,7 +849,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                 return Long.compare(remainderA, remainderB);
             }
         } else {
-            // todo: slow for huge scale differences
+            // todo: might be slow for huge scale differences
             BigInteger unscaledA = bigUnscaledValueFrom(a);
             BigInteger unscaledB = bigUnscaledValueFrom(b);
 
@@ -892,7 +892,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     private static long descaleValue(long unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
-        // todo: refactor this, but good for now
         long scaleDiff = (long) scale - scaleToUse;
 
         long valueWithRoundingDigit = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
@@ -917,13 +916,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     private static BigInteger descaleValue(BigInteger unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
-        // todo: quick descale: if scaleDiff > precision, but good for now
         long scaleDiff = (long) scale - (long) scaleToUse;
 
         boolean hasAdditionalRemainder = false;
         BigInteger valueWithRoundingDigit = unscaledValue;
         long n = scaleDiff - 1;
-        // todo: refactor this, but good for now
         while (n > 0 && valueWithRoundingDigit.signum() != 0) {
             int descaleBy = (int) Math.min((long) maxCachedBigPowerOf10(), n);
             BigInteger[] divAndMod = valueWithRoundingDigit.divideAndRemainder(powerOf10Big(descaleBy));

@@ -22,6 +22,8 @@ public class PlaygroundTest {
     @Test
     public void thinkingAboutToString() {
 
+        System.out.println(Math.pow(4, 0.5));
+
         System.out.println(d("1.1").pow(500).deprecisionTo(_34_SIGNIFICANT_DIGITS).toScientificNotation());
 
 //        System.out.println(d("     100_000_000.0"));
