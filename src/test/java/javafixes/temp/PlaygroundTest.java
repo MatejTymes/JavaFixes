@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import static javafixes.math.Decimal.d;
+import static javafixes.math.Precision._34_SIGNIFICANT_DIGITS;
 import static javafixes.test.Random.randomInt;
 import static javafixes.test.Random.randomLong;
 
@@ -20,6 +21,8 @@ public class PlaygroundTest {
 
     @Test
     public void thinkingAboutToString() {
+
+        System.out.println(d("1.1").pow(500).deprecisionTo(_34_SIGNIFICANT_DIGITS).toScientificNotation());
 
 //        System.out.println(d("     100_000_000.0"));
         System.out.println(d("_____100_000_000.0"));

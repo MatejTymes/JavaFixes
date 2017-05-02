@@ -558,11 +558,6 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
     }
 
-    // todo: do we really want this - only reason it is here is because of groovy
-    public Decimal multiply(Decimal value) {
-        return times(value);
-    }
-
     public Decimal div(Decimal value, Precision precisionToUse, RoundingMode roundingMode) {
         if (value.isZero()) {
             throw new ArithmeticException("Division by zero not allowed");
@@ -673,8 +668,15 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return div(value, DEFAULT_PRECISION, DEFAULT_ROUNDING);
     }
 
-    // todo: test
     public Decimal pow(int n) {
+        if (n < 0) {
+            throw new ArithmeticException("Can't calculate power using negative exponent " + n);
+        } else if (n == 0) {
+            return ONE;
+        } else if (n == 1) {
+            return this;
+        }
+
         long resultScale = (long) scale() * (long) n;
         if (!canFitIntoInt(resultScale)) {
             if (resultScale > Integer.MAX_VALUE) {
@@ -789,6 +791,14 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     protected abstract boolean isZero();
 
     protected abstract BigInteger unscaledValueAsBigInteger();
+
+    /* ============================ */
+    /* ---   groovy operators   --- */
+    /* ============================ */
+
+    Decimal multiply(Decimal value) {
+        return times(value);
+    }
 
     /* ================================== */
     /* ---   private static methods   --- */
