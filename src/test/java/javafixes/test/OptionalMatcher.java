@@ -21,7 +21,8 @@ public class OptionalMatcher<T> extends TypeSafeMatcher<Optional<T>> {
 
     @Override
     protected boolean matchesSafely(Optional<T> item) {
-        return item.isPresent() == shouldBePresent && valueMatcher.map(matcher -> matcher.matches(item)).orElse(true);
+        return item.isPresent() == shouldBePresent &&
+                (valueMatcher.isPresent() ? item.isPresent() && valueMatcher.get().matches(item.get()) : true);
     }
 
     @Override
