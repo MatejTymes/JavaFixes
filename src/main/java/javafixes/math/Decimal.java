@@ -65,7 +65,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
 
         @Override
-        public BigDecimal bigDecimalValue() {
+        public BigDecimal bigDecimalScientificValue() {
             return BigDecimal.valueOf(unscaledValue, scale);
         }
 
@@ -132,7 +132,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
 
         @Override
-        public BigDecimal bigDecimalValue() {
+        public BigDecimal bigDecimalScientificValue() {
             return new BigDecimal(unscaledValue, scale);
         }
 
@@ -367,8 +367,17 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     abstract public int precision();
 
-    // todo: maybe reuse the toString logic
-    abstract public BigDecimal bigDecimalValue();
+    public BigDecimal bigDecimalValue() {
+        int scale = scale();
+        if (scale <= -9 || (scale > 9 && scale - precision() >= 9)) {
+            return bigDecimalScientificValue();
+        } else {
+            // todo: speed up
+            return new BigDecimal(toPlainString());
+        }
+    }
+
+    abstract public BigDecimal bigDecimalScientificValue();
 
     // todo: add int/long/float/double Exact()
 

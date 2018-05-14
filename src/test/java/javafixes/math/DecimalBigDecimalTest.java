@@ -20,8 +20,12 @@ public class DecimalBigDecimalTest {
             -1,
             Integer.MAX_VALUE,
             Integer.MIN_VALUE,
-            randomInt(Integer.MIN_VALUE + 1, -2),
-            randomInt(2, Integer.MAX_VALUE - 1)
+            randomInt(-9, -2),
+            randomInt(-20, -10),
+            randomInt(Integer.MIN_VALUE + 1, -21),
+            randomInt(2, 9),
+            randomInt(10, 20),
+            randomInt(21, Integer.MAX_VALUE - 1)
     );
 
     @Test
@@ -29,11 +33,19 @@ public class DecimalBigDecimalTest {
 
         BigDecimal zeroBigDecimal = Decimal.ZERO.bigDecimalValue();
         assertThat(zeroBigDecimal.unscaledValue(), equalTo(BigInteger.ZERO));
-        assertThat(zeroBigDecimal.scale(), equalTo(0));
+        assertThat(zeroBigDecimal.scale(), equalTo(1));
 
         assertThat(Decimal.decimal(zeroBigDecimal), equalTo(Decimal.ZERO));
         assertThat(Decimal.decimal(zeroBigDecimal).unscaledValue(), equalTo(0L));
         assertThat(Decimal.decimal(zeroBigDecimal).scale(), equalTo(0));
+
+        BigDecimal zeroScientificBigDecimal = Decimal.ZERO.bigDecimalScientificValue();
+        assertThat(zeroScientificBigDecimal.unscaledValue(), equalTo(BigInteger.ZERO));
+        assertThat(zeroScientificBigDecimal.scale(), equalTo(0));
+
+        assertThat(Decimal.decimal(zeroScientificBigDecimal), equalTo(Decimal.ZERO));
+        assertThat(Decimal.decimal(zeroScientificBigDecimal).unscaledValue(), equalTo(0L));
+        assertThat(Decimal.decimal(zeroScientificBigDecimal).scale(), equalTo(0));
 
         List<Long> unscaledValues = newList(
                 1L,
@@ -47,17 +59,38 @@ public class DecimalBigDecimalTest {
         for (int scale : scales) {
             for (long unscaledValue : unscaledValues) {
                 Decimal decimal = Decimal.decimal(unscaledValue, scale);
+
+                BigDecimal scientificBigDecimal = decimal.bigDecimalScientificValue();
                 BigDecimal bigDecimal = decimal.bigDecimalValue();
 
-                assertThat(bigDecimal.unscaledValue(), equalTo(BigInteger.valueOf(unscaledValue)));
-                assertThat(bigDecimal.scale(), equalTo(scale));
-
-                Decimal newDecimal = Decimal.decimal(bigDecimal);
+                Decimal newDecimal = Decimal.decimal(scientificBigDecimal);
                 assertThat(newDecimal, equalTo(decimal));
                 assertThat(newDecimal.unscaledValue(), equalTo(unscaledValue));
                 assertThat(newDecimal.scale(), equalTo(scale));
+                assertThat(Decimal.decimal(scientificBigDecimal), equalTo(Decimal.d(scientificBigDecimal)));
 
+                newDecimal = Decimal.decimal(bigDecimal);
+                assertThat(newDecimal, equalTo(decimal));
+                assertThat(newDecimal.unscaledValue(), equalTo(unscaledValue));
+                assertThat(newDecimal.scale(), equalTo(scale));
                 assertThat(Decimal.decimal(bigDecimal), equalTo(Decimal.d(bigDecimal)));
+
+                assertThat(scientificBigDecimal.unscaledValue(), equalTo(BigInteger.valueOf(unscaledValue)));
+                assertThat(scientificBigDecimal.scale(), equalTo(scale));
+
+                if (scale <= -9 || (scale > 9 && scale - decimal.precision() >= 9)) {
+                    assertThat(bigDecimal.unscaledValue(), equalTo(BigInteger.valueOf(unscaledValue)));
+                    assertThat(bigDecimal.scale(), equalTo(scale));
+                } else {
+                    int expectedScale = scale;
+                    BigInteger expectedUnscaledValue = BigInteger.valueOf(unscaledValue);
+                    if (expectedScale < 1) {
+                        expectedUnscaledValue = expectedUnscaledValue.multiply(BigInteger.TEN.pow(1 - expectedScale));
+                        expectedScale = 1;
+                    }
+                    assertThat(bigDecimal.unscaledValue(), equalTo(expectedUnscaledValue));
+                    assertThat(bigDecimal.scale(), equalTo(expectedScale));
+                }
             }
         }
     }
@@ -74,17 +107,38 @@ public class DecimalBigDecimalTest {
         for (int scale : scales) {
             for (BigInteger unscaledValue : unscaledValues) {
                 Decimal decimal = Decimal.decimal(unscaledValue, scale);
+
+                BigDecimal scientificBigDecimal = decimal.bigDecimalScientificValue();
                 BigDecimal bigDecimal = decimal.bigDecimalValue();
 
-                assertThat(bigDecimal.unscaledValue(), equalTo(unscaledValue));
-                assertThat(bigDecimal.scale(), equalTo(scale));
-
-                Decimal newDecimal = Decimal.decimal(bigDecimal);
+                Decimal newDecimal = Decimal.decimal(scientificBigDecimal);
                 assertThat(newDecimal, equalTo(decimal));
                 assertThat(newDecimal.unscaledValue(), equalTo(unscaledValue));
                 assertThat(newDecimal.scale(), equalTo(scale));
-
                 assertThat(Decimal.decimal(bigDecimal), equalTo(Decimal.d(bigDecimal)));
+
+                newDecimal = Decimal.decimal(bigDecimal);
+                assertThat(newDecimal, equalTo(decimal));
+                assertThat(newDecimal.unscaledValue(), equalTo(unscaledValue));
+                assertThat(newDecimal.scale(), equalTo(scale));
+                assertThat(Decimal.decimal(bigDecimal), equalTo(Decimal.d(bigDecimal)));
+
+                assertThat(scientificBigDecimal.unscaledValue(), equalTo(unscaledValue));
+                assertThat(scientificBigDecimal.scale(), equalTo(scale));
+
+                if (scale <= -9 || (scale > 9 && scale - decimal.precision() >= 9)) {
+                    assertThat(bigDecimal.unscaledValue(), equalTo(unscaledValue));
+                    assertThat(bigDecimal.scale(), equalTo(scale));
+                } else {
+                    int expectedScale = scale;
+                    BigInteger expectedUnscaledValue = unscaledValue;
+                    if (expectedScale < 1) {
+                        expectedUnscaledValue = expectedUnscaledValue.multiply(BigInteger.TEN.pow(1 - expectedScale));
+                        expectedScale = 1;
+                    }
+                    assertThat(bigDecimal.unscaledValue(), equalTo(expectedUnscaledValue));
+                    assertThat(bigDecimal.scale(), equalTo(expectedScale));
+                }
             }
         }
     }

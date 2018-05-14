@@ -83,7 +83,7 @@ public class DecimalMultiplicationTest {
     }
 
     private void verifyCanMultiplyDecimals(Decimal decimalA, Decimal decimalB) {
-        System.out.println(decimalA + " * " + decimalB);
+//        System.out.println(decimalA + " * " + decimalB);
 
         BigInteger unscaledValueA = decimalA.unscaledValueAsBigInteger();
         BigInteger unscaledValueB = decimalB.unscaledValueAsBigInteger();
