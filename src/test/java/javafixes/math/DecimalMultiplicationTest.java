@@ -108,7 +108,11 @@ public class DecimalMultiplicationTest {
                 // Then
                 fail("expecting ArithmeticException as scale can't be less than Long.MIN_VALUE");
             } catch (ArithmeticException expected) {
-                assertThat(expected.getMessage(), equalTo("Illegal result. Scale '" + expectedScale + "' won't fit into Integer"));
+                if (expectedScale < 0) {
+                    assertThat(expected.getMessage(), equalTo("Scale underflow - multiplication resolves into non-integer scale '" + expectedScale + "'"));
+                } else {
+                    assertThat(expected.getMessage(), equalTo("Scale overflow - multiplication resolves into non-integer scale '" + expectedScale + "'"));
+                }
             }
 
             try {
@@ -118,7 +122,11 @@ public class DecimalMultiplicationTest {
                 // Then
                 fail("expecting ArithmeticException as scale can't be less than Long.MIN_VALUE");
             } catch (ArithmeticException expected) {
-                assertThat(expected.getMessage(), equalTo("Illegal result. Scale '" + expectedScale + "' won't fit into Integer"));
+                if (expectedScale < 0) {
+                    assertThat(expected.getMessage(), equalTo("Scale underflow - multiplication resolves into non-integer scale '" + expectedScale + "'"));
+                } else {
+                    assertThat(expected.getMessage(), equalTo("Scale overflow - multiplication resolves into non-integer scale '" + expectedScale + "'"));
+                }
             }
         } else {
 
@@ -148,7 +156,7 @@ public class DecimalMultiplicationTest {
                     // Then
                     fail("expecting ArithmeticException as scale can't be less than Long.MIN_VALUE");
                 } catch (ArithmeticException expected) {
-                    assertThat(expected.getMessage(), equalTo("Scale underflow - can't set scale to less than: -2147483648"));
+                    assertThat(expected.getMessage(), equalTo("Scale underflow - can't set scale to less than '-2147483648'"));
                 }
 
                 try {
@@ -158,7 +166,7 @@ public class DecimalMultiplicationTest {
                     // Then
                     fail("expecting ArithmeticException as scale can't be less than Long.MIN_VALUE");
                 } catch (ArithmeticException expected) {
-                    assertThat(expected.getMessage(), equalTo("Scale underflow - can't set scale to less than: -2147483648"));
+                    assertThat(expected.getMessage(), equalTo("Scale underflow - can't set scale to less than '-2147483648'"));
                 }
             }
         }

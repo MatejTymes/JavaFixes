@@ -1,5 +1,7 @@
 package javafixes.math;
 
+import static java.lang.String.format;
+
 public class Precision {
 
     public static final Precision _7_SIGNIFICANT_DIGITS = precision(7);
@@ -11,7 +13,7 @@ public class Precision {
     // private constructor so it is non-extendible
     private Precision(int value) {
         if (value <= 0) {
-            throw new IllegalArgumentException("Invalid precision '" + value + "'. Must be greater than zero");
+            throw new IllegalArgumentException(format("Invalid precision '%d'. Must be greater than 0.", value));
         }
         this.value = value;
     }

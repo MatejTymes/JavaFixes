@@ -14,7 +14,6 @@ import static javafixes.math.LongUtil.canFitIntoInt;
 import static javafixes.math.OverflowUtil.*;
 import static javafixes.math.PowerUtil.*;
 
-// todo: unify underflow and overflow exceptions
 // todo: add ArithmeticException annotation to all methods that could resolve into it
 // todo: add javadoc, formatter and make Serializable
 public abstract class Decimal extends Number implements Comparable<Decimal> {
@@ -175,7 +174,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
             unscaledValue /= 10;
 
             if (scale == Integer.MIN_VALUE) {
-                throw new ArithmeticException("Scale underflow - can't set scale to less than: " + Integer.MIN_VALUE);
+                throw new ArithmeticException(format("Scale underflow - can't set scale to less than '%d'", Integer.MIN_VALUE));
             }
             scale--;
         }
@@ -196,7 +195,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
             unscaledValue = divAndMod[0];
 
             if (scale == Integer.MIN_VALUE) {
-                throw new ArithmeticException("Scale underflow - can't set scale to less than: " + Integer.MIN_VALUE);
+                throw new ArithmeticException(format("Scale underflow - can't set scale to less than '%d'", Integer.MIN_VALUE));
             }
             scale--;
         }
@@ -279,7 +278,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                 if (foundDecimalPoint) {
                     // this currently can't happen and is untestable as we can't create char array with so many elements
                     if (scale == Integer.MAX_VALUE) {
-                        throw new ArithmeticException("Scale overflow - can't set scale to higher value than than: " + Integer.MAX_VALUE);
+                        throw new ArithmeticException(format("Scale overflow - can't set scale to more than '%d'", Integer.MAX_VALUE));
                     }
                     ++scale;
                 }
@@ -312,16 +311,16 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                         byte digitToAdd = (byte) (c - '0');
                         exponent = exponent * 10 + digitToAdd;
                         if (exponent > DOABLE_SCALE) {
-                            throw new ArithmeticException("Illegal value. Scale won't fit into Integer");
+                            throw new ArithmeticException("Illegal exponent value. Scale won't fit into Integer");
                         }
                     } else if (c == '-') {
                         if (foundExponentValue || exponentSignum != 0) {
-                            throw new NumberFormatException("Illegal value. Unexpected sign symbol '" + c + "'");
+                            throw new NumberFormatException("Illegal exponent value. Unexpected sign symbol '" + c + "'");
                         }
                         exponentSignum = -1;
                     } else if (c == '+') {
                         if (foundExponentValue || exponentSignum != 0) {
-                            throw new NumberFormatException("Illegal value. Unexpected sign symbol '" + c + "'");
+                            throw new NumberFormatException("Illegal exponent value. Unexpected sign symbol '" + c + "'");
                         }
                         exponentSignum = 1;
                     } else if (c == '_') {
@@ -334,7 +333,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                 exponent = (exponentSignum != -1) ? exponent : -exponent;
                 exponent = (long) scale - exponent;
                 if (!LongUtil.canFitIntoInt(exponent)) {
-                    throw new ArithmeticException("Illegal value. Scale '" + exponent + "' won't fit into Integer");
+                    throw new ArithmeticException("Illegal exponent '" + exponent + "' won't fit into Integer");
                 }
                 scale = (int) exponent;
             } else {
@@ -461,7 +460,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     public Decimal deprecisionTo(int precisionToUse, RoundingMode roundingMode) {
         if (precisionToUse <= 0) {
-            throw new IllegalArgumentException(format("Invalid precision '%d'. Should be greater than 0.", precisionToUse));
+            throw new IllegalArgumentException(format("Invalid precision '%d'. Must be greater than 0.", precisionToUse));
         }
 
         int precision = precision();
@@ -679,7 +678,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     public Decimal pow(int n) {
         if (n < 0) {
-            throw new ArithmeticException("Can't calculate power using negative exponent " + n);
+            throw new ArithmeticException(format("Can't calculate power using negative exponent '%d'", n));
         } else if (n == 0) {
             return ONE;
         } else if (n == 1) {
@@ -689,9 +688,9 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         long resultScale = (long) scale() * (long) n;
         if (!canFitIntoInt(resultScale)) {
             if (resultScale > Integer.MAX_VALUE) {
-                throw new ArithmeticException(format("Scale overflow - can't calculate power of %d as it would resolve into non-integer scale %d", n, resultScale));
+                throw new ArithmeticException(format("Scale overflow - can't calculate power of '%d' as it would resolve into non-integer scale '%d'", n, resultScale));
             } else {
-                throw new ArithmeticException(format("Scale underflow - can't calculate power of %d as it would resolve into non-integer scale %d", n, resultScale));
+                throw new ArithmeticException(format("Scale underflow - can't calculate power of '%d' as it would resolve into non-integer scale '%d'", n, resultScale));
             }
         }
 
@@ -994,9 +993,9 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     private static int roundingCorrection(int signum, Boolean isDigitToRoundOdd, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) {
         if (signum < -1 || signum > 1) {
-            throw new IllegalArgumentException(format("Invalid signum (%d). Should be between -1 and 1", signum));
+            throw new IllegalArgumentException(format("Invalid signum '%d'. Must be between -1 and 1", signum));
         } else if (roundingDigit < 0 || roundingDigit > 9) {
-            throw new IllegalArgumentException(format("Invalid rounding digit (%d). Should be between 0 and 9", roundingDigit));
+            throw new IllegalArgumentException(format("Invalid rounding digit '%d'. Must be between 0 and 9", roundingDigit));
         }
 
         int roundingCorrection = 0;
@@ -1112,7 +1111,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     private static Decimal multiply(long valueA, long valueB, long scale) {
         if (!canFitIntoInt(scale)) {
-            throw new ArithmeticException("Illegal result. Scale '" + scale + "' won't fit into Integer");
+            if (scale < 0) {
+                throw new ArithmeticException(format("Scale underflow - multiplication resolves into non-integer scale '%d'", scale));
+            } else {
+                throw new ArithmeticException(format("Scale overflow - multiplication resolves into non-integer scale '%d'", scale));
+            }
         }
 
         long result = valueA * valueB;
@@ -1124,7 +1127,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     private static Decimal multiply(BigInteger valueA, BigInteger valueB, long scale) {
         if (!canFitIntoInt(scale)) {
-            throw new ArithmeticException("Illegal result. Scale '" + scale + "' won't fit into Integer");
+            if (scale < 0) {
+                throw new ArithmeticException(format("Scale underflow - multiplication resolves into non-integer scale '%d'", scale));
+            } else {
+                throw new ArithmeticException(format("Scale overflow - multiplication resolves into non-integer scale '%d'", scale));
+            }
         }
 
         BigInteger result = valueA.multiply(valueB);

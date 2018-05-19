@@ -179,7 +179,7 @@ public class DecimalAdditionAndSubtractionTest {
                 // Then
                 fail("expecting ArithmeticException as scale can't be less than Long.MIN_VALUE");
             } catch (ArithmeticException expected) {
-                assertThat(expected.getMessage(), equalTo("Scale underflow - can't set scale to less than: -2147483648"));
+                assertThat(expected.getMessage(), equalTo("Scale underflow - can't set scale to less than '-2147483648'"));
             }
         }
     }
@@ -238,7 +238,7 @@ public class DecimalAdditionAndSubtractionTest {
                 // Then
                 fail("expecting ArithmeticException as scale can't be less than Long.MIN_VALUE");
             } catch (ArithmeticException expected) {
-                assertThat(expected.getMessage(), equalTo("Scale underflow - can't set scale to less than: -2147483648"));
+                assertThat(expected.getMessage(), equalTo("Scale underflow - can't set scale to less than '-2147483648'"));
             }
         }
     }

@@ -164,14 +164,14 @@ public class DecimalCreationFromStringTest {
                         Decimal.decimal(numberPart + exponentSign + (bottomLimitExponent - 1L));
                         fail("expecting NumberFormatException as scale can't fit into int");
                     } catch (ArithmeticException expected) {
-                        assertThat(expected.getMessage(), equalTo("Illegal value. Scale '" + ((long) Integer.MAX_VALUE + 1L) + "' won't fit into Integer"));
+                        assertThat(expected.getMessage(), equalTo("Illegal exponent '" + ((long) Integer.MAX_VALUE + 1L) + "' won't fit into Integer"));
                     }
 
                     try {
                         Decimal.decimal(numberPart + exponentSign + (topLimitExponent + 1L));
                         fail("expecting NumberFormatException as scale can't fit into int");
                     } catch (ArithmeticException expected) {
-                        assertThat(expected.getMessage(), equalTo("Illegal value. Scale '" + ((long) Integer.MIN_VALUE - 1L) + "' won't fit into Integer"));
+                        assertThat(expected.getMessage(), equalTo("Illegal exponent '" + ((long) Integer.MIN_VALUE - 1L) + "' won't fit into Integer"));
                     }
 
 
@@ -179,14 +179,14 @@ public class DecimalCreationFromStringTest {
                         Decimal.decimal(numberPart + exponentSign + Long.MIN_VALUE);
                         fail("expecting NumberFormatException as scale can't fit into int");
                     } catch (ArithmeticException expected) {
-                        assertThat(expected.getMessage(), equalTo("Illegal value. Scale won't fit into Integer"));
+                        assertThat(expected.getMessage(), equalTo("Illegal exponent value. Scale won't fit into Integer"));
                     }
 
                     try {
                         Decimal.decimal(numberPart + exponentSign + Long.MAX_VALUE);
                         fail("expecting NumberFormatException as scale can't fit into int");
                     } catch (ArithmeticException expected) {
-                        assertThat(expected.getMessage(), equalTo("Illegal value. Scale won't fit into Integer"));
+                        assertThat(expected.getMessage(), equalTo("Illegal exponent value. Scale won't fit into Integer"));
                     }
                 }
             }

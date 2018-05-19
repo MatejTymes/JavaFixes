@@ -3,6 +3,7 @@ package javafixes.math;
 import java.math.BigInteger;
 
 import static java.lang.Math.min;
+import static java.lang.String.format;
 
 class PowerUtil {
 
@@ -20,7 +21,7 @@ class PowerUtil {
             while (newN > 0 && newValue != 0) {
                 int scale = (int) min(maxLongPowerOf10(), newN);
                 if (!canUpscaleLongByPowerOf10(newValue, scale)) {
-                    throw new ArithmeticException("can't upscale long " + value + " by " + n + ". power of 10");
+                    throw new ArithmeticException(format("Can't upscale long '%d' by '%d' power of 10", value, n));
                 }
                 newValue *= powerOf10Long(scale);
                 newN -= scale;
@@ -144,7 +145,7 @@ class PowerUtil {
 
     static BigInteger powerOf10Big(int n) {
         if (n < 0) {
-            throw new IllegalArgumentException("n (" + n + ") must be greater or equal to 0");
+            throw new IllegalArgumentException(format("n '%d' must be greater or equal to 0", n));
         }
 
         if (n < powersOf10B.length) {
