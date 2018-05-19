@@ -11,18 +11,18 @@ public class Precision {
     public final int value;
 
     // private constructor so it is non-extendible
-    private Precision(int value) {
+    private Precision(int value) throws IllegalArgumentException {
         if (value <= 0) {
             throw new IllegalArgumentException(format("Invalid precision '%d'. Must be greater than 0.", value));
         }
         this.value = value;
     }
 
-    public static Precision of(int value) {
+    public static Precision of(int value) throws IllegalArgumentException {
         return new Precision(value);
     }
 
-    public static Precision precision(int value) {
+    public static Precision precision(int value) throws IllegalArgumentException {
         return new Precision(value);
     }
 

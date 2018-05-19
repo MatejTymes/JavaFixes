@@ -14,7 +14,7 @@ class PowerUtil {
         return minUpscaleLimitForPowOf10[(int) n] <= value && value <= maxUpscaleLimitForPowOf10[(int) n];
     }
 
-    static long upscaleByPowerOf10(long value, long n) {
+    static long upscaleByPowerOf10(long value, long n) throws ArithmeticException {
         long newValue = value;
         if (value != 0) {
             long newN = n;

@@ -14,7 +14,6 @@ import static javafixes.math.LongUtil.canFitIntoInt;
 import static javafixes.math.OverflowUtil.*;
 import static javafixes.math.PowerUtil.*;
 
-// todo: add ArithmeticException annotation to all methods that could resolve into it
 // todo: add javadoc, formatter and make Serializable
 public abstract class Decimal extends Number implements Comparable<Decimal> {
 
@@ -69,7 +68,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
 
         @Override
-        public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) {
+        public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) throws IllegalArgumentException {
             if (scaleToUse >= scale) {
                 return this;
             }
@@ -136,7 +135,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
 
         @Override
-        public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) {
+        public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) throws IllegalArgumentException {
             if (scaleToUse >= scale) {
                 return this;
             }
@@ -212,19 +211,19 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return decimal(unscaledValue, scale);
     }
 
-    public static Decimal decimal(int value) {
+    public static Decimal decimal(int value) throws ArithmeticException {
         return decimal(value, 0);
     }
 
-    public static Decimal d(int value) {
+    public static Decimal d(int value) throws ArithmeticException {
         return decimal(value, 0);
     }
 
-    public static Decimal decimal(long value) {
+    public static Decimal decimal(long value) throws ArithmeticException {
         return decimal(value, 0);
     }
 
-    public static Decimal d(long value) {
+    public static Decimal d(long value) throws ArithmeticException {
         return decimal(value, 0);
     }
 
@@ -350,7 +349,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                 : decimal(signum == -1 ? unscaledValueB.negate() : unscaledValueB, scale);
     }
 
-    public static Decimal d(String stringValue) {
+    public static Decimal d(String stringValue) throws ArithmeticException, NumberFormatException {
         return decimal(stringValue);
     }
 
@@ -444,21 +443,21 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return Double.parseDouble(toScientificNotation());
     }
 
-    abstract public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode);
+    abstract public Decimal descaleTo(int scaleToUse, RoundingMode roundingMode) throws IllegalArgumentException;
 
-    public Decimal descaleTo(Scale scaleToUse, RoundingMode roundingMode) {
+    public Decimal descaleTo(Scale scaleToUse, RoundingMode roundingMode) throws IllegalArgumentException {
         return descaleTo(scaleToUse.value, roundingMode);
     }
 
-    public Decimal descaleTo(int scaleToUse) {
+    public Decimal descaleTo(int scaleToUse) throws IllegalArgumentException {
         return descaleTo(scaleToUse, DEFAULT_ROUNDING);
     }
 
-    public Decimal descaleTo(Scale scaleToUse) {
+    public Decimal descaleTo(Scale scaleToUse) throws IllegalArgumentException {
         return descaleTo(scaleToUse.value, DEFAULT_ROUNDING);
     }
 
-    public Decimal deprecisionTo(int precisionToUse, RoundingMode roundingMode) {
+    public Decimal deprecisionTo(int precisionToUse, RoundingMode roundingMode) throws ArithmeticException, IllegalArgumentException {
         if (precisionToUse <= 0) {
             throw new IllegalArgumentException(format("Invalid precision '%d'. Must be greater than 0.", precisionToUse));
         }
@@ -476,15 +475,15 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return descaleTo((int) scaleToUse, roundingMode);
     }
 
-    public Decimal deprecisionTo(Precision precisionToUse, RoundingMode roundingMode) {
+    public Decimal deprecisionTo(Precision precisionToUse, RoundingMode roundingMode) throws ArithmeticException, IllegalArgumentException {
         return deprecisionTo(precisionToUse.value, roundingMode);
     }
 
-    public Decimal deprecisionTo(int precisionToUse) {
+    public Decimal deprecisionTo(int precisionToUse) throws ArithmeticException, IllegalArgumentException {
         return deprecisionTo(precisionToUse, DEFAULT_ROUNDING);
     }
 
-    public Decimal deprecisionTo(Precision precisionToUse) {
+    public Decimal deprecisionTo(Precision precisionToUse) throws ArithmeticException, IllegalArgumentException {
         return deprecisionTo(precisionToUse.value, DEFAULT_ROUNDING);
     }
 
@@ -548,7 +547,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
     }
 
-    public Decimal times(Decimal value) {
+    public Decimal times(Decimal value) throws ArithmeticException {
         if (this.isZero() || value.isZero()) {
             return ZERO;
         } else if (this instanceof LongDecimal && value instanceof LongDecimal) {
@@ -566,7 +565,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         }
     }
 
-    public Decimal div(Decimal value, Precision precisionToUse, RoundingMode roundingMode) {
+    public Decimal div(Decimal value, Precision precisionToUse, RoundingMode roundingMode) throws ArithmeticException, IllegalArgumentException {
         if (value.isZero()) {
             throw new ArithmeticException("Division by zero not allowed");
         } else if (this.isZero()) {
@@ -618,7 +617,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return decimal(result, scale);
     }
 
-    public Decimal div(Decimal value, Scale scaleToUse, RoundingMode roundingMode) {
+    public Decimal div(Decimal value, Scale scaleToUse, RoundingMode roundingMode) throws ArithmeticException, IllegalArgumentException {
         if (value.isZero()) {
             throw new ArithmeticException("Division by zero not allowed");
         } else if (this.isZero()) {
@@ -664,19 +663,19 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return decimal(result, scale);
     }
 
-    public Decimal div(Decimal value, Precision precisionToUse) {
+    public Decimal div(Decimal value, Precision precisionToUse) throws ArithmeticException, IllegalArgumentException {
         return div(value, precisionToUse, DEFAULT_ROUNDING);
     }
 
-    public Decimal div(Decimal value, Scale scaleToUse) {
+    public Decimal div(Decimal value, Scale scaleToUse) throws ArithmeticException, IllegalArgumentException {
         return div(value, scaleToUse, DEFAULT_ROUNDING);
     }
 
-    public Decimal div(Decimal value) {
+    public Decimal div(Decimal value) throws ArithmeticException, IllegalArgumentException {
         return div(value, DEFAULT_PRECISION, DEFAULT_ROUNDING);
     }
 
-    public Decimal pow(int n) {
+    public Decimal pow(int n) throws ArithmeticException {
         if (n < 0) {
             throw new ArithmeticException(format("Can't calculate power using negative exponent '%d'", n));
         } else if (n == 0) {
@@ -804,7 +803,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     /* ---   groovy operators   --- */
     /* ============================ */
 
-    Decimal multiply(Decimal value) {
+    Decimal multiply(Decimal value) throws ArithmeticException {
         return times(value);
     }
 
@@ -899,7 +898,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                 : value;
     }
 
-    private static long descaleValue(long unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
+    private static long descaleValue(long unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) throws IllegalArgumentException {
         long scaleDiff = (long) scale - scaleToUse;
 
         long valueWithRoundingDigit = downscaleByPowerOf10(unscaledValue, scaleDiff - 1);
@@ -923,7 +922,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return rescaledValue;
     }
 
-    private static BigInteger descaleValue(BigInteger unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) {
+    private static BigInteger descaleValue(BigInteger unscaledValue, int scale, int scaleToUse, RoundingMode roundingMode) throws IllegalArgumentException {
         long scaleDiff = (long) scale - (long) scaleToUse;
 
         boolean hasAdditionalRemainder = false;
@@ -975,7 +974,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return zeros;
     }
 
-    private static int roundingCorrection(int signum, long valueToRound, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) {
+    private static int roundingCorrection(int signum, long valueToRound, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) throws IllegalArgumentException {
         Boolean isDigitToRoundOdd = null;
         if (roundingMode == HALF_EVEN) {
             isDigitToRoundOdd = ((int) valueToRound & 1) == 1;
@@ -983,7 +982,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return roundingCorrection(signum, isDigitToRoundOdd, Math.abs(roundingDigit), hasAdditionalRemainder, roundingMode);
     }
 
-    private static int roundingCorrection(int signum, BigInteger valueToRound, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) {
+    private static int roundingCorrection(int signum, BigInteger valueToRound, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) throws IllegalArgumentException {
         Boolean isDigitToRoundOdd = null;
         if (roundingMode == HALF_EVEN) {
             isDigitToRoundOdd = (valueToRound.intValue() & 1) == 1;
@@ -991,11 +990,11 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return roundingCorrection(signum, isDigitToRoundOdd, Math.abs(roundingDigit), hasAdditionalRemainder, roundingMode);
     }
 
-    private static int roundingCorrection(int signum, Boolean isDigitToRoundOdd, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) {
+    private static int roundingCorrection(int signum, Boolean isDigitToRoundOdd, int roundingDigit, boolean hasAdditionalRemainder, RoundingMode roundingMode) throws IllegalArgumentException {
         if (signum < -1 || signum > 1) {
-            throw new IllegalArgumentException(format("Invalid signum '%d'. Must be between -1 and 1", signum));
+            throw new IllegalStateException(format("Invalid signum '%d'. Must be between -1 and 1", signum));
         } else if (roundingDigit < 0 || roundingDigit > 9) {
-            throw new IllegalArgumentException(format("Invalid rounding digit '%d'. Must be between 0 and 9", roundingDigit));
+            throw new IllegalStateException(format("Invalid rounding digit '%d'. Must be between 0 and 9", roundingDigit));
         }
 
         int roundingCorrection = 0;
@@ -1109,7 +1108,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return decimal(valueA.add(valueB), scale);
     }
 
-    private static Decimal multiply(long valueA, long valueB, long scale) {
+    private static Decimal multiply(long valueA, long valueB, long scale) throws ArithmeticException {
         if (!canFitIntoInt(scale)) {
             if (scale < 0) {
                 throw new ArithmeticException(format("Scale underflow - multiplication resolves into non-integer scale '%d'", scale));
@@ -1125,7 +1124,7 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
         return decimal(result, (int) scale);
     }
 
-    private static Decimal multiply(BigInteger valueA, BigInteger valueB, long scale) {
+    private static Decimal multiply(BigInteger valueA, BigInteger valueB, long scale) throws ArithmeticException {
         if (!canFitIntoInt(scale)) {
             if (scale < 0) {
                 throw new ArithmeticException(format("Scale underflow - multiplication resolves into non-integer scale '%d'", scale));
