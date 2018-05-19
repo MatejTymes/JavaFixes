@@ -14,7 +14,8 @@ import static javafixes.math.LongUtil.canFitIntoInt;
 import static javafixes.math.OverflowUtil.*;
 import static javafixes.math.PowerUtil.*;
 
-// todo: add javadoc, formatter and make Serializable
+// todo: add javadoc, formatter
+// todo: maybe add custom serialization
 public abstract class Decimal extends Number implements Comparable<Decimal> {
 
     private static final Precision DEFAULT_PRECISION = Precision._34_SIGNIFICANT_DIGITS;
