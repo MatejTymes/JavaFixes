@@ -24,5 +24,29 @@ public class Json5ToJsonReaderTest {
         assertThat(convertedJson, equalTo(originalJson));
     }
 
+    // todo: add commentary inside of string
+    @Test
+    public void shouldFilterMultiLineComment() throws IOException {
+        StringReader jsonReader = new StringReader(
+                "{ \"hello\"/*\n: // \"not\" \n */: \"world\" }"
+        );
 
+        Reader json5ToJsonReader = new Json5ToJsonReader(jsonReader);
+
+        String convertedJson = CharStreams.toString(json5ToJsonReader);
+        assertThat(convertedJson, equalTo("{ \"hello\": \"world\" }"));
+    }
+
+    // todo: add commentary inside of string
+    @Test
+    public void shouldFilterSingleLineComment() throws IOException {
+        StringReader jsonReader = new StringReader(
+                "{ \"hello\"//: /* \"not\" \n: \"world\" }"
+        );
+
+        Reader json5ToJsonReader = new Json5ToJsonReader(jsonReader);
+
+        String convertedJson = CharStreams.toString(json5ToJsonReader);
+        assertThat(convertedJson, equalTo("{ \"hello\"\n: \"world\" }"));
+    }
 }

@@ -3,6 +3,7 @@ package javafixes.json5;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
+import java.util.Stack;
 
 import static javafixes.common.CollectionUtil.newList;
 
@@ -40,11 +41,16 @@ public class Json5ToJsonReader extends Reader {
         json5Reader.close();
     }
 
-    private void ensureCharsInBuffer(int n) throws IOException {
-        while (!finished && buffer.size() < n) {
-            parseNextChars();
-        }
+    private enum In {
+        multiLineComment,
+        singleLineComment,
+        array,
+        object,
+        key,
+        value
     }
+
+    private Stack<In> inStack = new Stack<>();
 
     private void parseNextChars() throws IOException {
         int nextChar = json5Reader.read();
@@ -53,11 +59,78 @@ public class Json5ToJsonReader extends Reader {
             return;
         }
 
-        char c = (char) nextChar;
-        write(c);
+        In currentlyIn = inStack.isEmpty() ? null : inStack.peek();
+
+        char currChar = (char) nextChar;
+
+        if (currentlyIn == In.singleLineComment) {
+            boolean finishedComment = false;
+            while (!finishedComment) {
+                if (currChar == '\n') {
+                    finishedComment = true;
+                    inStack.pop();
+                    write(currChar);
+                } else {
+                    nextChar = json5Reader.read();
+                    if (nextChar == -1) {
+                        markEndOfStream();
+                        return;
+                    }
+                    currChar = (char) nextChar;
+                }
+            }
+        } else if (currentlyIn == In.multiLineComment) {
+            boolean finishedComment = false;
+            while (!finishedComment) {
+                if (currChar == '*') {
+                    nextChar = json5Reader.read();
+                    if (nextChar == -1) {
+                        markEndOfStream();
+                        return;
+                    }
+                    currChar = (char) nextChar;
+                    if (currChar == '/') {
+                        finishedComment = true;
+                        inStack.pop();
+                    }
+                } else {
+                    nextChar = json5Reader.read();
+                    if (nextChar == -1) {
+                        markEndOfStream();
+                        return;
+                    }
+                    currChar = (char) nextChar;
+                }
+            }
+        } else if (currChar == '/') {
+            nextChar = json5Reader.read();
+            if (nextChar == -1) {
+                markEndOfStream();
+                return;
+            }
+            char prevChar = currChar;
+            currChar = (char) nextChar;
+            if (currChar == '/') {
+                inStack.push(In.singleLineComment);
+            } else if (currChar == '*') {
+                inStack.push(In.multiLineComment);
+            } else {
+                throw new IOException("Unexpected String occurred: '" + prevChar + currChar + "'");
+            }
+        } else {
+            write(currChar);
+        }
+    }
+
+
+    private void ensureCharsInBuffer(int n) throws IOException {
+        while (!finished && buffer.size() < n) {
+            parseNextChars();
+        }
     }
 
     private void markEndOfStream() {
+        // todo: blow up if the inStack is not empty - with the exception of singleLineComment
         finished = true;
     }
 
