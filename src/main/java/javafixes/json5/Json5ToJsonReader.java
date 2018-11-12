@@ -42,12 +42,12 @@ public class Json5ToJsonReader extends Reader {
     }
 
     private enum In {
-        multiLineComment,
-        singleLineComment,
         array,
+//        afterArrayValue,
         object,
-        key,
-        value
+//        afterKey,
+//        afterKeyValueSeparator,
+//        afterObjectValue
     }
 
     private Stack<In> inStack = new Stack<>();
@@ -59,66 +59,91 @@ public class Json5ToJsonReader extends Reader {
             return;
         }
 
-        In currentlyIn = inStack.isEmpty() ? null : inStack.peek();
-
         char currChar = (char) nextChar;
 
-        if (currentlyIn == In.singleLineComment) {
-            boolean finishedComment = false;
-            while (!finishedComment) {
-                if (currChar == '\n') {
-                    finishedComment = true;
-                    inStack.pop();
-                    write(currChar);
-                } else {
-                    nextChar = json5Reader.read();
-                    if (nextChar == -1) {
-                        markEndOfStream();
-                        return;
-                    }
-                    currChar = (char) nextChar;
-                }
-            }
-        } else if (currentlyIn == In.multiLineComment) {
-            boolean finishedComment = false;
-            while (!finishedComment) {
-                if (currChar == '*') {
-                    nextChar = json5Reader.read();
-                    if (nextChar == -1) {
-                        markEndOfStream();
-                        return;
-                    }
-                    currChar = (char) nextChar;
-                    if (currChar == '/') {
-                        finishedComment = true;
-                        inStack.pop();
-                    }
-                } else {
-                    nextChar = json5Reader.read();
-                    if (nextChar == -1) {
-                        markEndOfStream();
-                        return;
-                    }
-                    currChar = (char) nextChar;
-                }
-            }
-        } else if (currChar == '/') {
-            nextChar = json5Reader.read();
-            if (nextChar == -1) {
-                markEndOfStream();
-                return;
-            }
-            char prevChar = currChar;
-            currChar = (char) nextChar;
-            if (currChar == '/') {
-                inStack.push(In.singleLineComment);
-            } else if (currChar == '*') {
-                inStack.push(In.multiLineComment);
-            } else {
-                throw new IOException("Unexpected String occurred: '" + prevChar + currChar + "'");
-            }
+        if (currChar == '/') {
+            handlePossibleComment(currChar);
+//        } else if (currChar == '{') {
+//            // todo: validate symbol can occur here
+//            inStack.push(In.object);
+//            write(currChar);
+//        } else if (currChar == '[') {
+//            // todo: validate symbol can occur here
+//            inStack.push(In.array);
+//            write(currChar);
         } else {
             write(currChar);
+        }
+    }
+
+    private void handlePossibleComment(char currChar) throws IOException {
+        int nextChar;
+        nextChar = json5Reader.read();
+        if (nextChar == -1) {
+            throw new IOException("Unexpected String occurred: '" + currChar + "'");
+        }
+        char prevChar = currChar;
+        currChar = (char) nextChar;
+        if (currChar == '/') {
+            handleSingleLineComment();
+        } else if (currChar == '*') {
+            handleMultiLineComment();
+        } else {
+            throw new IOException("Unexpected String occurred: '" + prevChar + currChar + "'");
+        }
+    }
+
+    private void handleSingleLineComment() throws IOException {
+        int nextChar = json5Reader.read();
+        if (nextChar == -1) {
+            markEndOfStream();
+            return;
+        }
+        char currChar = (char) nextChar;
+
+        boolean finishedComment = false;
+        while (!finishedComment) {
+            if (currChar == '\n') {
+                finishedComment = true;
+                write(currChar);
+            } else {
+                nextChar = json5Reader.read();
+                if (nextChar == -1) {
+                    markEndOfStream();
+                    return;
+                }
+                currChar = (char) nextChar;
+            }
+        }
+    }
+
+    private void handleMultiLineComment() throws IOException {
+        int nextChar = json5Reader.read();
+        if (nextChar == -1) {
+            markEndOfStream();
+            return;
+        }
+        char currChar = (char) nextChar;
+
+        boolean finishedComment = false;
+        while (!finishedComment) {
+            if (currChar == '*') {
+                nextChar = json5Reader.read();
+                if (nextChar == -1) {
+                    markEndOfStream();
+                    return;
+                }
+                currChar = (char) nextChar;
+                if (currChar == '/') {
+                    finishedComment = true;
+                }
+            } else {
+                nextChar = json5Reader.read();
+                if (nextChar == -1) {
+                    throw new IOException("Multiline comment never closed");
+                }
+                currChar = (char) nextChar;
+            }
         }
     }
 

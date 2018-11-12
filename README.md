@@ -3,7 +3,7 @@
 Adding some features which would be normally nice to have in Java
 
 You can get it via Gradle:
-`compile 'com.github.matejtymes:javafixes:1.2.0'`
+`compile 'com.github.matejtymes:javafixes:1.2.0``'`
 or Maven
 ```Xml
 <dependency>
