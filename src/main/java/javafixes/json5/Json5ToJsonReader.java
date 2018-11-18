@@ -41,42 +41,76 @@ public class Json5ToJsonReader extends Reader {
         json5Reader.close();
     }
 
-    private enum In {
-        array,
-        //        afterArrayValue,
-        object,
-//        afterKey,
-//        afterKeyValueSeparator,
-//        afterObjectValue
+    private enum Token {
+        objectStart,
+
+        keyInObject,
+        semicolon,
+        valueInObject,
+        commaInObject,
+
+        arrayStart,
+
+        valueInArray,
+        commaInArray,
     }
 
-    private Stack<In> inStack = new Stack<>();
+    private Stack<Token> tokenStack = new Stack<>();
 
-    private void parseNextChars() throws IOException {
-        int nextChar = json5Reader.read();
-        if (nextChar == -1) {
-            markEndOfStream();
-            return;
-        }
+    private void parseNextToken() throws IOException {
+        // todo: implement
+        boolean repeat;
 
-        char currChar = (char) nextChar;
+        do {
+            repeat = false;
 
-        if (currChar == '/') {
-            handlePossibleComment();
-        } else if (isJSON5WhiteSpace(currChar)) {
-            // do nothing
+            int nextChar = json5Reader.read();
+            if (nextChar == -1) {
+                markEndOfStream();
+                return;
+            }
 
-//        } else if (currChar == '{') {
-//            // todo: validate symbol can occur here
-//            inStack.push(In.object);
-//            write(currChar);
-//        } else if (currChar == '[') {
-//            // todo: validate symbol can occur here
-//            inStack.push(In.array);
-//            write(currChar);
-        } else {
-            write(currChar);
-        }
+            char currChar = (char) nextChar;
+
+            Token lastToken = tokenStack.isEmpty() ? tokenStack.peek() : null;
+
+            if (currChar == '/') {
+                handleCommentary();
+                repeat = true;
+            } else if (isJSON5WhiteSpace(currChar)) {
+                repeat = true;
+            } else if (currChar == '{' || currChar == '[') {
+                if (lastToken == null || lastToken == Token.semicolon || lastToken == Token.commaInArray) {
+                    tokenStack.push(currChar == '{' ? Token.objectStart : Token.arrayStart);
+                    write(currChar);
+                } else {
+                    throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
+                }
+            } else if (currChar == '}') {
+                if (lastToken == Token.objectStart) {
+                    tokenStack.pop();
+                    write(currChar);
+                } else if (lastToken == Token.valueInObject || lastToken == Token.commaInObject) {
+                    tokenStack.pop();
+                    tokenStack.pop(); // pop objectStart
+                    write(currChar);
+                } else {
+                    throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
+                }
+            } else if (currChar == ']') {
+                if (lastToken == Token.arrayStart) {
+                    tokenStack.pop();
+                } else if (lastToken == Token.valueInArray || lastToken == Token.commaInArray) {
+                    tokenStack.pop();
+                    tokenStack.pop(); // pop arrayStart
+                    write(currChar);
+                } else {
+                    throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
+                }
+            } else {
+                write(currChar);
+            }
+        } while (repeat);
     }
 
     private boolean isJSON5WhiteSpace(char c) {
@@ -91,7 +125,7 @@ public class Json5ToJsonReader extends Reader {
                 c == 0x205F || c == 0x3000;
     }
 
-    private void handlePossibleComment() throws IOException {
+    private void handleCommentary() throws IOException {
         int nextChar;
         nextChar = json5Reader.read();
         if (nextChar == -1) {
@@ -163,12 +197,12 @@ public class Json5ToJsonReader extends Reader {
 
     private void ensureCharsInBuffer(int n) throws IOException {
         while (!finished && buffer.size() < n) {
-            parseNextChars();
+            parseNextToken();
         }
     }
 
     private void markEndOfStream() {
-        // todo: blow up if the inStack is not empty - with the exception of singleLineComment
+        // todo: blow up if the tokenStack is not empty - with the exception of singleLineComment
         finished = true;
     }
 
