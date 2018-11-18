@@ -15,13 +15,12 @@ public class Json5ToJsonReaderTest {
     @Test
     public void shouldReturnJsonUnchanged() throws IOException {
         // todo: add every single json feature in here
-        String originalJson = "{ \"hello\": \"world\" }";
-        StringReader jsonReader = new StringReader(originalJson);
+        StringReader jsonReader = new StringReader("{ \"hello\": \"world\" }");
 
         Reader json5ToJsonReader = new Json5ToJsonReader(jsonReader);
 
         String convertedJson = CharStreams.toString(json5ToJsonReader);
-        assertThat(convertedJson, equalTo(originalJson));
+        assertThat(convertedJson, equalTo("{\"hello\":\"world\"}"));
     }
 
     // todo: add commentary inside of string
@@ -34,7 +33,7 @@ public class Json5ToJsonReaderTest {
         Reader json5ToJsonReader = new Json5ToJsonReader(jsonReader);
 
         String convertedJson = CharStreams.toString(json5ToJsonReader);
-        assertThat(convertedJson, equalTo("{ \"hello\": \"world\" }"));
+        assertThat(convertedJson, equalTo("{\"hello\":\"world\"}"));
     }
 
     // todo: add commentary inside of string
@@ -47,6 +46,6 @@ public class Json5ToJsonReaderTest {
         Reader json5ToJsonReader = new Json5ToJsonReader(jsonReader);
 
         String convertedJson = CharStreams.toString(json5ToJsonReader);
-        assertThat(convertedJson, equalTo("{ \"hello\"\n: \"world\" }"));
+        assertThat(convertedJson, equalTo("{\"hello\":\"world\"}"));
     }
 }

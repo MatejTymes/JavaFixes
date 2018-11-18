@@ -43,7 +43,7 @@ public class Json5ToJsonReader extends Reader {
 
     private enum In {
         array,
-//        afterArrayValue,
+        //        afterArrayValue,
         object,
 //        afterKey,
 //        afterKeyValueSeparator,
@@ -62,7 +62,10 @@ public class Json5ToJsonReader extends Reader {
         char currChar = (char) nextChar;
 
         if (currChar == '/') {
-            handlePossibleComment(currChar);
+            handlePossibleComment();
+        } else if (isJSON5WhiteSpace(currChar)) {
+            // do nothing
+
 //        } else if (currChar == '{') {
 //            // todo: validate symbol can occur here
 //            inStack.push(In.object);
@@ -76,20 +79,31 @@ public class Json5ToJsonReader extends Reader {
         }
     }
 
-    private void handlePossibleComment(char currChar) throws IOException {
+    private boolean isJSON5WhiteSpace(char c) {
+        return c == 0x0009 || c == 0x000A || c == 0x000B || c == 0x000C || c == 0x000D ||
+                c == 0x2028 || c == 0x2029 || c == 0xFEFF || isUnicodeSpaceSeparator(c);
+    }
+
+    private boolean isUnicodeSpaceSeparator(char c) {
+        return c == 0x0020 || c == 0x00A0 || c == 0x1680 || c == 0x2000 || c == 0x2001 ||
+                c == 0x2002 || c == 0x2003 || c == 0x2004 || c == 0x2005 || c == 0x2006 ||
+                c == 0x2007 || c == 0x2008 || c == 0x2009 || c == 0x200A || c == 0x202F ||
+                c == 0x205F || c == 0x3000;
+    }
+
+    private void handlePossibleComment() throws IOException {
         int nextChar;
         nextChar = json5Reader.read();
         if (nextChar == -1) {
-            throw new IOException("Unexpected String occurred: '" + currChar + "'");
+            throw new IOException("Unexpected String occurred: '/'");
         }
-        char prevChar = currChar;
-        currChar = (char) nextChar;
+        char currChar = (char) nextChar;
         if (currChar == '/') {
             handleSingleLineComment();
         } else if (currChar == '*') {
             handleMultiLineComment();
         } else {
-            throw new IOException("Unexpected String occurred: '" + prevChar + currChar + "'");
+            throw new IOException("Unexpected String occurred: '/" + currChar + "'");
         }
     }
 
@@ -105,7 +119,6 @@ public class Json5ToJsonReader extends Reader {
         while (!finishedComment) {
             if (currChar == '\n') {
                 finishedComment = true;
-                write(currChar);
             } else {
                 nextChar = json5Reader.read();
                 if (nextChar == -1) {
@@ -140,7 +153,7 @@ public class Json5ToJsonReader extends Reader {
             } else {
                 nextChar = json5Reader.read();
                 if (nextChar == -1) {
-                    throw new IOException("Multiline comment never closed");
+                    throw new IOException("Multiline comment never finished");
                 }
                 currChar = (char) nextChar;
             }
