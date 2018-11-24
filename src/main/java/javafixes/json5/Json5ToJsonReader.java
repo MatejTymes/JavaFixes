@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Stack;
 
 import static javafixes.common.CollectionUtil.newList;
+import static javafixes.json5.Token.*;
 
 // todo: test
 public class Json5ToJsonReader extends Reader {
@@ -41,20 +42,6 @@ public class Json5ToJsonReader extends Reader {
         json5Reader.close();
     }
 
-    private enum Token {
-        objectStart,
-
-        keyInObject,
-        semicolon,
-        valueInObject,
-        commaInObject,
-
-        arrayStart,
-
-        valueInArray,
-        commaInArray,
-    }
-
     private Stack<Token> tokenStack = new Stack<>();
 
     private void parseNextToken() throws IOException {
@@ -74,41 +61,82 @@ public class Json5ToJsonReader extends Reader {
 
             Token lastToken = tokenStack.isEmpty() ? tokenStack.peek() : null;
 
-            if (currChar == '/') {
+            if (currChar == '/') { // commentary
                 handleCommentary();
                 repeat = true;
-            } else if (isJSON5WhiteSpace(currChar)) {
+            } else if (isJSON5WhiteSpace(currChar)) { // white space
                 repeat = true;
-            } else if (currChar == '{' || currChar == '[') {
-                if (lastToken == null || lastToken == Token.semicolon || lastToken == Token.commaInArray) {
-                    tokenStack.push(currChar == '{' ? Token.objectStart : Token.arrayStart);
+            } else if (currChar == '{' || currChar == '[') { // object / array start
+                if (lastToken == null || lastToken == semicolon || lastToken == commaInArray) {
+                    tokenStack.push(currChar == '{' ? objectStart : arrayStart);
                     write(currChar);
                 } else {
                     throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
                 }
-            } else if (currChar == '}') {
-                if (lastToken == Token.objectStart) {
+            } else if (currChar == '}') { // object end
+                if (lastToken == objectStart) {
                     tokenStack.pop();
                     write(currChar);
-                } else if (lastToken == Token.valueInObject || lastToken == Token.commaInObject) {
+                } else if (lastToken == valueInObject || lastToken == commaInObject) {
                     tokenStack.pop();
                     tokenStack.pop(); // pop objectStart
                     write(currChar);
                 } else {
                     throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
                 }
-            } else if (currChar == ']') {
-                if (lastToken == Token.arrayStart) {
+            } else if (currChar == ']') { // array end
+                if (lastToken == arrayStart) {
                     tokenStack.pop();
-                } else if (lastToken == Token.valueInArray || lastToken == Token.commaInArray) {
+                } else if (lastToken == valueInArray || lastToken == commaInArray) {
                     tokenStack.pop();
                     tokenStack.pop(); // pop arrayStart
                     write(currChar);
                 } else {
                     throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
                 }
+            } else if (currChar == ',') { // comma
+                if (lastToken == valueInObject) {
+                    tokenStack.pop();
+                    tokenStack.push(commaInObject);
+                } else if (lastToken == valueInArray) {
+                    tokenStack.pop();
+                    tokenStack.push(commaInArray);
+                } else {
+                    throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
+                }
+            } else if (currChar == ':') { // semicolon
+                if (lastToken == keyInObject) {
+                    tokenStack.pop();
+                    tokenStack.push(semicolon);
+                    write(currChar);
+                } else {
+                    throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
+                }
+            } else if (lastToken == arrayStart || lastToken == commaInArray) { // value in array
+                if (lastToken == commaInArray) {
+                    tokenStack.pop();
+                    write(',');
+                }
+                tokenStack.push(valueInArray);
+                // todo: parse value
+            } else if (lastToken == objectStart || lastToken == commaInObject) { // key in object
+                if (lastToken == commaInObject) {
+                    tokenStack.pop();
+                    write(',');
+                }
+                if (currChar == '"') {
+                    write('"');
+                    handleString(currChar);
+                    tokenStack.push(keyInObject);
+                } else {
+                    throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
+                }
+            } else if (lastToken == semicolon) {
+                tokenStack.pop();
+                tokenStack.push(valueInObject);
+                // todo: parse value
             } else {
-                write(currChar);
+                throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
             }
         } while (repeat);
     }
@@ -123,6 +151,38 @@ public class Json5ToJsonReader extends Reader {
                 c == 0x2002 || c == 0x2003 || c == 0x2004 || c == 0x2005 || c == 0x2006 ||
                 c == 0x2007 || c == 0x2008 || c == 0x2009 || c == 0x200A || c == 0x202F ||
                 c == 0x205F || c == 0x3000;
+    }
+
+    private void handleString(char currChar) throws IOException {
+        write('\"');
+
+        boolean isEscaped = false;
+        boolean finishedString = false;
+        do {
+            int nextChar;
+            nextChar = json5Reader.read();
+            if (nextChar == -1) {
+                markEndOfStream();
+                return;
+            }
+
+            currChar = (char) nextChar;
+            if (!isEscaped) {
+                if (currChar == '\"') {
+                    finishedString = true;
+                    write('\"');
+                } else if (currChar == '\\') {
+                    isEscaped = true;
+                    write(currChar);
+                } else {
+                    write(currChar);
+                }
+            } else {
+                write(currChar);
+                isEscaped = false;
+            }
+
+        } while (!finishedString);
     }
 
     private void handleCommentary() throws IOException {
@@ -201,8 +261,10 @@ public class Json5ToJsonReader extends Reader {
         }
     }
 
-    private void markEndOfStream() {
-        // todo: blow up if the tokenStack is not empty - with the exception of singleLineComment
+    private void markEndOfStream() throws IOException {
+        if (!tokenStack.isEmpty()) {
+            throw new IOException("Unexpected end of JSON5 while not all tokens are closed: " + tokenStack);
+        }
         finished = true;
     }
 
