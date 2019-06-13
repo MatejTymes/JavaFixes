@@ -1,4 +1,4 @@
-package javafixes.json5;
+package javafixes.experimental.json5;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Stack;
 
 import static javafixes.common.CollectionUtil.newList;
-import static javafixes.json5.Token.*;
+import static javafixes.experimental.json5.Token.*;
 
 // todo: test
 public class Json5ToJsonReader extends Reader {

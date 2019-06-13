@@ -1,4 +1,4 @@
-package javafixes.json5;
+package javafixes.experimental.json5;
 
 enum Token {
     objectStart,

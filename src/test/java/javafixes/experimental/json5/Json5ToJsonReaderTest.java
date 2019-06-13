@@ -1,4 +1,4 @@
-package javafixes.json5;
+package javafixes.experimental.json5;
 
 import com.google.common.io.CharStreams;
 import org.junit.Test;
