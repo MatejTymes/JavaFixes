@@ -64,6 +64,48 @@ Great if number of scheduled task is not known upfront but you want to wait till
 
 In case you would like to monitor task newly submitted to existing scheduled executor use `MonitoringTaskSubmitter` instead.
 
+### Synchronizer
+
+Adds ability to synchronize code on different objects for which the .equals() == true (e.g.: account number)
+
+```Java
+    Synchronizer<AccountId> synchronizer = new Synchronizer();
+    
+    ...
+
+    // first thread
+    synchronizer.synchronizeOn(accountId("accAAA"), () -> {
+        long balance = loadBalance("accAAA")
+        if (balance > 10_000) {
+            decrementBalance("accAAA", 10_000)
+        }
+    })
+    
+    ...
+    
+    // second thread
+    synchronizer.synchronizeOn(accountId("accAAA"), () -> {
+        long balance = loadBalance("accAAA")
+        if (balance > 2_000) {
+            decrementBalance("accAAA", 2_000)
+        }
+    })
+    
+    ...
+    
+    // third thread - won't be blocked by previous threads
+    synchronizer.synchronizeOn(accountId("accXYZ"), () -> {
+        long balance = loadBalance("accXYZ")
+        if (balance > 3_500) {
+            decrementBalance("accXYZ", 3_500)
+        }
+    })
+```
+
+As both first and second thread are for the same id (accAAA) the second thread will be blocked until the first one finishes (so only one operation will run on the account accAAA).
+
+On the other hand the third thread won't be blocked by either the first or the second thread and will run with them in parallel as it is executed for a different id (accXYZ).
+
 ## Objects
 
 ### DataObject
