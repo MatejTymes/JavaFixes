@@ -11,36 +11,39 @@ public class Synchronizer<K> {
     private final Map<K, AtomicInteger> locks = new ConcurrentHashMap<>();
 
     public <T> T synchronizeOn(K key, Callable<T> action) {
-        synchronized (acquireLock(key)) {
-            try {
+        AtomicInteger lock = acquireLock(key);
+        try {
+            synchronized (lock) {
                 return action.call();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            } finally {
-                releaseLock(key);
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            releaseLock(key);
         }
     }
 
     public void synchronizeOn(K key, Runnable action) {
-        synchronized (acquireLock(key)) {
-            try {
+        AtomicInteger lock = acquireLock(key);
+        try {
+            synchronized (lock) {
                 action.run();
-            } finally {
-                releaseLock(key);
             }
+        } finally {
+            releaseLock(key);
         }
     }
 
     public void synchronizeOn(K key, Task action) {
-        synchronized (acquireLock(key)) {
-            try {
+        AtomicInteger lock = acquireLock(key);
+        try {
+            synchronized (lock) {
                 action.run();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            } finally {
-                releaseLock(key);
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            releaseLock(key);
         }
     }
 
