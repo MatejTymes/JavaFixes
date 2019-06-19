@@ -5,7 +5,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-// todo: test this
 public class Synchronizer<K> {
 
     private final Map<K, AtomicInteger> locks = new ConcurrentHashMap<>();
@@ -23,16 +22,16 @@ public class Synchronizer<K> {
         }
     }
 
-    public void synchronizeOn(K key, Runnable action) {
-        AtomicInteger lock = acquireLock(key);
-        try {
-            synchronized (lock) {
-                action.run();
-            }
-        } finally {
-            releaseLock(key);
-        }
-    }
+//    public void synchronizeOn(K key, Runnable action) {
+//        AtomicInteger lock = acquireLock(key);
+//        try {
+//            synchronized (lock) {
+//                action.run();
+//            }
+//        } finally {
+//            releaseLock(key);
+//        }
+//    }
 
     public void synchronizeOn(K key, Task action) {
         AtomicInteger lock = acquireLock(key);
