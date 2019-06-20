@@ -37,7 +37,7 @@ public class RunnerTest extends BaseExecutorTest {
     @Test
     public void shouldNotDeadlockOnShutdownNow() {
         // fill the queue
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10_000; i++) {
             executor.run(this::doSomethingThatTakesTime);
         }
 
@@ -45,8 +45,9 @@ public class RunnerTest extends BaseExecutorTest {
         executor.shutdownNow();
 
         // Then
-        boolean done = executor.waitTillDone(300, TimeUnit.MILLISECONDS);
+        boolean done = executor.waitTillDone(3, TimeUnit.SECONDS);
         assertThat(done, is(true));
+
         assertThat(executor.toBeCompletedCount(), is(0));
         assertThat(executor.failedToStartCount(), greaterThan(0));
     }
