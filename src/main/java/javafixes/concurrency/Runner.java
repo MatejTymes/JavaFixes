@@ -5,6 +5,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -19,6 +20,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo {
 
     private final AtomicBoolean wasShutdownTriggered = new AtomicBoolean(false);
+    private final AtomicInteger failedToStart = new AtomicInteger(0);
 
     /**
      * Constructs a runner with specific number of executor thread.
@@ -113,7 +115,8 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo {
      */
     public Runner shutdownNow() {
         wasShutdownTriggered.set(true); // todo: test
-        executor.shutdownNow();
+        int numberOfDrainedTasks = executor.shutdownNow().size();
+        tasksDrainedFromExecutor(numberOfDrainedTasks);
         return this;
     }
 
@@ -189,11 +192,35 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo {
         return shutdownNowAndAwaitTermination(5, SECONDS);
     }
 
+    /**
+     * @return number of tasks that were initially accepted by the executor but removed before they would start - most possibly because the executor has been shut down
+     */
+    public int failedToStartCount() {
+        return failedToStart.get();
+    }
+
+    /**
+     * Resets failedSubmission, failedToStart, succeeded and failed counter.
+     * It doesn't reset the toBeFinished counter as it is a derived number from the number of scheduled + running tasks.
+     */
+    @Override
+    public void resetCounters() {
+        failedToStart.set(0);
+        super.resetCounters();
+    }
+
     protected void finalize() throws Throwable {
         try {
             this.shutdownNow();
         } finally {
             super.finalize();
+        }
+    }
+
+    private void tasksDrainedFromExecutor(int numberOfTasks) {
+        for (int i = 0; i < numberOfTasks; i++) {
+            failedToStart.incrementAndGet();
+            latch.decrement();
         }
     }
 }

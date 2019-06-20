@@ -19,11 +19,11 @@ public class MonitoringTaskSubmitter {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final AtomicInteger failedToSubmit = new AtomicInteger();
-    private final AtomicInteger succeeded = new AtomicInteger();
-    private final AtomicInteger failed = new AtomicInteger();
+    private final AtomicInteger failedToSubmit = new AtomicInteger(0);
+    private final AtomicInteger succeeded = new AtomicInteger(0);
+    private final AtomicInteger failed = new AtomicInteger(0);
 
-    private final ReusableCountLatch latch = new ReusableCountLatch();
+    protected final ReusableCountLatch latch = new ReusableCountLatch();
 
     protected final ScheduledExecutorService executor;
 
@@ -371,7 +371,7 @@ public class MonitoringTaskSubmitter {
             return executor.submit(monitoredTask);
 
         } catch (RuntimeException e) {
-            taskSubmitFailed();
+            taskSubmissionFailed();
             onWorkException(e);
             throw e;
         }
@@ -384,7 +384,7 @@ public class MonitoringTaskSubmitter {
             return executor.schedule(monitoredTask, delay, unit);
 
         } catch (RuntimeException e) {
-            taskSubmitFailed();
+            taskSubmissionFailed();
             onWorkException(e);
             throw e;
         }
@@ -394,7 +394,7 @@ public class MonitoringTaskSubmitter {
         latch.increment();
     }
 
-    private void taskSubmitFailed() {
+    private void taskSubmissionFailed() {
         failedToSubmit.incrementAndGet();
         latch.decrement();
     }

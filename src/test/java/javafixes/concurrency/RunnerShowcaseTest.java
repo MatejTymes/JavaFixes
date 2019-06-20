@@ -34,8 +34,8 @@ public class RunnerShowcaseTest {
         Callable<Integer> callable = () -> 5;
 
 
-        runner.runIn(2, SECONDS, runnable);
-        runner.run(runnable);
+        runner.runRunnableIn(2, SECONDS, runnable);
+        runner.runRunnable(runnable);
 
 
         runner.waitTillDone(); // blocks until all tasks are finished (or failed)
@@ -57,8 +57,8 @@ public class RunnerShowcaseTest {
 
 
         // submit tasks - Runnable, Callable or Task (custom Runnable that can throw Exceptions) - each call will return you a Future
-        runner.runIn(2, SECONDS, runnable); // this will run in 2 seconds
-        runner.run(runnable); // this will run immediately
+        runner.runRunnableIn(2, SECONDS, runnable); // this will run in 2 seconds
+        runner.runRunnable(runnable); // this will run immediately
 
 
         runner.waitTillDone(); // blocks after all tasks are finishined (or failed)
