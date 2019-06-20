@@ -44,8 +44,8 @@ Great if number of scheduled task is not known upfront but you want to wait till
 ```Java
     Runner runner = Runner.runner(numberOfThreads);
 
-    runner.runIn(2, SECONDS, runnable);
-    runner.run(runnable);
+    runner.runIn(2, SECONDS, callable);
+    runner.run(callable);
 
 
     // blocks until all tasks are finished (or failed)
@@ -54,9 +54,17 @@ Great if number of scheduled task is not known upfront but you want to wait till
 
     // and reuse it
 
-    runner.runIn(500, MILLISECONDS, callable);
+    runner.runRunnableIn(500, MILLISECONDS, runnable);
 
     runner.waitTillDone();
+    
+    // or just repeat tasks until shutdown is triggered
+    
+    runner.run(shutdownInfo -> {
+        while (!shutdownInfo.wasShutdownTriggered()) {
+            // do some cyclical task
+        }
+    })
 
     runner.shutdownAndAwaitTermination();
 
