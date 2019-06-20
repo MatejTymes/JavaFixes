@@ -23,6 +23,19 @@ public class Synchronizer<K> {
         }
     }
 
+    public void synchronizeRunnableOn(K key, Runnable action) {
+        AtomicInteger lock = acquireLock(key);
+        try {
+            synchronized (lock) {
+                action.run();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            releaseLock(key);
+        }
+    }
+
     public void synchronizeOn(K key, Task action) {
         AtomicInteger lock = acquireLock(key);
         try {

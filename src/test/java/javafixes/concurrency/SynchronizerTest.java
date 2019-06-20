@@ -38,6 +38,20 @@ public class SynchronizerTest {
     }
 
     @Test
+    public void shouldExecuteRunnable() {
+        AtomicInteger numberOfCalls = new AtomicInteger(0);
+
+        synchronizer.synchronizeRunnableOn(
+                randomUUIDString(),
+                (Runnable) () -> {
+                    numberOfCalls.incrementAndGet();
+                }
+        );
+
+        assertThat(numberOfCalls.get(), equalTo(1));
+    }
+
+    @Test
     public void shouldExecuteTask() {
         AtomicInteger numberOfCalls = new AtomicInteger(0);
 
@@ -74,6 +88,46 @@ public class SynchronizerTest {
 
                             }
                             Thread.sleep(randomInt(1, 10));
+                            countOfThreadsCurrentlyRunning.decrementAndGet();
+                        });
+                    });
+                }
+                runner.waitTillDone();
+
+                assertThat(maxThreadRunningAtATime.get(), is(1));
+            }
+        } finally {
+            runner.shutdownNow();
+        }
+    }
+
+    @Test
+    public void shouldRunOnlyOneRunnableForASpecificIdAtATime() {
+        int numberOfThreads = 3;
+        int numberOfRetries = 20;
+
+        Runner runner = runner(numberOfThreads);
+        try {
+            for (int retryAttempt = 1; retryAttempt <= numberOfRetries; retryAttempt++) {
+
+                AtomicInteger maxThreadRunningAtATime = new AtomicInteger(0);
+
+                AtomicInteger countOfThreadsCurrentlyRunning = new AtomicInteger(0);
+                for (int threadIndex = 0; threadIndex < numberOfThreads; threadIndex++) {
+                    runner.runTask(() -> {
+                        Thread.sleep(randomInt(1, 10));
+
+                        synchronizer.synchronizeRunnableOn("id" + 123, () -> {
+                            int runningThreads = countOfThreadsCurrentlyRunning.incrementAndGet();
+                            if (runningThreads > maxThreadRunningAtATime.get()) {
+                                maxThreadRunningAtATime.set(runningThreads);
+
+                            }
+                            try {
+                                Thread.sleep(randomInt(1, 10));
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
                             countOfThreadsCurrentlyRunning.decrementAndGet();
                         });
                     });
