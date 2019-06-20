@@ -42,49 +42,41 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo {
     }
 
     // todo: javadoc
-    // todo: test this
     public <T> Future<T> run(ShutdownAwareCallable<T> callable) {
         return runCallable(() -> callable.call(this));
     }
 
     // todo: javadoc
-    // todo: test this
     public Future<Void> run(ShutdownAwareTask task) {
         return runTask(() -> task.run(this));
     }
 
     // todo: javadoc
-    // todo: test this
     public <T> ScheduledFuture<T> runIn(long delay, TimeUnit unit, ShutdownAwareCallable<T> callable) {
         return runCallableIn(delay, unit, () -> callable.call(this));
     }
 
     // todo: javadoc
-    // todo: test this
     public ScheduledFuture<Void> runIn(long delay, TimeUnit unit, ShutdownAwareTask task) {
         return runTaskIn(delay, unit, () -> task.run(this));
     }
 
     // todo: javadoc
-    // todo: test this
     public <T> Future<T> runCallable(ShutdownAwareCallable<T> callable) {
         return runCallable(() -> callable.call(this));
     }
 
     // todo: javadoc
-    // todo: test this
     public Future<Void> runTask(ShutdownAwareTask task) {
         return runTask(() -> task.run(this));
     }
 
     // todo: javadoc
-    // todo: test this
     public <T> ScheduledFuture<T> runCallableIn(long delay, TimeUnit unit, ShutdownAwareCallable<T> callable) {
         return runCallableIn(delay, unit, () -> callable.call(this));
     }
 
     // todo: javadoc
-    // todo: test this
     public ScheduledFuture<Void> runTaskIn(long delay, TimeUnit unit, ShutdownAwareTask task) {
         return runTaskIn(delay, unit, () -> task.run(this));
     }
@@ -102,7 +94,7 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo {
      * @see ExecutorService#shutdown()
      */
     public Runner shutdown() {
-        wasShutdownTriggered.set(true); // todo: test
+        wasShutdownTriggered.set(true);
         executor.shutdown();
         return this;
     }
@@ -114,14 +106,13 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo {
      * @see ExecutorService#shutdownNow()
      */
     public Runner shutdownNow() {
-        wasShutdownTriggered.set(true); // todo: test
+        wasShutdownTriggered.set(true);
         int numberOfDrainedTasks = executor.shutdownNow().size();
         tasksDrainedFromExecutor(numberOfDrainedTasks);
         return this;
     }
 
     // todo: add commentary
-    // todo: test
     @Override
     public boolean wasShutdownTriggered() {
         return wasShutdownTriggered.get();
