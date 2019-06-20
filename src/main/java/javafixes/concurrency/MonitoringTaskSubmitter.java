@@ -48,12 +48,12 @@ public class MonitoringTaskSubmitter {
     }
 
     /**
-     * Schedules a {@link javafixes.concurrency.Task Task} for immediate execution
+     * Schedules a {@link Task} for immediate execution
      * It might be executed later though if the {@link ScheduledExecutorService} has no available threads
      * or more tasks are queued for execution before this task.
      *
-     * @param task {@link javafixes.concurrency.Task Task} to be executed
-     * @return {@link Future} referring to the state of submitted {@link javafixes.concurrency.Task Task}
+     * @param task {@link Task} to be executed
+     * @return {@link Future} referring to the state of submitted {@link Task}
      */
     public Future<Void> run(Task task) {
         return submit(asMonitoredCallable(task));
@@ -76,15 +76,15 @@ public class MonitoringTaskSubmitter {
     }
 
     /**
-     * Schedules a {@link javafixes.concurrency.Task Task} for delayed execution
+     * Schedules a {@link Task} for delayed execution
      * The delay is defined using the {@code delay} and {@code unit} parameters.
      * It might be executed later though if the {@link ScheduledExecutorService} has no available threads
      * or more tasks are queued for execution before this task.
      *
      * @param delay the value of the delay
      * @param unit  the {@link TimeUnit} of the {@code delay} argument
-     * @param task  {@link javafixes.concurrency.Task Task} to be executed
-     * @return {@link Future} referring to the state of submitted {@link javafixes.concurrency.Task Task}
+     * @param task  {@link Task} to be executed
+     * @return {@link Future} referring to the state of submitted {@link Task}
      */
     public ScheduledFuture<Void> runIn(long delay, TimeUnit unit, Task task) {
         return schedule(delay, unit, asMonitoredCallable(task));
@@ -116,12 +116,12 @@ public class MonitoringTaskSubmitter {
     }
 
     /**
-     * Schedules a {@link javafixes.concurrency.Task Task} for immediate execution
+     * Schedules a {@link Task} for immediate execution
      * It might be executed later though if the {@link ScheduledExecutorService} has no available threads
      * or more tasks are queued for execution before this task.
      *
-     * @param task {@link javafixes.concurrency.Task Task} to be executed
-     * @return {@link Future} referring to the state of submitted {@link javafixes.concurrency.Task Task}
+     * @param task {@link Task} to be executed
+     * @return {@link Future} referring to the state of submitted {@link Task}
      */
     public Future<Void> runTask(Task task) {
         return submit(asMonitoredCallable(task));
@@ -159,15 +159,15 @@ public class MonitoringTaskSubmitter {
     }
 
     /**
-     * Schedules a {@link javafixes.concurrency.Task Task} for delayed execution
+     * Schedules a {@link Task} for delayed execution
      * The delay is defined using the {@code delay} and {@code unit} parameters.
      * It might be executed later though if the {@link ScheduledExecutorService} has no available threads
      * or more tasks are queued for execution before this task.
      *
      * @param delay the value of the delay
      * @param unit  the {@link TimeUnit} of the {@code delay} argument
-     * @param task  {@link javafixes.concurrency.Task Task} to be executed
-     * @return {@link Future} referring to the state of submitted {@link javafixes.concurrency.Task Task}
+     * @param task  {@link Task} to be executed
+     * @return {@link Future} referring to the state of submitted {@link Task}
      */
     public ScheduledFuture<Void> runTaskIn(long delay, TimeUnit unit, Task task) {
         return schedule(delay, unit, asMonitoredCallable(task));

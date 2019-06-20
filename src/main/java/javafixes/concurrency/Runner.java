@@ -1,9 +1,6 @@
 package javafixes.concurrency;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,42 +38,114 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo {
         return new Runner(threadCount);
     }
 
-    // todo: javadoc
+    /**
+     * Schedules a {@link ShutdownAwareCallable} for immediate execution.
+     * It might be executed later though if the {@link ScheduledExecutorService} has no available threads
+     * or more tasks are queued for execution before this task.
+     *
+     * @param callable {@link ShutdownAwareCallable} to be executed
+     * @param <T>      type of return value
+     * @return {@link Future} referring to the state of submitted {@link ShutdownAwareCallable}
+     */
     public <T> Future<T> run(ShutdownAwareCallable<T> callable) {
         return runCallable(() -> callable.call(this));
     }
 
-    // todo: javadoc
+    /**
+     * Schedules a {@link ShutdownAwareTask} for immediate execution
+     * It might be executed later though if the {@link ScheduledExecutorService} has no available threads
+     * or more tasks are queued for execution before this task.
+     *
+     * @param task {@link ShutdownAwareTask} to be executed
+     * @return {@link Future} referring to the state of submitted {@link ShutdownAwareTask}
+     */
     public Future<Void> run(ShutdownAwareTask task) {
         return runTask(() -> task.run(this));
     }
 
-    // todo: javadoc
+    /**
+     * Schedules a {@link ShutdownAwareCallable} for delayed execution.
+     * The delay is defined using the {@code delay} and {@code unit} parameters.
+     * It might be executed later though if the {@link ScheduledExecutorService} has no available threads
+     * or more tasks are queued for execution before this task.
+     *
+     * @param delay    the value of the delay
+     * @param unit     the {@link TimeUnit} of the {@code delay} argument
+     * @param callable {@link ShutdownAwareCallable} to be executed
+     * @param <T>      type of return value
+     * @return {@link Future} referring to the state of submitted {@link ShutdownAwareCallable}
+     */
     public <T> ScheduledFuture<T> runIn(long delay, TimeUnit unit, ShutdownAwareCallable<T> callable) {
         return runCallableIn(delay, unit, () -> callable.call(this));
     }
 
-    // todo: javadoc
+    /**
+     * Schedules a {@link ShutdownAwareTask} for delayed execution
+     * The delay is defined using the {@code delay} and {@code unit} parameters.
+     * It might be executed later though if the {@link ScheduledExecutorService} has no available threads
+     * or more tasks are queued for execution before this task.
+     *
+     * @param delay the value of the delay
+     * @param unit  the {@link TimeUnit} of the {@code delay} argument
+     * @param task  {@link ShutdownAwareTask} to be executed
+     * @return {@link Future} referring to the state of submitted {@link ShutdownAwareTask}
+     */
     public ScheduledFuture<Void> runIn(long delay, TimeUnit unit, ShutdownAwareTask task) {
         return runTaskIn(delay, unit, () -> task.run(this));
     }
 
-    // todo: javadoc
+    /**
+     * Schedules a {@link ShutdownAwareCallable} for immediate execution.
+     * It might be executed later though if the {@link ScheduledExecutorService} has no available threads
+     * or more tasks are queued for execution before this task.
+     *
+     * @param callable {@link ShutdownAwareCallable} to be executed
+     * @param <T>      type of return value
+     * @return {@link Future} referring to the state of submitted {@link ShutdownAwareCallable}
+     */
     public <T> Future<T> runCallable(ShutdownAwareCallable<T> callable) {
         return runCallable(() -> callable.call(this));
     }
 
-    // todo: javadoc
+    /**
+     * Schedules a {@link ShutdownAwareTask} for immediate execution
+     * It might be executed later though if the {@link ScheduledExecutorService} has no available threads
+     * or more tasks are queued for execution before this task.
+     *
+     * @param task {@link ShutdownAwareTask} to be executed
+     * @return {@link Future} referring to the state of submitted {@link ShutdownAwareTask}
+     */
     public Future<Void> runTask(ShutdownAwareTask task) {
         return runTask(() -> task.run(this));
     }
 
-    // todo: javadoc
+    /**
+     * Schedules a {@link ShutdownAwareCallable} for delayed execution.
+     * The delay is defined using the {@code delay} and {@code unit} parameters.
+     * It might be executed later though if the {@link ScheduledExecutorService} has no available threads
+     * or more tasks are queued for execution before this task.
+     *
+     * @param delay    the value of the delay
+     * @param unit     the {@link TimeUnit} of the {@code delay} argument
+     * @param callable {@link ShutdownAwareCallable} to be executed
+     * @param <T>      type of return value
+     * @return {@link Future} referring to the state of submitted {@link ShutdownAwareCallable}
+     */
     public <T> ScheduledFuture<T> runCallableIn(long delay, TimeUnit unit, ShutdownAwareCallable<T> callable) {
         return runCallableIn(delay, unit, () -> callable.call(this));
     }
 
-    // todo: javadoc
+    /**
+     * Schedules a {@link ShutdownAwareTask} for delayed execution
+     * The delay is defined using the {@code delay} and {@code unit} parameters.
+     * It might be executed later though if the {@link ScheduledExecutorService} has no available threads
+     * or more tasks are queued for execution before this task.
+     *
+     * @param delay the value of the delay
+     * @param unit  the {@link TimeUnit} of the {@code delay} argument
+     * @param task  {@link ShutdownAwareTask} to be executed
+     * @return {@link Future} referring to the state of submitted {@link ShutdownAwareTask}
+     */
     public ScheduledFuture<Void> runTaskIn(long delay, TimeUnit unit, ShutdownAwareTask task) {
         return runTaskIn(delay, unit, () -> task.run(this));
     }
@@ -112,7 +181,12 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo {
         return this;
     }
 
-    // todo: add commentary
+    /**
+     * Returns {@code true} if any shutdown operation has been called on this {@code Runner}.
+     * In this case the {@code Runner} won't accept any new tasks for execution.
+     *
+     * @return {@code true} if shutdown on the {@code Runner} has been triggered
+     */
     @Override
     public boolean wasShutdownTriggered() {
         return wasShutdownTriggered.get();
