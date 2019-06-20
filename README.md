@@ -61,7 +61,7 @@ Great if number of scheduled task is not known upfront but you want to wait till
     // or just repeat tasks until shutdown is triggered
     
     runner.run(shutdownInfo -> {
-        while (!shutdownInfo.wasShutdownTriggered()) {
+        while (shutdownInfo.wasShutdownTriggered() == false) {
             // do some cyclical task
         }
     })
