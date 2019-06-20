@@ -8,11 +8,13 @@ import java.util.Stack;
 import static javafixes.common.CollectionUtil.newList;
 import static javafixes.experimental.json5.Token.*;
 
+// todo: handle trailing commas
 // todo: test
 public class Json5ToJsonReader extends Reader {
 
     private final Reader json5Reader;
 
+    // todo: use LinkedArrayQueue in here instead
     private List<Character> buffer = newList();
     private boolean finished = false;
 
@@ -59,7 +61,7 @@ public class Json5ToJsonReader extends Reader {
 
             char currChar = (char) nextChar;
 
-            Token lastToken = tokenStack.isEmpty() ? tokenStack.peek() : null;
+            Token lastToken = !tokenStack.isEmpty() ? tokenStack.peek() : null;
 
             if (currChar == '/') { // commentary
                 handleCommentary();

@@ -15,7 +15,8 @@ public class Json5ToJsonReaderTest {
     @Test
     public void shouldReturnJsonUnchanged() throws IOException {
         // todo: add every single json feature in here
-        StringReader jsonReader = new StringReader("{ \"hello\": \"world\" }");
+        String jsonWithoutCommentary = "{ \"hello\": \"world\" }";
+        StringReader jsonReader = new StringReader(jsonWithoutCommentary);
 
         Reader json5ToJsonReader = new Json5ToJsonReader(jsonReader);
 
@@ -26,9 +27,8 @@ public class Json5ToJsonReaderTest {
     // todo: add commentary inside of string
     @Test
     public void shouldFilterMultiLineComment() throws IOException {
-        StringReader jsonReader = new StringReader(
-                "{ \"hello\"/*\n: // \"not\" \n */: \"world\" }"
-        );
+        String jsonWithMultiLineCommentary = "{ \"hello\"/*\n: // \"not\" \n */: \"world\" }";
+        StringReader jsonReader = new StringReader(jsonWithMultiLineCommentary);
 
         Reader json5ToJsonReader = new Json5ToJsonReader(jsonReader);
 
@@ -39,9 +39,8 @@ public class Json5ToJsonReaderTest {
     // todo: add commentary inside of string
     @Test
     public void shouldFilterSingleLineComment() throws IOException {
-        StringReader jsonReader = new StringReader(
-                "{ \"hello\"//: /* \"not\" \n: \"world\" }"
-        );
+        String jsonWithSingleLineCommentary = "{ \"hello\"//: /* \"not\" \n: \"world\" }";
+        StringReader jsonReader = new StringReader(jsonWithSingleLineCommentary);
 
         Reader json5ToJsonReader = new Json5ToJsonReader(jsonReader);
 
