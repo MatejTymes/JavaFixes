@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+// todo: javadoc
 public class Synchronizer<K> {
 
     private final Map<K, AtomicInteger> locks = new ConcurrentHashMap<>();

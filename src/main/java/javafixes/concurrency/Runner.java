@@ -1,7 +1,10 @@
 package javafixes.concurrency;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -13,7 +16,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  *
  * @author mtymes
  */
-public class Runner extends MonitoringTaskSubmitter {
+public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo {
+
+    private final AtomicBoolean wasShutdownTriggered = new AtomicBoolean(false);
 
     /**
      * Constructs a runner with specific number of executor thread.
@@ -34,6 +39,54 @@ public class Runner extends MonitoringTaskSubmitter {
         return new Runner(threadCount);
     }
 
+    // todo: javadoc
+    // todo: test this
+    public <T> Future<T> run(ShutdownAwareCallable<T> callable) {
+        return runCallable(() -> callable.call(this));
+    }
+
+    // todo: javadoc
+    // todo: test this
+    public Future<Void> run(ShutdownAwareTask task) {
+        return runTask(() -> task.run(this));
+    }
+
+    // todo: javadoc
+    // todo: test this
+    public <T> ScheduledFuture<T> runIn(long delay, TimeUnit unit, ShutdownAwareCallable<T> callable) {
+        return runCallableIn(delay, unit, () -> callable.call(this));
+    }
+
+    // todo: javadoc
+    // todo: test this
+    public ScheduledFuture<Void> runIn(long delay, TimeUnit unit, ShutdownAwareTask task) {
+        return runTaskIn(delay, unit, () -> task.run(this));
+    }
+
+    // todo: javadoc
+    // todo: test this
+    public <T> Future<T> runCallable(ShutdownAwareCallable<T> callable) {
+        return runCallable(() -> callable.call(this));
+    }
+
+    // todo: javadoc
+    // todo: test this
+    public Future<Void> runTask(ShutdownAwareTask task) {
+        return runTask(() -> task.run(this));
+    }
+
+    // todo: javadoc
+    // todo: test this
+    public <T> ScheduledFuture<T> runCallableIn(long delay, TimeUnit unit, ShutdownAwareCallable<T> callable) {
+        return runCallableIn(delay, unit, () -> callable.call(this));
+    }
+
+    // todo: javadoc
+    // todo: test this
+    public ScheduledFuture<Void> runTaskIn(long delay, TimeUnit unit, ShutdownAwareTask task) {
+        return runTaskIn(delay, unit, () -> task.run(this));
+    }
+
     @Override
     public Runner waitTillDone() {
         super.waitTillDone();
@@ -47,6 +100,7 @@ public class Runner extends MonitoringTaskSubmitter {
      * @see ExecutorService#shutdown()
      */
     public Runner shutdown() {
+        wasShutdownTriggered.set(true); // todo: test
         executor.shutdown();
         return this;
     }
@@ -58,8 +112,16 @@ public class Runner extends MonitoringTaskSubmitter {
      * @see ExecutorService#shutdownNow()
      */
     public Runner shutdownNow() {
+        wasShutdownTriggered.set(true); // todo: test
         executor.shutdownNow();
         return this;
+    }
+
+    // todo: add commentary
+    // todo: test
+    @Override
+    public boolean wasShutdownTriggered() {
+        return wasShutdownTriggered.get();
     }
 
     /**
