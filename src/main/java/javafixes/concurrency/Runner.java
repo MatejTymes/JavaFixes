@@ -8,7 +8,7 @@ import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
- * An {@link java.util.concurrent.ScheduledExecutorService ScheduledExecutorService} alternative
+ * An {@link ScheduledExecutorService} alternative
  * that allows you to monitor the number of submitted, failed and succeeded task, plus has the
  * ability to wait until all tasks are completed = there are no scheduled or running tasks.
  *

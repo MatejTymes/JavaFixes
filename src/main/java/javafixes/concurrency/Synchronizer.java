@@ -5,45 +5,76 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-// todo: javadoc
+/**
+ * A class that allows you to synchronize code on different objects (ids)
+ * for whom the .equals() method returns true
+ *
+ * @author mtymes
+ */
 public class Synchronizer<K> {
 
     private final Map<K, AtomicInteger> locks = new ConcurrentHashMap<>();
 
-    public <T> T synchronizeOn(K key, Callable<T> action) {
+    /**
+     * Executes the provided {@link Callable} and returning its output value,
+     * while making sure that only one action can be run for the provided {@code key}
+     *
+     * @param key value should be used for synchronization/locking purposes
+     * @param action action that should be executed
+     * @throws RuntimeException any thrown exception from the provided {@code action} is wrapped into a {@link RuntimeException}
+     *
+     * @return response generated from the provided {@code action} parameter
+     */
+    public <T> T synchronizeOn(K key, Callable<T> action) throws RuntimeException {
         AtomicInteger lock = acquireLock(key);
         try {
             synchronized (lock) {
                 return action.call();
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to execute action", e);
         } finally {
             releaseLock(key);
         }
     }
 
-    public void synchronizeRunnableOn(K key, Runnable action) {
+    /**
+     * Executes the provided {@link Runnable} while making sure that only one action
+     * can be run for the provided {@code key}
+     *
+     * @param key value should be used for synchronization/locking purposes
+     * @param action action that should be executed
+     * @throws RuntimeException any thrown exception from the provided {@code action} is wrapped into a {@link RuntimeException}
+     */
+    public void synchronizeRunnableOn(K key, Runnable action) throws RuntimeException {
         AtomicInteger lock = acquireLock(key);
         try {
             synchronized (lock) {
                 action.run();
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to execute action", e);
         } finally {
             releaseLock(key);
         }
     }
 
-    public void synchronizeOn(K key, Task action) {
+    /**
+     * Executes the provided {@link Task} while making sure that only one action
+     * can be run for the provided {@code key}
+     *
+     * @param key value should be used for synchronization/locking purposes
+     * @param action action that should be executed
+     * @throws RuntimeException any thrown exception from the provided {@code action} is wrapped into a {@link RuntimeException}
+     */
+    public void synchronizeOn(K key, Task action) throws RuntimeException {
         AtomicInteger lock = acquireLock(key);
         try {
             synchronized (lock) {
                 action.run();
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to execute action", e);
         } finally {
             releaseLock(key);
         }
