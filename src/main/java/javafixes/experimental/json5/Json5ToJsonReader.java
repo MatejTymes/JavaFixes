@@ -1,6 +1,7 @@
 package javafixes.experimental.json5;
 
 import java.io.IOException;
+import java.io.PushbackReader;
 import java.io.Reader;
 import java.util.List;
 import java.util.Stack;
@@ -9,20 +10,20 @@ import static javafixes.common.CollectionUtil.newList;
 import static javafixes.experimental.json5.Token.*;
 
 // todo: handle trailing commas
-// todo: test
 public class Json5ToJsonReader extends Reader {
 
-    private final Reader json5Reader;
+    private final PushbackReader json5Reader;
 
     // todo: use LinkedArrayQueue in here instead
     private List<Character> buffer = newList();
     private boolean finished = false;
 
     public Json5ToJsonReader(Reader json5Reader) {
-        this.json5Reader = json5Reader;
+        this.json5Reader = json5Reader instanceof PushbackReader
+                ? (PushbackReader) json5Reader
+                : new PushbackReader(json5Reader);
     }
 
-    // todo: implement
     @Override
     public int read(char[] cbuf, int off, int len) throws IOException {
         ensureCharsInBuffer(len);
@@ -70,6 +71,14 @@ public class Json5ToJsonReader extends Reader {
                 repeat = true;
             } else if (currChar == '{' || currChar == '[') { // object / array start
                 if (lastToken == null || lastToken == semicolon || lastToken == commaInArray) {
+                    if (lastToken == semicolon) {
+                        tokenStack.pop();
+                        tokenStack.push(valueInObject);
+                    } else if (lastToken == commaInArray) {
+                        write(',');
+                        tokenStack.pop();
+                        tokenStack.push(valueInArray);
+                    }
                     tokenStack.push(currChar == '{' ? objectStart : arrayStart);
                     write(currChar);
                 } else {
@@ -120,7 +129,19 @@ public class Json5ToJsonReader extends Reader {
                     write(',');
                 }
                 tokenStack.push(valueInArray);
-                // todo: parse value
+                if (currChar == '"') {
+                    handleString(currChar);
+                } else if (currChar == '-' || (currChar >= '0' && currChar <= '9')) {
+                    handleNumber(currChar);
+                } else if (currChar == 't') {
+                    handleTrue(currChar);
+                } else if (currChar == 'f') {
+                    handleFalse(currChar);
+                } else if (currChar == 'n') {
+                    handleNull(currChar);
+                } else {
+                    throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
+                }
             } else if (lastToken == objectStart || lastToken == commaInObject) { // key in object
                 if (lastToken == commaInObject) {
                     tokenStack.pop();
@@ -135,10 +156,18 @@ public class Json5ToJsonReader extends Reader {
             } else if (lastToken == semicolon) {
                 tokenStack.pop();
                 tokenStack.push(valueInObject);
-                // todo: handle all types of values not just strings
                 if (currChar == '"') {
                     handleString(currChar);
-                    tokenStack.pop();
+                } else if (currChar == '-' || (currChar >= '0' && currChar <= '9')) {
+                    handleNumber(currChar);
+                } else if (currChar == 't') {
+                    handleTrue(currChar);
+                } else if (currChar == 'f') {
+                    handleFalse(currChar);
+                } else if (currChar == 'n') {
+                    handleNull(currChar);
+                } else {
+                    throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
                 }
             } else {
                 throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
@@ -164,14 +193,7 @@ public class Json5ToJsonReader extends Reader {
         boolean isEscaped = false;
         boolean finishedString = false;
         do {
-            int nextChar;
-            nextChar = json5Reader.read();
-            if (nextChar == -1) {
-                markEndOfStream();
-                return;
-            }
-
-            char currChar = (char) nextChar;
+            char currChar = readNextChar();
             if (!isEscaped) {
                 if (currChar == '\"') {
                     finishedString = true;
@@ -188,6 +210,150 @@ public class Json5ToJsonReader extends Reader {
             }
 
         } while (!finishedString);
+    }
+
+    private void handleTrue(char currChar) throws IOException {
+        write(currChar);
+        currChar = readNextChar();
+        if (currChar != 'r') {
+            throw new IOException("Unexpected character: '" + currChar + "' while expecting character t-'r'-ue");
+        }
+        write(currChar);
+        currChar = readNextChar();
+        if (currChar != 'u') {
+            throw new IOException("Unexpected character: '" + currChar + "' while expecting character tr-'u'-e");
+        }
+        write(currChar);
+        currChar = readNextChar();
+        if (currChar != 'e') {
+            throw new IOException("Unexpected character: '" + currChar + "' while expecting character tru-'e'");
+        }
+        write(currChar);
+    }
+
+    private void handleFalse(char currChar) throws IOException {
+        write(currChar);
+        currChar = readNextChar();
+        if (currChar != 'a') {
+            throw new IOException("Unexpected character: '" + currChar + "' while expecting character f-'a'-lse");
+        }
+        write(currChar);
+        currChar = readNextChar();
+        if (currChar != 'l') {
+            throw new IOException("Unexpected character: '" + currChar + "' while expecting character fa-'l'-se");
+        }
+        write(currChar);
+        currChar = readNextChar();
+        if (currChar != 's') {
+            throw new IOException("Unexpected character: '" + currChar + "' while expecting character fal-'s'-e");
+        }
+        write(currChar);
+        currChar = readNextChar();
+        if (currChar != 'e') {
+            throw new IOException("Unexpected character: '" + currChar + "' while expecting character fals-'e'");
+        }
+        write(currChar);
+    }
+
+    private void handleNull(char currChar) throws IOException {
+        write(currChar);
+        currChar = readNextChar();
+        if (currChar != 'u') {
+            throw new IOException("Unexpected character: '" + currChar + "' while expecting character n-'u'-ll");
+        }
+        write(currChar);
+        currChar = readNextChar();
+        if (currChar != 'l') {
+            throw new IOException("Unexpected character: '" + currChar + "' while expecting character nu-'l'-l");
+        }
+        write(currChar);
+        currChar = readNextChar();
+        if (currChar != 'l') {
+            throw new IOException("Unexpected character: '" + currChar + "' while expecting character nul-'l'");
+        }
+        write(currChar);
+    }
+
+    private void handleNumber(char currChar) throws IOException {
+        boolean isZero = (currChar == '0');
+        boolean hadAtLeastOneDigit = (currChar >= '0' && currChar <= '9');
+        write(currChar);
+
+        while (true) {
+            int nextChar = readNextInt();
+            currChar = (char) nextChar;
+
+            if (currChar == 'e' || currChar == 'E') {
+                if (!hadAtLeastOneDigit) {
+                    throw new IOException("Unexpected exponent character: '" + currChar + "' when expecting first number digit");
+                }
+                handleExponent(currChar);
+            } else if(currChar == '.') {
+                if (!hadAtLeastOneDigit) {
+                    throw new IOException("Unexpected character: '" + currChar + "' when expecting first number digit");
+                }
+                write(currChar);
+                handleDecimalPart();
+            } else if (!hadAtLeastOneDigit) {
+                if (currChar == '0') {
+                    isZero = true;
+                } else if (currChar < '1' || currChar > '9') {
+                    throw new IOException("Unexpected character: '" + currChar + "' when expecting first number digit");
+                }
+                hadAtLeastOneDigit = true;
+                write(currChar);
+            } else if (currChar >= '0' && currChar <= '9') {
+                if (isZero) {
+                    throw new IOException("Unexpected character: '" + currChar + "' after a number starting with 0");
+                }
+                write(currChar);
+            } else {
+                json5Reader.unread(nextChar);
+                break;
+            }
+        }
+    }
+
+    private void handleDecimalPart() throws IOException {
+        boolean hadAtLeastOneDigit = false;
+
+        while (true) {
+            int nextChar = readNextInt();
+            char currChar = (char) nextChar;
+            if (currChar >= '0' && currChar <= '9') {
+                hadAtLeastOneDigit = true;
+                write(currChar);
+            } else if (!hadAtLeastOneDigit) {
+                throw new IOException("Unexpected character: '" + currChar + "' when expecting a decimal digit");
+            } else if (currChar == 'e' || currChar == 'E') {
+                handleExponent(currChar);
+            } else {
+                json5Reader.unread(nextChar);
+                break;
+            }
+        }
+    }
+
+    private void handleExponent(char currChar) throws IOException {
+        boolean hadSign = false;
+        write(currChar);
+
+        while (true) {
+            int nextChar = readNextInt();
+            currChar = (char) nextChar;
+            if (currChar == '+' || currChar == '-') {
+                if (hadSign) {
+                    throw new IOException("Second sign character: '" + currChar + "' while parsing a number's exponent");
+                }
+                write(currChar);
+                hadSign = true;
+            } else if (currChar >= '0' && currChar <= '9') {
+                write(currChar);
+            } else {
+                json5Reader.unread(nextChar);
+                break;
+            }
+        }
     }
 
     private void handleCommentary() throws IOException {
@@ -259,6 +425,18 @@ public class Json5ToJsonReader extends Reader {
         }
     }
 
+
+    private char readNextChar() throws IOException {
+        return (char) readNextInt();
+    }
+
+    private int readNextInt() throws IOException {
+        int nextChar = json5Reader.read();
+        if (nextChar == -1) {
+            markEndOfStream();
+        }
+        return nextChar;
+    }
 
     private void ensureCharsInBuffer(int n) throws IOException {
         while (!finished && buffer.size() < n) {

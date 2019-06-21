@@ -13,6 +13,40 @@ import static org.junit.Assert.assertThat;
 public class Json5ToJsonReaderTest {
 
     @Test
+    public void shouldBeAbleToParseValidJson() throws IOException {
+        StringReader jsonReader = new StringReader("{\n" +
+                "  \"stringField\" : \"this \\\" is \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a string \",\n" +
+                "  \"intField1\" : 0,\n" +
+                "  \"intField2\" : 1.953e+5,\n" +
+                "  \"objectField\" : {\n" +
+                "    \"booleanField\" : true,\n" +
+                "    \"booleanField2\" : false,\n" +
+                "    \"nullField\" : null,\n" +
+                "    \"arrayField\" : [\n" +
+                "      \"this \\\" is \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a string \",\n" +
+                "      { \"field\" : \"value\" },\n" +
+                "      [ 0, 1.953e+5, \"string\", false, null, true ],\n" +
+                "      -59,\n" +
+                "      489E-31,\n" +
+                "      false,\n" +
+                "      null,\n" +
+                "      true\n" +
+                "    ]\n" +
+                "  },\n" +
+                "  \"intField3\" : -59,\n" +
+                "  \"intField4\" : 489E-31,\n" +
+                "  \"intField5\" : -0E1,\n" +
+                "  \"nullField\" : null\n" +
+                "}");
+
+        Reader json5ToJsonReader = new Json5ToJsonReader(jsonReader);
+
+        String convertedJson = CharStreams.toString(json5ToJsonReader);
+        assertThat(convertedJson, equalTo("{\"stringField\":\"this \\\" is \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a string \",\"intField1\":0,\"intField2\":1.953e+5,\"objectField\":{\"booleanField\":true,\"booleanField2\":false,\"nullField\":null,\"arrayField\":[\"this \\\" is \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a string \",{\"field\":\"value\"},[0,1.953e+5,\"string\",false,null,true],-59,489E-31,false,null,true]},\"intField3\":-59,\"intField4\":489E-31,\"intField5\":-0E1,\"nullField\":null}"));
+    }
+
+
+    @Test
     public void shouldReturnJsonUnchanged() throws IOException {
         // todo: add every single json feature in here
         String jsonWithoutCommentary = "{ \"hello\": \"world\" }";
