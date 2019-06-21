@@ -127,7 +127,6 @@ public class Json5ToJsonReader extends Reader {
                     write(',');
                 }
                 if (currChar == '"') {
-                    write('"');
                     handleString(currChar);
                     tokenStack.push(keyInObject);
                 } else {
@@ -136,7 +135,11 @@ public class Json5ToJsonReader extends Reader {
             } else if (lastToken == semicolon) {
                 tokenStack.pop();
                 tokenStack.push(valueInObject);
-                // todo: parse value
+                // todo: handle all types of values not just strings
+                if (currChar == '"') {
+                    handleString(currChar);
+                    tokenStack.pop();
+                }
             } else {
                 throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
             }
@@ -155,7 +158,7 @@ public class Json5ToJsonReader extends Reader {
                 c == 0x205F || c == 0x3000;
     }
 
-    private void handleString(char currChar) throws IOException {
+    private void handleString(char wrappingQuote) throws IOException {
         write('\"');
 
         boolean isEscaped = false;
@@ -168,7 +171,7 @@ public class Json5ToJsonReader extends Reader {
                 return;
             }
 
-            currChar = (char) nextChar;
+            char currChar = (char) nextChar;
             if (!isEscaped) {
                 if (currChar == '\"') {
                     finishedString = true;
