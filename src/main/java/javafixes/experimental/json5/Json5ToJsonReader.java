@@ -207,8 +207,9 @@ public class Json5ToJsonReader extends Reader {
                 if (wrappingQuote == '\'' && currChar == '\'') {
                     write('\'');
                 } else if (currChar == '\n') {
-                    write('\\');
-                    write('n');
+                    // do nothing
+//                    write('\\');
+//                    write('n');
                 } else {
                     write('\\');
                     write(currChar);
