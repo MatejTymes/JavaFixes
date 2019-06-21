@@ -12,7 +12,7 @@ import static javafixes.experimental.json5.Token.*;
 // https://spec.json5.org/
 public class Json5ToJsonReader extends Reader {
 
-    // todo: add flags: addZeroAfterTrailingDecimalPoint = {default true}
+    // todo: add flags: addZeroAfterTrailingDecimalPoint = {default false}
 
     private final PushbackReader json5Reader;
 
@@ -206,6 +206,9 @@ public class Json5ToJsonReader extends Reader {
             } else {
                 if (wrappingQuote == '\'' && currChar == '\'') {
                     write('\'');
+                } else if (currChar == '\n') {
+                    write('\\');
+                    write('n');
                 } else {
                     write('\\');
                     write(currChar);

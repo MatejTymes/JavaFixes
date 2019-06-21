@@ -57,8 +57,10 @@ public class Json5ToJsonReaderTest {
                 "{ // comment\n" +
                 "  \"stringField\":\"this \\\"is\\\" \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a 'string' \",\n" +
                 "  'singleQuotedStringField'\n" +
-                "  : 'this \"is\" \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a \\'string\\' ',\n" +
+                "  : 'that \"is\" \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a \\'string\\' ',\n" +
                 "\n" +
+                "  \"multilineField\" : \"This is \\\n" +
+                "a multi \\n line value\",\n" +
                 "  \"intField1\" : 0, /*\n" +
                 "\n" +
                 "    yet more multiline\n" +
@@ -85,7 +87,7 @@ public class Json5ToJsonReaderTest {
                 "      { \"field\" : \"value\" },\n" +
                 "      8675309.,\n" +
                 "      +1,\n" +
-                "      'this \"is\" \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a \\'string\\' ',\n" +
+                "      'that \"is\" \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a \\'string\\' ',\n" +
                 "      [ 0, 1.953e+5, \"string\", false, null, true ],\n" +
                 "      -59,\n" +
                 "      489E-31,\n" +
@@ -105,6 +107,6 @@ public class Json5ToJsonReaderTest {
         Reader json5ToJsonReader = new Json5ToJsonReader(jsonReader);
 
         String convertedJson = CharStreams.toString(json5ToJsonReader);
-        assertThat(convertedJson, equalTo("{\"stringField\":\"this \\\"is\\\" \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a 'string' \",\"singleQuotedStringField\":\"this \\\"is\\\" \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a 'string' \",\"intField1\":0,\"intField2\":1.953e+5,\"leadingDecimalPoint\":0.8675309,\"trailingDecimalPoint\":8675309,\"positiveSign\":1,\"objectField\":{\"booleanField\":true,\"booleanField2\":false,\"nullField\":null,\"arrayField\":[\"this \\\"is\\\" \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a 'string' \",0.8675309,{\"field\":\"value\"},8675309,1,\"this \\\"is\\\" \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a 'string' \",[0,1.953e+5,\"string\",false,null,true],-59,489E-31,false,null,true]},\"intField3\":-59,\"intField4\":489E-31,\"intField5\":-0E1,\"nullField\":null}"));
+        assertThat(convertedJson, equalTo("{\"stringField\":\"this \\\"is\\\" \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a 'string' \",\"singleQuotedStringField\":\"that \\\"is\\\" \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a 'string' \",\"multilineField\":\"This is \\na multi \\n line value\",\"intField1\":0,\"intField2\":1.953e+5,\"leadingDecimalPoint\":0.8675309,\"trailingDecimalPoint\":8675309,\"positiveSign\":1,\"objectField\":{\"booleanField\":true,\"booleanField2\":false,\"nullField\":null,\"arrayField\":[\"this \\\"is\\\" \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a 'string' \",0.8675309,{\"field\":\"value\"},8675309,1,\"that \\\"is\\\" \\\\ \\/ \\b \\f \\n \\r \\t \\u9210 a 'string' \",[0,1.953e+5,\"string\",false,null,true],-59,489E-31,false,null,true]},\"intField3\":-59,\"intField4\":489E-31,\"intField5\":-0E1,\"nullField\":null}"));
     }
 }

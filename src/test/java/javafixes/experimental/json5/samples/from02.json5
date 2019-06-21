@@ -10,6 +10,8 @@ comment */
   'singleQuotedStringField'
   : 'that "is" \\ \/ \b \f \n \r \t \u9210 a \'string\' ',
 
+  "multilineField" : "This is \
+a multi \n line value",
   "intField1" : 0, /*
 
     yet more multiline
