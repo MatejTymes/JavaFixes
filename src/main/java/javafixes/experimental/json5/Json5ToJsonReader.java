@@ -9,7 +9,6 @@ import java.util.Stack;
 import static javafixes.common.CollectionUtil.newList;
 import static javafixes.experimental.json5.Token.*;
 
-// todo: handle trailing commas
 public class Json5ToJsonReader extends Reader {
 
     private final PushbackReader json5Reader;
@@ -48,7 +47,6 @@ public class Json5ToJsonReader extends Reader {
     private Stack<Token> tokenStack = new Stack<>();
 
     private void parseNextToken() throws IOException {
-        // todo: implement
         boolean repeat;
 
         do {
@@ -129,25 +127,13 @@ public class Json5ToJsonReader extends Reader {
                     write(',');
                 }
                 tokenStack.push(valueInArray);
-                if (currChar == '"') {
-                    handleString(currChar);
-                } else if (currChar == '-' || (currChar >= '0' && currChar <= '9')) {
-                    handleNumber(currChar);
-                } else if (currChar == 't') {
-                    handleTrue(currChar);
-                } else if (currChar == 'f') {
-                    handleFalse(currChar);
-                } else if (currChar == 'n') {
-                    handleNull(currChar);
-                } else {
-                    throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
-                }
+                handleValue(currChar, lastToken);
             } else if (lastToken == objectStart || lastToken == commaInObject) { // key in object
                 if (lastToken == commaInObject) {
                     tokenStack.pop();
                     write(',');
                 }
-                if (currChar == '"') {
+                if (isBeginningOfString(currChar)) {
                     handleString(currChar);
                     tokenStack.push(keyInObject);
                 } else {
@@ -156,23 +142,31 @@ public class Json5ToJsonReader extends Reader {
             } else if (lastToken == semicolon) {
                 tokenStack.pop();
                 tokenStack.push(valueInObject);
-                if (currChar == '"') {
-                    handleString(currChar);
-                } else if (currChar == '-' || (currChar >= '0' && currChar <= '9')) {
-                    handleNumber(currChar);
-                } else if (currChar == 't') {
-                    handleTrue(currChar);
-                } else if (currChar == 'f') {
-                    handleFalse(currChar);
-                } else if (currChar == 'n') {
-                    handleNull(currChar);
-                } else {
-                    throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
-                }
+                handleValue(currChar, lastToken);
             } else {
                 throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
             }
         } while (repeat);
+    }
+
+    private boolean isBeginningOfString(char currChar) {
+        return currChar == '"' || currChar == '\'';
+    }
+
+    private void handleValue(char currChar, Token lastToken) throws IOException {
+        if (isBeginningOfString(currChar)) {
+            handleString(currChar);
+        } else if (currChar == '-' || currChar == '+' || currChar == '.' || (currChar >= '0' && currChar <= '9')) {
+            handleNumber(currChar);
+        } else if (currChar == 't') {
+            handleTrue(currChar);
+        } else if (currChar == 'f') {
+            handleFalse(currChar);
+        } else if (currChar == 'n') {
+            handleNull(currChar);
+        } else {
+            throw new IOException("Unexpected character: '" + currChar + "' after token '" + lastToken + "'");
+        }
     }
 
     private boolean isJSON5WhiteSpace(char c) {
@@ -195,17 +189,24 @@ public class Json5ToJsonReader extends Reader {
         do {
             char currChar = readNextChar();
             if (!isEscaped) {
-                if (currChar == '\"') {
+                if (currChar == wrappingQuote) {
                     finishedString = true;
+                    write('\"');
+                } else if (wrappingQuote == '\'' && currChar == '"') {
+                    write('\\');
                     write('\"');
                 } else if (currChar == '\\') {
                     isEscaped = true;
-                    write(currChar);
                 } else {
                     write(currChar);
                 }
             } else {
-                write(currChar);
+                if (wrappingQuote == '\'' && currChar == '\'') {
+                    write('\'');
+                } else {
+                    write('\\');
+                    write(currChar);
+                }
                 isEscaped = false;
             }
 
@@ -275,55 +276,66 @@ public class Json5ToJsonReader extends Reader {
     }
 
     private void handleNumber(char currChar) throws IOException {
-        boolean isZero = (currChar == '0');
-        boolean hadAtLeastOneDigit = (currChar >= '0' && currChar <= '9');
-        write(currChar);
+        if (currChar == '.') {
+            write('0');
+            handleDecimalPart(false);
+        } else {
+            boolean isZero = (currChar == '0');
+            boolean hadAtLeastOneDigit = (currChar >= '0' && currChar <= '9');
+            if (currChar != '+') {
+                write(currChar);
+            }
 
-        while (true) {
-            int nextChar = readNextInt();
-            currChar = (char) nextChar;
+            while (true) {
+                int nextChar = readNextInt();
+                currChar = (char) nextChar;
 
-            if (currChar == 'e' || currChar == 'E') {
-                if (!hadAtLeastOneDigit) {
-                    throw new IOException("Unexpected exponent character: '" + currChar + "' when expecting first number digit");
+                if (currChar == 'e' || currChar == 'E') {
+                    if (!hadAtLeastOneDigit) {
+                        throw new IOException("Unexpected exponent character: '" + currChar + "' when expecting first number digit");
+                    }
+                    handleExponent(currChar);
+                } else if (currChar == '.') {
+                    if (!hadAtLeastOneDigit) {
+                        throw new IOException("Unexpected character: '" + currChar + "' when expecting first number digit");
+                    }
+                    handleDecimalPart(hadAtLeastOneDigit);
+                } else if (!hadAtLeastOneDigit) {
+                    if (currChar == '0') {
+                        isZero = true;
+                    } else if (currChar < '1' || currChar > '9') {
+                        throw new IOException("Unexpected character: '" + currChar + "' when expecting first number digit");
+                    }
+                    hadAtLeastOneDigit = true;
+                    write(currChar);
+                } else if (currChar >= '0' && currChar <= '9') {
+                    if (isZero) {
+                        throw new IOException("Unexpected character: '" + currChar + "' after a number starting with 0");
+                    }
+                    write(currChar);
+                } else {
+                    json5Reader.unread(nextChar);
+                    break;
                 }
-                handleExponent(currChar);
-            } else if(currChar == '.') {
-                if (!hadAtLeastOneDigit) {
-                    throw new IOException("Unexpected character: '" + currChar + "' when expecting first number digit");
-                }
-                write(currChar);
-                handleDecimalPart();
-            } else if (!hadAtLeastOneDigit) {
-                if (currChar == '0') {
-                    isZero = true;
-                } else if (currChar < '1' || currChar > '9') {
-                    throw new IOException("Unexpected character: '" + currChar + "' when expecting first number digit");
-                }
-                hadAtLeastOneDigit = true;
-                write(currChar);
-            } else if (currChar >= '0' && currChar <= '9') {
-                if (isZero) {
-                    throw new IOException("Unexpected character: '" + currChar + "' after a number starting with 0");
-                }
-                write(currChar);
-            } else {
-                json5Reader.unread(nextChar);
-                break;
             }
         }
     }
 
-    private void handleDecimalPart() throws IOException {
-        boolean hadAtLeastOneDigit = false;
+    private void handleDecimalPart(boolean hadAtLeastWholePartOneDigit) throws IOException {
+        boolean hadTheDotBeenWritten = false;
+        boolean hadAtLeastOneDecimalDigit = false;
 
         while (true) {
             int nextChar = readNextInt();
             char currChar = (char) nextChar;
             if (currChar >= '0' && currChar <= '9') {
-                hadAtLeastOneDigit = true;
+                if (!hadTheDotBeenWritten) {
+                    write('.');
+                    hadTheDotBeenWritten = true;
+                }
+                hadAtLeastOneDecimalDigit = true;
                 write(currChar);
-            } else if (!hadAtLeastOneDigit) {
+            } else if (!hadAtLeastWholePartOneDigit && !hadAtLeastOneDecimalDigit) {
                 throw new IOException("Unexpected character: '" + currChar + "' when expecting a decimal digit");
             } else if (currChar == 'e' || currChar == 'E') {
                 handleExponent(currChar);
@@ -440,7 +452,12 @@ public class Json5ToJsonReader extends Reader {
 
     private void ensureCharsInBuffer(int n) throws IOException {
         while (!finished && buffer.size() < n) {
-            parseNextToken();
+            try {
+                parseNextToken();
+            } catch (IOException e) {
+                System.err.println("Failed after filled JSON buffer with: " + buffer);
+                throw e;
+            }
         }
     }
 
