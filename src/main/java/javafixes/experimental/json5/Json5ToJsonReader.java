@@ -9,7 +9,10 @@ import java.util.Stack;
 import static javafixes.common.CollectionUtil.newList;
 import static javafixes.experimental.json5.Token.*;
 
+// https://spec.json5.org/
 public class Json5ToJsonReader extends Reader {
+
+    // todo: add flags: addZeroAfterTrailingDecimalPoint = {default true}
 
     private final PushbackReader json5Reader;
 
