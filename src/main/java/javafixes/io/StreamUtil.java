@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import static java.io.File.createTempFile;
 
+// todo: add gzipping
 // todo: test this
 public class StreamUtil {
 

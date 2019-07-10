@@ -2,11 +2,10 @@ package javafixes.object;
 
 import java.util.concurrent.Callable;
 
-// todo: test this
 public class Lazy<T> {
 
-    private T value;
-    private boolean isInitialized;
+    private T value = null;
+    private boolean isInitialized = false;
 
     private final Callable<T> valueProvider;
 
