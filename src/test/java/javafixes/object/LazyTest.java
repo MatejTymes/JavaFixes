@@ -30,6 +30,11 @@ public class LazyTest {
     @Mock
     private Callable<UUID> valueInitializer;
 
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailToInitializeLazyWithNullValueProvider() {
+        new Lazy<String>(null);
+    }
+
     @Test
     public void shouldNotBeInitializedIfValueHasNotBeenCalled() {
         // When
