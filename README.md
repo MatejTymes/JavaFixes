@@ -116,6 +116,24 @@ On the other hand the third thread won't be blocked by either the first or the s
 
 ## Objects
 
+### Lazy
+
+Allows to create objects with lazy/late initialization and then provides it's value.
+
+```Java
+    Lazy<HeavyObject> lazyValue = lazy(() -> heavyInitializationMethod());
+
+    lazyValue.isInitialized();  // false - as not initialized yet
+    
+    HeavyObject actualValue = lazyValue.value();  // calls heavyInitializationMethod()
+    lazyValue.isInitialized();  // true
+    
+    
+    lazyValue.value();  // does NOT call heavyInitializationMethod() anymore (as already initialized)
+```
+
+Once initialized guarantees that the initialization won't be called again but cached value will be provided. 
+
 ### DataObject
 
 Adds `equals`, `hashCode` and `toString` methods to domain objects:

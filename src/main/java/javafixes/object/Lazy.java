@@ -21,7 +21,7 @@ public class Lazy<T> {
         return isInitialized;
     }
 
-    public T value() {
+    public T value() throws IllegalStateException {
         if (!isInitialized) {
             synchronized (this) {
                 if (!isInitialized) {
