@@ -118,7 +118,7 @@ On the other hand the third thread won't be blocked by either the first or the s
 
 ### Lazy
 
-Allows to create objects with lazy/late initialization and then provides it's value.
+Allows to create objects whose initialization is called only once we're interested into it's value.
 
 ```Java
     Lazy<HeavyObject> lazyValue = lazy(() -> heavyInitializationMethod());
@@ -132,7 +132,8 @@ Allows to create objects with lazy/late initialization and then provides it's va
     lazyValue.value();  // does NOT call heavyInitializationMethod() anymore (as already initialized)
 ```
 
-Once initialized guarantees that the initialization won't be called again but cached value will be provided. 
+Once initialization is successful the value is cached and initialization is not called anymore.
+This class is thread/concurrent safe and guarantees to execute only one successful initialization. 
 
 ### DataObject
 
