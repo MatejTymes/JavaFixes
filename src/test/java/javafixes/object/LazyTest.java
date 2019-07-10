@@ -130,7 +130,8 @@ public class LazyTest {
 
             // Then
             fail("expected IllegalStateException");
-        } catch (IllegalStateException actualException) {
+        } catch (InitializationFailedException actualException) {
+            assertThat(actualException.getMessage(), equalTo("Failed to initialize Lazy value"));
             assertThat(actualException.getCause(), equalTo(expectedException));
             assertThat(lazy.isInitialized(), is(false));
 
@@ -165,7 +166,8 @@ public class LazyTest {
 
                 // Then
                 fail("expected IllegalStateException");
-            } catch (IllegalStateException actualException) {
+            } catch (InitializationFailedException actualException) {
+                assertThat(actualException.getMessage(), equalTo("Failed to initialize Lazy value"));
                 assertThat(actualException.getCause(), equalTo(expectedException));
                 assertThat(lazy.isInitialized(), is(false));
             }

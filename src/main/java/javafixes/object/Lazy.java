@@ -2,6 +2,7 @@ package javafixes.object;
 
 import java.util.concurrent.Callable;
 
+// todo: add javadoc
 public class Lazy<T> {
 
     private T value = null;
@@ -21,7 +22,7 @@ public class Lazy<T> {
         return isInitialized;
     }
 
-    public T value() throws IllegalStateException {
+    public T value() throws InitializationFailedException {
         if (!isInitialized) {
             synchronized (this) {
                 if (!isInitialized) {
@@ -29,7 +30,7 @@ public class Lazy<T> {
                         value = valueProvider.call();
                         isInitialized = true;
                     } catch (Exception e) {
-                        throw new IllegalStateException("Failed to initialize Lazy value", e);
+                        throw new InitializationFailedException("Failed to initialize Lazy value", e);
                     }
                 }
             }
