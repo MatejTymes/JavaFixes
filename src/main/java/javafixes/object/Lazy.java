@@ -2,7 +2,17 @@ package javafixes.object;
 
 import java.util.concurrent.Callable;
 
-// todo: add javadoc
+/**
+ * {@code Lazy} is intended as wrapper a lazy initialized objects.
+ * It wraps an initialization method, which is called only once the {@code value()} method is invoked.
+ * If initialization method provided a value, this value is cached an returned with every following {@code value()} call.
+ * Also the initialization is never triggered again.
+ * In case the initialization resulted in an {@link Exception} then the {@code Lazy} is being considered uninitialized
+ * and the following {@code value()} call will result into invoking the initialization method again.
+ * This can be repeated until the initialization method is not successful.
+ *
+ * @author mtymes
+ */
 public class Lazy<T> {
 
     private T value = null;
@@ -10,6 +20,12 @@ public class Lazy<T> {
 
     private final Callable<T> valueProvider;
 
+    /**
+     * Constructor of {@code Lazy} with value initialization method
+     *
+     * @param valueProvider initialization method
+     * @throws IllegalArgumentException if {@code null} is passed as input parameter
+     */
     public Lazy(Callable<T> valueProvider) {
         if (valueProvider == null) {
             throw new IllegalArgumentException("valueProvider of a Lazy can't be null");
