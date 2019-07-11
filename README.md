@@ -118,7 +118,7 @@ On the other hand the third thread won't be blocked by either the first or the s
 
 ### Lazy
 
-Allows to create objects whose initialization is called only once we're interested into it's value.
+Allows to create objects whose initialization is called only once we call it's `value()` method.
 
 ```Java
     Lazy<HeavyObject> lazyValue = lazy(() -> heavyInitializationMethod());
