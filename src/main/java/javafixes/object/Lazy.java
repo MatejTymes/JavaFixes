@@ -3,13 +3,14 @@ package javafixes.object;
 import java.util.concurrent.Callable;
 
 /**
- * {@code Lazy} is intended as wrapper a lazy initialized objects.
- * It wraps an initialization method, which is called only once the {@code value()} method is invoked.
- * If initialization method provided a value, this value is cached an returned with every following {@code value()} call.
- * Also the initialization is never triggered again.
+ * {@code Lazy} is intended as wrapper for lazily initialized objects.
+ * It wraps an initialization method, which is called only once the {@code value()} method is invoked
+ * (so it might be never called at all).
+ * If initialization method provided a value, this value is cached an returned with every following {@code value()} call
+ * and the initialization will be never triggered again.
  * In case the initialization resulted in an {@link Exception} then the {@code Lazy} is being considered uninitialized
  * and the following {@code value()} call will result into invoking the initialization method again.
- * This can be repeated until the initialization method is not successful.
+ * This can be repeated until the initialization method is successful.
  *
  * @author mtymes
  */
