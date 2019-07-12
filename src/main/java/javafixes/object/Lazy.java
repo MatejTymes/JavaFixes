@@ -55,10 +55,12 @@ public class Lazy<T> {
     }
 
     /**
-     * If initialization was not call successful, calls initialization and its result.
-     * If initialization was successful, then on second call only the value is return
-     * (and the initialization is NOT executed anymore).
-     * In case the initialization has failed an {@code InitializationFailedException} is thrown.
+     * If {@code Lazy} is not yet initialized call, calls initialization and caches and returns its result.
+     * If initialization was successful then on second call only the cached value is returned
+     * and the initialization is NOT executed anymore.
+     * In case the initialization has failed with any {@code Exception}
+     * an {@code InitializationFailedException} is thrown and the {@code Lazy} is considered to be
+     * not initialized.
      * Subsequent call of this method after failure will execution initialization again.
      * This can be repeated until the initialization is finally successful.
      *
