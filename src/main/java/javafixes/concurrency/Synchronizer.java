@@ -1,9 +1,14 @@
 package javafixes.concurrency;
 
+import javafixes.object.Tuple;
+
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.StampedLock;
+
+import static javafixes.object.Tuple.tuple;
 
 /**
  * A class that allows you to synchronize code on different objects (ids)
@@ -11,9 +16,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author mtymes
  */
+// todo: mtymes - change RuntimeException -> WrappedException
+// todo: mtymes - introduce SynchronizationTimeoutException
 public class Synchronizer<K> {
 
-    private final Map<K, AtomicInteger> locks = new ConcurrentHashMap<>();
+    private final Map<K, Tuple<AtomicInteger, StampedLock>> counterWithLocks = new ConcurrentHashMap<>();
 
     /**
      * Executes the provided {@link Callable} and returning its output value,
@@ -26,10 +33,13 @@ public class Synchronizer<K> {
      * @return response generated from the provided {@code action} parameter
      */
     public <T> T synchronizeOn(K key, Callable<T> action) throws RuntimeException {
-        AtomicInteger lock = acquireLock(key);
+        StampedLock lock = acquireLock(key);
         try {
-            synchronized (lock) {
+            long stamp = lock.writeLock();
+            try {
                 return action.call();
+            } finally {
+                lock.unlock(stamp);
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to execute action", e);
@@ -47,10 +57,13 @@ public class Synchronizer<K> {
      * @throws RuntimeException any thrown exception from the provided {@code action} is wrapped into a {@link RuntimeException}
      */
     public void synchronizeRunnableOn(K key, Runnable action) throws RuntimeException {
-        AtomicInteger lock = acquireLock(key);
+        StampedLock lock = acquireLock(key);
         try {
-            synchronized (lock) {
+            long stamp = lock.writeLock();
+            try {
                 action.run();
+            } finally {
+                lock.unlock(stamp);
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to execute action", e);
@@ -68,10 +81,13 @@ public class Synchronizer<K> {
      * @throws RuntimeException any thrown exception from the provided {@code action} is wrapped into a {@link RuntimeException}
      */
     public void synchronizeOn(K key, Task action) throws RuntimeException {
-        AtomicInteger lock = acquireLock(key);
+        StampedLock lock = acquireLock(key);
         try {
-            synchronized (lock) {
+            long stamp = lock.writeLock();
+            try {
                 action.run();
+            } finally {
+                lock.unlock(stamp);
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to execute action", e);
@@ -80,22 +96,22 @@ public class Synchronizer<K> {
         }
     }
 
-    private AtomicInteger acquireLock(K key) {
-        synchronized (locks) {
-            AtomicInteger counter = locks.computeIfAbsent(
+    private StampedLock acquireLock(K key) {
+        synchronized (counterWithLocks) {
+            Tuple<AtomicInteger, StampedLock> counterWithLock = counterWithLocks.computeIfAbsent(
                     key,
-                    k -> new AtomicInteger(0)
+                    k -> tuple(new AtomicInteger(0), new StampedLock())
             );
-            counter.incrementAndGet();
-            return counter;
+            counterWithLock.a.incrementAndGet();
+            return counterWithLock.b;
         }
     }
 
     private void releaseLock(K key) {
-        synchronized (locks) {
-            AtomicInteger counter = locks.get(key);
-            if (counter.decrementAndGet() == 0) {
-                locks.remove(key);
+        synchronized (counterWithLocks) {
+            Tuple<AtomicInteger, StampedLock> counterWithLock = counterWithLocks.get(key);
+            if (counterWithLock.a.decrementAndGet() == 0) {
+                counterWithLocks.remove(key);
             }
         }
     }
