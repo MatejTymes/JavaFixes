@@ -7,7 +7,7 @@ import static java.io.File.createTempFile;
 
 // todo: add gzipping
 // todo: test this
-public class StreamUtil {
+public class InputStreamUtil {
 
     public static InputStream toTempFileInputStream(InputStream inputStream) throws IOException {
         File file = writeIntoTempFile(inputStream);

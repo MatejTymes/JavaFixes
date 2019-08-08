@@ -10,7 +10,7 @@ import static javafixes.common.CollectionUtil.newList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class StreamUtilTest {
+public class InputStreamUtilTest {
 
     @Test
     public void shouldCreateStreamFromIterable() {
