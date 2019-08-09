@@ -208,8 +208,6 @@ public class Json5ToJsonReader extends Reader {
                     write('\'');
                 } else if (currChar == '\n') {
                     // do nothing
-//                    write('\\');
-//                    write('n');
                 } else {
                     write('\\');
                     write(currChar);
