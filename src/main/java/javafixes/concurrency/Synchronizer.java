@@ -29,7 +29,7 @@ public class Synchronizer<K> {
      * @param key value should be used for synchronization/locking purposes
      * @param action action that should be executed
      *
-     * @throws WrappedException any thrown exception from the provided {@code action} is wrapped into a {@link WrappedException}
+     * @throws WrappedException any exception thrown from the provided {@code action} is wrapped into a {@link WrappedException}
      *
      * @return response generated from the provided {@code action} parameter
      */
@@ -61,7 +61,7 @@ public class Synchronizer<K> {
      *
      * @throws TimeoutException if we can't acquire lock within the defined time
      * @throws InterruptedException if the current thread is interrupted before acquiring the lock
-     * @throws WrappedException any thrown exception from the provided {@code action} is wrapped into a {@link WrappedException}
+     * @throws WrappedException any exception thrown from the provided {@code action} is wrapped into a {@link WrappedException}
      *
      * @return response generated from the provided {@code action} parameter
      */
@@ -92,7 +92,7 @@ public class Synchronizer<K> {
      * @param key value should be used for synchronization/locking purposes
      * @param action action that should be executed
      *
-     * @throws WrappedException any thrown exception from the provided {@code action} is wrapped into a {@link WrappedException}
+     * @throws WrappedException any exception thrown from the provided {@code action} is wrapped into a {@link WrappedException}
      */
     public void synchronizeRunnableOn(K key, Runnable action) throws WrappedException {
         StampedLock lock = acquireLock(key);
@@ -122,7 +122,7 @@ public class Synchronizer<K> {
      *
      * @throws TimeoutException if we can't acquire lock within the defined time
      * @throws InterruptedException if the current thread is interrupted before acquiring the lock
-     * @throws WrappedException any thrown exception from the provided {@code action} is wrapped into a {@link WrappedException}
+     * @throws WrappedException any exception thrown from the provided {@code action} is wrapped into a {@link WrappedException}
      *
      */
     public void synchronizeRunnableOn(K key, long time, TimeUnit unit, Runnable action) throws TimeoutException, InterruptedException, WrappedException {
@@ -152,7 +152,7 @@ public class Synchronizer<K> {
      * @param key value should be used for synchronization/locking purposes
      * @param action action that should be executed
      *
-     * @throws WrappedException any thrown exception from the provided {@code action} is wrapped into a {@link WrappedException}
+     * @throws WrappedException any exception thrown from the provided {@code action} is wrapped into a {@link WrappedException}
      */
     public void synchronizeOn(K key, Task action) throws WrappedException {
         StampedLock lock = acquireLock(key);
@@ -182,7 +182,7 @@ public class Synchronizer<K> {
      *
      * @throws TimeoutException if we can't acquire lock within the defined time
      * @throws InterruptedException if the current thread is interrupted before acquiring the lock
-     * @throws WrappedException any thrown exception from the provided {@code action} is wrapped into a {@link WrappedException}
+     * @throws WrappedException any exception thrown from the provided {@code action} is wrapped into a {@link WrappedException}
      */
     public void synchronizeOn(K key, long time, TimeUnit unit, Task action) throws TimeoutException, InterruptedException, WrappedException {
         StampedLock lock = acquireLock(key);
