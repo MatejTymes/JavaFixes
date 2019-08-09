@@ -5,6 +5,7 @@ import javafixes.object.Tuple;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.StampedLock;
 
@@ -16,8 +17,6 @@ import static javafixes.object.Tuple.tuple;
  *
  * @author mtymes
  */
-// todo: mtymes - change RuntimeException -> WrappedException
-// todo: mtymes - introduce SynchronizationTimeoutException
 public class Synchronizer<K> {
 
     private final Map<K, Tuple<AtomicInteger, StampedLock>> counterWithLocks = new ConcurrentHashMap<>();
@@ -28,21 +27,54 @@ public class Synchronizer<K> {
      *
      * @param key value should be used for synchronization/locking purposes
      * @param action action that should be executed
-     * @throws RuntimeException any thrown exception from the provided {@code action} is wrapped into a {@link RuntimeException}
+     *
+     * @throws WrappedException any thrown exception from the provided {@code action} is wrapped into a {@link WrappedException}
      *
      * @return response generated from the provided {@code action} parameter
      */
-    public <T> T synchronizeOn(K key, Callable<T> action) throws RuntimeException {
+    public <T> T synchronizeOn(K key, Callable<T> action) throws WrappedException {
         StampedLock lock = acquireLock(key);
         try {
             long stamp = lock.writeLock();
             try {
                 return action.call();
+            } catch (Exception e) {
+                throw new WrappedException("Failed to execute action", e);
             } finally {
                 lock.unlock(stamp);
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to execute action", e);
+        } finally {
+            releaseLock(key);
+        }
+    }
+
+    /**
+     * Will attempt to executes the provided {@link Callable} and return its output value,
+     * while making sure that only one action can be run for the provided {@code key}.
+     * In case the lock can't be acquired within given time an {@link InterruptedException} is thrown.
+     *
+     * @param key value should be used for synchronization/locking purposes
+     * @param time the maximum time to wait for the lock
+     * @param unit the time unit of the {@code time} argument
+     * @param action action that should be executed
+     *
+     * @throws InterruptedException if we can't acquire lock within the defined time
+     * @throws WrappedException any thrown exception from the provided {@code action} is wrapped into a {@link WrappedException}
+     *
+     * @return response generated from the provided {@code action} parameter
+     */
+    // todo: test
+    public <T> T synchronizeOn(K key, long time, TimeUnit unit, Callable<T> action) throws InterruptedException, WrappedException {
+        StampedLock lock = acquireLock(key);
+        try {
+            long stamp = lock.tryWriteLock(time, unit);
+            try {
+                return action.call();
+            } catch (Exception e) {
+                throw new WrappedException("Failed to execute action", e);
+            } finally {
+                lock.unlock(stamp);
+            }
         } finally {
             releaseLock(key);
         }
@@ -54,19 +86,51 @@ public class Synchronizer<K> {
      *
      * @param key value should be used for synchronization/locking purposes
      * @param action action that should be executed
-     * @throws RuntimeException any thrown exception from the provided {@code action} is wrapped into a {@link RuntimeException}
+     *
+     * @throws WrappedException any thrown exception from the provided {@code action} is wrapped into a {@link WrappedException}
      */
-    public void synchronizeRunnableOn(K key, Runnable action) throws RuntimeException {
+    public void synchronizeRunnableOn(K key, Runnable action) throws WrappedException {
         StampedLock lock = acquireLock(key);
         try {
             long stamp = lock.writeLock();
             try {
                 action.run();
+            } catch (Exception e) {
+                throw new WrappedException("Failed to execute action", e);
             } finally {
                 lock.unlock(stamp);
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to execute action", e);
+        } finally {
+            releaseLock(key);
+        }
+    }
+
+    /**
+     * Will attempt to executes the provided {@link Runnable} while making sure that only one action
+     * can be run for the provided {@code key}.
+     * In case the lock can't be acquired within given time an {@link InterruptedException} is thrown.
+     *
+     * @param key value should be used for synchronization/locking purposes
+     * @param time the maximum time to wait for the lock
+     * @param unit the time unit of the {@code time} argument
+     * @param action action that should be executed
+     *
+     * @throws InterruptedException if we can't acquire lock within the defined time
+     * @throws WrappedException any thrown exception from the provided {@code action} is wrapped into a {@link WrappedException}
+     *
+     */
+    // todo: test
+    public void synchronizeRunnableOn(K key, long time, TimeUnit unit, Runnable action) throws InterruptedException, WrappedException {
+        StampedLock lock = acquireLock(key);
+        try {
+            long stamp = lock.tryWriteLock(time, unit);
+            try {
+                action.run();
+            } catch (Exception e) {
+                throw new WrappedException("Failed to execute action", e);
+            } finally {
+                lock.unlock(stamp);
+            }
         } finally {
             releaseLock(key);
         }
@@ -78,19 +142,50 @@ public class Synchronizer<K> {
      *
      * @param key value should be used for synchronization/locking purposes
      * @param action action that should be executed
-     * @throws RuntimeException any thrown exception from the provided {@code action} is wrapped into a {@link RuntimeException}
+     *
+     * @throws WrappedException any thrown exception from the provided {@code action} is wrapped into a {@link WrappedException}
      */
-    public void synchronizeOn(K key, Task action) throws RuntimeException {
+    public void synchronizeOn(K key, Task action) throws WrappedException {
         StampedLock lock = acquireLock(key);
         try {
             long stamp = lock.writeLock();
             try {
                 action.run();
+            } catch (Exception e) {
+                throw new WrappedException("Failed to execute action", e);
             } finally {
                 lock.unlock(stamp);
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to execute action", e);
+        } finally {
+            releaseLock(key);
+        }
+    }
+
+    /**
+     * Will attempt to executes the provided {@link Task} while making sure that only one action
+     * can be run for the provided {@code key}.
+     * In case the lock can't be acquired within given time an {@link InterruptedException} is thrown.
+     *
+     * @param key value should be used for synchronization/locking purposes
+     * @param time the maximum time to wait for the lock
+     * @param unit the time unit of the {@code time} argument
+     * @param action action that should be executed
+     *
+     * @throws InterruptedException if we can't acquire lock within the defined time
+     * @throws WrappedException any thrown exception from the provided {@code action} is wrapped into a {@link WrappedException}
+     */
+    // todo: test
+    public void synchronizeOn(K key, long time, TimeUnit unit, Task action) throws InterruptedException, WrappedException {
+        StampedLock lock = acquireLock(key);
+        try {
+            long stamp = lock.tryWriteLock(time, unit);
+            try {
+                action.run();
+            } catch (Exception e) {
+                throw new WrappedException("Failed to execute action", e);
+            } finally {
+                lock.unlock(stamp);
+            }
         } finally {
             releaseLock(key);
         }

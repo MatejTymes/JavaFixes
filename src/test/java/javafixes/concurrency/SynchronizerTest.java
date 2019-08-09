@@ -5,26 +5,32 @@ import org.junit.Test;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.UUID.randomUUID;
 import static javafixes.common.CollectionUtil.newList;
 import static javafixes.concurrency.Runner.runner;
-import static javafixes.test.Random.randomInt;
-import static javafixes.test.Random.randomUUIDString;
+import static javafixes.test.Random.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
+// todo: mtymes - should run within Timeout
+// todo: mtymes - should run pass the Timeout
 public class SynchronizerTest {
 
     private Synchronizer<String> synchronizer = new Synchronizer<>();
 
     @Test
-    public void shouldExecuteCallable() {
+    public void shouldExecuteAction() throws Exception {
         AtomicInteger numberOfCalls = new AtomicInteger(0);
         UUID expectedResult = randomUUID();
+        UUID actalResult;
 
-        UUID actalResult = synchronizer.synchronizeOn(
+
+        numberOfCalls.set(0);
+        actalResult = synchronizer.synchronizeOn(
                 randomUUIDString(),
                 (Callable<UUID>) () -> {
                     numberOfCalls.incrementAndGet();
@@ -32,38 +38,197 @@ public class SynchronizerTest {
                     return expectedResult;
                 }
         );
-
         assertThat(numberOfCalls.get(), equalTo(1));
         assertThat(actalResult, equalTo(expectedResult));
-    }
 
-    @Test
-    public void shouldExecuteRunnable() {
-        AtomicInteger numberOfCalls = new AtomicInteger(0);
 
+        numberOfCalls.set(0);
+        actalResult = synchronizer.synchronizeOn(
+                randomUUIDString(),
+                randomLong(1, 9_999),
+                pickRandomValue(TimeUnit.MILLISECONDS, TimeUnit.SECONDS),
+                (Callable<UUID>) () -> {
+                    numberOfCalls.incrementAndGet();
+
+                    return expectedResult;
+                }
+        );
+        assertThat(numberOfCalls.get(), equalTo(1));
+        assertThat(actalResult, equalTo(expectedResult));
+
+
+        numberOfCalls.set(0);
         synchronizer.synchronizeRunnableOn(
                 randomUUIDString(),
                 (Runnable) () -> {
                     numberOfCalls.incrementAndGet();
                 }
         );
-
         assertThat(numberOfCalls.get(), equalTo(1));
-    }
 
-    @Test
-    public void shouldExecuteTask() {
-        AtomicInteger numberOfCalls = new AtomicInteger(0);
 
+        numberOfCalls.set(0);
+        synchronizer.synchronizeRunnableOn(
+                randomUUIDString(),
+                randomLong(1, 9_999),
+                pickRandomValue(TimeUnit.MILLISECONDS, TimeUnit.SECONDS),
+                (Runnable) () -> {
+                    numberOfCalls.incrementAndGet();
+                }
+        );
+        assertThat(numberOfCalls.get(), equalTo(1));
+
+
+        numberOfCalls.set(0);
         synchronizer.synchronizeOn(
                 randomUUIDString(),
                 (Task) () -> {
                     numberOfCalls.incrementAndGet();
                 }
         );
+        assertThat(numberOfCalls.get(), equalTo(1));
 
+
+        numberOfCalls.set(0);
+        synchronizer.synchronizeOn(
+                randomUUIDString(),
+                randomLong(1, 9_999),
+                pickRandomValue(TimeUnit.MILLISECONDS, TimeUnit.SECONDS),
+                (Task) () -> {
+                    numberOfCalls.incrementAndGet();
+                }
+        );
         assertThat(numberOfCalls.get(), equalTo(1));
     }
+
+
+    @Test
+    public void shouldWrapExceptionOnFailure() throws Exception {
+        AtomicInteger numberOfCalls = new AtomicInteger();
+        Exception expectedException = randomException();
+        RuntimeException expectedRuntimeException = randomRuntimeException();
+
+
+        numberOfCalls.set(0);
+        try {
+            synchronizer.synchronizeOn(
+                    randomUUIDString(),
+                    (Callable<UUID>) () -> {
+                        numberOfCalls.incrementAndGet();
+
+                        throw expectedException;
+                    }
+            );
+
+            fail("Expected WrappedException");
+
+        } catch (WrappedException wrappedException) {
+            assertThat(wrappedException.getCause(), equalTo(expectedException));
+            assertThat(numberOfCalls.get(), equalTo(1));
+        }
+
+
+        numberOfCalls.set(0);
+        try {
+            synchronizer.synchronizeOn(
+                    randomUUIDString(),
+                    randomLong(1, 9_999),
+                    pickRandomValue(TimeUnit.MILLISECONDS, TimeUnit.SECONDS),
+                    (Callable<UUID>) () -> {
+                        numberOfCalls.incrementAndGet();
+
+                        throw expectedException;
+                    }
+            );
+
+            fail("Expected WrappedException");
+
+        } catch (WrappedException wrappedException) {
+            assertThat(wrappedException.getCause(), equalTo(expectedException));
+            assertThat(numberOfCalls.get(), equalTo(1));
+        }
+
+
+        numberOfCalls.set(0);
+        try {
+            synchronizer.synchronizeRunnableOn(
+                    randomUUIDString(),
+                    (Runnable) () -> {
+                        numberOfCalls.incrementAndGet();
+
+                        throw expectedRuntimeException;
+                    }
+            );
+
+            fail("Expected WrappedException");
+
+        } catch (WrappedException wrappedException) {
+            assertThat(wrappedException.getCause(), equalTo(expectedRuntimeException));
+            assertThat(numberOfCalls.get(), equalTo(1));
+        }
+
+
+        numberOfCalls.set(0);
+        try {
+            synchronizer.synchronizeRunnableOn(
+                    randomUUIDString(),
+                    randomLong(1, 9_999),
+                    pickRandomValue(TimeUnit.MILLISECONDS, TimeUnit.SECONDS),
+                    (Runnable) () -> {
+                        numberOfCalls.incrementAndGet();
+
+                        throw expectedRuntimeException;
+                    }
+            );
+
+            fail("Expected WrappedException");
+
+        } catch (WrappedException wrappedException) {
+            assertThat(wrappedException.getCause(), equalTo(expectedRuntimeException));
+            assertThat(numberOfCalls.get(), equalTo(1));
+        }
+
+
+        numberOfCalls.set(0);
+        try {
+            synchronizer.synchronizeOn(
+                    randomUUIDString(),
+                    (Task) () -> {
+                        numberOfCalls.incrementAndGet();
+
+                        throw expectedException;
+                    }
+            );
+
+            fail("Expected WrappedException");
+
+        } catch (WrappedException wrappedException) {
+            assertThat(wrappedException.getCause(), equalTo(expectedException));
+            assertThat(numberOfCalls.get(), equalTo(1));
+        }
+
+
+        numberOfCalls.set(0);
+        try {
+            synchronizer.synchronizeOn(
+                    randomUUIDString(),
+                    randomLong(1, 9_999),
+                    pickRandomValue(TimeUnit.MILLISECONDS, TimeUnit.SECONDS),
+                    (Task) () -> {
+                        numberOfCalls.incrementAndGet();
+
+                        throw expectedException;
+                    }
+            );
+
+            fail("Expected WrappedException");
+
+        } catch (WrappedException wrappedException) {
+            assertThat(wrappedException.getCause(), equalTo(expectedException));
+            assertThat(numberOfCalls.get(), equalTo(1));
+        }
+    }
+
 
     @Test
     public void shouldRunOnlyOneTaskForASpecificIdAtATime() {

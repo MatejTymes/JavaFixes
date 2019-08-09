@@ -1,5 +1,6 @@
 package javafixes.test;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -144,6 +145,29 @@ public class Random {
     public static RoundingMode randomRoundingMode(Function<RoundingMode, Boolean>... validityConditions) {
         return generateValidValue(Random::randomRoundingMode, validityConditions);
     }
+
+    public static Exception randomException() {
+        return pickRandomValue(
+                randomCheckedException(),
+                randomRuntimeException()
+        );
+    }
+
+    public static RuntimeException randomRuntimeException() {
+        return pickRandomValue(
+                new RuntimeException("Some unique failure " + randomUUID()),
+                new IllegalStateException("Another unique failure " + randomUUID())
+        );
+    }
+
+
+    public static Exception randomCheckedException() {
+        return pickRandomValue(
+                new Exception("Other unique failure " + randomUUID()),
+                new IOException("Yet another unique failure " + randomUUID())
+        );
+    }
+
 
     @SafeVarargs
     public static <T> T pickRandomValue(T... values) {
