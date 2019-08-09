@@ -5,7 +5,9 @@ import org.junit.Test;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.UUID.randomUUID;
@@ -16,8 +18,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-// todo: mtymes - should run within Timeout
-// todo: mtymes - should run pass the Timeout
 public class SynchronizerTest {
 
     private Synchronizer<String> synchronizer = new Synchronizer<>();
@@ -229,6 +229,147 @@ public class SynchronizerTest {
         }
     }
 
+    @Test
+    public void shouldNotFailIfWaitingForExecutionIsWithinTimeLimit() throws Exception {
+        AtomicInteger numberOfCalls = new AtomicInteger(0);
+
+        String key;
+        UUID expectedResult = randomUUID();
+        UUID actalResult;
+
+        long blockDurationInMs = randomLong(750, 2_500);
+        long waitTimeInMs = blockDurationInMs + randomLong(2_000, 5_000);
+
+        key = randomUUIDString();
+        numberOfCalls.set(0);
+        blockKeyFor(key, blockDurationInMs, TimeUnit.MILLISECONDS);
+        actalResult = synchronizer.synchronizeOn(
+                key,
+                waitTimeInMs,
+                TimeUnit.MILLISECONDS,
+                (Callable<UUID>) () -> {
+                    numberOfCalls.incrementAndGet();
+
+                    return expectedResult;
+                }
+        );
+        assertThat(numberOfCalls.get(), equalTo(1));
+        assertThat(actalResult, equalTo(expectedResult));
+
+
+        key = randomUUIDString();
+        numberOfCalls.set(0);
+        blockKeyFor(key, blockDurationInMs, TimeUnit.MILLISECONDS);
+        synchronizer.synchronizeRunnableOn(
+                key,
+                waitTimeInMs,
+                TimeUnit.MILLISECONDS,
+                (Runnable) () -> {
+                    numberOfCalls.incrementAndGet();
+                }
+        );
+        assertThat(numberOfCalls.get(), equalTo(1));
+
+
+        key = randomUUIDString();
+        numberOfCalls.set(0);
+        blockKeyFor(key, blockDurationInMs, TimeUnit.MILLISECONDS);
+        synchronizer.synchronizeOn(
+                key,
+                waitTimeInMs,
+                TimeUnit.MILLISECONDS,
+                (Task) () -> {
+                    numberOfCalls.incrementAndGet();
+                }
+        );
+        assertThat(numberOfCalls.get(), equalTo(1));
+    }
+
+    @Test
+    public void shouldFailIfWaitingForExecutionIsOutsideTimeLimit() throws Exception {
+        AtomicInteger numberOfCalls = new AtomicInteger(0);
+
+        String key;
+
+        long waitTimeInMs = randomLong(750, 2_500);
+        long blockDurationInMs = waitTimeInMs + randomLong(2_000, 5_000);
+        long startTime;
+
+
+        key = randomUUIDString();
+        numberOfCalls.set(0);
+        blockKeyFor(key, blockDurationInMs, TimeUnit.MILLISECONDS);
+        startTime = System.currentTimeMillis();
+        try {
+            synchronizer.synchronizeOn(
+                    key,
+                    waitTimeInMs,
+                    TimeUnit.MILLISECONDS,
+                    (Callable<UUID>) () -> {
+                        numberOfCalls.incrementAndGet();
+
+                        return randomUUID();
+                    }
+            );
+
+            fail("expected TimeoutException");
+
+        } catch (TimeoutException expectedException) {
+            long duration = System.currentTimeMillis() - startTime;
+            assertThat(numberOfCalls.get(), equalTo(0));
+            assertThat(duration, greaterThanOrEqualTo(waitTimeInMs));
+            assertThat(duration, lessThan(waitTimeInMs + 1_000));
+        }
+
+
+        key = randomUUIDString();
+        numberOfCalls.set(0);
+        blockKeyFor(key, blockDurationInMs, TimeUnit.MILLISECONDS);
+        startTime = System.currentTimeMillis();
+        try {
+            synchronizer.synchronizeRunnableOn(
+                    key,
+                    waitTimeInMs,
+                    TimeUnit.MILLISECONDS,
+                    (Runnable) () -> {
+                        numberOfCalls.incrementAndGet();
+                    }
+            );
+
+            fail("expected TimeoutException");
+
+        } catch (TimeoutException expectedException) {
+            long duration = System.currentTimeMillis() - startTime;
+            assertThat(numberOfCalls.get(), equalTo(0));
+            assertThat(duration, greaterThanOrEqualTo(waitTimeInMs));
+            assertThat(duration, lessThan(waitTimeInMs + 1_000));
+        }
+
+
+        key = randomUUIDString();
+        numberOfCalls.set(0);
+        blockKeyFor(key, blockDurationInMs, TimeUnit.MILLISECONDS);
+        startTime = System.currentTimeMillis();
+        try {
+            synchronizer.synchronizeOn(
+                    key,
+                    waitTimeInMs,
+                    TimeUnit.MILLISECONDS,
+                    (Task) () -> {
+                        numberOfCalls.incrementAndGet();
+                    }
+            );
+
+            fail("expected TimeoutException");
+
+        } catch (TimeoutException expectedException) {
+            long duration = System.currentTimeMillis() - startTime;
+            assertThat(numberOfCalls.get(), equalTo(0));
+            assertThat(duration, greaterThanOrEqualTo(waitTimeInMs));
+            assertThat(duration, lessThan(waitTimeInMs + 1_000));
+        }
+    }
+
 
     @Test
     public void shouldRunOnlyOneTaskForASpecificIdAtATime() {
@@ -377,5 +518,21 @@ public class SynchronizerTest {
         } finally {
             runner.shutdownNow();
         }
+    }
+
+    private void blockKeyFor(String key, long blockDuration, TimeUnit timeUnit) throws InterruptedException {
+        Runner runner = runner(1);
+        CountDownLatch hasStarted = new CountDownLatch(1);
+        runner.run(() -> {
+            synchronizer.synchronizeOn(key, () -> {
+                try {
+                    hasStarted.countDown();
+                    Thread.sleep(timeUnit.toMillis(blockDuration));
+                } finally {
+                    runner.shutdown();
+                }
+            });
+        });
+        hasStarted.await();
     }
 }
