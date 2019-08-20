@@ -3,13 +3,13 @@
 Adding some features which would be normally nice to have in Java
 
 You can get it via Gradle:
-`compile 'com.github.matejtymes:javafixes:1.3.0'`
+`compile 'com.github.matejtymes:javafixes:1.3.1'`
 or Maven
 ```Xml
 <dependency>
     <groupId>com.github.matejtymes</groupId>
     <artifactId>javafixes</artifactId>
-    <version>1.3.0</version>
+    <version>1.3.1</version>
 </dependency>
 ```
 
