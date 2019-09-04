@@ -1,12 +1,13 @@
 package javafixes.experimental.json5;
 
+import javafixes.experimental.collect.LinkedArrayQueue;
+
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
-import java.util.List;
+import java.util.Queue;
 import java.util.Stack;
 
-import static javafixes.common.CollectionUtil.newList;
 import static javafixes.experimental.json5.Token.*;
 
 // https://spec.json5.org/
@@ -16,8 +17,7 @@ public class Json5ToJsonReader extends Reader {
 
     private final PushbackReader json5Reader;
 
-    // todo: use LinkedArrayQueue in here instead
-    private List<Character> buffer = newList();
+    private Queue<Character> buffer = new LinkedArrayQueue<>();
     private boolean finished = false;
 
     public Json5ToJsonReader(Reader json5Reader) {
@@ -33,7 +33,7 @@ public class Json5ToJsonReader extends Reader {
         int writtenLength = 0;
         for (int i = 0; i < len; i++) {
             if (buffer.size() > 0) {
-                cbuf[off + i] = buffer.remove(0);
+                cbuf[off + i] = buffer.poll();
                 writtenLength++;
             } else {
                 break;
