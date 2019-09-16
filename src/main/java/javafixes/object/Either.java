@@ -5,7 +5,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-// todo: add javadoc
+// todo: add javadoc - non biased implementation
+// todo: add into readme
 public abstract class Either<L, R> extends DataObject {
 
     private Either() {
@@ -45,7 +46,16 @@ public abstract class Either<L, R> extends DataObject {
 
     public abstract Either<L, R> ifRight(Consumer<? super R> action);
 
-    public abstract Object get();
+    public abstract <T extends Throwable> Either<L, R> ifLeftThrow(Function<L, ? extends T> exceptionSupplier) throws T;
+
+    public abstract <T extends Throwable> Either<L, R> ifRightThrow(Function<R, ? extends T> exceptionSupplier) throws T;
+
+    /**
+     * Returns left value if of type {@link Left} or right value if of type {@link Right}
+     *
+     * @return either left or right value (depending on which one is defined)
+     */
+    public abstract Object value();
 
     public static final class Right<L, R> extends Either<L, R> {
 
@@ -86,7 +96,7 @@ public abstract class Either<L, R> extends DataObject {
         }
 
         @Override
-        public <T extends Throwable> R getRightOrThrow(Supplier<? extends T> exceptionSupplier) throws T {
+        public <T extends Throwable> R getRightOrThrow(Supplier<? extends T> exceptionSupplier) {
             return value;
         }
 
@@ -122,7 +132,22 @@ public abstract class Either<L, R> extends DataObject {
         }
 
         @Override
-        public Object get() {
+        public <T extends Throwable> Either<L, R> ifLeftThrow(Function<L, ? extends T> exceptionSupplier) {
+            return this;
+        }
+
+        @Override
+        public <T extends Throwable> Either<L, R> ifRightThrow(Function<R, ? extends T> exceptionSupplier) throws T {
+            throw exceptionSupplier.apply(value);
+        }
+
+        /**
+         * Returns right value
+         *
+         * @return right value
+         */
+        @Override
+        public R value() {
             return value;
         }
     }
@@ -161,7 +186,7 @@ public abstract class Either<L, R> extends DataObject {
         }
 
         @Override
-        public <T extends Throwable> L getLeftOrThrow(Supplier<? extends T> exceptionSupplier) throws T {
+        public <T extends Throwable> L getLeftOrThrow(Supplier<? extends T> exceptionSupplier) {
             return value;
         }
 
@@ -202,7 +227,22 @@ public abstract class Either<L, R> extends DataObject {
         }
 
         @Override
-        public Object get() {
+        public <T extends Throwable> Either<L, R> ifLeftThrow(Function<L, ? extends T> exceptionSupplier) throws T {
+            throw exceptionSupplier.apply(value);
+        }
+
+        @Override
+        public <T extends Throwable> Either<L, R> ifRightThrow(Function<R, ? extends T> exceptionSupplier) {
+            return this;
+        }
+
+        /**
+         * Returns left value
+         *
+         * @return left value
+         */
+        @Override
+        public L value() {
             return value;
         }
     }

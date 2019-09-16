@@ -129,7 +129,41 @@ public class EitherTest {
         assertThat(either.ifRight(rightValue -> rightCallCount.incrementAndGet()), equalTo(left(value)));
         assertThat(rightCallCount.get(), is(0));
 
-        assertThat(either.get(), equalTo(value));
+        try {
+            either.ifLeftThrow(leftValue -> {
+                assertThat(leftValue, equalTo(value));
+                return expectedThrowable;
+            });
+            fail("expected Throwable");
+        } catch (Throwable actualThrowable) {
+            assertThat(actualThrowable, equalTo(expectedThrowable));
+        }
+
+        try {
+            either.ifLeftThrow(leftValue -> {
+                assertThat(leftValue, equalTo(value));
+                return expectedException;
+            });
+            fail("expected Exception");
+        } catch (Exception actualException) {
+            assertThat(actualException, equalTo(expectedException));
+        }
+
+        try {
+            either.ifLeftThrow(leftValue -> {
+                assertThat(leftValue, equalTo(value));
+                return expectedRuntimeException;
+            });
+            fail("expected RuntimeException");
+        } catch (RuntimeException actualRuntimeException) {
+            assertThat(actualRuntimeException, equalTo(expectedRuntimeException));
+        }
+
+        assertThat(either.ifRightThrow(rightValue -> expectedThrowable), equalTo(left(value)));
+        assertThat(either.ifRightThrow(rightValue -> expectedException), equalTo(left(value)));
+        assertThat(either.ifRightThrow(rightValue -> expectedRuntimeException), equalTo(left(value)));
+
+        assertThat(either.value(), equalTo(value));
     }
 
     @Test
@@ -243,6 +277,40 @@ public class EitherTest {
         assertThat(either.ifRight(rightValue -> rightCallCount.incrementAndGet()), equalTo(right(value)));
         assertThat(rightCallCount.get(), is(1));
 
-        assertThat(either.get(), equalTo(value));
+        assertThat(either.ifLeftThrow(leftValue -> expectedThrowable), equalTo(right(value)));
+        assertThat(either.ifLeftThrow(leftValue -> expectedException), equalTo(right(value)));
+        assertThat(either.ifLeftThrow(leftValue -> expectedRuntimeException), equalTo(right(value)));
+
+        try {
+            either.ifRightThrow(rightValue -> {
+                assertThat(rightValue, equalTo(value));
+                return expectedThrowable;
+            });
+            fail("expected Throwable");
+        } catch (Throwable actualThrowable) {
+            assertThat(actualThrowable, equalTo(expectedThrowable));
+        }
+
+        try {
+            either.ifRightThrow(rightValue -> {
+                assertThat(rightValue, equalTo(value));
+                return expectedException;
+            });
+            fail("expected Exception");
+        } catch (Exception actualException) {
+            assertThat(actualException, equalTo(expectedException));
+        }
+
+        try {
+            either.ifRightThrow(rightValue -> {
+                assertThat(rightValue, equalTo(value));
+                return expectedRuntimeException;
+            });
+            fail("expected RuntimeException");
+        } catch (RuntimeException actualRuntimeException) {
+            assertThat(actualRuntimeException, equalTo(expectedRuntimeException));
+        }
+
+        assertThat(either.value(), equalTo(value));
     }
 }
