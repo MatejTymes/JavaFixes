@@ -193,7 +193,8 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
 //        for (int i = 0; i < 10; i++) {
 ////            List<Integer> values = newArrayList();
 ////            List<Integer> values = newLinkedList();
-//            LinkedArrayQueue<Integer> values = new LinkedArrayQueue<>(1024);
+////            Queue<Integer> values = new LinkedArrayQueue<>(1024);
+//            Queue<Integer> values = new LinkedBlockingQueue<>();
 //
 //            for (int j = 0; j < 10_000_000; j++) {
 ////                values.add(j);
