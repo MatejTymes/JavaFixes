@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-// todo: add javadoc - non biased implementation
+// todo: add javadoc - un/non biased implementation
 // todo: add into readme
 public abstract class Either<L, R> extends DataObject {
 
@@ -42,8 +42,23 @@ public abstract class Either<L, R> extends DataObject {
 
     public abstract <T> T fold(Function<L, T> foldLeft, Function<R, T> foldRight);
 
+    /**
+     * Executes provided {@code action} if value is defined as {@link Left Left} {@link Either}.
+     * The {@code action} is ignored if value is defined as {@link Right Right} {@link Either}.
+     *
+     * @param action that is executed for {@link Left Left} {@link Either}
+     * @return the same instance to allow method chaining
+     */
     public abstract Either<L, R> ifLeft(Consumer<? super L> action);
 
+
+    /**
+     * Executes provided {@code action} if value is defined as {@link Right Right} {@link Either}.
+     * The {@code action} is ignored if value is defined as {@link Left Left} {@link Either}.
+     *
+     * @param action that is executed for {@link Right Right} {@link Either}
+     * @return the same instance to allow method chaining
+     */
     public abstract Either<L, R> ifRight(Consumer<? super R> action);
 
     public abstract <T extends Throwable> Either<L, R> ifLeftThrow(Function<L, ? extends T> exceptionSupplier) throws T;
