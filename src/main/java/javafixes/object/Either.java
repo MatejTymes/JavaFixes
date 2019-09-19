@@ -61,8 +61,26 @@ public abstract class Either<L, R> extends DataObject {
      */
     public abstract Either<L, R> ifRight(Consumer<? super R> action);
 
+    /**
+     * Throws {@link Exception} provided via {@code exceptionSupplier} if value is defined as {@link Left Left} {@link Either}.
+     * The {@code exceptionSupplier} is ignored if value is defined as {@link Right Right} {@link Either}.
+     *
+     * @param exceptionSupplier that should provide {@link Exception} in case of {@link Left Left} {@link Either}
+     * @param <T> type of {@link Exception} that will be provided by exceptionSupplier
+     * @return the same instance to allow method chaining
+     * @throws T
+     */
     public abstract <T extends Throwable> Either<L, R> ifLeftThrow(Function<L, ? extends T> exceptionSupplier) throws T;
 
+    /**
+     * Throws {@link Exception} provided via {@code exceptionSupplier} if value is defined as {@link Right Right} {@link Either}.
+     * The {@code exceptionSupplier} is ignored if value is defined as {@link Left Left} {@link Either}.
+     *
+     * @param exceptionSupplier that should provide {@link Exception} in case of {@link Right Right} {@link Either}
+     * @param <T> type of {@link Exception} that will be provided by exceptionSupplier
+     * @return the same instance to allow method chaining
+     * @throws T
+     */
     public abstract <T extends Throwable> Either<L, R> ifRightThrow(Function<R, ? extends T> exceptionSupplier) throws T;
 
     /**
