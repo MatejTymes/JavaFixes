@@ -12,54 +12,119 @@ public abstract class Either<L, R> extends DataObject {
     private Either() {
     }
 
-    // todo: javadoc
+    /**
+     * Generates {@link Either} of type {@link Right Right} wrapping the provided value
+     *
+     * @param value value to wrap
+     * @param <L>   generic type of left side
+     * @param <R>   generic type of right side
+     * @return {@link Right Right} {@link Either} wrapping provided value
+     */
     public static <L, R> Either<L, R> right(R value) {
-        return new Either.Right<L, R>(value);
+        return new Either.Right<>(value);
     }
 
-    // todo: javadoc
+    /**
+     * Generates {@link Either} of type {@link Left Left} wrapping the provided value
+     *
+     * @param value value to wrap
+     * @param <L>   generic type of left side
+     * @param <R>   generic type of right side
+     * @return {@link Left Left} {@link Either} wrapping provided value
+     */
     public static <L, R> Either<L, R> left(L value) {
-        return new Either.Left<L, R>(value);
+        return new Either.Left<>(value);
     }
 
-    // todo: javadoc
+    /**
+     * Swaps left and right value of an {@link Either}
+     *
+     * @return {@link Either} with swapped left and right values
+     */
     public abstract Either<R, L> swap();
 
-    // todo: javadoc
+    /**
+     * Returns true if value is wrapped into a {@link Left Left} {@link Either}
+     *
+     * @return true if is {@link Left Left} {@link Either}
+     */
     public abstract boolean isLeft();
 
-    // todo: javadoc
+    /**
+     * Returns true if value is wrapped into a {@link Right Right} {@link Either}
+     *
+     * @return true if is {@link Right Right} {@link Either}
+     */
     public abstract boolean isRight();
 
-    // todo: javadoc
+    /**
+     * Returns wrapped value in case the {@link Either} is of type {@link Left Left}.
+     * Throws a {@link NoSuchElementException} in case the {@link Either} is of type {@link Right Right}.
+     *
+     * @return value in case the {@link Either} is of type {@link Left Left}
+     * @throws NoSuchElementException in case the {@link Either} is of type {@link Right Right}
+     */
     public abstract L getLeft() throws NoSuchElementException;
 
-    // todo: javadoc
+    /**
+     * Returns wrapped value in case the {@link Either} is of type {@link Right Right}.
+     * Throws a {@link NoSuchElementException} in case the {@link Either} is of type {@link Left Left}.
+     *
+     * @return value in case the {@link Either} is of type {@link Right Right}
+     * @throws NoSuchElementException in case the {@link Either} is of type {@link Left Left}
+     */
     public abstract R getRight() throws NoSuchElementException;
 
-    // todo: javadoc
+    /**
+     * Returns wrapped value in case the {@link Either} is of type {@link Left Left}.
+     * Throws {@link Exception} provided via {@code exceptionSupplier} if value is defined as {@link Right Right} {@link Either}.
+     *
+     * @param exceptionSupplier that should provide {@link Exception} in case of {@link Right Right} {@link Either}
+     * @param <T>               type of {@link Exception} that will be provided by exceptionSupplier
+     * @return value in case the {@link Either} is of type {@link Left Left}
+     * @throws T {@link Exception} provided via {@code exceptionSupplier} if value is defined as {@link Right Right} {@link Either}.
+     */
     public abstract <T extends Throwable> L getLeftOrThrow(Supplier<? extends T> exceptionSupplier) throws T;
 
-    // todo: javadoc
+    /**
+     * Returns wrapped value in case the {@link Either} is of type {@link Right Right}.
+     * Throws {@link Exception} provided via {@code exceptionSupplier} if value is defined as {@link Left Left} {@link Either}.
+     *
+     * @param exceptionSupplier that should provide {@link Exception} in case of {@link Left Left} {@link Either}
+     * @param <T>               type of {@link Exception} that will be provided by exceptionSupplier
+     * @return value in case the {@link Either} is of type {@link Right Right}
+     * @throws T {@link Exception} provided via {@code exceptionSupplier} if value is defined as {@link Left Left} {@link Either}.
+     */
     public abstract <T extends Throwable> R getRightOrThrow(Supplier<? extends T> exceptionSupplier) throws T;
 
-    // todo: javadoc
-    public abstract <L2, R2> Either<L2, R2> map(Function<L, L2> mapLeft, Function<R, R2> mapRight);
+    /**
+     * Applies provided {@code leftValueMapper} to transform wrapped {@code value} if value is defined as {@link Left Left} {@link Either}.
+     * Applies provided {@code rightValueMapper} to transform wrapped {@code value} if value is defined as {@link Right Right} {@link Either}.
+     *
+     * @param leftValueMapper function that is applied {@link Left Left} {@link Either} {@code value}
+     * @param rightValueMapper function that is applied {@link Right Right} {@link Either} {@code value}
+     * @param <L2> new type of {@link Left Left} {@link Either} {@code value}
+     * @param <R2> new type of {@link Right Right} {@link Either} {@code value}
+     * @return modified {@link Either}
+     */
+    public abstract <L2, R2> Either<L2, R2> map(Function<L, L2> leftValueMapper, Function<R, R2> rightValueMapper);
 
     /**
      * Applies provided {@code leftValueMapper} to transform wrapped {@code value} if value is defined as {@link Left Left} {@link Either}.
      * The {@code leftValueMapper} is ignored if value is defined as {@link Right Right} {@link Either}.
      *
      * @param leftValueMapper function that is applied {@link Left Left} {@link Either} {@code value}
+     * @param <L2> new type of {@link Left Left} {@link Either} {@code value}
      * @return modified {@link Either}
      */
     public abstract <L2> Either<L2, R> mapLeft(Function<L, L2> leftValueMapper);
 
     /**
-     * Applies provided {@code leftValueMapper} to transform wrapped {@code value} if value is defined as {@link Right Right} {@link Either}.
-     * The {@code leftValueMapper} is ignored if value is defined as {@link Left Left} {@link Either}.
+     * Applies provided {@code rightValueMapper} to transform wrapped {@code value} if value is defined as {@link Right Right} {@link Either}.
+     * The {@code rightValueMapper} is ignored if value is defined as {@link Left Left} {@link Either}.
      *
      * @param rightValueMapper function that is applied {@link Right Right} {@link Either} {@code value}
+     * @param <R2> new type of {@link Right Right} {@link Either} {@code value}
      * @return modified {@link Either}
      */
     public abstract <R2> Either<L, R2> mapRight(Function<R, R2> rightValueMapper);
@@ -91,9 +156,9 @@ public abstract class Either<L, R> extends DataObject {
      * The {@code exceptionSupplier} is ignored if value is defined as {@link Right Right} {@link Either}.
      *
      * @param exceptionSupplier that should provide {@link Exception} in case of {@link Left Left} {@link Either}
-     * @param <T> type of {@link Exception} that will be provided by exceptionSupplier
+     * @param <T>               type of {@link Exception} that will be provided by exceptionSupplier
      * @return the same instance to allow method chaining
-     * @throws T
+     * @throws T {@link Exception} provided via {@code exceptionSupplier} if value is defined as {@link Left Left} {@link Either}.
      */
     public abstract <T extends Throwable> Either<L, R> ifLeftThrow(Function<L, ? extends T> exceptionSupplier) throws T;
 
@@ -102,9 +167,9 @@ public abstract class Either<L, R> extends DataObject {
      * The {@code exceptionSupplier} is ignored if value is defined as {@link Left Left} {@link Either}.
      *
      * @param exceptionSupplier that should provide {@link Exception} in case of {@link Right Right} {@link Either}
-     * @param <T> type of {@link Exception} that will be provided by exceptionSupplier
+     * @param <T>               type of {@link Exception} that will be provided by exceptionSupplier
      * @return the same instance to allow method chaining
-     * @throws T
+     * @throws T {@link Exception} provided via {@code exceptionSupplier} if value is defined as {@link Right Right} {@link Either}
      */
     public abstract <T extends Throwable> Either<L, R> ifRightThrow(Function<R, ? extends T> exceptionSupplier) throws T;
 
@@ -159,8 +224,8 @@ public abstract class Either<L, R> extends DataObject {
         }
 
         @Override
-        public <L2, R2> Either<L2, R2> map(Function<L, L2> mapLeft, Function<R, R2> mapRight) {
-            return Either.right(mapRight.apply(value));
+        public <L2, R2> Either<L2, R2> map(Function<L, L2> leftValueMapper, Function<R, R2> rightValueMapper) {
+            return Either.right(rightValueMapper.apply(value));
         }
 
         @Override
@@ -254,8 +319,8 @@ public abstract class Either<L, R> extends DataObject {
         }
 
         @Override
-        public <L2, R2> Either<L2, R2> map(Function<L, L2> mapLeft, Function<R, R2> mapRight) {
-            return Either.left(mapLeft.apply(value));
+        public <L2, R2> Either<L2, R2> map(Function<L, L2> leftValueMapper, Function<R, R2> rightValueMapper) {
+            return Either.left(leftValueMapper.apply(value));
         }
 
         @Override

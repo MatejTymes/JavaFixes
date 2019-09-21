@@ -164,6 +164,8 @@ public class EitherTest {
         assertThat(either.ifRightThrow(rightValue -> expectedRuntimeException), equalTo(left(value)));
 
         assertThat(either.value(), equalTo(value));
+
+        assertThat(either.swap(), equalTo(right(value)));
     }
 
     @Test
@@ -312,5 +314,7 @@ public class EitherTest {
         }
 
         assertThat(either.value(), equalTo(value));
+
+        assertThat(either.swap(), equalTo(left(value)));
     }
 }
