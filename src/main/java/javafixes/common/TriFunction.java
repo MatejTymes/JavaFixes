@@ -18,7 +18,7 @@ import java.util.function.Function;
  * @see java.util.function.BiFunction
  * @since 07/15/16 11:53 PM
  */
-// todo: use better package
+// todo: move into common.function
 @FunctionalInterface
 public interface TriFunction<A, B, C, D> {
 

@@ -16,6 +16,7 @@ package javafixes.concurrency;
  * @author mtymes
  * @since 10/22/14 11:07 PM
  */
+// todo: move into common.function
 @FunctionalInterface
 public interface Task {
 
