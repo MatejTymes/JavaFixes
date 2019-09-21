@@ -137,7 +137,14 @@ public abstract class Either<L, R> extends DataObject {
      */
     public abstract <R2> Either<L, R2> mapRight(Function<R, R2> rightValueMapper);
 
-    // todo: javadoc
+    /**
+     * Transforms a value and returns it
+     *
+     * @param foldLeft  function to map {@link Left Left} value into output value
+     * @param foldRight function to map {@link Right Right} value into output value
+     * @param <T> type of output value
+     * @return transformed value
+     */
     public abstract <T> T fold(Function<L, T> foldLeft, Function<R, T> foldRight);
 
     /**
