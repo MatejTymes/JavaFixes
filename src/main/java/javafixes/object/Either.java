@@ -5,8 +5,16 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-// todo: add javadoc - un/non biased implementation
 // todo: add into readme
+
+/**
+ * {@link Either} can wrap value of one of 2 types defined as {@link Left Left} or {@link Right Right}.
+ * This is an unbiased implementation where both left and right side have the same methods and neither one is preferred.
+ *
+ * @param <L> the {@link Left Left} {@link Either} type
+ * @param <R> the {@link Right Right} {@link Either} type
+ */
+// todo: improve ifLeft and ifRight to add ability to throw exception
 public abstract class Either<L, R> extends DataObject {
 
     private Either() {
@@ -101,10 +109,10 @@ public abstract class Either<L, R> extends DataObject {
      * Applies provided {@code leftValueMapper} to transform wrapped {@code value} if value is defined as {@link Left Left} {@link Either}.
      * Applies provided {@code rightValueMapper} to transform wrapped {@code value} if value is defined as {@link Right Right} {@link Either}.
      *
-     * @param leftValueMapper function that is applied {@link Left Left} {@link Either} {@code value}
+     * @param leftValueMapper  function that is applied {@link Left Left} {@link Either} {@code value}
      * @param rightValueMapper function that is applied {@link Right Right} {@link Either} {@code value}
-     * @param <L2> new type of {@link Left Left} {@link Either} {@code value}
-     * @param <R2> new type of {@link Right Right} {@link Either} {@code value}
+     * @param <L2>             new type of {@link Left Left} {@link Either} {@code value}
+     * @param <R2>             new type of {@link Right Right} {@link Either} {@code value}
      * @return modified {@link Either}
      */
     public abstract <L2, R2> Either<L2, R2> map(Function<L, L2> leftValueMapper, Function<R, R2> rightValueMapper);
@@ -114,7 +122,7 @@ public abstract class Either<L, R> extends DataObject {
      * The {@code leftValueMapper} is ignored if value is defined as {@link Right Right} {@link Either}.
      *
      * @param leftValueMapper function that is applied {@link Left Left} {@link Either} {@code value}
-     * @param <L2> new type of {@link Left Left} {@link Either} {@code value}
+     * @param <L2>            new type of {@link Left Left} {@link Either} {@code value}
      * @return modified {@link Either}
      */
     public abstract <L2> Either<L2, R> mapLeft(Function<L, L2> leftValueMapper);
@@ -124,7 +132,7 @@ public abstract class Either<L, R> extends DataObject {
      * The {@code rightValueMapper} is ignored if value is defined as {@link Left Left} {@link Either}.
      *
      * @param rightValueMapper function that is applied {@link Right Right} {@link Either} {@code value}
-     * @param <R2> new type of {@link Right Right} {@link Either} {@code value}
+     * @param <R2>             new type of {@link Right Right} {@link Either} {@code value}
      * @return modified {@link Either}
      */
     public abstract <R2> Either<L, R2> mapRight(Function<R, R2> rightValueMapper);
