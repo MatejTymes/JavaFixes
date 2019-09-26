@@ -1,7 +1,6 @@
 package javafixes.object;
 
 import java.util.NoSuchElementException;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -14,8 +13,12 @@ import java.util.function.Supplier;
  * @param <L> the {@link Left Left} {@link Either} type
  * @param <R> the {@link Right Right} {@link Either} type
  */
-// todo: improve ifLeft and ifRight to add ability to throw exception
 public abstract class Either<L, R> extends DataObject {
+
+    // todo: move into common.function
+    public interface ValueHandler<V, T extends Throwable> {
+        void handle(V value) throws T;
+    }
 
     private Either() {
     }
@@ -142,29 +145,34 @@ public abstract class Either<L, R> extends DataObject {
      *
      * @param foldLeft  function to map {@link Left Left} value into output value
      * @param foldRight function to map {@link Right Right} value into output value
-     * @param <T> type of output value
+     * @param <T>       type of output value
      * @return transformed value
      */
     public abstract <T> T fold(Function<L, T> foldLeft, Function<R, T> foldRight);
 
     /**
-     * Executes provided {@code action} if value is defined as {@link Left Left} {@link Either}.
+     * Executes provided {@code leftValueHandler} if value is defined as {@link Left Left} {@link Either}.
      * The {@code action} is ignored if value is defined as {@link Right Right} {@link Either}.
      *
-     * @param action that is executed for {@link Left Left} {@link Either}
-     * @return the same instance to allow method chaining
+     * @param leftValueHandler action that is executed for {@link Left Left} {@link Either}
+     * @param <T> class of potential {@link Throwable} thrown by {@code leftValueHandler}
+     * @return the same instance of {@link Either} to allow method chaining
+     * @throws T in case the {@code leftValueHandler} throws T
      */
-    public abstract Either<L, R> ifLeft(Consumer<? super L> action);
-
+    public abstract <T extends Throwable> Either<L, R> handleLeft(ValueHandler<? super L, T> leftValueHandler) throws T;
 
     /**
-     * Executes provided {@code action} if value is defined as {@link Right Right} {@link Either}.
+     * Executes provided {@code leftValueHandler} if value is defined as {@link Right Right} {@link Either}.
      * The {@code action} is ignored if value is defined as {@link Left Left} {@link Either}.
      *
-     * @param action that is executed for {@link Right Right} {@link Either}
-     * @return the same instance to allow method chaining
+     * @param rightValueHandler action that is executed for {@link Right Right} {@link Either}
+     * @param <T> class of potential {@link Throwable} thrown by {@code leftValueHandler}
+     * @return the same instance of {@link Either} to allow method chaining
+     * @throws T in case the {@code leftValueHandler} throws T
      */
-    public abstract Either<L, R> ifRight(Consumer<? super R> action);
+    public abstract <T extends Throwable> Either<L, R> handleRight(ValueHandler<? super R, T> rightValueHandler) throws T;
+
+    // todo: add handle(leftValueHandler, rightValueHandler)
 
     /**
      * Throws {@link Exception} provided via {@code exceptionSupplier} if value is defined as {@link Left Left} {@link Either}.
@@ -259,13 +267,13 @@ public abstract class Either<L, R> extends DataObject {
         }
 
         @Override
-        public Either<L, R> ifLeft(Consumer<? super L> action) {
+        public <T extends Throwable> Either<L, R> handleLeft(ValueHandler<? super L, T> leftValueHandler) throws T {
             return this;
         }
 
         @Override
-        public Either<L, R> ifRight(Consumer<? super R> action) {
-            action.accept(value);
+        public <T extends Throwable> Either<L, R> handleRight(ValueHandler<? super R, T> rightValueHandler) throws T {
+            rightValueHandler.handle(value);
             return this;
         }
 
@@ -354,13 +362,13 @@ public abstract class Either<L, R> extends DataObject {
         }
 
         @Override
-        public Either<L, R> ifLeft(Consumer<? super L> action) {
-            action.accept(value);
+        public <T extends Throwable> Either<L, R> handleLeft(ValueHandler<? super L, T> leftValueHandler) throws T {
+            leftValueHandler.handle(value);
             return this;
         }
 
         @Override
-        public Either<L, R> ifRight(Consumer<? super R> action) {
+        public <T extends Throwable> Either<L, R> handleRight(ValueHandler<? super R, T> rightValueHandler) throws T {
             return this;
         }
 
