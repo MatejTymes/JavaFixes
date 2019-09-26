@@ -25,6 +25,8 @@ dependencies {
     testCompile 'ch.qos.logback:logback-classic:1.1.7'
     testCompile 'com.google.guava:guava:27.0-jre'
     testCompile 'org.mockito:mockito-all:1.10.19'
+    testCompile 'commons-io:commons-io:2.6'
+
 }
 
 

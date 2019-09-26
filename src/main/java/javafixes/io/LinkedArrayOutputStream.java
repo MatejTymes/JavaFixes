@@ -80,6 +80,7 @@ public class LinkedArrayOutputStream extends OutputStream {
                     readIndex++;
                     if (readIndex == node.bytes.length && node.next != null) {
                         node = node.next;
+                        readIndex = 0;
                     }
                     return value;
                 }
@@ -127,7 +128,7 @@ public class LinkedArrayOutputStream extends OutputStream {
                     if (writeIndex < arrayLength) {
                         int writeNBytes = min(len, arrayLength - writeIndex);
 
-                        System.arraycopy(b, off, bytes, writeNBytes, writeNBytes);
+                        System.arraycopy(b, off, node.bytes, writeIndex, writeNBytes);
 
                         node.writeToIndex = node.writeToIndex + writeNBytes;
                         off = off + writeNBytes;
