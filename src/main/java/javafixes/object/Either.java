@@ -267,7 +267,7 @@ public abstract class Either<L, R> extends DataObject {
         }
 
         @Override
-        public <T extends Throwable> Either<L, R> handleLeft(ValueHandler<? super L, T> leftValueHandler) throws T {
+        public <T extends Throwable> Either<L, R> handleLeft(ValueHandler<? super L, T> leftValueHandler) {
             return this;
         }
 
@@ -368,7 +368,7 @@ public abstract class Either<L, R> extends DataObject {
         }
 
         @Override
-        public <T extends Throwable> Either<L, R> handleRight(ValueHandler<? super R, T> rightValueHandler) throws T {
+        public <T extends Throwable> Either<L, R> handleRight(ValueHandler<? super R, T> rightValueHandler) {
             return this;
         }
 
