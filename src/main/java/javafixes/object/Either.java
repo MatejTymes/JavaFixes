@@ -159,20 +159,32 @@ public abstract class Either<L, R> extends DataObject {
      * @return the same instance of {@link Either} to allow method chaining
      * @throws T in case the {@code leftValueHandler} throws T
      */
-    public abstract <T extends Throwable> Either<L, R> handleLeft(ValueHandler<? super L, T> leftValueHandler) throws T;
+    public abstract <T extends Throwable> Either<L, R> handleLeft(ValueHandler<? super L, ? extends T> leftValueHandler) throws T;
 
     /**
-     * Executes provided {@code leftValueHandler} if value is defined as {@link Right Right} {@link Either}.
+     * Executes provided {@code rightValueHandler} if value is defined as {@link Right Right} {@link Either}.
      * The {@code action} is ignored if value is defined as {@link Left Left} {@link Either}.
      *
      * @param rightValueHandler action that is executed for {@link Right Right} {@link Either}
-     * @param <T> class of potential {@link Throwable} thrown by {@code leftValueHandler}
+     * @param <T> class of potential {@link Throwable} thrown by {@code rightValueHandler}
      * @return the same instance of {@link Either} to allow method chaining
-     * @throws T in case the {@code leftValueHandler} throws T
+     * @throws T in case the {@code rightValueHandler} throws T
      */
-    public abstract <T extends Throwable> Either<L, R> handleRight(ValueHandler<? super R, T> rightValueHandler) throws T;
+    public abstract <T extends Throwable> Either<L, R> handleRight(ValueHandler<? super R, ? extends T> rightValueHandler) throws T;
 
-    // todo: add handle(leftValueHandler, rightValueHandler)
+    /**
+     * Executes provided {@code leftValueHandler} if value is defined as {@link Left Left} {@link Either}.
+     * Executes provided {@code rightValueHandler} if value is defined as {@link Right Right} {@link Either}.
+     *
+     * @param leftValueHandler action that is executed for {@link Left Left} {@link Either}
+     * @param rightValueHandler action that is executed for {@link Right Right} {@link Either}
+     * @param <TL> class of potential {@link Throwable} thrown by {@code leftValueHandler}
+     * @param <TR> class of potential {@link Throwable} thrown by {@code rightValueHandler}
+     * @return the same instance of {@link Either} to allow method chaining
+     * @throws TL in case the {@code leftValueHandler} throws T
+     * @throws TR in case the {@code rightValueHandler} throws T
+     */
+    public abstract <TL extends Throwable, TR extends Throwable> Either<L, R> handle(ValueHandler<? super L, ? extends TL> leftValueHandler, ValueHandler<? super R, ? extends TR> rightValueHandler) throws TL, TR;
 
     /**
      * Throws {@link Exception} provided via {@code exceptionSupplier} if value is defined as {@link Left Left} {@link Either}.
@@ -267,12 +279,18 @@ public abstract class Either<L, R> extends DataObject {
         }
 
         @Override
-        public <T extends Throwable> Either<L, R> handleLeft(ValueHandler<? super L, T> leftValueHandler) {
+        public <T extends Throwable> Either<L, R> handleLeft(ValueHandler<? super L, ? extends T> leftValueHandler) {
             return this;
         }
 
         @Override
-        public <T extends Throwable> Either<L, R> handleRight(ValueHandler<? super R, T> rightValueHandler) throws T {
+        public <T extends Throwable> Either<L, R> handleRight(ValueHandler<? super R, ? extends T> rightValueHandler) throws T {
+            rightValueHandler.handle(value);
+            return this;
+        }
+
+        @Override
+        public <TL extends Throwable, TR extends Throwable> Either<L, R> handle(ValueHandler<? super L, ? extends TL> leftValueHandler, ValueHandler<? super R, ? extends TR> rightValueHandler) throws TR {
             rightValueHandler.handle(value);
             return this;
         }
@@ -362,13 +380,19 @@ public abstract class Either<L, R> extends DataObject {
         }
 
         @Override
-        public <T extends Throwable> Either<L, R> handleLeft(ValueHandler<? super L, T> leftValueHandler) throws T {
+        public <T extends Throwable> Either<L, R> handleLeft(ValueHandler<? super L, ? extends T> leftValueHandler) throws T {
             leftValueHandler.handle(value);
             return this;
         }
 
         @Override
-        public <T extends Throwable> Either<L, R> handleRight(ValueHandler<? super R, T> rightValueHandler) {
+        public <T extends Throwable> Either<L, R> handleRight(ValueHandler<? super R, ? extends T> rightValueHandler) {
+            return this;
+        }
+
+        @Override
+        public <TL extends Throwable, TR extends Throwable> Either<L, R> handle(ValueHandler<? super L, ? extends TL> leftValueHandler, ValueHandler<? super R, ? extends TR> rightValueHandler) throws TL {
+            leftValueHandler.handle(value);
             return this;
         }
 
