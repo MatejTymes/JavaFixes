@@ -55,7 +55,7 @@ public class LinkedArrayOutputStream extends OutputStream {
                     os.write(node.bytes, 0, node.writeToIndex);
                 }
                 node = node.next;
-            } while(node != null);
+            } while (node != null);
         }
     }
 
@@ -82,6 +82,31 @@ public class LinkedArrayOutputStream extends OutputStream {
                         readIndex = 0;
                     }
                     return value;
+                }
+
+                @Override
+                public int read(byte[] b, int off, int len) throws IOException {
+                    int actualLen = 0;
+                    while (len > 0) {
+                        int copyNBytes = min(node.writeToIndex - readIndex, len);
+                        if (copyNBytes > 0) {
+                            System.arraycopy(node.bytes, readIndex, b, off, copyNBytes);
+
+                            actualLen = actualLen + copyNBytes;
+                            off = off + copyNBytes;
+                            len = len - copyNBytes;
+                            readIndex = readIndex + copyNBytes;
+                        }
+                        if (node.next == null) {
+                            break;
+                        }
+
+                        if (readIndex == node.bytes.length && node.next != null) {
+                            node = node.next;
+                            readIndex = 0;
+                        }
+                    }
+                    return (actualLen == 0) ? -1 : actualLen;
                 }
             };
         }
