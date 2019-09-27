@@ -16,16 +16,29 @@ public class LinkedArrayOutputStreamTest {
     @Test
     public void shouldCollectBytes() throws IOException {
         String text = "This is a random string " + randomUUID() + " with some random " + randomUUID() + " values in it";
+        String charsetName = "UTF-8";
 
         LinkedArrayOutputStream stream = new LinkedArrayOutputStream(5);
-
-        stream.write(text.getBytes("UTF-8"));
+        stream.write(text.getBytes(charsetName));
         stream.close();
 
+        verifyCollectedData(stream, text, charsetName);
+
+
+        stream = new LinkedArrayOutputStream(5);
+        for (byte b : text.getBytes(charsetName)) {
+            stream.write(b);
+        }
+        stream.close();
+
+        verifyCollectedData(stream, text, charsetName);
+    }
+
+    private void verifyCollectedData(LinkedArrayOutputStream stream, String text, String charsetName) throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         stream.copyTo(os);
 
-        assertThat(new String(os.toByteArray(), "UTF-8"), equalTo(text));
-        assertThat(IOUtils.toString(stream.toInputStream(), "UTF-8"), equalTo(text));
+        assertThat(new String(os.toByteArray(), charsetName), equalTo(text));
+        assertThat(IOUtils.toString(stream.toInputStream(), charsetName), equalTo(text));
     }
 }

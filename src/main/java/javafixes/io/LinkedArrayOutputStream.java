@@ -8,7 +8,6 @@ import static java.lang.Math.min;
 
 // todo: add into readme
 // todo: javadoc
-// todo: test
 public class LinkedArrayOutputStream extends OutputStream {
 
     private transient final Object lock = new Object();
