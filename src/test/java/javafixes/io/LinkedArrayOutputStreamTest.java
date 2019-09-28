@@ -12,7 +12,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class LinkedArrayOutputStreamTest {
 
-
     @Test
     public void shouldCollectBytes() throws IOException {
         String text = "This is a random string " + randomUUID() + " with some random " + randomUUID() + " values in it";
