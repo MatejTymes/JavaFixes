@@ -48,15 +48,15 @@ public class LinkedArrayOutputStream extends OutputStream {
             if (!closed) {
                 throw new IllegalStateException("Unable to copy content to OutputStream. LinkedArrayOutputStream is not closed yet");
             }
-
-            Node node = first;
-            do {
-                if (node.writeToIndex != 0) {
-                    os.write(node.bytes, 0, node.writeToIndex);
-                }
-                node = node.next;
-            } while (node != null);
         }
+
+        Node node = first;
+        do {
+            if (node.writeToIndex != 0) {
+                os.write(node.bytes, 0, node.writeToIndex);
+            }
+            node = node.next;
+        } while (node != null);
     }
 
     public InputStream toInputStream() {
@@ -64,52 +64,52 @@ public class LinkedArrayOutputStream extends OutputStream {
             if (!closed) {
                 throw new IllegalStateException("Unable to provide InputStream. LinkedArrayOutputStream is not closed yet");
             }
+        }
 
-            return new InputStream() {
-                int readIndex = 0;
-                Node node = first;
+        return new InputStream() {
+            int readIndex = 0;
+            Node node = first;
 
-                @Override
-                public int read() throws IOException {
-                    if (readIndex == node.writeToIndex) {
-                        return -1;
+            @Override
+            public int read() throws IOException {
+                if (readIndex == node.writeToIndex) {
+                    return -1;
+                }
+
+                int value = node.bytes[readIndex];
+                readIndex++;
+                if (readIndex == node.bytes.length && node.next != null) {
+                    node = node.next;
+                    readIndex = 0;
+                }
+                return value;
+            }
+
+            @Override
+            public int read(byte[] b, int off, int len) throws IOException {
+                int actualLen = 0;
+                while (len > 0) {
+                    int copyNBytes = min(node.writeToIndex - readIndex, len);
+                    if (copyNBytes > 0) {
+                        System.arraycopy(node.bytes, readIndex, b, off, copyNBytes);
+
+                        actualLen = actualLen + copyNBytes;
+                        off = off + copyNBytes;
+                        len = len - copyNBytes;
+                        readIndex = readIndex + copyNBytes;
+                    }
+                    if (node.next == null) {
+                        break;
                     }
 
-                    int value = node.bytes[readIndex];
-                    readIndex++;
                     if (readIndex == node.bytes.length && node.next != null) {
                         node = node.next;
                         readIndex = 0;
                     }
-                    return value;
                 }
-
-                @Override
-                public int read(byte[] b, int off, int len) throws IOException {
-                    int actualLen = 0;
-                    while (len > 0) {
-                        int copyNBytes = min(node.writeToIndex - readIndex, len);
-                        if (copyNBytes > 0) {
-                            System.arraycopy(node.bytes, readIndex, b, off, copyNBytes);
-
-                            actualLen = actualLen + copyNBytes;
-                            off = off + copyNBytes;
-                            len = len - copyNBytes;
-                            readIndex = readIndex + copyNBytes;
-                        }
-                        if (node.next == null) {
-                            break;
-                        }
-
-                        if (readIndex == node.bytes.length && node.next != null) {
-                            node = node.next;
-                            readIndex = 0;
-                        }
-                    }
-                    return (actualLen == 0) ? -1 : actualLen;
-                }
-            };
-        }
+                return (actualLen == 0) ? -1 : actualLen;
+            }
+        };
     }
 
     private class Node {
