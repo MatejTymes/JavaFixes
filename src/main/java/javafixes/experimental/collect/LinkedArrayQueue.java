@@ -1,12 +1,10 @@
 package javafixes.experimental.collect;
 
-import java.util.AbstractQueue;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import static java.lang.Math.min;
 
+// todo: mtymes - remove from experimental package
 // todo: mtymes - test this
 public class LinkedArrayQueue<T> extends AbstractQueue<T> {
 
@@ -37,15 +35,6 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
     @Override
     public int size() {
         return size;
-//        int total = 0;
-//
-//        Node nodeToProcess = first;
-//        do {
-//            total += nodeToProcess.size();
-//            nodeToProcess = nodeToProcess.next;
-//        } while (nodeToProcess != null);
-//
-//        return total;
     }
 
     @Override
@@ -61,6 +50,18 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
         } else {
             return null;
         }
+    }
+
+    public List<T> pollN(int n) {
+        List<T> values = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if (first.hasNext()) {
+                values.add(first.remove());
+            } else {
+                break;
+            }
+        }
+        return values;
     }
 
     @Override
@@ -191,20 +192,20 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
 //        long startTime = System.currentTimeMillis();
 //
 //        for (int i = 0; i < 10; i++) {
-////            List<Integer> values = newArrayList();
+////            List<Integer> values = new ArrayList<>();
 ////            List<Integer> values = newLinkedList();
-////            Queue<Integer> values = new LinkedArrayQueue<>(1024);
-//            Queue<Integer> values = new LinkedBlockingQueue<>();
+//            Queue<Integer> values = new LinkedArrayQueue<>(1024);
+////            Queue<Integer> values = new LinkedBlockingQueue<>();
 //
-//            for (int j = 0; j < 10_000_000; j++) {
-////                values.add(j);
-//                values.offer(j);
+//            for (int j = 0; j < 102_000_000; j++) {
+//                values.add(j);
+////                values.offer(j);
 //            }
 //
-//            while (!values.isEmpty()) {
+////            while (!values.isEmpty()) {
 ////                values.remove(0);
-//                values.poll();
-//            }
+//////                values.poll();
+////            }
 //        }
 //
 //        long duration = System.currentTimeMillis() - startTime;
