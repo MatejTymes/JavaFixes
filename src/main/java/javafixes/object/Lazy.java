@@ -1,6 +1,7 @@
 package javafixes.object;
 
 import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 /**
  * {@code Lazy} is intended as wrapper for lazily initialized objects.
@@ -82,5 +83,18 @@ public class Lazy<T> {
         }
 
         return value;
+    }
+
+    /**
+     * Creates a derived {@code Lazy} value by mapping currently wrapped value into a new on.
+     * Call to this operation does not change the state of this {@code Lazy} value, so if it was not initialized before
+     * it stays un-initialized. If it was initialized it stays initialized.
+     *
+     * @param mapper function to map the wrapped value into a new one
+     * @param <T2>   the type of generated value
+     * @return new {@code Lazy} value generated via the mapping function
+     */
+    public <T2> Lazy<T2> map(Function<? super T, ? extends T2> mapper) {
+        return new Lazy<>(() -> mapper.apply(this.value()));
     }
 }

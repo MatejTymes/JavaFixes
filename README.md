@@ -128,12 +128,20 @@ Allows to create objects whose initialization is called only once we call it's `
     HeavyObject actualValue = lazyValue.value();  // calls heavyInitializationMethod()
     lazyValue.isInitialized();  // true
     
-    
     lazyValue.value();  // does NOT call heavyInitializationMethod() anymore (as already initialized)
+
+
+    Lazy<String> derivedValue = lazyValue.map(heavyObject -> heavyObject.someValueOnHeavyObject());
 ```
 
 Once initialization is successful the value is cached and initialization is not called anymore.
 This class is thread/concurrent safe and guarantees to execute only one successful initialization. 
+
+### Either
+
+Unbiased implementation of Either.
+
+todo: add more
 
 ### DataObject
 

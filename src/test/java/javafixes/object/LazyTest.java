@@ -202,4 +202,25 @@ public class LazyTest {
 
         verifyNoMoreInteractions(valueInitializer);
     }
+
+    @Test
+    public void shouldDeriveLazyValue() {
+        Lazy<UUID> uuidLazyValue = new Lazy<>(UUID::randomUUID);
+
+        // When & Then
+        Lazy<String> stringLazyValue = uuidLazyValue.map(uuid -> uuid.toString());
+
+        assertThat(stringLazyValue.isInitialized(), is(false));
+        assertThat(uuidLazyValue.isInitialized(), is(false));
+
+        String stringValue = stringLazyValue.value();
+
+        assertThat(stringLazyValue.isInitialized(), is(true));
+        assertThat(uuidLazyValue.isInitialized(), is(true));
+
+        UUID uuidValue = uuidLazyValue.value();
+
+        assertThat(uuidValue.toString(), equalTo(stringValue));
+    }
+
 }
