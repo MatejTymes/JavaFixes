@@ -10,21 +10,21 @@ import static java.util.UUID.randomUUID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class LinkedArrayOutputStreamTest {
+public class ByteCollectingOutputStreamTest {
 
     @Test
     public void shouldCollectBytes() throws IOException {
         String text = "This is a random string " + randomUUID() + " with some random " + randomUUID() + " values in it";
         String charsetName = "UTF-8";
 
-        LinkedArrayOutputStream stream = new LinkedArrayOutputStream(5);
+        ByteCollectingOutputStream stream = new ByteCollectingOutputStream(5);
         stream.write(text.getBytes(charsetName));
         stream.close();
 
         verifyCollectedData(stream, text, charsetName);
 
 
-        stream = new LinkedArrayOutputStream(5);
+        stream = new ByteCollectingOutputStream(5);
         for (byte b : text.getBytes(charsetName)) {
             stream.write(b);
         }
@@ -33,7 +33,7 @@ public class LinkedArrayOutputStreamTest {
         verifyCollectedData(stream, text, charsetName);
     }
 
-    private void verifyCollectedData(LinkedArrayOutputStream stream, String text, String charsetName) throws IOException {
+    private void verifyCollectedData(ByteCollectingOutputStream stream, String text, String charsetName) throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         stream.copyTo(os);
 

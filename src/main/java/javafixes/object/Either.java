@@ -4,8 +4,6 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-// todo: add into readme
-
 /**
  * {@link Either} can wrap value of one of 2 types defined as {@link Left Left} or {@link Right Right}.
  * This is an unbiased implementation where both left and right side have the same methods and neither one is preferred.

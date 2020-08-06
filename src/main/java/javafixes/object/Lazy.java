@@ -95,6 +95,10 @@ public class Lazy<T> {
      * @return new {@code Lazy} value generated via the mapping function
      */
     public <T2> Lazy<T2> map(Function<? super T, ? extends T2> mapper) {
+        if (mapper == null) {
+            throw new IllegalArgumentException("Mapper must be defined");
+        }
+
         return new Lazy<>(() -> mapper.apply(this.value()));
     }
 }

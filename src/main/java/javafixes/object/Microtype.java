@@ -61,7 +61,7 @@ public abstract class Microtype<T> {
      */
     public <T2> T2 map(Function<? super T, ? extends T2> mapper) {
         if (mapper == null) {
-            throw new IllegalArgumentException("Microtype mapper can't be null");
+            throw new IllegalArgumentException("Mapper must be defined");
         }
         return mapper.apply(value());
     }
