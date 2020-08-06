@@ -8,7 +8,8 @@ import static java.lang.Math.min;
 
 // todo: add into readme
 // todo: javadoc
-public class LinkedArrayOutputStream extends OutputStream {
+// todo: maybe explain internal implementation (LinkedArray)
+public class ByteCollectingOutputStream extends OutputStream {
 
     private transient final Object lock = new Object();
 
@@ -17,12 +18,12 @@ public class LinkedArrayOutputStream extends OutputStream {
 
     private transient boolean closed = false;
 
-    public LinkedArrayOutputStream(int arraySize) {
+    public ByteCollectingOutputStream(int arraySize) {
         this.first = new Node(arraySize);
         this.last = this.first;
     }
 
-    public LinkedArrayOutputStream() {
+    public ByteCollectingOutputStream() {
         this(4 * 1024);
     }
 
@@ -128,7 +129,7 @@ public class LinkedArrayOutputStream extends OutputStream {
         private Node nextNode() {
             if (next == null) {
                 next = new Node(bytes.length);
-                LinkedArrayOutputStream.this.last = next;
+                ByteCollectingOutputStream.this.last = next;
             }
             return next;
         }
