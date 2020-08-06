@@ -1,11 +1,11 @@
-package javafixes.experimental.collect;
+package javafixes.collect;
 
 import java.util.*;
 
 import static java.lang.Math.min;
 
-// todo: mtymes - remove from experimental package
 // todo: mtymes - test this
+// todo: mtymes - add javadoc
 public class LinkedArrayQueue<T> extends AbstractQueue<T> {
 
     private transient Node first;
