@@ -2,7 +2,7 @@ package javafixes.math;
 
 import org.junit.Test;
 
-import static javafixes.common.CollectionUtil.newList;
+import static javafixes.collection.CollectionUtil.newList;
 import static javafixes.test.Condition.*;
 import static javafixes.test.Random.randomInt;
 import static org.hamcrest.Matchers.equalTo;

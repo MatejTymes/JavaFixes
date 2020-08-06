@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static javafixes.common.CollectionUtil.newList;
+import static javafixes.collection.CollectionUtil.newList;
 
 public class CollectionUtil {
 

@@ -14,7 +14,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.UUID.randomUUID;
-import static javafixes.common.CollectionUtil.newList;
+import static javafixes.collection.CollectionUtil.newList;
 import static javafixes.concurrency.Runner.runner;
 import static javafixes.test.Random.pickRandomValue;
 import static javafixes.test.Random.randomInt;

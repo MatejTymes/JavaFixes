@@ -1,12 +1,13 @@
-package javafixes.common;
+package javafixes.io;
 
+import javafixes.common.StreamUtil;
 import org.junit.Test;
 
 import java.util.Iterator;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
-import static javafixes.common.CollectionUtil.newList;
+import static javafixes.collection.CollectionUtil.newList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 

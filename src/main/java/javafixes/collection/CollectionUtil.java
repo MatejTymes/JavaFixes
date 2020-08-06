@@ -1,10 +1,8 @@
-package javafixes.common;
+package javafixes.collection;
 
 import java.util.*;
 
-// todo: use better package
 // todo: add javadoc
-// todo: move into common.util
 public class CollectionUtil {
 
     @SafeVarargs

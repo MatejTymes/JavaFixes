@@ -6,6 +6,7 @@ import java.util.stream.StreamSupport;
 
 // todo: move into common.util
 // todo: add javadoc
+// todo: test this
 public class StreamUtil {
 
     public static <T> Stream<T> toStream(Iterable<T> iterable) {

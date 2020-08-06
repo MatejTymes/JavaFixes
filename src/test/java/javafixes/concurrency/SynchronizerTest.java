@@ -11,7 +11,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.UUID.randomUUID;
-import static javafixes.common.CollectionUtil.newList;
+import static javafixes.collection.CollectionUtil.newList;
 import static javafixes.concurrency.Runner.runner;
 import static javafixes.test.Random.*;
 import static org.hamcrest.Matchers.*;

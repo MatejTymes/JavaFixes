@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import java.math.BigInteger;
 
-import static javafixes.common.CollectionUtil.newList;
+import static javafixes.collection.CollectionUtil.newList;
 import static javafixes.math.Decimal.d;
 import static javafixes.math.LongUtil.canFitIntoInt;
 import static javafixes.test.Condition.*;

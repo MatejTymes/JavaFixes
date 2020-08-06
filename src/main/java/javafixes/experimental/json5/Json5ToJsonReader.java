@@ -1,6 +1,6 @@
 package javafixes.experimental.json5;
 
-import javafixes.experimental.collect.LinkedArrayQueue;
+import javafixes.collection.LinkedArrayQueue;
 
 import java.io.IOException;
 import java.io.PushbackReader;

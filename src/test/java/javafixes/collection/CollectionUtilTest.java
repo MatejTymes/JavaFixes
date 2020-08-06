@@ -1,4 +1,4 @@
-package javafixes.common;
+package javafixes.collection;
 
 import org.junit.Test;
 

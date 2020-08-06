@@ -8,7 +8,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import static java.math.RoundingMode.HALF_UP;
-import static javafixes.common.CollectionUtil.newList;
+import static javafixes.collection.CollectionUtil.newList;
 import static javafixes.math.Decimal.ZERO;
 import static javafixes.math.Decimal.d;
 import static javafixes.math.Precision._34_SIGNIFICANT_DIGITS;

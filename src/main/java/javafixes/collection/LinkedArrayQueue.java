@@ -1,4 +1,4 @@
-package javafixes.collect;
+package javafixes.collection;
 
 import java.util.*;
 
