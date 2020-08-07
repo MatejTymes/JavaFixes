@@ -37,7 +37,7 @@ The `ReusableCountLatch` exposes a method to get its count so you can monitor it
 
 ### Runner
 
-`Runner` is a custom executor that allows you to wait until submitted tasks (of type `Runnable`, `Callable` or `Task`) have finished or failed.
+`Runner` is a reusable executor that allows you to wait until submitted tasks (of type `Runnable`, `Callable` or `Task`) have finished or failed.
 
 Great if number of scheduled task is not known upfront but you want to wait till all of them finish.
 
