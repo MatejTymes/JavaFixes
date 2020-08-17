@@ -15,7 +15,7 @@ import java.util.function.Function;
  *
  * @author mtymes
  */
-public class Lazy<T> {
+public class Lazy<T> implements Value<T> {
 
     private T value = null;
     private boolean isInitialized = false;
@@ -68,6 +68,7 @@ public class Lazy<T> {
      * @return initialized value (in case of initialization success)
      * @throws InitializationFailedException wrapping {@code Exception} that occurred during initialization failure
      */
+    @Override
     public T value() throws InitializationFailedException {
         if (!isInitialized) {
             synchronized (this) {

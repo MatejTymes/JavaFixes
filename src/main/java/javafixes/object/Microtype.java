@@ -16,7 +16,7 @@ import java.util.function.Function;
  * @author mtymes
  * @since 07/13/16 09:55 PM
  */
-public abstract class Microtype<T> {
+public abstract class Microtype<T> implements Value<T> {
 
     private final T value;
 
@@ -39,6 +39,7 @@ public abstract class Microtype<T> {
      *
      * @return wrapped value
      */
+    @Override
     public T value() {
         return value;
     }
