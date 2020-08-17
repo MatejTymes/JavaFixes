@@ -12,7 +12,7 @@ public interface DynamicValue<T> extends Value<T> {
 
     long valueVersion();
 
-    default <T2> DerivedValueBuilder usingMapFunction(Function<T, ? extends T2> mapper) {
-        return new DerivedValueBuilder(this, mapper);
+    default <T2> DerivedValue<T2, T> map(Function<T, ? extends T2> derivedValueMapper) {
+        return new DerivedValue<>(Optional.empty(), this, derivedValueMapper, Optional.empty());
     }
 }

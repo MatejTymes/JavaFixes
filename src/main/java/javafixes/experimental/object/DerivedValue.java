@@ -43,6 +43,36 @@ public class DerivedValue<T, SourceValue> implements DynamicValue<T> {
         this.valueVersion = 0;
     }
 
+    private DerivedValue(
+            Optional<String> valueName,
+            DynamicValue<SourceValue> sourceValue,
+            Function<SourceValue, ? extends T> valueMapper,
+            Optional<Consumer<T>> disposeFunction,
+
+            Either<RuntimeException, T> derivedValue
+    ) {
+        this.valueName = valueName;
+        this.sourceValue = sourceValue;
+        this.valueMapper = valueMapper;
+        this.disposeFunction = disposeFunction;
+
+        this.currentValue.set(derivedValue);
+        this.valueVersion = 0;
+    }
+
+    public DerivedValue<T, SourceValue> withValueName(String valueName) {
+        synchronized (currentValue) {
+            return new DerivedValue<>(Optional.of(valueName), sourceValue, valueMapper, disposeFunction, currentValue.get());
+        }
+    }
+
+    public DerivedValue<T, SourceValue> withDisposeFunction(Consumer<T> disposeFunction) {
+        synchronized (currentValue) {
+            return new DerivedValue<>(valueName, sourceValue, valueMapper, Optional.of(disposeFunction), currentValue.get());
+        }
+    }
+
+
     @Override
     public Optional<String> name() {
         return valueName;
@@ -86,8 +116,8 @@ public class DerivedValue<T, SourceValue> implements DynamicValue<T> {
             try {
                 logger.error(
                         "Failed to derive value"
-                                + name().map(name -> " '" + name + "'")
-                                + sourceValue.name().map(name -> " from '" + name + "'"),
+                                + name().map(name -> " '" + name + "'").orElse("")
+                                + sourceValue.name().map(name -> " from '" + name + "'").orElse(""),
                         e
                 );
             } catch (Exception ignore) {

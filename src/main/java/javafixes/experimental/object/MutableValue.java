@@ -32,6 +32,22 @@ public class MutableValue<T> implements DynamicValue<T> {
         valueVersion = 0;
     }
 
+    public static <T> MutableValue<T> mutableValue(T initialValue) {
+        return new MutableValue<>(Optional.empty(), right(initialValue), Optional.empty());
+    }
+
+    public MutableValue<T> withValueName(String valueName) {
+        synchronized (currentValue) {
+            return new MutableValue<>(Optional.of(valueName), currentValue.get(), disposeFunction);
+        }
+    }
+
+    public MutableValue<T> withDisposeFunction(Consumer<T> disposeFunction) {
+        synchronized (currentValue) {
+            return new MutableValue<>(valueName, currentValue.get(), Optional.of(disposeFunction));
+        }
+    }
+
     @Override
     public Optional<String> name() {
         return valueName;
