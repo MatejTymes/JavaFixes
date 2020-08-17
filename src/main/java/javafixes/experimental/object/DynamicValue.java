@@ -18,8 +18,8 @@ public interface DynamicValue<T> extends Value<T> {
         return new DerivedValue<>(Optional.empty(), this, derivedValueMapper, Optional.empty());
     }
 
-    default <T> T asProxy(Class<T> proxyInterface) {
-        return (T) newProxyInstance(
+    default <TI> TI asProxy(Class<TI> proxyInterface) {
+        return (TI) newProxyInstance(
                 this.getClass().getClassLoader(),
                 new Class[]{proxyInterface},
                 (proxy, method, args) -> {
