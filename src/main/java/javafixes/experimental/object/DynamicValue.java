@@ -24,8 +24,9 @@ public interface DynamicValue<T> extends Value<T> {
                 this.getClass().getClassLoader(),
                 new Class[]{proxyInterface},
                 (proxy, method, args) -> {
+                    T value = value();
                     try {
-                        return method.invoke(value(), args);
+                        return method.invoke(value, args);
                     } catch (InvocationTargetException invocationTargetException) {
                         throw invocationTargetException.getCause();
                     }
