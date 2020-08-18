@@ -2,6 +2,7 @@ package javafixes.experimental.object;
 
 import javafixes.object.Value;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -23,7 +24,11 @@ public interface DynamicValue<T> extends Value<T> {
                 this.getClass().getClassLoader(),
                 new Class[]{proxyInterface},
                 (proxy, method, args) -> {
-                    return method.invoke(value(), args);
+                    try {
+                        return method.invoke(value(), args);
+                    } catch (InvocationTargetException invocationTargetException) {
+                        throw invocationTargetException.getCause();
+                    }
                 }
         );
     }
