@@ -1,6 +1,8 @@
 package javafixes.experimental.object;
 
 import javafixes.object.Either;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -13,6 +15,8 @@ import static javafixes.object.Either.right;
 // todo: javadoc
 // todo: add toString()
 public class MutableValue<T> implements DynamicValue<T> {
+
+    private static final Logger logger = LoggerFactory.getLogger(MutableValue.class);
 
     private final Optional<String> valueName;
     private final Optional<Consumer<T>> disposeFunction;
@@ -82,8 +86,12 @@ public class MutableValue<T> implements DynamicValue<T> {
 
         valueVersion++;
 
-        disposeFunction.ifPresent(disposeFunction -> {
-            oldValue.handleRight(disposeFunction::accept);
-        });
+        try {
+            disposeFunction.ifPresent(disposeFunction -> {
+                oldValue.handleRight(disposeFunction::accept);
+            });
+        } catch (Exception loggableException) {
+            logger.error("Failed to dispose old value", loggableException);
+        }
     }
 }

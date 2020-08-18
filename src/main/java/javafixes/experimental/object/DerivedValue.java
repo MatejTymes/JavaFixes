@@ -72,7 +72,6 @@ public class DerivedValue<T, SourceValue> implements DynamicValue<T> {
         }
     }
 
-
     @Override
     public Optional<String> name() {
         return valueName;
@@ -127,9 +126,13 @@ public class DerivedValue<T, SourceValue> implements DynamicValue<T> {
             this.valueVersion++;
         }
 
-        Either<RuntimeException, T> toRelease = oldValue;
-        disposeFunction.ifPresent(disposeFunction -> {
-            toRelease.handleRight(disposeFunction::accept);
-        });
+        Either<RuntimeException, T> valueToDispose = oldValue;
+        try {
+            disposeFunction.ifPresent(disposeFunction -> {
+                valueToDispose.handleRight(disposeFunction::accept);
+            });
+        } catch (Exception loggableException) {
+            logger.error("Failed to dispose old value", loggableException);
+        }
     }
 }
