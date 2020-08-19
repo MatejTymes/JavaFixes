@@ -18,12 +18,12 @@ import static org.junit.Assert.fail;
 
 public class EitherTest {
 
-    private Throwable expectedThrowable = new Throwable("Failed with a Throwable");
-    private Exception expectedException = new Exception("Failed with another Exception");
-    private RuntimeException expectedRuntimeException = new RuntimeException("Failed with yet another Exception");
+    private final Throwable expectedThrowable = new Throwable("Failed with a Throwable");
+    private final Exception expectedException = new Exception("Failed with another Exception");
+    private final RuntimeException expectedRuntimeException = new RuntimeException("Failed with yet another Exception");
 
-    private AtomicInteger leftCallCount = new AtomicInteger(0);
-    private AtomicInteger rightCallCount = new AtomicInteger(0);
+    private final AtomicInteger leftCallCount = new AtomicInteger(0);
+    private final AtomicInteger rightCallCount = new AtomicInteger(0);
 
     @Test
     public void shouldHandleLeft() throws Throwable {
@@ -96,7 +96,7 @@ public class EitherTest {
         // mapLeft
 
         leftCallCount.set(0);
-        Either<String, Integer> leftMappedEither = either.mapLeft(leftValue -> {
+    Either<String, Integer> leftMappedEither = either.mapLeft(leftValue -> {
             leftCallCount.incrementAndGet();
             return leftValue + "-" + leftValue;
         });

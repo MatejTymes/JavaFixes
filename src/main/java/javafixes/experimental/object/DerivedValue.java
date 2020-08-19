@@ -15,13 +15,13 @@ import static javafixes.object.Either.right;
 // todo: test
 // todo: javadoc
 // todo: add toString()
-public class DerivedValue<T, SourceValue> implements DynamicValue<T> {
+public class DerivedValue<T, SourceType> implements DynamicValue<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(DerivedValue.class);
 
     private final Optional<String> valueName;
-    private final DynamicValue<SourceValue> sourceValue;
-    private final Function<SourceValue, ? extends T> valueMapper;
+    private final DynamicValue<SourceType> sourceValue;
+    private final Function<SourceType, ? extends T> valueMapper;
     private final Optional<Consumer<T>> disposeFunction;
 
     private final AtomicReference<Either<RuntimeException, T>> currentValue = new AtomicReference<>();
@@ -30,8 +30,8 @@ public class DerivedValue<T, SourceValue> implements DynamicValue<T> {
 
     DerivedValue(
             Optional<String> valueName,
-            DynamicValue<SourceValue> sourceValue,
-            Function<SourceValue, ? extends T> valueMapper,
+            DynamicValue<SourceType> sourceValue,
+            Function<SourceType, ? extends T> valueMapper,
             Optional<Consumer<T>> disposeFunction
     ) {
         this.valueName = valueName;
@@ -45,8 +45,8 @@ public class DerivedValue<T, SourceValue> implements DynamicValue<T> {
 
     private DerivedValue(
             Optional<String> valueName,
-            DynamicValue<SourceValue> sourceValue,
-            Function<SourceValue, ? extends T> valueMapper,
+            DynamicValue<SourceType> sourceValue,
+            Function<SourceType, ? extends T> valueMapper,
             Optional<Consumer<T>> disposeFunction,
 
             Either<RuntimeException, T> derivedValue
@@ -60,13 +60,13 @@ public class DerivedValue<T, SourceValue> implements DynamicValue<T> {
         this.valueVersion = 0;
     }
 
-    public DerivedValue<T, SourceValue> withValueName(String valueName) {
+    public DerivedValue<T, SourceType> withValueName(String valueName) {
         synchronized (currentValue) {
             return new DerivedValue<>(Optional.of(valueName), sourceValue, valueMapper, disposeFunction, currentValue.get());
         }
     }
 
-    public DerivedValue<T, SourceValue> withDisposeFunction(Consumer<T> disposeFunction) {
+    public DerivedValue<T, SourceType> withDisposeFunction(Consumer<T> disposeFunction) {
         synchronized (currentValue) {
             return new DerivedValue<>(valueName, sourceValue, valueMapper, Optional.of(disposeFunction), currentValue.get());
         }
