@@ -1,5 +1,6 @@
 package javafixes.concurrency;
 
+import javafixes.common.function.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

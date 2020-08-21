@@ -1,4 +1,7 @@
-package javafixes.concurrency;
+package javafixes.common.function;
+
+import javafixes.concurrency.MonitoringTaskSubmitter;
+import javafixes.concurrency.Runner;
 
 /**
  * A task that has no result and may throw an exception.
@@ -16,7 +19,6 @@ package javafixes.concurrency;
  * @author mtymes
  * @since 10/22/14 11:07 PM
  */
-// todo: move into common.function
 @FunctionalInterface
 public interface Task {
 

@@ -1,5 +1,7 @@
 package javafixes.concurrency;
 
+import javafixes.common.function.Task;
+
 import java.util.concurrent.Executor;
 
 /**

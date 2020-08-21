@@ -1,6 +1,6 @@
 package javafixes.object;
 
-import javafixes.common.TriFunction;
+import javafixes.common.function.TriFunction;
 
 /**
  * Immutable holder of three values. All values can have different types and can be {@code null}.

@@ -1,5 +1,7 @@
 package javafixes.object;
 
+import javafixes.common.function.ValueHandler;
+
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -11,12 +13,7 @@ import java.util.function.Supplier;
  * @param <L> the {@link Left Left} {@link Either} type
  * @param <R> the {@link Right Right} {@link Either} type
  */
-public abstract class Either<L, R> extends DataObject {
-
-    // todo: move into common.function
-    public interface ValueHandler<V, T extends Throwable> {
-        void handle(V value) throws T;
-    }
+public abstract class Either<L, R> extends DataObject implements Value<Object> {
 
     private Either() {
     }
@@ -211,6 +208,7 @@ public abstract class Either<L, R> extends DataObject {
      *
      * @return either left or right value (depending on which one is defined)
      */
+    @Override
     public abstract Object value();
 
     public static final class Right<L, R> extends Either<L, R> {

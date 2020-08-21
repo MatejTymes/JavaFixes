@@ -1,4 +1,4 @@
-package javafixes.common;
+package javafixes.common.function;
 
 import java.util.function.Function;
 
@@ -18,7 +18,6 @@ import java.util.function.Function;
  * @see java.util.function.BiFunction
  * @since 07/15/16 11:53 PM
  */
-// todo: move into common.function
 @FunctionalInterface
 public interface TriFunction<A, B, C, D> {
 

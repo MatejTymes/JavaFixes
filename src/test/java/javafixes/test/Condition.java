@@ -8,6 +8,7 @@ import java.util.function.Function;
 
 import static javafixes.collection.CollectionUtil.newSet;
 
+@FunctionalInterface
 public interface Condition<T> extends Function<T, Boolean> {
 
     BigInteger MIN_LONG_AS_BIG_INTEGER = BigInteger.valueOf(Long.MIN_VALUE);
