@@ -4,6 +4,7 @@ import javafixes.object.Either;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -60,6 +61,18 @@ public class MutableValue<T> implements DynamicValue<T> {
     public void updateValue(T newValue) {
         synchronized (currentValue) {
             updateTo(right(newValue));
+        }
+    }
+
+    public void updateValueIfDifferent(T potentialNewValue) {
+        synchronized (currentValue) {
+            boolean shouldUpdate = currentValue.get().fold(
+                    ifException -> true,
+                    oldValue -> !Objects.equals(oldValue, potentialNewValue)
+            );
+            if (shouldUpdate) {
+                updateTo(right(potentialNewValue));
+            }
         }
     }
 
