@@ -1,4 +1,4 @@
-package javafixes.experimental.object;
+package javafixes.object.dynamic;
 
 import javafixes.object.Either;
 import org.slf4j.Logger;

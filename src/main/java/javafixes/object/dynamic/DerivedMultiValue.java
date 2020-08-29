@@ -1,4 +1,4 @@
-package javafixes.experimental.object;
+package javafixes.object.dynamic;
 
 import javafixes.object.Either;
 
@@ -16,7 +16,7 @@ import static javafixes.object.Either.right;
 // todo: test
 // todo: javadoc
 // todo: add toString()
-public class DerivedMultiValue<T> implements DynamicValue<List<T>> {
+class DerivedMultiValue<T> implements DynamicValue<List<T>> {
 
     private final List<DynamicValue<T>> sources;
     private final List<Either<RuntimeException, T>> sourceValues;
