@@ -139,26 +139,29 @@ This class is thread/concurrent safe and guarantees to execute only one successf
 
 ### Either
 
-Unbiased implementation of Either.
+Unbiased implementation of Either. Usable if you'd like to return one of two different types.
 
 Here are some if potential usages:
 
 ```Java
-    Either<Response, Exception> result = methodReturningEither();
+    Either<Exception, Response> result = methodReturningEither();
 
     String outcomeMessage = result
         .fold(
-            response -> response.getBody(),
-            exception -> exception.getMessage()
+            exception -> exception.getMessage(),
+            response -> response.getBody().toString(),
         );
 
-    Response response = result
-        .handleLeft(response -> log(response))
-        .ifRightThrow(exception -> exception)
-        .swap()
-        .getRight();
+    if (result.ifRight()) {
+        System.out.println("Yeaaah, we've got a response");
+   }
 
-    
+    ResponseBody body = result
+        .handleRight(response -> log(response)) // if we had right value
+        .mapRight(response -> response.getBody())
+        .ifLeftThrow(exception -> exception) // if we had an exception
+        .swap()
+        .getLeft();
 ```
 
 
