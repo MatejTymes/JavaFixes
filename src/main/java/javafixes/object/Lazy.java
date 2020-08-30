@@ -13,6 +13,7 @@ import java.util.function.Function;
  * and the following {@code value()} call will result into invoking the initialization method again.
  * This can be repeated until the initialization method is successful.
  *
+ * @param <T> type of wrapped value
  * @author mtymes
  */
 public class Lazy<T> implements Value<T> {

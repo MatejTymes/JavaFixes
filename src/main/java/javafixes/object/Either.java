@@ -12,6 +12,7 @@ import java.util.function.Supplier;
  *
  * @param <L> the {@link Left Left} {@link Either} type
  * @param <R> the {@link Right Right} {@link Either} type
+ * @author mtymes
  */
 public abstract class Either<L, R> extends DataObject implements Value<Object> {
 

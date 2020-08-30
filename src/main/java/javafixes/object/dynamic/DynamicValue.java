@@ -16,10 +16,32 @@ import static javafixes.object.Tuple.tuple;
 
 // todo: add javadoc
 // todo: test static methods
+
+/**
+ * {@code DynamicValue} is intended as wrapper of value that could change over time and whose changes should propagate
+ * to other values automatically.
+ * <p>
+ * <p>A good usage example would be a config from which other values could be derived and should be changed
+ * once config changes.
+ *
+ * @param <T> type of wrapped value
+ * @author mtymes
+ */
+// todo: remaining javadoc
+// todo: test default and static methods
 public interface DynamicValue<T> extends Value<T> {
 
+    /**
+     * @return optional name of {@code DynamicValue}
+     */
     Optional<String> name();
 
+    /**
+     * Indicator of how often has the value wrapped changed.
+     * By default should start with zero and each time the underlying value changes the {@code valueVersion} should
+     * increase by one.
+     * @return number indicator of current wrapped version
+     */
     long valueVersion();
 
     default <T2> DerivedValue<T2, T> map(Function<T, ? extends T2> derivedValueMapper) {
@@ -34,7 +56,7 @@ public interface DynamicValue<T> extends Value<T> {
         valueHandler.handle(value());
     }
 
-    static <T1, T2> DynamicValue<Tuple<T1, T2>> join(DynamicValue<T1> value1, DynamicValue<T2> value2) {
+    static <T1, T2> DerivedValue<Tuple<T1, T2>, ?> join(DynamicValue<T1> value1, DynamicValue<T2> value2) {
         return ((DynamicValue<List<Object>>) new DerivedMultiValue(newList(value1, value2)))
                 .map(values -> tuple(
                         (T1) values.get(0),
@@ -42,7 +64,7 @@ public interface DynamicValue<T> extends Value<T> {
                 ));
     }
 
-    static <T1, T2, T3> DynamicValue<Triple<T1, T2, T3>> join(DynamicValue<T1> value1, DynamicValue<T2> value2, DynamicValue<T3> value3) {
+    static <T1, T2, T3> DerivedValue<Triple<T1, T2, T3>, ?> join(DynamicValue<T1> value1, DynamicValue<T2> value2, DynamicValue<T3> value3) {
         return ((DynamicValue<List<Object>>) new DerivedMultiValue(newList(value1, value2, value3)))
                 .map(values -> triple(
                         (T1) values.get(0),
