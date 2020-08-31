@@ -118,6 +118,13 @@ public interface DynamicValue<T> extends Value<T> {
                 ));
     }
 
+    /**
+     * Merges a {@link List} of {@code DynamicValue}s of type {@code T} into one {@code DynamicValue} of type {@code List<T>}
+     *
+     * @param values dynamic values to merge
+     * @param <T>    type of {@code values} {@link List}
+     * @return {@code DynamicValue} of type {@code List<T>}
+     */
     static <T> DynamicValue<List<T>> join(List<DynamicValue<T>> values) {
         return new DerivedMultiValue<>(values);
     }
