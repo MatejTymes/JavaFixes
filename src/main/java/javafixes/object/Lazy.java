@@ -88,7 +88,7 @@ public class Lazy<T> implements Value<T> {
     }
 
     /**
-     * Creates a derived {@code Lazy} value by mapping currently wrapped value into a new on.
+     * Creates a derived {@code Lazy} value by mapping currently wrapped value into a new one.
      * Call to this operation does not change the state of this {@code Lazy} value, so if it was not initialized before
      * it stays un-initialized. If it was initialized it stays initialized.
      *
