@@ -25,7 +25,6 @@ import static javafixes.object.Tuple.tuple;
  * @author mtymes
  */
 // todo: put into README
-// todo: remaining javadoc
 // todo: test default and static methods
 // todo: add null check for input parameters
 public interface DynamicValue<T> extends Value<T> {
@@ -82,13 +81,13 @@ public interface DynamicValue<T> extends Value<T> {
     }
 
     /**
-     * Merges two {@code DynamicValue}s of type {@code T1} and {@code T2} into one {@code DynamicValue} of type {@code Tuple<T1, T2>}
+     * Merges two {@code DynamicValue}s of type {@code T1} and {@code T2} into one {@code DerivedValue} of type {@code Tuple<T1, T2>}
      *
      * @param value1 first {@code DynamicValue} of type {@code T1}
      * @param value2 second {@code DynamicValue} of type {@code T2}
      * @param <T1>   type of {@code value1}
      * @param <T2>   type of {@code value2}
-     * @return {@code DynamicValue} of type {@code Tuple<T1, T2>}
+     * @return {@code DerivedValue} of type {@code Tuple<T1, T2>}
      */
     static <T1, T2> DerivedValue<Tuple<T1, T2>, ?> join(DynamicValue<T1> value1, DynamicValue<T2> value2) {
         return ((DynamicValue<List<Object>>) new DerivedMultiValue(newList(value1, value2)))
@@ -99,7 +98,7 @@ public interface DynamicValue<T> extends Value<T> {
     }
 
     /**
-     * Merges three {@code DynamicValue}s of type {@code T1}, {@code T2} and {@code T3} into one {@code DynamicValue} of type {@code Triple<T1, T2, T3>}
+     * Merges three {@code DynamicValue}s of type {@code T1}, {@code T2} and {@code T3} into one {@code DerivedValue} of type {@code Triple<T1, T2, T3>}
      *
      * @param value1 first {@code DynamicValue} of type {@code T1}
      * @param value2 second {@code DynamicValue} of type {@code T2}
@@ -107,7 +106,7 @@ public interface DynamicValue<T> extends Value<T> {
      * @param <T1>   type of {@code value1}
      * @param <T2>   type of {@code value2}
      * @param <T3>   type of {@code value3}
-     * @return {@code DynamicValue} of type {@code Triple<T1, T2, T3>}
+     * @return {@code DerivedValue} of type {@code Triple<T1, T2, T3>}
      */
     static <T1, T2, T3> DerivedValue<Triple<T1, T2, T3>, ?> join(DynamicValue<T1> value1, DynamicValue<T2> value2, DynamicValue<T3> value3) {
         return ((DynamicValue<List<Object>>) new DerivedMultiValue(newList(value1, value2, value3)))
