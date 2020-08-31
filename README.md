@@ -164,9 +164,6 @@ Here are some if potential usages:
         .getLeft();
 ```
 
-
-todo: add more
-
 ### DataObject
 
 Adds `equals`, `hashCode` and `toString` methods to domain objects:
