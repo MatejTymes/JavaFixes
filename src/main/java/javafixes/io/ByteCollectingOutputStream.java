@@ -47,7 +47,7 @@ public class ByteCollectingOutputStream extends OutputStream {
     public void copyTo(OutputStream os) throws IOException {
         synchronized (lock) {
             if (!closed) {
-                throw new IllegalStateException("Unable to copy content to OutputStream. LinkedArrayOutputStream is not closed yet");
+                throw new IllegalStateException("Unable to copy content to OutputStream. ByteCollectingOutputStream is not closed yet");
             }
         }
 
@@ -63,7 +63,7 @@ public class ByteCollectingOutputStream extends OutputStream {
     public InputStream toInputStream() {
         synchronized (lock) {
             if (!closed) {
-                throw new IllegalStateException("Unable to provide InputStream. LinkedArrayOutputStream is not closed yet");
+                throw new IllegalStateException("Unable to provide InputStream. ByteCollectingOutputStream is not closed yet");
             }
         }
 
@@ -84,7 +84,7 @@ public class ByteCollectingOutputStream extends OutputStream {
         private void add(byte b) {
             synchronized (lock) {
                 if (closed) {
-                    throw new IllegalStateException("Unable to write any more bytes. LinkedArrayOutputStream is closed");
+                    throw new IllegalStateException("Unable to write any more bytes. ByteCollectingOutputStream is closed");
                 }
 
                 if (writeToIndex < bytes.length) {
@@ -99,7 +99,7 @@ public class ByteCollectingOutputStream extends OutputStream {
         private void add(byte[] b, int off, int len) {
             synchronized (lock) {
                 if (closed) {
-                    throw new IllegalStateException("Unable to write any more bytes. LinkedArrayOutputStream is closed");
+                    throw new IllegalStateException("Unable to write any more bytes. ByteCollectingOutputStream is closed");
                 }
 
                 Node node = this;
