@@ -1,4 +1,4 @@
-package javafixes.object.dynamic;
+package javafixes.object.changing;
 
 import javafixes.object.Either;
 
@@ -16,24 +16,24 @@ import static javafixes.object.Either.right;
 // todo: test
 // todo: javadoc
 // todo: add toString()
-class DerivedMultiValue<T> implements DynamicValue<List<T>> {
+class DerivedMultiValue<T> implements ChangingValue<List<T>> {
 
-    private final List<DynamicValue<T>> sources;
+    private final List<ChangingValue<T>> sources;
     private final List<Either<RuntimeException, T>> sourceValues;
-    private final List<Long> lastSourceVersions;
+    private final List<Long> lastSourceChangeVersions;
 
     private final AtomicReference<Either<RuntimeException, List<T>>> currentValue = new AtomicReference<>();
-    private long valueVersion;
+    private long changeVersion;
 
 
-    DerivedMultiValue(List<DynamicValue<T>> sources) {
+    DerivedMultiValue(List<ChangingValue<T>> sources) {
         this.sources = unmodifiableList(newList(sources));
-        this.lastSourceVersions = new ArrayList<>(sources.size());
+        this.lastSourceChangeVersions = new ArrayList<>(sources.size());
         this.sourceValues = new ArrayList<>(sources.size());
 
         RuntimeException foundRuntimeException = null;
-        for (DynamicValue<T> source : sources) {
-            lastSourceVersions.add(source.valueVersion());
+        for (ChangingValue<T> source : sources) {
+            lastSourceChangeVersions.add(source.changeVersion());
             try {
                 sourceValues.add(right(source.value()));
             } catch (RuntimeException e) {
@@ -49,7 +49,7 @@ class DerivedMultiValue<T> implements DynamicValue<List<T>> {
             currentValue.set(left(foundRuntimeException));
         }
 
-        this.valueVersion = 0;
+        this.changeVersion = 0;
     }
 
     @Override
@@ -67,18 +67,18 @@ class DerivedMultiValue<T> implements DynamicValue<List<T>> {
     }
 
     @Override
-    public long valueVersion() {
+    public long changeVersion() {
         ensureIsDerivedFromLatestData();
 
-        return valueVersion;
+        return changeVersion;
     }
 
     private void ensureIsDerivedFromLatestData() {
         boolean wasModified = false;
         for (int i = 0; i < sources.size(); i++) {
-            DynamicValue<T> source = sources.get(i);
-            long lastSourceVersion = lastSourceVersions.get(i);
-            if (lastSourceVersion != source.valueVersion()) {
+            ChangingValue<T> source = sources.get(i);
+            long lastSourceVersion = lastSourceChangeVersions.get(i);
+            if (lastSourceVersion != source.changeVersion()) {
                 wasModified = true;
                 break;
             }
@@ -89,10 +89,10 @@ class DerivedMultiValue<T> implements DynamicValue<List<T>> {
                 try {
                     RuntimeException foundRuntimeException = null;
                     for (int i = 0; i < sources.size(); i++) {
-                        DynamicValue<T> source = sources.get(i);
-                        long lastSourceVersion = lastSourceVersions.get(i);
+                        ChangingValue<T> source = sources.get(i);
+                        long lastSourceVersion = lastSourceChangeVersions.get(i);
 
-                        if (lastSourceVersion != source.valueVersion()) {
+                        if (lastSourceVersion != source.changeVersion()) {
                             try {
                                 sourceValues.set(i, right(source.value()));
                             } catch (RuntimeException e) {
@@ -117,7 +117,7 @@ class DerivedMultiValue<T> implements DynamicValue<List<T>> {
                         currentValue.set(left(foundRuntimeException));
                     }
                 } finally {
-                    this.valueVersion++;
+                    this.changeVersion++;
                 }
             }
         }

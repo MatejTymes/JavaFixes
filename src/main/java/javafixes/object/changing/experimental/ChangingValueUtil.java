@@ -1,6 +1,6 @@
-package javafixes.object.dynamic.experimental;
+package javafixes.object.changing.experimental;
 
-import javafixes.object.dynamic.DynamicValue;
+import javafixes.object.changing.ChangingValue;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -8,14 +8,14 @@ import static java.lang.reflect.Proxy.newProxyInstance;
 
 // todo: test
 // todo: javadoc
-public class DynamicValueUtil {
+public class ChangingValueUtil {
 
-    public static <TI> TI mapToProxy(Class<TI> proxyInterface, DynamicValue<?> dynamicValue) {
+    public static <TI> TI mapToProxy(Class<TI> proxyInterface, ChangingValue<?> changingValue) {
         return (TI) newProxyInstance(
-                DynamicValueUtil.class.getClassLoader(),
+                ChangingValueUtil.class.getClassLoader(),
                 new Class[]{proxyInterface},
                 (proxy, method, args) -> {
-                    Object value = dynamicValue.value();
+                    Object value = changingValue.value();
                     try {
                         return method.invoke(value, args);
                     } catch (InvocationTargetException invocationTargetException) {

@@ -1,4 +1,4 @@
-package javafixes.object.dynamic;
+package javafixes.object.changing;
 
 import javafixes.object.Either;
 import org.slf4j.Logger;
@@ -15,22 +15,22 @@ import static javafixes.object.Either.right;
 // todo: test
 // todo: javadoc
 // todo: add toString()
-public class DerivedValue<T, SourceType> implements DynamicValue<T> {
+public class DerivedValue<T, SourceType> implements ChangingValue<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(DerivedValue.class);
 
     private final Optional<String> valueName;
-    private final DynamicValue<SourceType> sourceValue;
+    private final ChangingValue<SourceType> sourceValue;
     private final Function<SourceType, ? extends T> valueMapper;
     private final Optional<Consumer<T>> disposeFunction;
 
     private final AtomicReference<Either<RuntimeException, T>> currentValue = new AtomicReference<>();
-    private long valueVersion;
-    private long lastSourceValueVersion;
+    private long changeVersion;
+    private long lastSourceChangeVersion;
 
     DerivedValue(
             Optional<String> valueName,
-            DynamicValue<SourceType> sourceValue,
+            ChangingValue<SourceType> sourceValue,
             Function<SourceType, ? extends T> valueMapper,
             Optional<Consumer<T>> disposeFunction
     ) {
@@ -40,12 +40,12 @@ public class DerivedValue<T, SourceType> implements DynamicValue<T> {
         this.disposeFunction = disposeFunction;
 
         deriveValue();
-        this.valueVersion = 0;
+        this.changeVersion = 0;
     }
 
     private DerivedValue(
             Optional<String> valueName,
-            DynamicValue<SourceType> sourceValue,
+            ChangingValue<SourceType> sourceValue,
             Function<SourceType, ? extends T> valueMapper,
             Optional<Consumer<T>> disposeFunction,
 
@@ -57,7 +57,7 @@ public class DerivedValue<T, SourceType> implements DynamicValue<T> {
         this.disposeFunction = disposeFunction;
 
         this.currentValue.set(derivedValue);
-        this.valueVersion = 0;
+        this.changeVersion = 0;
     }
 
     public DerivedValue<T, SourceType> withValueName(String valueName) {
@@ -87,16 +87,16 @@ public class DerivedValue<T, SourceType> implements DynamicValue<T> {
     }
 
     @Override
-    public long valueVersion() {
+    public long changeVersion() {
         ensureIsDerivedFromLatestVersion();
 
-        return valueVersion;
+        return changeVersion;
     }
 
     private void ensureIsDerivedFromLatestVersion() {
-        if (lastSourceValueVersion != sourceValue.valueVersion()) {
+        if (lastSourceChangeVersion != sourceValue.changeVersion()) {
             synchronized (currentValue) {
-                if (lastSourceValueVersion != sourceValue.valueVersion()) {
+                if (lastSourceChangeVersion != sourceValue.changeVersion()) {
                     deriveValue();
                 }
             }
@@ -104,7 +104,7 @@ public class DerivedValue<T, SourceType> implements DynamicValue<T> {
     }
 
     private void deriveValue() {
-        this.lastSourceValueVersion = sourceValue.valueVersion();
+        this.lastSourceChangeVersion = sourceValue.changeVersion();
 
         Either<RuntimeException, T> oldValue;
         try {
@@ -123,7 +123,7 @@ public class DerivedValue<T, SourceType> implements DynamicValue<T> {
                 // failure here must not stop following code
             }
         } finally {
-            this.valueVersion++;
+            this.changeVersion++;
         }
 
         Either<RuntimeException, T> valueToDispose = oldValue;

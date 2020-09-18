@@ -1,4 +1,4 @@
-package javafixes.object.dynamic;
+package javafixes.object.changing;
 
 import javafixes.object.Either;
 import org.slf4j.Logger;
@@ -15,7 +15,7 @@ import static javafixes.object.Either.right;
 // todo: test
 // todo: javadoc
 // todo: add toString()
-public class MutableValue<T> implements DynamicValue<T> {
+public class MutableValue<T> implements ChangingValue<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(MutableValue.class);
 
@@ -23,7 +23,7 @@ public class MutableValue<T> implements DynamicValue<T> {
     private final Optional<Consumer<T>> disposeFunction;
 
     private final AtomicReference<Either<RuntimeException, T>> currentValue = new AtomicReference<>();
-    private long valueVersion;
+    private long changeVersion;
 
     MutableValue(
             Optional<String> valueName,
@@ -34,7 +34,7 @@ public class MutableValue<T> implements DynamicValue<T> {
         this.disposeFunction = disposeFunction;
 
         this.currentValue.set(currentValue);
-        valueVersion = 0;
+        changeVersion = 0;
     }
 
     public static <T> MutableValue<T> mutableValue(T initialValue) {
@@ -90,14 +90,14 @@ public class MutableValue<T> implements DynamicValue<T> {
     }
 
     @Override
-    public long valueVersion() {
-        return valueVersion;
+    public long changeVersion() {
+        return changeVersion;
     }
 
     private void updateTo(Either<RuntimeException, T> newValue) {
         Either<RuntimeException, T> oldValue = currentValue.getAndSet(newValue);
 
-        valueVersion++;
+        changeVersion++;
 
         try {
             disposeFunction.ifPresent(disposeFunction -> {
