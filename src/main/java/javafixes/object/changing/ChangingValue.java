@@ -35,7 +35,7 @@ public interface ChangingValue<T> extends Value<T> {
     Optional<String> name();
 
     /**
-     * Indicator of how often has the value wrapped changed.
+     * Indicator of how often has the wrapped value changed.
      * Should be 0 when value is created and each time the underlying value changes the {@code changeVersion} should
      * increase by one.
      *
