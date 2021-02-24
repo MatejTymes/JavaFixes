@@ -152,7 +152,7 @@ Here are some if potential usages:
             response -> response.getBody().toString(),
         );
 
-    if (result.ifRight()) {
+    if (result.isRight()) {
         System.out.println("Yeaaah, we've got a response");
    }
 
