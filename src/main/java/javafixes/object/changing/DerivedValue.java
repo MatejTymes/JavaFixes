@@ -49,26 +49,42 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
             Function<SourceType, ? extends T> valueMapper,
             Optional<Consumer<T>> disposeFunction,
 
-            Either<RuntimeException, T> derivedValue
+            Either<RuntimeException, T> currentValue,
+            long changeVersion,
+            long lastSourceChangeVersion
+
     ) {
         this.valueName = valueName;
         this.sourceValue = sourceValue;
         this.valueMapper = valueMapper;
         this.disposeFunction = disposeFunction;
 
-        this.currentValue.set(derivedValue);
-        this.changeVersion = 0;
+        this.currentValue.set(currentValue);
+        this.changeVersion = changeVersion;
+        this.lastSourceChangeVersion = lastSourceChangeVersion;
     }
 
     public DerivedValue<T, SourceType> withValueName(String valueName) {
         synchronized (currentValue) {
-            return new DerivedValue<>(Optional.of(valueName), sourceValue, valueMapper, disposeFunction, currentValue.get());
+            return new DerivedValue<>(Optional.of(valueName), sourceValue, valueMapper, disposeFunction, currentValue.get(), changeVersion, lastSourceChangeVersion);
+        }
+    }
+
+    public DerivedValue<T, SourceType> withNoValueName() {
+        synchronized (currentValue) {
+            return new DerivedValue<>(Optional.empty(), sourceValue, valueMapper, disposeFunction, currentValue.get(), changeVersion, lastSourceChangeVersion);
         }
     }
 
     public DerivedValue<T, SourceType> withDisposeFunction(Consumer<T> disposeFunction) {
         synchronized (currentValue) {
-            return new DerivedValue<>(valueName, sourceValue, valueMapper, Optional.of(disposeFunction), currentValue.get());
+            return new DerivedValue<>(valueName, sourceValue, valueMapper, Optional.of(disposeFunction), currentValue.get(), changeVersion, lastSourceChangeVersion);
+        }
+    }
+
+    public DerivedValue<T, SourceType> withNoDisposeFunction() {
+        synchronized (currentValue) {
+            return new DerivedValue<>(valueName, sourceValue, valueMapper, Optional.empty(), currentValue.get(), changeVersion, lastSourceChangeVersion);
         }
     }
 

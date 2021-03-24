@@ -37,19 +37,44 @@ public class MutableValue<T> implements ChangingValue<T> {
         changeVersion = 0;
     }
 
+    private MutableValue(
+            Optional<String> valueName,
+            Either<RuntimeException, T> currentValue,
+            Optional<Consumer<T>> disposeFunction,
+            long changeVersion
+    ) {
+        this.valueName = valueName;
+        this.disposeFunction = disposeFunction;
+
+        this.currentValue.set(currentValue);
+        this.changeVersion = changeVersion;
+    }
+
     public static <T> MutableValue<T> mutableValue(T initialValue) {
         return new MutableValue<>(Optional.empty(), right(initialValue), Optional.empty());
     }
 
     public MutableValue<T> withValueName(String valueName) {
         synchronized (currentValue) {
-            return new MutableValue<>(Optional.of(valueName), currentValue.get(), disposeFunction);
+            return new MutableValue<>(Optional.of(valueName), currentValue.get(), disposeFunction, changeVersion);
+        }
+    }
+
+    public MutableValue<T> withNoValueName() {
+        synchronized (currentValue) {
+            return new MutableValue<>(Optional.empty(), currentValue.get(), disposeFunction, changeVersion);
         }
     }
 
     public MutableValue<T> withDisposeFunction(Consumer<T> disposeFunction) {
         synchronized (currentValue) {
-            return new MutableValue<>(valueName, currentValue.get(), Optional.of(disposeFunction));
+            return new MutableValue<>(valueName, currentValue.get(), Optional.of(disposeFunction), changeVersion);
+        }
+    }
+
+    public MutableValue<T> withNoDisposeFunction() {
+        synchronized (currentValue) {
+            return new MutableValue<>(valueName, currentValue.get(), Optional.empty(), changeVersion);
         }
     }
 
