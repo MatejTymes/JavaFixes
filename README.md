@@ -206,9 +206,9 @@ It also implements `equals`, `hashCode` and `toString`.
 ```
 `Microtype` can't contain a `null` value and initialization with `null` value will throw an `IllegalArgumentException`
 
-### Tuple
+### Tuple / Triple
 
-Immutable Two values holder. Each Tuple extends `DataObject` so methods `equals`, `hashCode` and `toString` are provided by default.
+Immutable Two / Three values holder. Each Tuple / Triple extends `DataObject` so methods `equals`, `hashCode` and `toString` are provided by default.
 ```Java
     Tuple<UserId, User> tuple = tuple(
             new UserId("mtymes"),
