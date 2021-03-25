@@ -230,17 +230,17 @@ Immutable Two / Three values holder. Each `Tuple` / `Triple` extends `DataObject
 
 If you have a value that is changing over time and you'd like to derive other values from it, you could use this hierarchy of classes.
 ```Java
-        MutableValue<ConnectionDetails> connectionDetails = mutableValue(originalConnectionDetails);
+    MutableValue<ConnectionDetails> connectionDetails = mutableValue(originalConnectionDetails);
 
-        ChangingValue<DbConnection> dbConnection = connectionDetails.map(details -> connectTo(details))
-        .withDisposeFunction(connection -> releaseConnection(connection));
+    ChangingValue<DbConnection> dbConnection = connectionDetails.map(details -> connectTo(details))
+    .withDisposeFunction(connection -> releaseConnection(connection));
 
-        DbItem dbItem = dbConnection.mapToValue(db -> db.loadItem(itemId));
-        dbConnection.forCurrentValue(db -> db.delete(itemId));
+    DbItem dbItem = dbConnection.mapToValue(db -> db.loadItem(itemId));
+    dbConnection.forCurrentValue(db -> db.delete(itemId));
 
-        connectionDetails.updateValue(newConnectionDetails);
+    connectionDetails.updateValue(newConnectionDetails);
 
-        DbItem dbItem2 = dbConnection.mapToValue(db -> db.loadItem(itemId2));
+    DbItem dbItem2 = dbConnection.mapToValue(db -> db.loadItem(itemId2));
 ```
 
 ## Math
