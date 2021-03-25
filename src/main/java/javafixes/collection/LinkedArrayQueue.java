@@ -27,6 +27,8 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
         return new NodeIterator();
     }
 
+    // todo: pollNIterable - partition
+
     @Override
     public boolean isEmpty() {
         return !first.hasNext();

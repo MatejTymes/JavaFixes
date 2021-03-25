@@ -19,6 +19,7 @@ import static javafixes.object.Tuple.tuple;
  *
  * @author mtymes
  */
+// todo: maybe rename to Locker<K>.
 public class Synchronizer<K> {
 
     private final Map<K, Tuple<AtomicInteger, StampedLock>> counterWithLocks = new ConcurrentHashMap<>();

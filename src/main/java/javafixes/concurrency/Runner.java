@@ -174,6 +174,7 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo {
      * @return this {@code Runner} instance
      * @see ExecutorService#shutdownNow()
      */
+    // todo: fix specific case where an task is removed without ever started (and because of this doesn't goes into numberOfDrainedTasks)
     public Runner shutdownNow() {
         wasShutdownTriggered.set(true);
         int numberOfDrainedTasks = executor.shutdownNow().size();
@@ -274,6 +275,7 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo {
         super.resetCounters();
     }
 
+    @Override
     protected void finalize() throws Throwable {
         try {
             this.shutdownNow();
