@@ -208,7 +208,7 @@ It also implements `equals`, `hashCode` and `toString`.
 
 ### Tuple / Triple
 
-Immutable Two / Three values holder. Each Tuple / Triple extends `DataObject` so methods `equals`, `hashCode` and `toString` are provided by default.
+Immutable Two / Three values holder. Each `Tuple` / `Triple` extends `DataObject` so methods `equals`, `hashCode` and `toString` are provided by default.
 ```Java
     Tuple<UserId, User> tuple = tuple(
             new UserId("mtymes"),
@@ -225,6 +225,23 @@ Immutable Two / Three values holder. Each Tuple / Triple extends `DataObject` so
     );
 ```
 `Tuple` can contain `null` values.
+
+### ChangingValue - propagation of value changes
+
+If you have a value that is changing over time and you'd like to derive other values from it, you could use this hierarchy of classes.
+```Java
+        MutableValue<ConnectionDetails> connectionDetails = mutableValue(originalConnectionDetails);
+
+        ChangingValue<DbConnection> dbConnection = connectionDetails.map(details -> connectTo(details))
+        .withDisposeFunction(connection -> releaseConnection(connection));
+
+        DbItem dbItem = dbConnection.mapToValue(db -> db.loadItem(itemId));
+        dbConnection.forCurrentValue(db -> db.delete(itemId));
+
+        connectionDetails.updateValue(newConnectionDetails);
+
+        DbItem dbItem2 = dbConnection.mapToValue(db -> db.loadItem(itemId2));
+```
 
 ## Math
 
