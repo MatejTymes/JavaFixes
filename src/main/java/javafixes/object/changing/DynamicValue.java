@@ -161,7 +161,14 @@ public class DynamicValue<T> implements ChangingValue<T> {
                 oldValue.handleRight(disposeFunction::accept);
             });
         } catch (Exception loggableException) {
-            logger.error("Failed to dispose old value", loggableException);
+            try {
+                logger.error(
+                        "Failed to dispose old value" + name().map(name -> " for '" + name + "'").orElse(""),
+                        loggableException
+                );
+            } catch (Exception unwantedException) {
+                unwantedException.printStackTrace();
+            }
         }
     }
 }
