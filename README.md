@@ -3,13 +3,13 @@
 Adding some features which would be normally nice to have in Java
 
 You can get it via Gradle:
-`compile 'com.github.matejtymes:javafixes:1.3.3'`
+`compile 'com.github.matejtymes:javafixes:1.3.4'`
 or Maven
 ```Xml
 <dependency>
     <groupId>com.github.matejtymes</groupId>
     <artifactId>javafixes</artifactId>
-    <version>1.3.3</version>
+    <version>1.3.4</version>
 </dependency>
 ```
 
@@ -141,7 +141,7 @@ This class is thread/concurrent safe and guarantees to execute only one successf
 
 Unbiased implementation of Either. Usable if you'd like to return one of two different types.
 
-Here are some if potential usages:
+Here are some example usages:
 
 ```Java
     Either<Exception, Response> result = methodReturningEither();
