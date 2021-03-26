@@ -235,6 +235,7 @@ If you have a value that is changing over time and you'd like to derive other va
             originalConnectionDetails
     );
 
+
     // database connection derived from connection details
     // each time connection details change this wrapper will create/refer to a new connection
     ChangingValue<DbConnection> dbConnection = connectionDetails.map(
@@ -245,6 +246,7 @@ If you have a value that is changing over time and you'd like to derive other va
                 connection -> releaseConnection(connection)
         );
 
+    
     // this will be executed on original connection
     DbItem dbItem = dbConnection.mapToValue(
             db -> db.loadItem(itemId)
@@ -253,9 +255,13 @@ If you have a value that is changing over time and you'd like to derive other va
             db -> db.delete(itemId)
     );
 
+    
     // update of connection details
-    connectionDetails.updateValue(newConnectionDetails);
+    connectionDetails.updateValue(
+            newConnectionDetails
+    );
 
+    
     // this will be executed on new database connection
     DbItem dbItem2 = dbConnection.mapToValue(
             db -> db.loadItem(itemId2)
