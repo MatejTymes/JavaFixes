@@ -278,7 +278,7 @@ There are currently 2 issues with `ByteArrayOutputStream`.
 
 `ByteCollectingOutputStream` doesn't have to copy data when byte buffer has to be expanded. Instead it just adds one additional small byte buffer to a linked list (by default size of buffer is 4kb).
 Also once closed it can be transformed into an `InputStream` (without need to copy the bytes), byte array or just copy the collected content into another `OutputStream`.
-Also if transformed into `InputStream` and the `ByteCollectingOutputStream` is not referenced anymore all byte buffers that have been already read are eligible for garbage collection (so the memory footprint decreases as the data is being read).
+Also if transformed into `InputStream` and the `ByteCollectingOutputStream` is not referenced anymore all byte buffers that have been read are eligible for garbage collection (so the memory footprint decreases as the data is being read).
 
 ```Java
     ByteCollectingOutputStream bcoStream = new ByteCollectingOutputStream();
