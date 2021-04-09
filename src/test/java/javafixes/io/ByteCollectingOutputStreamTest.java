@@ -50,6 +50,28 @@ public class ByteCollectingOutputStreamTest {
         verifyCollectedData(stream, text, charsetName);
     }
 
+//    @Test
+//    @Ignore
+//    public void performanceCheck() throws Exception{
+//        ByteCollectingOutputStream stream = new ByteCollectingOutputStream(1024);
+////        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//
+//        byte[] bytes = new byte[1024];
+//        SecureRandom random = new SecureRandom();
+//        random.nextBytes(bytes);
+//
+//        long startTime = System.currentTimeMillis();
+//        for (int i = 0; i < 1024 * 128; i++) {
+//            stream.write(bytes, 0, bytes.length);;
+//        }
+//        long duration = System.currentTimeMillis() - startTime;
+//
+//        System.out.println("- duration = " + Duration.ofMillis(duration));
+//
+//        stream.close();
+//    }
+
+
     private void verifyCollectedData(ByteCollectingOutputStream stream, String text, String charsetName) throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         stream.writeTo(os);

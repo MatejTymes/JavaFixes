@@ -294,6 +294,13 @@ Also if transformed into `InputStream` and the `ByteCollectingOutputStream` is n
     byte[] collectedBytes = bcoStream.toByteArray();
 ```
 
+just for comparison, when collecting data (in jdk15) we need:
+| data size | ByteArrayOutputStream       | ByteCollectingOutputStream  |
+|-----------|-----------------------------|-----------------------------|
+|  1024 MB  | 1.18 seconds / 1067 MB heap | 2.00 seconds / 2192 MB heap |
+|   512 MB  | 0.66 seconds /  535 MB heap | 1.10 seconds / 1155 MB heap |
+|   128 MB  | 0.24 seconds /  135 MB heap | 0.25 seconds /  264 MB heap |
+
 ## Math
 
 ### Decimal
