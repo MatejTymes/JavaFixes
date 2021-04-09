@@ -287,12 +287,14 @@ Also if transformed into `InputStream` and the `ByteCollectingOutputStream` is n
     bcoStream.write(text.getBytes(charsetName));
     bcoStream.write(singleByte);
     ...
-    
     stream.close();
 
-    InputStream collectedBytesStream = bcoStream.toInputStream();
-    bcoStream.writeTo(someOtherOutputStream);
+    
+    InputStream collectedBytesStream = bcoStream.toInputStream(); // no additional memory is allocated for collected bytes
+
     byte[] collectedBytes = bcoStream.toByteArray();
+    
+    bcoStream.writeTo(someOtherOutputStream);
 ```
 
 just for comparison, when collecting data (in jdk15) we need:
