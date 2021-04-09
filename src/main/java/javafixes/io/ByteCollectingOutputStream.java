@@ -16,6 +16,7 @@ public class ByteCollectingOutputStream extends OutputStream {
     private transient final Node first;
     private transient Node last;
 
+    private transient int size = 0;
     private transient boolean closed = false;
 
     public ByteCollectingOutputStream(int arraySize) {
@@ -28,33 +29,39 @@ public class ByteCollectingOutputStream extends OutputStream {
     }
 
     @Override
-    public void write(int b) throws IOException {
+    public void write(int b) {
         synchronized (lock) {
             if (closed) {
                 throw new IllegalStateException("Unable to write any more bytes. ByteCollectingOutputStream is closed");
             }
             last = last.add((byte) b);
+            size++;
         }
     }
 
     @Override
-    public void write(byte[] b, int off, int len) throws IOException {
+    public void write(byte[] b, int off, int len) {
         synchronized (lock) {
             if (closed) {
                 throw new IllegalStateException("Unable to write any more bytes. ByteCollectingOutputStream is closed");
             }
             last = last.add(b, off, len);
+            size += len;
         }
     }
 
+    public int getSize() {
+        return size;
+    }
+
     @Override
-    public void close() throws IOException {
+    public void close() {
         synchronized (lock) {
             closed = true;
         }
     }
 
-    public void copyTo(OutputStream os) throws IOException {
+    public void writeTo(OutputStream os) throws IOException {
         synchronized (lock) {
             if (!closed) {
                 throw new IllegalStateException("Unable to copy content to OutputStream. ByteCollectingOutputStream is not closed yet");
@@ -78,6 +85,29 @@ public class ByteCollectingOutputStream extends OutputStream {
         }
 
         return new InternalInputStream(first, 0);
+    }
+
+    public byte[] toByteArray() {
+        synchronized (lock) {
+            if (!closed) {
+                throw new IllegalStateException("Unable to create byte array. ByteCollectingOutputStream is not closed yet");
+            }
+        }
+
+        int writeIndex = 0;
+        byte[] byteArray = new byte[size];
+
+        Node node = first;
+        do {
+            int length = node.writeToIndex;
+            if (length != 0) {
+                System.arraycopy(node.bytes, 0, byteArray, writeIndex, length);
+                writeIndex += length;
+            }
+            node = node.next;
+        } while (node != null);
+
+        return byteArray;
     }
 
     private static class Node {
@@ -160,7 +190,7 @@ public class ByteCollectingOutputStream extends OutputStream {
         }
 
         @Override
-        public int read(byte[] b, int off, int len) throws IOException {
+        public int read(byte[] b, int off, int len) {
             int actualLen = 0;
             while (len > 0) {
                 int copyNBytes = min(node.writeToIndex - readIndex, len);

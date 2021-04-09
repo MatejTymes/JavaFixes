@@ -268,6 +268,32 @@ If you have a value that is changing over time and you'd like to derive other va
     );
 ```
 
+## IO
+
+### ByteCollectingOutputStream
+
+There are currently 2 issues with `ByteArrayOutputStream`.
+* collected data can't be directly transformed into InputStream
+* each time the wrapped byte buffer has to be increased it creates another byte array and has to copy whole data again - which can be costly (from memory and performance point of view for big files)
+
+`ByteCollectingOutputStream` collects data into linked list of smaller byte arrays (by default of size of byte array is 4kb). Once closed it can be transformed into an 'InputStream', byte array or just copy the collected conted into another 'OutputStream'.
+Also if transformed into `InputStream` and the `ByteCollectingOutputStream` is not referenced anymore all the read byte arrays that have been already read are eligible for garbage collection (so the memory footprint decreases as the data is being read).
+
+```Java
+    ByteCollectingOutputStream bcoStream = new ByteCollectingOutputStream();
+    
+    // fill with bytes, e.g.:
+    bcoStream.write(text.getBytes(charsetName));
+    bcoStream.write(singleByte);
+    ...
+    
+    stream.close();
+
+    InputStream collectedBytesStream = bcoStream.toInputStream();
+    bcoStream.writeTo(someOtherOutputStream);
+    byte[] collectedBytes = bcoStream.toByteArray();
+```
+
 ## Math
 
 ### Decimal
