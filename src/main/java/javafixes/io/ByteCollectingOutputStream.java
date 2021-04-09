@@ -29,12 +29,22 @@ public class ByteCollectingOutputStream extends OutputStream {
 
     @Override
     public void write(int b) throws IOException {
-        last.add((byte) b);
+        synchronized (lock) {
+            if (closed) {
+                throw new IllegalStateException("Unable to write any more bytes. ByteCollectingOutputStream is closed");
+            }
+            last = last.add((byte) b);
+        }
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
-        last.add(b, off, len);
+        synchronized (lock) {
+            if (closed) {
+                throw new IllegalStateException("Unable to write any more bytes. ByteCollectingOutputStream is closed");
+            }
+            last = last.add(b, off, len);
+        }
     }
 
     @Override
@@ -70,7 +80,7 @@ public class ByteCollectingOutputStream extends OutputStream {
         return new InternalInputStream(first, 0);
     }
 
-    private class Node {
+    private static class Node {
 
         private final byte[] bytes;
         private int writeToIndex = 0;
@@ -81,61 +91,50 @@ public class ByteCollectingOutputStream extends OutputStream {
             this.bytes = new byte[size];
         }
 
-        private void add(byte b) {
-            synchronized (lock) {
-                if (closed) {
-                    throw new IllegalStateException("Unable to write any more bytes. ByteCollectingOutputStream is closed");
-                }
-
-                if (writeToIndex < bytes.length) {
-                    bytes[writeToIndex] = b;
-                    writeToIndex++;
-                } else {
-                    nextNode().add(b);
-                }
+        private Node add(byte b) {
+            if (writeToIndex < bytes.length) {
+                bytes[writeToIndex] = b;
+                writeToIndex++;
+                return this;
+            } else {
+                return nextNode().add(b);
             }
         }
 
-        private void add(byte[] b, int off, int len) {
-            synchronized (lock) {
-                if (closed) {
-                    throw new IllegalStateException("Unable to write any more bytes. ByteCollectingOutputStream is closed");
-                }
+        private Node add(byte[] b, int off, int len) {
+            Node lastNode = this;
+            while (len > 0) {
+                int writeIndex = lastNode.writeToIndex;
+                int arrayLength = lastNode.bytes.length;
 
-                Node node = this;
-                while (len > 0) {
-                    int writeIndex = node.writeToIndex;
-                    int arrayLength = node.bytes.length;
+                if (writeIndex < arrayLength) {
+                    int writeNBytes = min(len, arrayLength - writeIndex);
 
-                    if (writeIndex < arrayLength) {
-                        int writeNBytes = min(len, arrayLength - writeIndex);
+                    System.arraycopy(b, off, lastNode.bytes, writeIndex, writeNBytes);
 
-                        System.arraycopy(b, off, node.bytes, writeIndex, writeNBytes);
+                    lastNode.writeToIndex = lastNode.writeToIndex + writeNBytes;
+                    off = off + writeNBytes;
+                    len = len - writeNBytes;
 
-                        node.writeToIndex = node.writeToIndex + writeNBytes;
-                        off = off + writeNBytes;
-                        len = len - writeNBytes;
-
-                        if (len > 0) {
-                            node = node.nextNode();
-                        }
-                    } else {
-                        node = node.nextNode();
+                    if (len > 0) {
+                        lastNode = lastNode.nextNode();
                     }
+                } else {
+                    lastNode = lastNode.nextNode();
                 }
             }
+            return lastNode;
         }
 
         private Node nextNode() {
             if (next == null) {
                 next = new Node(bytes.length);
-                ByteCollectingOutputStream.this.last = next;
             }
             return next;
         }
     }
 
-    private class InternalInputStream extends InputStream {
+    private static class InternalInputStream extends InputStream {
 
         private Node node;
         private int readIndex;
