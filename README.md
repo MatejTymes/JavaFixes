@@ -298,7 +298,7 @@ Also if transformed into `InputStream` and the `ByteCollectingOutputStream` is n
 ```
 
 just for comparison, when collecting data (in jdk15) we need:
-| data size | ByteArrayOutputStream       | ByteCollectingOutputStream  |
+| data size | ByteCollectingOutputStream  | ByteArrayOutputStream       |
 |-----------|-----------------------------|-----------------------------|
 |  1024 MB  | 1.18 seconds / 1067 MB heap | 2.00 seconds / 2192 MB heap |
 |   512 MB  | 0.66 seconds /  535 MB heap | 1.10 seconds / 1155 MB heap |
