@@ -29,7 +29,7 @@ public class ByteCollectingOutputStream extends OutputStream {
     }
 
     @Override
-    public void write(int b) {
+    public void write(int b) throws IOException {
         synchronized (lock) {
             if (closed) {
                 throw new IllegalStateException("Unable to write any more bytes. ByteCollectingOutputStream is closed");
@@ -40,7 +40,7 @@ public class ByteCollectingOutputStream extends OutputStream {
     }
 
     @Override
-    public void write(byte[] b, int off, int len) {
+    public void write(byte[] b, int off, int len) throws IOException {
         synchronized (lock) {
             if (closed) {
                 throw new IllegalStateException("Unable to write any more bytes. ByteCollectingOutputStream is closed");
@@ -55,7 +55,7 @@ public class ByteCollectingOutputStream extends OutputStream {
     }
 
     @Override
-    public void close() {
+    public void close() throws IOException {
         synchronized (lock) {
             closed = true;
         }
@@ -190,7 +190,7 @@ public class ByteCollectingOutputStream extends OutputStream {
         }
 
         @Override
-        public int read(byte[] b, int off, int len) {
+        public int read(byte[] b, int off, int len) throws IOException {
             int actualLen = 0;
             while (len > 0) {
                 int copyNBytes = min(node.writeToIndex - readIndex, len);
