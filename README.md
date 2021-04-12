@@ -3,13 +3,13 @@
 Adding some features which would be normally nice to have in Java
 
 You can get it via Gradle:
-`compile 'com.github.matejtymes:javafixes:1.3.5.2'`
+`compile 'com.github.matejtymes:javafixes:1.3.5.3'`
 or Maven
 ```Xml
 <dependency>
     <groupId>com.github.matejtymes</groupId>
     <artifactId>javafixes</artifactId>
-    <version>1.3.5.2</version>
+    <version>1.3.5.3</version>
 </dependency>
 ```
 
@@ -298,11 +298,11 @@ Also if transformed into `InputStream` and the `ByteCollectingOutputStream` is n
 ```
 
 just for comparison, when collecting data (in jdk15) we need:
-| data size | ByteCollectingOutputStream  | ByteArrayOutputStream       |
+| data size | ByteArrayOutputStream       | ByteCollectingOutputStream  |
 |-----------|-----------------------------|-----------------------------|
-|  1024 MB  | 1.18 seconds / 1067 MB heap | 2.00 seconds / 2192 MB heap |
-|   512 MB  | 0.66 seconds /  535 MB heap | 1.10 seconds / 1155 MB heap |
-|   128 MB  | 0.24 seconds /  135 MB heap | 0.25 seconds /  264 MB heap |
+|  1024 MB  | 2.00 seconds / 2192 MB heap | 1.18 seconds / 1067 MB heap |
+|   512 MB  | 1.10 seconds / 1155 MB heap | 0.66 seconds /  535 MB heap |
+|   128 MB  | 0.25 seconds /  264 MB heap | 0.24 seconds /  135 MB heap |
 
 ## Math
 
