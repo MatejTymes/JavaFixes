@@ -180,13 +180,12 @@ public class ByteCollectingOutputStream extends OutputStream {
                 return -1;
             }
 
-            int value = node.bytes[readIndex];
-            readIndex++;
+            int value = node.bytes[readIndex++];
             if (readIndex == node.bytes.length && node.next != null) {
                 node = node.next;
                 readIndex = 0;
             }
-            return value;
+            return (value & 0xff);
         }
 
         @Override
