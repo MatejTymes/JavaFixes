@@ -182,6 +182,11 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo, Aut
         return this;
     }
 
+    /**
+     * Sends a shutdownNow signal to the runner.
+     *
+     * @see ExecutorService#shutdownNow()
+     */
     @Override
     public void close() throws Exception {
         shutdownNow();
