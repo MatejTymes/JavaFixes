@@ -14,7 +14,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  *
  * @author mtymes
  */
-public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo {
+public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo, AutoCloseable {
 
     private final AtomicBoolean wasShutdownTriggered = new AtomicBoolean(false);
     private final AtomicInteger failedToStart = new AtomicInteger(0);
@@ -180,6 +180,11 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo {
         int numberOfDrainedTasks = executor.shutdownNow().size();
         tasksDrainedFromExecutor(numberOfDrainedTasks);
         return this;
+    }
+
+    @Override
+    public void close() throws Exception {
+        shutdownNow();
     }
 
     /**
