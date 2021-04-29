@@ -66,6 +66,14 @@ public class MutableValue<T> implements ChangingValue<T> {
         }
     }
 
+    public MutableValue<T> withValueName(Optional<String> optionalValueName) {
+        if (optionalValueName.isPresent()) {
+            return withValueName(optionalValueName.get());
+        } else {
+            return withNoValueName();
+        }
+    }
+
     public MutableValue<T> withDisposeFunction(Consumer<T> disposeFunction) {
         synchronized (currentValue) {
             return new MutableValue<>(valueName, currentValue.get(), Optional.of(disposeFunction), changeVersion);
@@ -75,6 +83,14 @@ public class MutableValue<T> implements ChangingValue<T> {
     public MutableValue<T> withNoDisposeFunction() {
         synchronized (currentValue) {
             return new MutableValue<>(valueName, currentValue.get(), Optional.empty(), changeVersion);
+        }
+    }
+
+    public MutableValue<T> withDisposeFunction(Optional<Consumer<T>> optionalDisposeFunction) {
+        if (optionalDisposeFunction.isPresent()) {
+            return withDisposeFunction(optionalDisposeFunction.get());
+        } else {
+            return withNoDisposeFunction();
         }
     }
 

@@ -76,6 +76,14 @@ public class DynamicValue<T> implements ChangingValue<T> {
         }
     }
 
+    public DynamicValue<T> withValueName(Optional<String> optionalValueName) {
+        if (optionalValueName.isPresent()) {
+            return withValueName(optionalValueName.get());
+        } else {
+            return withNoValueName();
+        }
+    }
+
     public DynamicValue<T> withDisposeFunction(Consumer<T> disposeFunction) {
         synchronized (currentValue) {
             return new DynamicValue<>(valueName, valueGenerator, Optional.of(disposeFunction), currentValue.get(), changeVersion);
@@ -85,6 +93,14 @@ public class DynamicValue<T> implements ChangingValue<T> {
     public DynamicValue<T> withNoDisposeFunction() {
         synchronized (currentValue) {
             return new DynamicValue<>(valueName, valueGenerator, Optional.empty(), currentValue.get(), changeVersion);
+        }
+    }
+
+    public DynamicValue<T> withDisposeFunction(Optional<Consumer<T>> optionalDisposeFunction) {
+        if (optionalDisposeFunction.isPresent()) {
+            return withDisposeFunction(optionalDisposeFunction.get());
+        } else {
+            return withNoDisposeFunction();
         }
     }
 

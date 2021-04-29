@@ -76,6 +76,14 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
         }
     }
 
+    public DerivedValue<T, SourceType> withValueName(Optional<String> optionalValueName) {
+        if (optionalValueName.isPresent()) {
+            return withValueName(optionalValueName.get());
+        } else {
+            return withNoValueName();
+        }
+    }
+
     public DerivedValue<T, SourceType> withDisposeFunction(Consumer<T> disposeFunction) {
         synchronized (currentValue) {
             return new DerivedValue<>(valueName, sourceValue, valueMapper, Optional.of(disposeFunction), currentValue.get(), changeVersion, lastSourceChangeVersion);
@@ -85,6 +93,14 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
     public DerivedValue<T, SourceType> withNoDisposeFunction() {
         synchronized (currentValue) {
             return new DerivedValue<>(valueName, sourceValue, valueMapper, Optional.empty(), currentValue.get(), changeVersion, lastSourceChangeVersion);
+        }
+    }
+
+    public DerivedValue<T, SourceType> withDisposeFunction(Optional<Consumer<T>> optionalDisposeFunction) {
+        if (optionalDisposeFunction.isPresent()) {
+            return withDisposeFunction(optionalDisposeFunction.get());
+        } else {
+            return withNoDisposeFunction();
         }
     }
 
