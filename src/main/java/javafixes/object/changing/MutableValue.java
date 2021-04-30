@@ -105,15 +105,18 @@ public class MutableValue<T> implements ChangingValue<T> {
         }
     }
 
-    public void updateValueIfDifferent(T potentialNewValue) {
+    public boolean updateValueIfDifferent(T potentialNewValue) {
         synchronized (currentValue) {
             boolean shouldUpdate = currentValue.get().fold(
                     ifException -> true,
                     oldValue -> !Objects.equals(oldValue, potentialNewValue)
             );
+
             if (shouldUpdate) {
                 updateTo(right(potentialNewValue));
             }
+
+            return shouldUpdate;
         }
     }
 

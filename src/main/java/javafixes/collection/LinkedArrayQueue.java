@@ -4,6 +4,7 @@ import java.util.*;
 
 import static java.lang.Math.min;
 
+// todo: mtymes - put into README.md
 // todo: mtymes - test this
 // todo: mtymes - add javadoc
 public class LinkedArrayQueue<T> extends AbstractQueue<T> {

@@ -8,7 +8,7 @@ import static java.lang.Math.min;
 
 // todo: add into readme
 // todo: javadoc
-// todo: maybe explain internal implementation (LinkedArray)
+// todo: maybe explain internal implementation (LinkedByteArrays)
 public class ByteCollectingOutputStream extends OutputStream {
 
     private transient final Object lock = new Object();
@@ -63,6 +63,7 @@ public class ByteCollectingOutputStream extends OutputStream {
 
     public void writeTo(OutputStream os) throws IOException {
         synchronized (lock) {
+            // todo: it can be actually done with unclosed stream
             if (!closed) {
                 throw new IllegalStateException("Unable to copy content to OutputStream. ByteCollectingOutputStream is not closed yet");
             }
@@ -79,6 +80,7 @@ public class ByteCollectingOutputStream extends OutputStream {
 
     public InputStream toInputStream() {
         synchronized (lock) {
+            // todo: it can be actually done with unclosed stream
             if (!closed) {
                 throw new IllegalStateException("Unable to provide InputStream. ByteCollectingOutputStream is not closed yet");
             }
@@ -89,6 +91,7 @@ public class ByteCollectingOutputStream extends OutputStream {
 
     public byte[] toByteArray() {
         synchronized (lock) {
+            // todo: it can be actually done with unclosed stream
             if (!closed) {
                 throw new IllegalStateException("Unable to create byte array. ByteCollectingOutputStream is not closed yet");
             }
