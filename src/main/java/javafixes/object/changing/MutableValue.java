@@ -108,7 +108,7 @@ public class MutableValue<T> implements ChangingValue<T> {
      * Creates a copy of current {@code MutableValue} with new value name if {@code Optional} name is defined
      * and without a value name if the {@code Optional} name is undefined
      *
-     * @param optionalValueName if empty new {@MutableValue} will have no value name otherwise the define value name will be used
+     * @param optionalValueName if empty new {@code MutableValue} will have no value name otherwise the define value name will be used
      * @return copy of current {@code MutableValue} with defined value name
      */
     public MutableValue<T> withValueName(Optional<String> optionalValueName) {
@@ -146,7 +146,7 @@ public class MutableValue<T> implements ChangingValue<T> {
      * Creates a copy of current {@code MutableValue} with new dispose function if {@code Optional} dispose function is defined
      * and without a dispose function if the {@code Optional} dispose function is undefined
      *
-     * @param optionalDisposeFunction if empty new {@MutableValue} will have no dispose function otherwise the define dispose function will be used
+     * @param optionalDisposeFunction if empty new {@code MutableValue} will have no dispose function otherwise the define dispose function will be used
      * @return copy of current {@code MutableValue} with defined dispose function
      */
     public MutableValue<T> withDisposeFunction(Optional<Consumer<T>> optionalDisposeFunction) {
