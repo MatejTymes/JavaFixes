@@ -24,7 +24,6 @@ import static javafixes.object.Tuple.tuple;
  * @param <T> type of wrapped value
  * @author mtymes
  */
-// todo: put into README
 // todo: test default and static methods
 // todo: add null check for input parameters
 public interface ChangingValue<T> extends Value<T> {

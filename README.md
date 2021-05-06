@@ -224,11 +224,11 @@ Immutable Two / Three values holder. Each `Tuple` / `Triple` extends `DataObject
         (userId, user) -> user.firstName + " " + user.lastName + "'s ID is: " + userId.value()
     );
 ```
-`Tuple` can contain `null` values.
+`Tuple` / `Triple` can contain `null` values.
 
 ### ChangingValue
 
-If you have a value that is changing over time and you'd like to derive other values from it, you could use this hierarchy of classes.
+If you have a value that changes over time and want to have derived values that reflects these changes, you could use this hierarchy of classes.
 ```Java
     // mutable wrapper of connection details
     MutableValue<ConnectionDetails> connectionDetails = mutableValue(
@@ -241,7 +241,7 @@ If you have a value that is changing over time and you'd like to derive other va
     ChangingValue<DbConnection> dbConnection = connectionDetails.map(
                 details -> connectTo(details)
         )
-        // and dispose the previous connection
+        // and use this to dispose old connection if new one will be created
         .withDisposeFunction(
                 connection -> releaseConnection(connection)
         );
