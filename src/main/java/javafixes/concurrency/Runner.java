@@ -10,7 +10,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 /**
  * An {@link ScheduledExecutorService} alternative
  * that allows you to monitor the number of submitted, failed and succeeded task, plus has the
- * ability to wait until all tasks are completed = there are no scheduled or running tasks.
+ * ability to wait until all tasks are completed (without the need of shutting it down)
+ * = wait until there are no scheduled or running tasks.
  *
  * @author mtymes
  */

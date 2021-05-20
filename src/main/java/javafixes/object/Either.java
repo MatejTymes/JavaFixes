@@ -3,6 +3,7 @@ package javafixes.object;
 import javafixes.common.function.ValueHandler;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -151,7 +152,7 @@ public abstract class Either<L, R> extends DataObject implements Value<Object> {
      * The {@code action} is ignored if value is defined as {@link Right Right} {@link Either}.
      *
      * @param leftValueHandler action that is executed for {@link Left Left} {@link Either}
-     * @param <T> class of potential {@link Throwable} thrown by {@code leftValueHandler}
+     * @param <T>              class of potential {@link Throwable} thrown by {@code leftValueHandler}
      * @return the same instance of {@link Either} to allow method chaining
      * @throws T in case the {@code leftValueHandler} throws T
      */
@@ -162,7 +163,7 @@ public abstract class Either<L, R> extends DataObject implements Value<Object> {
      * The {@code action} is ignored if value is defined as {@link Left Left} {@link Either}.
      *
      * @param rightValueHandler action that is executed for {@link Right Right} {@link Either}
-     * @param <T> class of potential {@link Throwable} thrown by {@code rightValueHandler}
+     * @param <T>               class of potential {@link Throwable} thrown by {@code rightValueHandler}
      * @return the same instance of {@link Either} to allow method chaining
      * @throws T in case the {@code rightValueHandler} throws T
      */
@@ -172,10 +173,10 @@ public abstract class Either<L, R> extends DataObject implements Value<Object> {
      * Executes provided {@code leftValueHandler} if value is defined as {@link Left Left} {@link Either}.
      * Executes provided {@code rightValueHandler} if value is defined as {@link Right Right} {@link Either}.
      *
-     * @param leftValueHandler action that is executed for {@link Left Left} {@link Either}
+     * @param leftValueHandler  action that is executed for {@link Left Left} {@link Either}
      * @param rightValueHandler action that is executed for {@link Right Right} {@link Either}
-     * @param <TL> class of potential {@link Throwable} thrown by {@code leftValueHandler}
-     * @param <TR> class of potential {@link Throwable} thrown by {@code rightValueHandler}
+     * @param <TL>              class of potential {@link Throwable} thrown by {@code leftValueHandler}
+     * @param <TR>              class of potential {@link Throwable} thrown by {@code rightValueHandler}
      * @return the same instance of {@link Either} to allow method chaining
      * @throws TL in case the {@code leftValueHandler} throws T
      * @throws TR in case the {@code rightValueHandler} throws T
@@ -311,6 +312,19 @@ public abstract class Either<L, R> extends DataObject implements Value<Object> {
         public R value() {
             return value;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Right<?, ?> right = (Right<?, ?>) o;
+            return Objects.equals(value, right.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(value);
+        }
     }
 
     public static final class Left<L, R> extends Either<L, R> {
@@ -411,6 +425,19 @@ public abstract class Either<L, R> extends DataObject implements Value<Object> {
         @Override
         public L value() {
             return value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Left<?, ?> left = (Left<?, ?>) o;
+            return Objects.equals(value, left.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(value);
         }
     }
 }
