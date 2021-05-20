@@ -24,6 +24,9 @@ import static javafixes.object.Tuple.tuple;
  * @param <T> type of wrapped value
  * @author mtymes
  */
+// todo: add ChangingValue.withDisposeFunction()
+// todo: add withOnValueSet(Consumer<T> onValueSet) method
+// todo: add withOnUpdateFunction(BiConsumer<T, T> onUpdate) method
 // todo: test default and static methods
 // todo: add null check for input parameters
 public interface ChangingValue<T> extends Value<T> {
@@ -52,7 +55,7 @@ public interface ChangingValue<T> extends Value<T> {
      * @return generated {@link DerivedValue}
      */
     default <T2> DerivedValue<T2, T> map(Function<T, ? extends T2> derivedValueMapper) {
-        return new DerivedValue<>(Optional.empty(), this, derivedValueMapper, Optional.empty());
+        return new DerivedValue<>(Optional.empty(), this, derivedValueMapper, Optional.empty(), false);
     }
 
     /**

@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -23,6 +24,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
     private final ChangingValue<SourceType> sourceValue;
     private final Function<SourceType, ? extends T> valueMapper;
     private final Optional<Consumer<T>> disposeFunction;
+    private final boolean doUpdateIfNewAndOldValueAreEqual;
 
     private final AtomicReference<Either<RuntimeException, T>> currentValue = new AtomicReference<>();
     private long changeVersion;
@@ -32,12 +34,14 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
             Optional<String> valueName,
             ChangingValue<SourceType> sourceValue,
             Function<SourceType, ? extends T> valueMapper,
-            Optional<Consumer<T>> disposeFunction
+            Optional<Consumer<T>> disposeFunction,
+            boolean doUpdateIfNewAndOldValueAreEqual
     ) {
         this.valueName = valueName;
         this.sourceValue = sourceValue;
         this.valueMapper = valueMapper;
         this.disposeFunction = disposeFunction;
+        this.doUpdateIfNewAndOldValueAreEqual = doUpdateIfNewAndOldValueAreEqual;
 
         deriveValue();
         this.changeVersion = 0;
@@ -48,6 +52,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
             ChangingValue<SourceType> sourceValue,
             Function<SourceType, ? extends T> valueMapper,
             Optional<Consumer<T>> disposeFunction,
+            boolean doUpdateIfNewAndOldValueAreEqual,
 
             Either<RuntimeException, T> currentValue,
             long changeVersion,
@@ -58,6 +63,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
         this.sourceValue = sourceValue;
         this.valueMapper = valueMapper;
         this.disposeFunction = disposeFunction;
+        this.doUpdateIfNewAndOldValueAreEqual = doUpdateIfNewAndOldValueAreEqual;
 
         this.currentValue.set(currentValue);
         this.changeVersion = changeVersion;
@@ -66,13 +72,31 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
 
     public DerivedValue<T, SourceType> withValueName(String valueName) {
         synchronized (currentValue) {
-            return new DerivedValue<>(Optional.of(valueName), sourceValue, valueMapper, disposeFunction, currentValue.get(), changeVersion, lastSourceChangeVersion);
+            return new DerivedValue<>(
+                    Optional.of(valueName),
+                    sourceValue,
+                    valueMapper,
+                    disposeFunction,
+                    doUpdateIfNewAndOldValueAreEqual,
+                    currentValue.get(),
+                    changeVersion,
+                    lastSourceChangeVersion
+            );
         }
     }
 
     public DerivedValue<T, SourceType> withNoValueName() {
         synchronized (currentValue) {
-            return new DerivedValue<>(Optional.empty(), sourceValue, valueMapper, disposeFunction, currentValue.get(), changeVersion, lastSourceChangeVersion);
+            return new DerivedValue<>(
+                    Optional.empty(),
+                    sourceValue,
+                    valueMapper,
+                    disposeFunction,
+                    doUpdateIfNewAndOldValueAreEqual,
+                    currentValue.get(),
+                    changeVersion,
+                    lastSourceChangeVersion
+            );
         }
     }
 
@@ -86,13 +110,31 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
 
     public DerivedValue<T, SourceType> withDisposeFunction(Consumer<T> disposeFunction) {
         synchronized (currentValue) {
-            return new DerivedValue<>(valueName, sourceValue, valueMapper, Optional.of(disposeFunction), currentValue.get(), changeVersion, lastSourceChangeVersion);
+            return new DerivedValue<>(
+                    valueName,
+                    sourceValue,
+                    valueMapper,
+                    Optional.of(disposeFunction),
+                    doUpdateIfNewAndOldValueAreEqual,
+                    currentValue.get(),
+                    changeVersion,
+                    lastSourceChangeVersion
+            );
         }
     }
 
     public DerivedValue<T, SourceType> withNoDisposeFunction() {
         synchronized (currentValue) {
-            return new DerivedValue<>(valueName, sourceValue, valueMapper, Optional.empty(), currentValue.get(), changeVersion, lastSourceChangeVersion);
+            return new DerivedValue<>(
+                    valueName,
+                    sourceValue,
+                    valueMapper,
+                    Optional.empty(),
+                    doUpdateIfNewAndOldValueAreEqual,
+                    currentValue.get(),
+                    changeVersion,
+                    lastSourceChangeVersion
+            );
         }
     }
 
@@ -101,6 +143,21 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
             return withDisposeFunction(optionalDisposeFunction.get());
         } else {
             return withNoDisposeFunction();
+        }
+    }
+
+    public DerivedValue<T, SourceType> withDoUpdateIfNewAndOldValueAreEqual(boolean doUpdateIfNewAndOldValueAreEqual) {
+        synchronized (currentValue) {
+            return new DerivedValue<>(
+                    valueName,
+                    sourceValue,
+                    valueMapper,
+                    disposeFunction,
+                    doUpdateIfNewAndOldValueAreEqual,
+                    currentValue.get(),
+                    changeVersion,
+                    lastSourceChangeVersion
+            );
         }
     }
 
@@ -125,6 +182,10 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
         return changeVersion;
     }
 
+    public boolean isDoUpdateIfNewAndOldValueAreEqual() {
+        return doUpdateIfNewAndOldValueAreEqual;
+    }
+
     private void ensureIsDerivedFromLatestVersion() {
         if (lastSourceChangeVersion != sourceValue.changeVersion()) {
             synchronized (currentValue) {
@@ -138,9 +199,25 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
     private void deriveValue() {
         this.lastSourceChangeVersion = sourceValue.changeVersion();
 
+        AtomicBoolean didUpdateHappen = new AtomicBoolean(true);
         Either<RuntimeException, T> oldValue;
         try {
-            oldValue = this.currentValue.getAndSet(right(valueMapper.apply(sourceValue.value())));
+            T newValue = valueMapper.apply(sourceValue.value());
+            if (doUpdateIfNewAndOldValueAreEqual) {
+                oldValue = this.currentValue.getAndSet(right(newValue));
+            } else {
+                oldValue = this.currentValue.getAndAccumulate(
+                        right(newValue),
+                        (oldEither, newEither) -> {
+                            if (oldEither.equals(newEither)) {
+                                didUpdateHappen.set(false);
+                                return oldEither;
+                            } else {
+                                return newEither;
+                            }
+                        }
+                );
+            }
         } catch (RuntimeException e) {
             oldValue = this.currentValue.getAndSet(left(e));
 
@@ -155,22 +232,26 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
                 unwantedException.printStackTrace();
             }
         } finally {
-            this.changeVersion++;
+            if (didUpdateHappen.get()) {
+                this.changeVersion++;
+            }
         }
 
-        Either<RuntimeException, T> valueToDispose = oldValue;
-        try {
-            disposeFunction.ifPresent(disposeFunction -> {
-                valueToDispose.handleRight(disposeFunction::accept);
-            });
-        } catch (Exception loggableException) {
+        if (didUpdateHappen.get()) {
+            Either<RuntimeException, T> valueToDispose = oldValue;
             try {
-                logger.error(
-                        "Failed to dispose old value" + name().map(name -> " for '" + name + "'").orElse(""),
-                        loggableException
-                );
-            } catch (Exception unwantedException) {
-                unwantedException.printStackTrace();
+                disposeFunction.ifPresent(disposeFunction -> {
+                    valueToDispose.handleRight(disposeFunction::accept);
+                });
+            } catch (Exception loggableException) {
+                try {
+                    logger.error(
+                            "Failed to dispose old value" + name().map(name -> " for '" + name + "'").orElse(""),
+                            loggableException
+                    );
+                } catch (Exception unwantedException) {
+                    unwantedException.printStackTrace();
+                }
             }
         }
     }
