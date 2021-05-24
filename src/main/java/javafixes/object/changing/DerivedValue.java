@@ -209,7 +209,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
                 oldValue = this.currentValue.getAndAccumulate(
                         right(newValue),
                         (oldEither, newEither) -> {
-                            if (oldEither.equals(newEither)) {
+                            if (oldEither != null && oldEither.equals(newEither)) {
                                 didUpdateHappen.set(false);
                                 return oldEither;
                             } else {
