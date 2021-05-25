@@ -22,7 +22,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
 
     private final Optional<String> valueName;
     private final Supplier<T> valueGenerator;
-    private final Optional<Consumer<T>> onValueSetFunction;
+    private final Optional<Consumer<T>> onValueChangedFunction;
     private final Optional<Consumer<T>> disposeFunction;
 
     private final AtomicReference<Either<RuntimeException, T>> currentValue = new AtomicReference<>();
@@ -31,12 +31,12 @@ public class DynamicValue<T> implements ChangingValue<T> {
     DynamicValue(
             Optional<String> valueName,
             Supplier<T> valueGenerator,
-            Optional<Consumer<T>> onValueSetFunction,
+            Optional<Consumer<T>> onValueChangedFunction,
             Optional<Consumer<T>> disposeFunction
     ) {
         this.valueName = valueName;
         this.valueGenerator = valueGenerator;
-        this.onValueSetFunction = onValueSetFunction;
+        this.onValueChangedFunction = onValueChangedFunction;
         this.disposeFunction = disposeFunction;
         this.changeVersion = 0;
 
@@ -50,7 +50,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
     private DynamicValue(
             Optional<String> valueName,
             Supplier<T> valueGenerator,
-            Optional<Consumer<T>> onValueSetFunction,
+            Optional<Consumer<T>> onValueChangedFunction,
             Optional<Consumer<T>> disposeFunction,
 
             Either<RuntimeException, T> currentValue,
@@ -58,7 +58,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
     ) {
         this.valueName = valueName;
         this.valueGenerator = valueGenerator;
-        this.onValueSetFunction = onValueSetFunction;
+        this.onValueChangedFunction = onValueChangedFunction;
         this.disposeFunction = disposeFunction;
 
         this.currentValue.set(currentValue);
@@ -79,7 +79,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
             return new DynamicValue<>(
                     Optional.of(valueName),
                     valueGenerator,
-                    onValueSetFunction,
+                    onValueChangedFunction,
                     disposeFunction,
                     currentValue.get(),
                     changeVersion
@@ -92,7 +92,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
             return new DynamicValue<>(
                     Optional.empty(),
                     valueGenerator,
-                    onValueSetFunction,
+                    onValueChangedFunction,
                     disposeFunction,
                     currentValue.get(),
                     changeVersion
@@ -108,26 +108,26 @@ public class DynamicValue<T> implements ChangingValue<T> {
         }
     }
 
-    public DynamicValue<T> withOnValueSetFunction(Consumer<T> onValueSetFunction, boolean applyToCurrentValue) {
+    public DynamicValue<T> withOnValueChangedFunction(Consumer<T> onValueChangedFunction, boolean applyToCurrentValue) {
         synchronized (currentValue) {
             DynamicValue<T> dynamicValue = new DynamicValue<>(
                     valueName,
                     valueGenerator,
-                    Optional.of(onValueSetFunction),
+                    Optional.of(onValueChangedFunction),
                     disposeFunction,
                     currentValue.get(),
                     changeVersion
             );
 
             if (applyToCurrentValue) {
-                dynamicValue.applyOnValueSetFunction();
+                dynamicValue.applyOnValueChangedFunction();
             }
 
             return dynamicValue;
         }
     }
 
-    public DynamicValue<T> withNoOnValueSetFunction() {
+    public DynamicValue<T> withNoOnValueChangedFunction() {
         synchronized (currentValue) {
             return new DynamicValue<>(
                     valueName,
@@ -140,11 +140,11 @@ public class DynamicValue<T> implements ChangingValue<T> {
         }
     }
 
-    public DynamicValue<T> withOnValueSetFunction(Optional<Consumer<T>> optionalOnValueSetFunction, boolean applyToCurrentValue) {
-        if (optionalOnValueSetFunction.isPresent()) {
-            return withOnValueSetFunction(optionalOnValueSetFunction.get(), applyToCurrentValue);
+    public DynamicValue<T> withOnValueChangedFunction(Optional<Consumer<T>> optionalOnValueChangedFunction, boolean applyToCurrentValue) {
+        if (optionalOnValueChangedFunction.isPresent()) {
+            return withOnValueChangedFunction(optionalOnValueChangedFunction.get(), applyToCurrentValue);
         } else {
-            return withNoOnValueSetFunction();
+            return withNoOnValueChangedFunction();
         }
     }
 
@@ -153,7 +153,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
             return new DynamicValue<>(
                     valueName,
                     valueGenerator,
-                    onValueSetFunction,
+                    onValueChangedFunction,
                     Optional.of(disposeFunction),
                     currentValue.get(),
                     changeVersion
@@ -166,7 +166,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
             return new DynamicValue<>(
                     valueName,
                     valueGenerator,
-                    onValueSetFunction,
+                    onValueChangedFunction,
                     Optional.empty(),
                     currentValue.get(),
                     changeVersion
@@ -249,20 +249,20 @@ public class DynamicValue<T> implements ChangingValue<T> {
 
         changeVersion++;
 
-        applyOnValueSetFunction();
+        applyOnValueChangedFunction();
 
         applyDisposeFunction(oldValue);
     }
 
-    private void applyOnValueSetFunction() {
+    private void applyOnValueChangedFunction() {
         try {
-            onValueSetFunction.ifPresent(onValueSetFunction -> {
-                currentValue.get().handleRight(onValueSetFunction::accept);
+            onValueChangedFunction.ifPresent(onValueChangedFunction -> {
+                currentValue.get().handleRight(onValueChangedFunction::accept);
             });
         } catch (Exception loggableException) {
             try {
                 logger.error(
-                        "Failed to apply onValueSetFunction to new value" + name().map(name -> " for '" + name + "'").orElse(""),
+                        "Failed to apply onValueChangedFunction to new value" + name().map(name -> " for '" + name + "'").orElse(""),
                         loggableException
                 );
             } catch (Exception unwantedException) {

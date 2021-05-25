@@ -25,7 +25,7 @@ import static javafixes.object.Tuple.tuple;
  * @author mtymes
  */
 // todo: add ChangingValue.withDisposeFunction()
-// todo: add ChangingValue.withOnValueSetFunction(Consumer<T> onValueSet, runForCurrentValue) method
+// todo: add ChangingValue.withOnValueChangedFunction(Consumer<T> onValueChangedFunction, runForCurrentValue) method
 // todo: add withOnUpdateFunction(BiConsumer<T, T> onUpdate) method
 // todo: test default and static methods
 // todo: add null check for input parameters

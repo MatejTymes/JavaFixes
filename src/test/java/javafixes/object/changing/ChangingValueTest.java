@@ -15,12 +15,12 @@ public class ChangingValueTest {
 
 
         MutableValue<String> hostAndPort = mutableValue("host123:8080")
-                .withOnValueSetFunction(
+                .withOnValueChangedFunction(
                         value -> System.out.println("host = " + value),
                         true
                 );
         ChangingValue<Boolean> isConnected = hostAndPort.map(value -> randomBoolean())
-                .withOnValueSetFunction(
+                .withOnValueChangedFunction(
                         value -> System.out.println("is connected = " + value),
                         true
                 );
@@ -28,7 +28,7 @@ public class ChangingValueTest {
         ChangingValue<String> nodeInfo = join(hostAndPort, isConnected).map(tuple -> {
             System.out.println("generating new value");
             return tuple.a + " : " + (tuple.b ? "IS connected" : "UNABLE to connect");
-        }).withOnValueSetFunction(
+        }).withOnValueChangedFunction(
                 value -> System.out.println("hostInfo =  " + value),
                 true
         );

@@ -29,7 +29,7 @@ public class MutableValue<T> implements ChangingValue<T> {
     private static final Logger logger = LoggerFactory.getLogger(MutableValue.class);
 
     private final Optional<String> valueName;
-    private final Optional<Consumer<T>> onValueSetFunction;
+    private final Optional<Consumer<T>> onValueChangedFunction;
     private final Optional<Consumer<T>> disposeFunction;
 
     private final AtomicReference<Either<RuntimeException, T>> currentValue = new AtomicReference<>();
@@ -38,11 +38,11 @@ public class MutableValue<T> implements ChangingValue<T> {
     MutableValue(
             Optional<String> valueName,
             Either<RuntimeException, T> currentValue,
-            Optional<Consumer<T>> onValueSetFunction,
+            Optional<Consumer<T>> onValueChangedFunction,
             Optional<Consumer<T>> disposeFunction
     ) {
         this.valueName = valueName;
-        this.onValueSetFunction = onValueSetFunction;
+        this.onValueChangedFunction = onValueChangedFunction;
         this.disposeFunction = disposeFunction;
 
         this.currentValue.set(currentValue);
@@ -52,12 +52,12 @@ public class MutableValue<T> implements ChangingValue<T> {
     private MutableValue(
             Optional<String> valueName,
             Either<RuntimeException, T> currentValue,
-            Optional<Consumer<T>> onValueSetFunction,
+            Optional<Consumer<T>> onValueChangedFunction,
             Optional<Consumer<T>> disposeFunction,
             long changeVersion
     ) {
         this.valueName = valueName;
-        this.onValueSetFunction = onValueSetFunction;
+        this.onValueChangedFunction = onValueChangedFunction;
         this.disposeFunction = disposeFunction;
 
         this.currentValue.set(currentValue);
@@ -106,7 +106,7 @@ public class MutableValue<T> implements ChangingValue<T> {
             return new MutableValue<>(
                     Optional.of(valueName),
                     currentValue.get(),
-                    onValueSetFunction,
+                    onValueChangedFunction,
                     disposeFunction,
                     changeVersion
             );
@@ -123,7 +123,7 @@ public class MutableValue<T> implements ChangingValue<T> {
             return new MutableValue<>(
                     Optional.empty(),
                     currentValue.get(),
-                    onValueSetFunction,
+                    onValueChangedFunction,
                     disposeFunction,
                     changeVersion
             );
@@ -148,22 +148,22 @@ public class MutableValue<T> implements ChangingValue<T> {
     /**
      * Creates a copy of current {@code MutableValue} with defined function applied to each new wrapped value
      *
-     * @param onValueSetFunction function that is called using new value when it is being passed in
-     * @param applyToCurrentValue indicator if the {@code onValueSetFunction} should be applied to the currently wrapped value
-     * @return copy of current {@code MutableValue} with a new on value set function
+     * @param onValueChangedFunction function that is called when a wrapped value is changed
+     * @param applyToCurrentValue indicator if the {@code onValueChangedFunction} should be applied to the currently wrapped value
+     * @return copy of current {@code MutableValue} with a new on value changed function
      */
-    public MutableValue<T> withOnValueSetFunction(Consumer<T> onValueSetFunction, boolean applyToCurrentValue) {
+    public MutableValue<T> withOnValueChangedFunction(Consumer<T> onValueChangedFunction, boolean applyToCurrentValue) {
         synchronized (currentValue) {
             MutableValue<T> mutableValue = new MutableValue<>(
                     valueName,
                     currentValue.get(),
-                    Optional.of(onValueSetFunction),
+                    Optional.of(onValueChangedFunction),
                     disposeFunction,
                     changeVersion
             );
 
             if (applyToCurrentValue) {
-                mutableValue.applyOnValueSetFunction();
+                mutableValue.applyOnValueChangedFunction();
             }
 
             return mutableValue;
@@ -171,11 +171,11 @@ public class MutableValue<T> implements ChangingValue<T> {
     }
 
     /**
-     * Creates a copy of current {@code MutableValue} with on value set function being removed
+     * Creates a copy of current {@code MutableValue} with on value changed function being removed
      *
-     * @return copy of current {@code MutableValue} without an on value set function
+     * @return copy of current {@code MutableValue} without an on value changed function
      */
-    public MutableValue<T> withNoOnValueSetFunction() {
+    public MutableValue<T> withNoOnValueChangedFunction() {
         synchronized (currentValue) {
             return new MutableValue<>(
                     valueName,
@@ -188,18 +188,18 @@ public class MutableValue<T> implements ChangingValue<T> {
     }
 
     /**
-     * Creates a copy of current {@code MutableValue} with new on value set function if {@code Optional} on value set function is defined
-     * and without an on value set function if the {@code Optional} on value set function is undefined
+     * Creates a copy of current {@code MutableValue} with new on value changed function if {@code Optional} on value changed function is defined
+     * and without an on value changed function if the {@code Optional} on value changed function is undefined
      *
-     * @param optionalOnValueSetFunction  if empty new {@code MutableValue} will have no on value set function otherwise the define on value set function will be used
-     * @param applyToCurrentValue indicator if the defined {@code optionalOnValueSetFunction} should be applied to the currently wrapped value
-     * @return copy of current {@code MutableValue} with defined on value set function
+     * @param optionalOnValueChangedFunction  if empty new {@code MutableValue} will have no on value changed function otherwise the define on value changed function will be used
+     * @param applyToCurrentValue indicator if the defined {@code optionalOnValueChangedFunction} should be applied to the currently wrapped value
+     * @return copy of current {@code MutableValue} with defined on value changed function
      */
-    public MutableValue<T> withOnValueSetFunction(Optional<Consumer<T>> optionalOnValueSetFunction, boolean applyToCurrentValue) {
-        if (optionalOnValueSetFunction.isPresent()) {
-            return withOnValueSetFunction(optionalOnValueSetFunction.get(), applyToCurrentValue);
+    public MutableValue<T> withOnValueChangedFunction(Optional<Consumer<T>> optionalOnValueChangedFunction, boolean applyToCurrentValue) {
+        if (optionalOnValueChangedFunction.isPresent()) {
+            return withOnValueChangedFunction(optionalOnValueChangedFunction.get(), applyToCurrentValue);
         } else {
-            return withNoOnValueSetFunction();
+            return withNoOnValueChangedFunction();
         }
     }
 
@@ -214,7 +214,7 @@ public class MutableValue<T> implements ChangingValue<T> {
             return new MutableValue<>(
                     valueName,
                     currentValue.get(),
-                    onValueSetFunction,
+                    onValueChangedFunction,
                     Optional.of(disposeFunction),
                     changeVersion
             );
@@ -231,7 +231,7 @@ public class MutableValue<T> implements ChangingValue<T> {
             return new MutableValue<>(
                     valueName,
                     currentValue.get(),
-                    onValueSetFunction,
+                    onValueChangedFunction,
                     Optional.empty(),
                     changeVersion
             );
@@ -323,20 +323,20 @@ public class MutableValue<T> implements ChangingValue<T> {
 
         changeVersion++;
 
-        applyOnValueSetFunction();
+        applyOnValueChangedFunction();
 
         applyDisposeFunction(oldValue);
     }
 
-    private void applyOnValueSetFunction() {
+    private void applyOnValueChangedFunction() {
         try {
-            onValueSetFunction.ifPresent(onValueSetFunction -> {
-                currentValue.get().handleRight(onValueSetFunction::accept);
+            onValueChangedFunction.ifPresent(onValueChangedFunction -> {
+                currentValue.get().handleRight(onValueChangedFunction::accept);
             });
         } catch (Exception loggableException) {
             try {
                 logger.error(
-                        "Failed to apply onValueSetFunction to new value" + name().map(name -> " for '" + name + "'").orElse(""),
+                        "Failed to apply onValueChangedFunction to new value" + name().map(name -> " for '" + name + "'").orElse(""),
                         loggableException
                 );
             } catch (Exception unwantedException) {

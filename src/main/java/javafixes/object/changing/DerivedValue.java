@@ -23,7 +23,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
     private final Optional<String> valueName;
     private final ChangingValue<SourceType> sourceValue;
     private final Function<SourceType, ? extends T> valueMapper;
-    private final Optional<Consumer<T>> onValueSetFunction;
+    private final Optional<Consumer<T>> onValueChangedFunction;
     private final Optional<Consumer<T>> disposeFunction;
     private final boolean doUpdateIfNewAndOldValueAreEqual;
 
@@ -35,14 +35,14 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
             Optional<String> valueName,
             ChangingValue<SourceType> sourceValue,
             Function<SourceType, ? extends T> valueMapper,
-            Optional<Consumer<T>> onValueSetFunction,
+            Optional<Consumer<T>> onValueChangedFunction,
             Optional<Consumer<T>> disposeFunction,
             boolean doUpdateIfNewAndOldValueAreEqual
     ) {
         this.valueName = valueName;
         this.sourceValue = sourceValue;
         this.valueMapper = valueMapper;
-        this.onValueSetFunction = onValueSetFunction;
+        this.onValueChangedFunction = onValueChangedFunction;
         this.disposeFunction = disposeFunction;
         this.doUpdateIfNewAndOldValueAreEqual = doUpdateIfNewAndOldValueAreEqual;
 
@@ -54,7 +54,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
             Optional<String> valueName,
             ChangingValue<SourceType> sourceValue,
             Function<SourceType, ? extends T> valueMapper,
-            Optional<Consumer<T>> onValueSetFunction,
+            Optional<Consumer<T>> onValueChangedFunction,
             Optional<Consumer<T>> disposeFunction,
             boolean doUpdateIfNewAndOldValueAreEqual,
 
@@ -66,7 +66,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
         this.valueName = valueName;
         this.sourceValue = sourceValue;
         this.valueMapper = valueMapper;
-        this.onValueSetFunction = onValueSetFunction;
+        this.onValueChangedFunction = onValueChangedFunction;
         this.disposeFunction = disposeFunction;
         this.doUpdateIfNewAndOldValueAreEqual = doUpdateIfNewAndOldValueAreEqual;
 
@@ -81,7 +81,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
                     Optional.of(valueName),
                     sourceValue,
                     valueMapper,
-                    onValueSetFunction,
+                    onValueChangedFunction,
                     disposeFunction,
                     doUpdateIfNewAndOldValueAreEqual,
                     currentValue.get(),
@@ -97,7 +97,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
                     Optional.empty(),
                     sourceValue,
                     valueMapper,
-                    onValueSetFunction,
+                    onValueChangedFunction,
                     disposeFunction,
                     doUpdateIfNewAndOldValueAreEqual,
                     currentValue.get(),
@@ -115,13 +115,13 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
         }
     }
 
-    public DerivedValue<T, SourceType> withOnValueSetFunction(Consumer<T> onValueSetFunction, boolean applyToCurrentValue) {
+    public DerivedValue<T, SourceType> withOnValueChangedFunction(Consumer<T> onValueChangedFunction, boolean applyToCurrentValue) {
         synchronized (currentValue) {
             DerivedValue<T, SourceType> derivedValue = new DerivedValue<>(
                     valueName,
                     sourceValue,
                     valueMapper,
-                    Optional.of(onValueSetFunction),
+                    Optional.of(onValueChangedFunction),
                     disposeFunction,
                     doUpdateIfNewAndOldValueAreEqual,
                     currentValue.get(),
@@ -130,14 +130,14 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
             );
 
             if (applyToCurrentValue) {
-                derivedValue.applyOnValueSetFunction();
+                derivedValue.applyOnValueChangedFunction();
             }
 
             return derivedValue;
         }
     }
 
-    public DerivedValue<T, SourceType> withNoOnValueSetFunction() {
+    public DerivedValue<T, SourceType> withNoOnValueChangedFunction() {
         synchronized (currentValue) {
             return new DerivedValue<>(
                     valueName,
@@ -153,11 +153,11 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
         }
     }
 
-    public DerivedValue<T, SourceType> withOnValueSetFunction(Optional<Consumer<T>> optionalOnValueSetFunction, boolean applyToCurrentValue) {
-        if (optionalOnValueSetFunction.isPresent()) {
-            return withOnValueSetFunction(optionalOnValueSetFunction.get(), applyToCurrentValue);
+    public DerivedValue<T, SourceType> withOnValueChangedFunction(Optional<Consumer<T>> optionalOnValueChangedFunction, boolean applyToCurrentValue) {
+        if (optionalOnValueChangedFunction.isPresent()) {
+            return withOnValueChangedFunction(optionalOnValueChangedFunction.get(), applyToCurrentValue);
         } else {
-            return withNoOnValueSetFunction();
+            return withNoOnValueChangedFunction();
         }
     }
 
@@ -167,7 +167,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
                     valueName,
                     sourceValue,
                     valueMapper,
-                    onValueSetFunction,
+                    onValueChangedFunction,
                     Optional.of(disposeFunction),
                     doUpdateIfNewAndOldValueAreEqual,
                     currentValue.get(),
@@ -183,7 +183,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
                     valueName,
                     sourceValue,
                     valueMapper,
-                    onValueSetFunction,
+                    onValueChangedFunction,
                     Optional.empty(),
                     doUpdateIfNewAndOldValueAreEqual,
                     currentValue.get(),
@@ -207,7 +207,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
                     valueName,
                     sourceValue,
                     valueMapper,
-                    onValueSetFunction,
+                    onValueChangedFunction,
                     disposeFunction,
                     doUpdateIfNewAndOldValueAreEqual,
                     currentValue.get(),
@@ -294,22 +294,22 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
         }
 
         if (didUpdateHappen.get()) {
-            applyOnValueSetFunction();
+            applyOnValueChangedFunction();
 
             applyDisposeFunction(oldValue);
         }
     }
 
-    private void applyOnValueSetFunction() {
+    private void applyOnValueChangedFunction() {
         synchronized (currentValue) {
             try {
-                onValueSetFunction.ifPresent(onValueSetFunction -> {
-                    currentValue.get().handleRight(onValueSetFunction::accept);
+                onValueChangedFunction.ifPresent(onValueChangedFunction -> {
+                    currentValue.get().handleRight(onValueChangedFunction::accept);
                 });
             } catch (Exception loggableException) {
                 try {
                     logger.error(
-                            "Failed to apply onValueSetFunction to new value" + name().map(name -> " for '" + name + "'").orElse(""),
+                            "Failed to apply onValueChangedFunction to new value" + name().map(name -> " for '" + name + "'").orElse(""),
                             loggableException
                     );
                 } catch (Exception unwantedException) {

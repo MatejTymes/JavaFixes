@@ -3,13 +3,13 @@
 Adding some features which would be normally nice to have in Java
 
 You can get it via Gradle:
-`compile 'com.github.matejtymes:javafixes:1.3.5.4'`
+`compile 'com.github.matejtymes:javafixes:1.3.6.1'`
 or Maven
 ```Xml
 <dependency>
     <groupId>com.github.matejtymes</groupId>
     <artifactId>javafixes</artifactId>
-    <version>1.3.5.4</version>
+    <version>1.3.6.1</version>
 </dependency>
 ```
 
@@ -244,6 +244,11 @@ If you have a value that changes over time and want to have derived values that 
         // and use this to dispose old connection if new one will be created
         .withDisposeFunction(
                 connection -> releaseConnection(connection)
+        )
+        // and call this when value changes
+        .withOnValueChangedFunction(
+                value -> System.out.println("we have a new connection"),
+                true // and apply it to current value
         );
 
     
