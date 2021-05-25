@@ -22,6 +22,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
 
     private final Optional<String> valueName;
     private final Supplier<T> valueGenerator;
+    private final Optional<Consumer<T>> onValueSetFunction;
     private final Optional<Consumer<T>> disposeFunction;
 
     private final AtomicReference<Either<RuntimeException, T>> currentValue = new AtomicReference<>();
@@ -30,10 +31,12 @@ public class DynamicValue<T> implements ChangingValue<T> {
     DynamicValue(
             Optional<String> valueName,
             Supplier<T> valueGenerator,
+            Optional<Consumer<T>> onValueSetFunction,
             Optional<Consumer<T>> disposeFunction
     ) {
         this.valueName = valueName;
         this.valueGenerator = valueGenerator;
+        this.onValueSetFunction = onValueSetFunction;
         this.disposeFunction = disposeFunction;
         this.changeVersion = 0;
 
@@ -47,6 +50,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
     private DynamicValue(
             Optional<String> valueName,
             Supplier<T> valueGenerator,
+            Optional<Consumer<T>> onValueSetFunction,
             Optional<Consumer<T>> disposeFunction,
 
             Either<RuntimeException, T> currentValue,
@@ -54,6 +58,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
     ) {
         this.valueName = valueName;
         this.valueGenerator = valueGenerator;
+        this.onValueSetFunction = onValueSetFunction;
         this.disposeFunction = disposeFunction;
 
         this.currentValue.set(currentValue);
@@ -61,18 +66,37 @@ public class DynamicValue<T> implements ChangingValue<T> {
     }
 
     public static <T> DynamicValue<T> dynamicValue(Supplier<T> valueGenerator) {
-        return new DynamicValue<>(Optional.empty(), valueGenerator, Optional.empty());
+        return new DynamicValue<>(
+                Optional.empty(),
+                valueGenerator,
+                Optional.empty(),
+                Optional.empty()
+        );
     }
 
     public DynamicValue<T> withValueName(String valueName) {
         synchronized (currentValue) {
-            return new DynamicValue<>(Optional.of(valueName), valueGenerator, disposeFunction, currentValue.get(), changeVersion);
+            return new DynamicValue<>(
+                    Optional.of(valueName),
+                    valueGenerator,
+                    onValueSetFunction,
+                    disposeFunction,
+                    currentValue.get(),
+                    changeVersion
+            );
         }
     }
 
     public DynamicValue<T> withNoValueName() {
         synchronized (currentValue) {
-            return new DynamicValue<>(Optional.empty(), valueGenerator, disposeFunction, currentValue.get(), changeVersion);
+            return new DynamicValue<>(
+                    Optional.empty(),
+                    valueGenerator,
+                    onValueSetFunction,
+                    disposeFunction,
+                    currentValue.get(),
+                    changeVersion
+            );
         }
     }
 
@@ -84,15 +108,69 @@ public class DynamicValue<T> implements ChangingValue<T> {
         }
     }
 
+    public DynamicValue<T> withOnValueSetFunction(Consumer<T> onValueSetFunction, boolean applyToCurrentValue) {
+        synchronized (currentValue) {
+            DynamicValue<T> dynamicValue = new DynamicValue<>(
+                    valueName,
+                    valueGenerator,
+                    Optional.of(onValueSetFunction),
+                    disposeFunction,
+                    currentValue.get(),
+                    changeVersion
+            );
+
+            if (applyToCurrentValue) {
+                dynamicValue.applyOnValueSetFunction();
+            }
+
+            return dynamicValue;
+        }
+    }
+
+    public DynamicValue<T> withNoOnValueSetFunction() {
+        synchronized (currentValue) {
+            return new DynamicValue<>(
+                    valueName,
+                    valueGenerator,
+                    Optional.empty(),
+                    disposeFunction,
+                    currentValue.get(),
+                    changeVersion
+            );
+        }
+    }
+
+    public DynamicValue<T> withOnValueSetFunction(Optional<Consumer<T>> optionalOnValueSetFunction, boolean applyToCurrentValue) {
+        if (optionalOnValueSetFunction.isPresent()) {
+            return withOnValueSetFunction(optionalOnValueSetFunction.get(), applyToCurrentValue);
+        } else {
+            return withNoOnValueSetFunction();
+        }
+    }
+
     public DynamicValue<T> withDisposeFunction(Consumer<T> disposeFunction) {
         synchronized (currentValue) {
-            return new DynamicValue<>(valueName, valueGenerator, Optional.of(disposeFunction), currentValue.get(), changeVersion);
+            return new DynamicValue<>(
+                    valueName,
+                    valueGenerator,
+                    onValueSetFunction,
+                    Optional.of(disposeFunction),
+                    currentValue.get(),
+                    changeVersion
+            );
         }
     }
 
     public DynamicValue<T> withNoDisposeFunction() {
         synchronized (currentValue) {
-            return new DynamicValue<>(valueName, valueGenerator, Optional.empty(), currentValue.get(), changeVersion);
+            return new DynamicValue<>(
+                    valueName,
+                    valueGenerator,
+                    onValueSetFunction,
+                    Optional.empty(),
+                    currentValue.get(),
+                    changeVersion
+            );
         }
     }
 
@@ -148,8 +226,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
         }
     }
 
-    // todo: implement in better way
-    public void updateAsFailure(RuntimeException exception) {
+    private void updateAsFailure(RuntimeException exception) {
         boolean shouldUpdate = currentValue.get().fold(
                 oldException -> {
                     if (!Objects.equals(oldException.getClass(), exception.getClass())) {
@@ -172,6 +249,29 @@ public class DynamicValue<T> implements ChangingValue<T> {
 
         changeVersion++;
 
+        applyOnValueSetFunction();
+
+        applyDisposeFunction(oldValue);
+    }
+
+    private void applyOnValueSetFunction() {
+        try {
+            onValueSetFunction.ifPresent(onValueSetFunction -> {
+                currentValue.get().handleRight(onValueSetFunction::accept);
+            });
+        } catch (Exception loggableException) {
+            try {
+                logger.error(
+                        "Failed to apply onValueSetFunction to new value" + name().map(name -> " for '" + name + "'").orElse(""),
+                        loggableException
+                );
+            } catch (Exception unwantedException) {
+                unwantedException.printStackTrace();
+            }
+        }
+    }
+
+    private void applyDisposeFunction(Either<RuntimeException, T> oldValue) {
         try {
             disposeFunction.ifPresent(disposeFunction -> {
                 oldValue.handleRight(disposeFunction::accept);

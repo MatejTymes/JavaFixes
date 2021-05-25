@@ -14,13 +14,24 @@ public class ChangingValueTest {
     public void shouldBeAbleToUseIt() {
 
 
-        MutableValue<String> hostAndPort = mutableValue("host123:8080");
-        ChangingValue<Boolean> isConnected = hostAndPort.map(value -> randomBoolean());
+        MutableValue<String> hostAndPort = mutableValue("host123:8080")
+                .withOnValueSetFunction(
+                        value -> System.out.println("host = " + value),
+                        true
+                );
+        ChangingValue<Boolean> isConnected = hostAndPort.map(value -> randomBoolean())
+                .withOnValueSetFunction(
+                        value -> System.out.println("is connected = " + value),
+                        true
+                );
 
         ChangingValue<String> nodeInfo = join(hostAndPort, isConnected).map(tuple -> {
             System.out.println("generating new value");
             return tuple.a + " : " + (tuple.b ? "IS connected" : "UNABLE to connect");
-        });
+        }).withOnValueSetFunction(
+                value -> System.out.println("hostInfo =  " + value),
+                true
+        );
 
         System.out.println(nodeInfo.value());
 

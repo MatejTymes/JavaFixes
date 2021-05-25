@@ -25,7 +25,7 @@ import static javafixes.object.Tuple.tuple;
  * @author mtymes
  */
 // todo: add ChangingValue.withDisposeFunction()
-// todo: add withOnValueSetFunction(Consumer<T> onValueSet, runForCurrentValue) method
+// todo: add ChangingValue.withOnValueSetFunction(Consumer<T> onValueSet, runForCurrentValue) method
 // todo: add withOnUpdateFunction(BiConsumer<T, T> onUpdate) method
 // todo: test default and static methods
 // todo: add null check for input parameters
@@ -55,7 +55,14 @@ public interface ChangingValue<T> extends Value<T> {
      * @return generated {@link DerivedValue}
      */
     default <T2> DerivedValue<T2, T> map(Function<T, ? extends T2> derivedValueMapper) {
-        return new DerivedValue<>(Optional.empty(), this, derivedValueMapper, Optional.empty(), false);
+        return new DerivedValue<>(
+                Optional.empty(),
+                this,
+                derivedValueMapper,
+                Optional.empty(),
+                Optional.empty(),
+                false
+        );
     }
 
     /**
