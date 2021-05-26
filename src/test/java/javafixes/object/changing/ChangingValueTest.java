@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import static javafixes.object.changing.ChangingValue.join;
 import static javafixes.object.changing.MutableValue.mutableValue;
-import static javafixes.object.changing.experimental.ChangingValueUtil.mapToProxy;
 import static javafixes.test.Random.randomBoolean;
 
 public class ChangingValueTest {
@@ -12,7 +11,6 @@ public class ChangingValueTest {
 
     @Test
     public void shouldBeAbleToUseIt() {
-
 
         MutableValue<String> hostAndPort = mutableValue("host123:8080")
                 .withOnValueChangedFunction(
@@ -40,7 +38,7 @@ public class ChangingValueTest {
         System.out.println(nodeInfo.value());
 
         long startTime = System.currentTimeMillis();
-        CharSequence nodeInfoString = mapToProxy(CharSequence.class, nodeInfo);
+        CharSequence nodeInfoString = nodeInfo.mapToProxy(CharSequence.class);
         long duration = System.currentTimeMillis() - startTime;
 
         System.out.println("duration = " + duration);
@@ -74,7 +72,7 @@ public class ChangingValueTest {
                 .withValueName("IsGreetingLong")
                 .withDisposeFunction(isLong -> System.out.println("don't know what to do with this"));
 
-        CharSequence greetingProxy = mapToProxy(CharSequence.class, greeting);
+        CharSequence greetingProxy = greeting.mapToProxy(CharSequence.class);
 
         System.out.println("Greeting '" + greeting.value() + "' " + (isGreetingLong.value() ? "is long" : "is not long"));
         System.out.println(greetingProxy.toString());

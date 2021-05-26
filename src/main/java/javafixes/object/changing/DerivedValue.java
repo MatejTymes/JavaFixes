@@ -12,6 +12,8 @@ import java.util.function.Function;
 
 import static javafixes.object.Either.left;
 import static javafixes.object.Either.right;
+import static javafixes.object.changing.ChangingValueUtil.applyDisposeFunction;
+import static javafixes.object.changing.ChangingValueUtil.applyOnValueChangedFunction;
 
 // todo: test
 // todo: javadoc
@@ -130,7 +132,12 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
             );
 
             if (applyToCurrentValue) {
-                derivedValue.applyOnValueChangedFunction();
+                applyOnValueChangedFunction(
+                        derivedValue.currentValue.get(),
+                        derivedValue.onValueChangedFunction,
+                        derivedValue.valueName,
+                        logger
+                );
             }
 
             return derivedValue;
@@ -260,9 +267,9 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
         try {
             T newValue = valueMapper.apply(sourceValue.value());
             if (doUpdateIfNewAndOldValueAreEqual) {
-                oldValue = this.currentValue.getAndSet(right(newValue));
+                oldValue = currentValue.getAndSet(right(newValue));
             } else {
-                oldValue = this.currentValue.getAndAccumulate(
+                oldValue = currentValue.getAndAccumulate(
                         right(newValue),
                         (oldEither, newEither) -> {
                             if (oldEither != null && oldEither.equals(newEither)) {
@@ -275,7 +282,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
                 );
             }
         } catch (RuntimeException e) {
-            oldValue = this.currentValue.getAndSet(left(e));
+            oldValue = currentValue.getAndSet(left(e));
 
             try {
                 logger.error(
@@ -294,45 +301,19 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
         }
 
         if (didUpdateHappen.get()) {
-            applyOnValueChangedFunction();
+            applyOnValueChangedFunction(
+                    currentValue.get(),
+                    onValueChangedFunction,
+                    valueName,
+                    logger
+            );
 
-            applyDisposeFunction(oldValue);
-        }
-    }
-
-    private void applyOnValueChangedFunction() {
-        synchronized (currentValue) {
-            try {
-                onValueChangedFunction.ifPresent(onValueChangedFunction -> {
-                    currentValue.get().handleRight(onValueChangedFunction::accept);
-                });
-            } catch (Exception loggableException) {
-                try {
-                    logger.error(
-                            "Failed to apply onValueChangedFunction to new value" + name().map(name -> " for '" + name + "'").orElse(""),
-                            loggableException
-                    );
-                } catch (Exception unwantedException) {
-                    unwantedException.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private void applyDisposeFunction(Either<RuntimeException, T> valueToDispose) {
-        try {
-            disposeFunction.ifPresent(disposeFunction -> {
-                valueToDispose.handleRight(disposeFunction::accept);
-            });
-        } catch (Exception loggableException) {
-            try {
-                logger.error(
-                        "Failed to dispose old value" + name().map(name -> " for '" + name + "'").orElse(""),
-                        loggableException
-                );
-            } catch (Exception unwantedException) {
-                unwantedException.printStackTrace();
-            }
+            applyDisposeFunction(
+                    oldValue,
+                    disposeFunction,
+                    valueName,
+                    logger
+            );
         }
     }
 }

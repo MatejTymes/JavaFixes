@@ -6,10 +6,12 @@ import javafixes.object.Triple;
 import javafixes.object.Tuple;
 import javafixes.object.Value;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import static java.lang.reflect.Proxy.newProxyInstance;
 import static javafixes.collection.CollectionUtil.newList;
 import static javafixes.object.Triple.triple;
 import static javafixes.object.Tuple.tuple;
@@ -24,8 +26,6 @@ import static javafixes.object.Tuple.tuple;
  * @param <T> type of wrapped value
  * @author mtymes
  */
-// todo: add ChangingValue.withDisposeFunction()
-// todo: add ChangingValue.withOnValueChangedFunction(Consumer<T> onValueChangedFunction, runForCurrentValue) method
 // todo: add withOnUpdateFunction(BiConsumer<T, T> onUpdate) method
 // todo: test default and static methods
 // todo: add null check for input parameters
@@ -76,6 +76,21 @@ public interface ChangingValue<T> extends Value<T> {
      */
     default <T2, E extends Throwable> T2 mapToValue(ValueMapper<? super T, ? extends T2, E> valueMapper) throws E {
         return valueMapper.map(value());
+    }
+
+    default <TI> TI mapToProxy(Class<TI> proxyInterface) {
+        return (TI) newProxyInstance(
+                ChangingValueUtil.class.getClassLoader(),
+                new Class[]{proxyInterface},
+                (proxy, method, args) -> {
+                    Object value = this.value();
+                    try {
+                        return method.invoke(value, args);
+                    } catch (InvocationTargetException invocationTargetException) {
+                        throw invocationTargetException.getCause();
+                    }
+                }
+        );
     }
 
     /**

@@ -12,6 +12,8 @@ import java.util.function.Supplier;
 
 import static javafixes.object.Either.left;
 import static javafixes.object.Either.right;
+import static javafixes.object.changing.ChangingValueUtil.applyDisposeFunction;
+import static javafixes.object.changing.ChangingValueUtil.applyOnValueChangedFunction;
 
 // todo: test
 // todo: javadoc
@@ -120,7 +122,12 @@ public class DynamicValue<T> implements ChangingValue<T> {
             );
 
             if (applyToCurrentValue) {
-                dynamicValue.applyOnValueChangedFunction();
+                applyOnValueChangedFunction(
+                        dynamicValue.currentValue.get(),
+                        dynamicValue.disposeFunction,
+                        dynamicValue.valueName,
+                        logger
+                );
             }
 
             return dynamicValue;
@@ -249,42 +256,18 @@ public class DynamicValue<T> implements ChangingValue<T> {
 
         changeVersion++;
 
-        applyOnValueChangedFunction();
+        applyOnValueChangedFunction(
+                currentValue.get(),
+                onValueChangedFunction,
+                valueName,
+                logger
+        );
 
-        applyDisposeFunction(oldValue);
-    }
-
-    private void applyOnValueChangedFunction() {
-        try {
-            onValueChangedFunction.ifPresent(onValueChangedFunction -> {
-                currentValue.get().handleRight(onValueChangedFunction::accept);
-            });
-        } catch (Exception loggableException) {
-            try {
-                logger.error(
-                        "Failed to apply onValueChangedFunction to new value" + name().map(name -> " for '" + name + "'").orElse(""),
-                        loggableException
-                );
-            } catch (Exception unwantedException) {
-                unwantedException.printStackTrace();
-            }
-        }
-    }
-
-    private void applyDisposeFunction(Either<RuntimeException, T> oldValue) {
-        try {
-            disposeFunction.ifPresent(disposeFunction -> {
-                oldValue.handleRight(disposeFunction::accept);
-            });
-        } catch (Exception loggableException) {
-            try {
-                logger.error(
-                        "Failed to dispose old value" + name().map(name -> " for '" + name + "'").orElse(""),
-                        loggableException
-                );
-            } catch (Exception unwantedException) {
-                unwantedException.printStackTrace();
-            }
-        }
+        applyDisposeFunction(
+                oldValue,
+                disposeFunction,
+                valueName,
+                logger
+        );
     }
 }
