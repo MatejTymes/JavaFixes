@@ -228,7 +228,7 @@ Immutable Two / Three values holder. Each `Tuple` / `Triple` extends `DataObject
 
 ### ChangingValue
 
-If you have a value that changes over time and want to have derived values that reflects these changes, you could use this hierarchy of classes.
+If you have a value that changes over time and want to have derived values that reflects these changes, you could use this hierarchy of classes. (great if you have a config that changes during runtime, e.g.: db connection, memcached location)
 ```Java
     // mutable wrapper of connection details
     MutableValue<ConnectionDetails> connectionDetails = mutableValue(
