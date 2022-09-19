@@ -273,6 +273,12 @@ If you have a value that changes over time and want to have derived values that 
     );
 ```
 
+## Collections
+
+### LinkedArrayQueue
+
+In all the cases where multiple items have to be collected just so they can be iterated over in some later stage. More performant or memory efficient than ArrayList or LinkedList while having constant (O(n)) performance on inserting last item as well as removing the first one.
+
 ## IO
 
 ### ByteCollectingOutputStream
