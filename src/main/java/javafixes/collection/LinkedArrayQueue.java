@@ -30,6 +30,10 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
 
     // todo: pollNIterable - partition
 
+    public Iterator<T> pollingIterator() {
+        return new PollingIterator();
+    }
+
     @Override
     public boolean isEmpty() {
         return !first.hasNext();
@@ -180,7 +184,7 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
         @Override
         public T next() {
             if (!hasNext()) {
-                throw new NoSuchElementException("Has no value");
+                throw new NoSuchElementException("Has no more values");
             }
             if (readIndex < node.readIndex) {
                 throw new ConcurrentModificationException();
@@ -189,15 +193,47 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
         }
     }
 
+    private class PollingIterator implements Iterator<T> {
+
+        @Override
+        public boolean hasNext() {
+            return first.hasNext();
+        }
+
+        @Override
+        public T next() {
+            if (first.hasNext()) {
+                return first.remove();
+            } else {
+                throw new NoSuchElementException("Has no more values");
+            }
+        }
+    }
+
+    // todo: mtymes - remove
+//    public static void main(String[] args) {
+//        LinkedArrayQueue<String> values = new LinkedArrayQueue<>();
+//        values.add("Hello");
+//        values.add("World");
+//        values.add("!");
+//
+//        System.out.println("values = " + values);
+//        Iterator<String> pollingIterator = values.pollingIterator();
+//        while (pollingIterator.hasNext()) {
+//            System.out.println("- " + pollingIterator.next());
+//        }
+//        System.out.println("values = " + values);
+//    }
+
     // todo: mtymes - remove
 //    public static void main(String[] args) {
 //
 //        long startTime = System.currentTimeMillis();
 //
 //        for (int i = 0; i < 10; i++) {
-////            List<Integer> values = new ArrayList<>();
+//            List<Integer> values = new ArrayList<>();
 ////            List<Integer> values = newLinkedList();
-//            Queue<Integer> values = new LinkedArrayQueue<>(1024);
+////            Queue<Integer> values = new LinkedArrayQueue<>(1024);
 ////            Queue<Integer> values = new LinkedBlockingQueue<>();
 //
 //            for (int j = 0; j < 102_000_000; j++) {
@@ -205,10 +241,10 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
 ////                values.offer(j);
 //            }
 //
-////            while (!values.isEmpty()) {
-////                values.remove(0);
-//////                values.poll();
-////            }
+//            while (!values.isEmpty()) {
+//                values.remove(0);
+////                values.poll();
+//            }
 //        }
 //
 //        long duration = System.currentTimeMillis() - startTime;
