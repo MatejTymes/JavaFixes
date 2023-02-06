@@ -213,8 +213,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
     }
 
     private void reEvaluteValue() {
-        Either<RuntimeException, T> oldValue = currentValue.get();
-
+//        Either<RuntimeException, T> oldValue = currentValue.get();
         try {
             T generatedValue = valueGenerator.get();
             updateValueIfDifferent(generatedValue);
