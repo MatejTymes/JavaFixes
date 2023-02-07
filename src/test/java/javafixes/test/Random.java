@@ -21,6 +21,14 @@ public class Random {
     }
 
     @SafeVarargs
+    public static <T extends Enum<T>> T randomEnum(Class<T> enumClass, Function<T, Boolean>... validityConditions) {
+        return generateValidValue(
+                () -> pickRandomValue(enumClass.getEnumConstants()),
+                validityConditions
+        );
+    }
+
+    @SafeVarargs
     public static int randomInt(int from, int to, Function<Integer, Boolean>... validityConditions) {
         return generateValidValue(
                 // typecast it to long as otherwise we could get int overflow
@@ -138,7 +146,7 @@ public class Random {
     }
 
     public static RoundingMode randomRoundingMode() {
-        return pickRandomValue(RoundingMode.values());
+        return randomEnum(RoundingMode.class);
     }
 
     @SafeVarargs
@@ -179,7 +187,7 @@ public class Random {
     }
 
     @SafeVarargs
-    private static <T> T generateValidValue(Supplier<T> generator, Function<T, Boolean>... validityConditions) {
+    public static <T> T generateValidValue(Supplier<T> generator, Function<T, Boolean>... validityConditions) {
         T value;
 
         int infiniteCycleCounter = 0;
