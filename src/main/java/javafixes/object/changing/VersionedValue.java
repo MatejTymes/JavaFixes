@@ -10,6 +10,7 @@ import static javafixes.object.Either.right;
 
 /**
  * For INTERNAL USE ONLY - used within ChangingValue
+ *
  * @param <T>
  */
 class VersionedValue<T> extends DataObject implements Value<T> {
@@ -35,10 +36,23 @@ class VersionedValue<T> extends DataObject implements Value<T> {
         this(value, System.currentTimeMillis(), versionNumber);
     }
 
-    VersionedValue(
-            Either<RuntimeException, T> value
+    public static <T> VersionedValue<T> versionedValue(
+            Either<RuntimeException, T> value,
+            long timestamp,
+            long versionNumber
     ) {
-        this(value, 0);
+        return new VersionedValue<>(value, timestamp, versionNumber);
+    }
+
+    public static <T> VersionedValue<T> versionedValue(
+            Either<RuntimeException, T> value,
+            long versionNumber
+    ) {
+        return versionedValue(value, System.currentTimeMillis(), versionNumber);
+    }
+
+    public static <T> VersionedValue<T> versionedValue(Either<RuntimeException, T> value) {
+        return versionedValue(value, 0);
     }
 
     public VersionedValue<T> generateNextVersion(T newValue, long newTimestamp) {
