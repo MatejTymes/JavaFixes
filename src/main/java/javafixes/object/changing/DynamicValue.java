@@ -41,12 +41,6 @@ public class DynamicValue<T> implements ChangingValue<T> {
         this.onValueChangedFunction = onValueChangedFunction;
         this.disposeFunction = disposeFunction;
         this.changeVersion = 0;
-
-        try {
-            currentValue.set(right(valueGenerator.get()));
-        } catch (RuntimeException e) {
-            currentValue.set(left(e));
-        }
     }
 
     private DynamicValue(
@@ -122,12 +116,15 @@ public class DynamicValue<T> implements ChangingValue<T> {
             );
 
             if (applyToCurrentValue) {
-                applyOnValueChangedFunction(
-                        dynamicValue.currentValue.get(),
-                        dynamicValue.disposeFunction,
-                        dynamicValue.valueName,
-                        logger
-                );
+                Either<RuntimeException, T> valueBeingHeld = dynamicValue.currentValue.get();
+                if (valueBeingHeld != null) {
+                    applyOnValueChangedFunction(
+                            valueBeingHeld,
+                            dynamicValue.disposeFunction,
+                            dynamicValue.valueName,
+                            logger
+                    );
+                }
             }
 
             return dynamicValue;
@@ -223,7 +220,8 @@ public class DynamicValue<T> implements ChangingValue<T> {
     }
 
     private void updateValueIfDifferent(T potentialNewValue) {
-        boolean shouldUpdate = currentValue.get().fold(
+        Either<RuntimeException, T> valueBeingHeld = currentValue.get();
+        boolean shouldUpdate = (valueBeingHeld == null) || valueBeingHeld.fold(
                 ifException -> true,
                 oldValue -> !Objects.equals(oldValue, potentialNewValue)
         );
@@ -233,7 +231,8 @@ public class DynamicValue<T> implements ChangingValue<T> {
     }
 
     private void updateAsFailure(RuntimeException exception) {
-        boolean shouldUpdate = currentValue.get().fold(
+        Either<RuntimeException, T> valueBeingHeld = currentValue.get();
+        boolean shouldUpdate = (valueBeingHeld == null) || valueBeingHeld.fold(
                 oldException -> {
                     if (!Objects.equals(oldException.getClass(), exception.getClass())) {
                         return true;
@@ -262,11 +261,13 @@ public class DynamicValue<T> implements ChangingValue<T> {
                 logger
         );
 
-        applyDisposeFunction(
-                oldValue,
-                disposeFunction,
-                valueName,
-                logger
-        );
+        if (oldValue != null) {
+            applyDisposeFunction(
+                    oldValue,
+                    disposeFunction,
+                    valueName,
+                    logger
+            );
+        }
     }
 }
