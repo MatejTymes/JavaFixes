@@ -39,6 +39,16 @@ public class ChangingValueReCachingConfig<T> {
         );
     }
 
+    public ChangingValueReCachingConfig<T> withRefreshPeriod(Duration refreshPeriod) {
+        return new ChangingValueReCachingConfig<>(
+                refreshPeriod,
+                this.usingExecutor,
+                this.valueName,
+                this.onValueChangedFunction,
+                this.disposeFunction
+        );
+    }
+
     public ChangingValueReCachingConfig<T> withValueRefreshInBackgroundProcess(ScheduledExecutorService usingExecutor) {
         return new ChangingValueReCachingConfig<>(
                 this.refreshPeriod,
