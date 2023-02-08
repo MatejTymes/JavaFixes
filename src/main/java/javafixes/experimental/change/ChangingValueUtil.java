@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 import static javafixes.experimental.change.function.UseDifferentValueCheck.equalsBasedChecker;
 
-public class ChangingValueUtil {
+class ChangingValueUtil {
 
     static <T> boolean handleNewValue(
             Either<RuntimeException, T> newValue,
