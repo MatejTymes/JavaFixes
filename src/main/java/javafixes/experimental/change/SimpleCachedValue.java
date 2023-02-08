@@ -5,44 +5,38 @@ import org.slf4j.Logger;
 
 import java.time.Duration;
 import java.util.Optional;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static javafixes.experimental.change.ChangingValueUtil.handleNewValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class PeriodicallyReCachedValue<T> implements CachedChangingValue<T> {
+public class SimpleCachedValue<T> implements CachedChangingValue<T> {
 
-    private static final Logger logger = getLogger(PeriodicallyReCachedValue.class);
+    private static final Logger logger = getLogger(SimpleCachedValue.class);
 
 
     private final Optional<String> valueName;
     private final ChangingValue<T> sourceValue;
     private final ChangingValueUpdateConfig<T> updateConfig;
+    private final long refreshPeriodInMS;
+
 
     private final AtomicReference<VersionedValue<T>> currentValueHolder = new AtomicReference<>();
     private final AtomicReference<Long> lastCachingTimestamp = new AtomicReference<>();
 
-    public PeriodicallyReCachedValue(
+
+    public SimpleCachedValue(
             Optional<String> valueName,
             ChangingValue<T> sourceValue,
             ChangingValueUpdateConfig<T> updateConfig,
-            Duration refreshPeriod,
-            ScheduledExecutorService usingExecutor
+            Duration refreshPeriod
     ) {
         this.valueName = valueName;
         this.sourceValue = sourceValue;
         this.updateConfig = updateConfig;
+        this.refreshPeriodInMS = refreshPeriod.toMillis();
 
         forceNewValueReCaching();
-
-        usingExecutor.scheduleAtFixedRate(
-                this::forceNewValueReCaching,
-                refreshPeriod.toMillis(),
-                refreshPeriod.toMillis(),
-                TimeUnit.MILLISECONDS
-        );
     }
 
     @Override
@@ -52,6 +46,10 @@ public class PeriodicallyReCachedValue<T> implements CachedChangingValue<T> {
 
     @Override
     public VersionedValue<T> getVersionedValue() {
+        if (System.currentTimeMillis() > lastCachingTimestamp.get() + refreshPeriodInMS) {
+            forceNewValueReCaching();
+        }
+
         return currentValueHolder.get();
     }
 

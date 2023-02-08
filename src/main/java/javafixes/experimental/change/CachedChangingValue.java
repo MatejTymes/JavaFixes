@@ -12,9 +12,9 @@ public interface CachedChangingValue<T> extends ChangingValue<T> {
         forceNewValueReCaching(false);
     }
 
-    long getLastReCacheTimestamp();
+    long getLastCachingTimestamp();
 
-    default ZonedDateTime getLastReCacheTime(ZoneId zoneId) {
-        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(getLastReCacheTimestamp()), zoneId);
+    default ZonedDateTime getLastCachingTime(ZoneId zoneId) {
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(getLastCachingTimestamp()), zoneId);
     }
 }
