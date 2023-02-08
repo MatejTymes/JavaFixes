@@ -1,7 +1,6 @@
 package javafixes.experimental.change;
 
 import javafixes.experimental.change.function.UseNewValueCheck;
-import javafixes.object.Either;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,10 +12,11 @@ import java.util.function.Supplier;
 import static javafixes.experimental.change.ChangingValueUtil.*;
 import static javafixes.object.Either.left;
 import static javafixes.object.Either.right;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class DynamicValue<T> implements ChangingValue<T> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DynamicValue.class);
+    private static final Logger logger = getLogger(DynamicValue.class);
 
 
     private final Optional<String> valueName;
@@ -30,6 +30,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
     private DynamicValue(
             Optional<String> valueName,
             Supplier<T> valueGenerator,
+            boolean prePopulateValueImmediately,
             Optional<UseNewValueCheck> useNewValueCheck,
             Optional<Consumer<T>> onValueChangedFunction,
             Optional<Consumer<T>> disposeFunction
@@ -39,55 +40,49 @@ public class DynamicValue<T> implements ChangingValue<T> {
         this.useNewValueCheck = useNewValueCheck;
         this.afterValueChangedFunction = onValueChangedFunction;
         this.disposeFunction = disposeFunction;
+
+        if (prePopulateValueImmediately) {
+            populateWithLatestValue();
+        }
+    }
+
+    @Override
+    public Optional<String> name() {
+        return valueName;
     }
 
     @Override
     public VersionedValue<T> getVersionedValue() {
         synchronized (latestValueHolder) {
-            try {
-                T generatedValue = valueGenerator.get();
-
-                handleNewValue(right(generatedValue));
-            } catch (RuntimeException e) {
-                handleNewValue(left(e));
-            }
+            populateWithLatestValue();
 
             return latestValueHolder.get();
         }
     }
 
-    private void handleNewValue(Either<RuntimeException, T> newValue) {
-        VersionedValue<T> oldValue = latestValueHolder.get();
+    private void populateWithLatestValue() {
+        try {
+            T generatedValue = valueGenerator.get();
 
-        boolean shouldUpdate = shouldUpdate(
-                oldValue,
-                newValue,
-                useNewValueCheck,
-                valueName,
-                logger
-        );
-
-        if (shouldUpdate) {
-            setNewValue(
-                    oldValue,
-                    newValue,
-                    latestValueHolder
-            );
-
-            applyAfterValueChangedFunction(
-                    newValue,
-                    afterValueChangedFunction,
+            handleNewValue(
+                    right(generatedValue),
+                    latestValueHolder,
                     valueName,
+                    useNewValueCheck,
+                    afterValueChangedFunction,
+                    disposeFunction,
                     logger
             );
-
-            applyDisposeFunction(
-                    oldValue,
-                    disposeFunction,
+        } catch (RuntimeException e) {
+            handleNewValue(
+                    left(e),
+                    latestValueHolder,
                     valueName,
+                    useNewValueCheck,
+                    afterValueChangedFunction,
+                    disposeFunction,
                     logger
             );
         }
     }
-
 }

@@ -28,6 +28,10 @@ public class VersionedValue<T> extends DataObject implements Value<T> {
                 .getRight();
     }
 
+    public boolean isFailure() {
+        return value.isLeft();
+    }
+
     public long getVersionNumber() {
         return versionNumber;
     }

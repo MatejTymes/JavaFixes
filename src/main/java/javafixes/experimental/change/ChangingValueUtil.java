@@ -8,10 +8,53 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import static javafixes.experimental.change.VersionedValue.initialValueVersion;
-import static javafixes.experimental.change.function.EqualsBasedUseNewValueCheck.equalsBasedChecker;
+import static javafixes.experimental.change.function.UseDifferentValueCheck.equalsBasedChecker;
 
 public class ChangingValueUtil {
+
+    static <T> boolean handleNewValue(
+            Either<RuntimeException, T> newValue,
+            AtomicReference<VersionedValue<T>> valueHolder,
+            Optional<String> valueName,
+            Optional<UseNewValueCheck> useNewValueCheck,
+            Optional<Consumer<T>> afterValueChangedFunction,
+            Optional<Consumer<T>> disposeFunction,
+            Logger logger
+    ) {
+        VersionedValue<T> oldValue = valueHolder.get();
+
+        boolean shouldUpdate = shouldUpdate(
+                oldValue,
+                newValue,
+                useNewValueCheck,
+                valueName,
+                logger
+        );
+
+        if (shouldUpdate) {
+            setNewValue(
+                    oldValue,
+                    newValue,
+                    valueHolder
+            );
+
+            applyAfterValueChangedFunction(
+                    newValue,
+                    afterValueChangedFunction,
+                    valueName,
+                    logger
+            );
+
+            applyDisposeFunction(
+                    oldValue,
+                    disposeFunction,
+                    valueName,
+                    logger
+            );
+        }
+
+        return shouldUpdate;
+    }
 
     static <T> boolean shouldUpdate(
             VersionedValue<T> oldValue,

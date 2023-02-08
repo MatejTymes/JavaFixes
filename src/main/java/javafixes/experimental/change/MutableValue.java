@@ -3,19 +3,19 @@ package javafixes.experimental.change;
 import javafixes.experimental.change.function.UseNewValueCheck;
 import javafixes.object.Either;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import static javafixes.experimental.change.ChangingValueUtil.*;
-import static javafixes.experimental.change.ChangingValueUtil.applyDisposeFunction;
+import static javafixes.experimental.change.ChangingValueUtil.handleNewValue;
 import static javafixes.experimental.change.VersionedValue.initialValueVersion;
+import static javafixes.experimental.change.function.AlwaysUseNewValueCheck.alwaysUseNewValueCheck;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class MutableValue<T> implements ChangingValue<T> {
 
-    private static final Logger logger = LoggerFactory.getLogger(MutableValue.class);
+    private static final Logger logger = getLogger(MutableValue.class);
 
 
     private final Optional<String> valueName;
@@ -41,6 +41,11 @@ public class MutableValue<T> implements ChangingValue<T> {
     }
 
     @Override
+    public Optional<String> name() {
+        return valueName;
+    }
+
+    @Override
     public VersionedValue<T> getVersionedValue() {
         return currentValueHolder.get();
     }
@@ -50,39 +55,15 @@ public class MutableValue<T> implements ChangingValue<T> {
             boolean ignoreDifferenceCheck
     ) {
         synchronized (currentValueHolder) {
-            VersionedValue<T> oldValue = currentValueHolder.get();
-
-            boolean shouldUpdate = ignoreDifferenceCheck || shouldUpdate(
-                    oldValue,
+            return handleNewValue(
                     newValue,
-                    useNewValueCheck,
+                    currentValueHolder,
                     valueName,
+                    ignoreDifferenceCheck ? Optional.of(alwaysUseNewValueCheck()) : useNewValueCheck,
+                    afterValueChangedFunction,
+                    disposeFunction,
                     logger
             );
-
-            if (shouldUpdate) {
-                setNewValue(
-                        oldValue,
-                        newValue,
-                        currentValueHolder
-                );
-
-                applyAfterValueChangedFunction(
-                        newValue,
-                        afterValueChangedFunction,
-                        valueName,
-                        logger
-                );
-
-                applyDisposeFunction(
-                        oldValue,
-                        disposeFunction,
-                        valueName,
-                        logger
-                );
-            }
-
-            return shouldUpdate;
         }
     }
 }

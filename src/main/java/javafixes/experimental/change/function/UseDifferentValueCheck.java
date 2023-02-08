@@ -4,12 +4,12 @@ import javafixes.object.Either;
 
 import java.util.Objects;
 
-public class EqualsBasedUseNewValueCheck<T> implements UseNewValueCheck<T> {
+public class UseDifferentValueCheck<T> implements UseNewValueCheck<T> {
 
-    private static EqualsBasedUseNewValueCheck<Objects> INSTANCE = new EqualsBasedUseNewValueCheck<>();
+    private static UseDifferentValueCheck<Objects> INSTANCE = new UseDifferentValueCheck<>();
 
     public static <T> UseNewValueCheck<T> equalsBasedChecker() {
-        return (EqualsBasedUseNewValueCheck) INSTANCE;
+        return (UseDifferentValueCheck) INSTANCE;
     }
 
     @Override

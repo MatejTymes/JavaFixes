@@ -2,7 +2,11 @@ package javafixes.experimental.change;
 
 import javafixes.object.Value;
 
+import java.util.Optional;
+
 public interface ChangingValue<T> extends Value<T> {
+
+    Optional<String> name();
 
     VersionedValue<T> getVersionedValue();
 
