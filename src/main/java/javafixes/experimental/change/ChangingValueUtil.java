@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import static javafixes.experimental.change.function.AlwaysUseNewValueCheck.alwaysUseNewValueCheck;
 import static javafixes.experimental.change.function.UseDifferentValueCheck.equalsBasedChecker;
 
 class ChangingValueUtil {
@@ -69,6 +70,25 @@ class ChangingValueUtil {
                 valueHolder,
                 valueName,
                 updateConfig.useNewValueCheck,
+                updateConfig.afterValueChangedFunction,
+                updateConfig.disposeFunction,
+                logger
+        );
+    }
+
+    static <T> boolean handleNewValue(
+            Either<RuntimeException, T> newValue,
+            AtomicReference<VersionedValue<T>> valueHolder,
+            Optional<String> valueName,
+            boolean ignoreDifferenceCheck,
+            ChangingValueUpdateConfig updateConfig,
+            Logger logger
+    ) {
+        return handleNewValue(
+                newValue,
+                valueHolder,
+                valueName,
+                ignoreDifferenceCheck ? Optional.of(alwaysUseNewValueCheck()) : updateConfig.useNewValueCheck,
                 updateConfig.afterValueChangedFunction,
                 updateConfig.disposeFunction,
                 logger

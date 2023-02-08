@@ -61,7 +61,9 @@ public class PeriodicallyReCachedValue<T> implements CachedChangingValue<T> {
     }
 
     @Override
-    public void forceNewValueReCaching(boolean ignoreDifferenceCheck) {
+    public void forceNewValueReCaching(
+            boolean ignoreDifferenceCheck
+    ) {
         synchronized (currentValueHolder) {
             VersionedValue<T> newValue = sourceValue.getVersionedValue();
 
@@ -69,6 +71,7 @@ public class PeriodicallyReCachedValue<T> implements CachedChangingValue<T> {
                     newValue.value,
                     currentValueHolder,
                     valueName,
+                    ignoreDifferenceCheck,
                     updateConfig,
                     logger
             );

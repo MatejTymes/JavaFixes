@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static javafixes.experimental.change.ChangingValueUtil.handleNewValue;
 import static javafixes.experimental.change.VersionedValue.initialValueVersion;
-import static javafixes.experimental.change.function.AlwaysUseNewValueCheck.alwaysUseNewValueCheck;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MutableValue<T> implements ChangingValue<T> {
@@ -52,9 +51,8 @@ public class MutableValue<T> implements ChangingValue<T> {
                     newValue,
                     currentValueHolder,
                     valueName,
-                    ignoreDifferenceCheck ? Optional.of(alwaysUseNewValueCheck()) : updateConfig.useNewValueCheck,
-                    updateConfig.afterValueChangedFunction,
-                    updateConfig.disposeFunction,
+                    ignoreDifferenceCheck,
+                    updateConfig,
                     logger
             );
         }
