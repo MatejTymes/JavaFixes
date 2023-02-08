@@ -1,15 +1,13 @@
 package javafixes.experimental.change;
 
-import javafixes.experimental.change.function.UseNewValueCheck;
+import javafixes.experimental.change.config.ChangingValueUpdateConfig;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static javafixes.experimental.change.ChangingValueUtil.*;
+import static javafixes.experimental.change.ChangingValueUtil.handleNewValue;
 import static javafixes.object.Either.left;
 import static javafixes.object.Either.right;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -21,9 +19,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
 
     private final Optional<String> valueName;
     private final Supplier<T> valueGenerator;
-    private final Optional<UseNewValueCheck> useNewValueCheck;
-    private final Optional<Consumer<T>> afterValueChangedFunction;
-    private final Optional<Consumer<T>> disposeFunction;
+    private final ChangingValueUpdateConfig<T> updateConfig;
 
     private final AtomicReference<VersionedValue<T>> latestValueHolder = new AtomicReference<>();
 
@@ -31,15 +27,11 @@ public class DynamicValue<T> implements ChangingValue<T> {
             Optional<String> valueName,
             Supplier<T> valueGenerator,
             boolean prePopulateValueImmediately,
-            Optional<UseNewValueCheck> useNewValueCheck,
-            Optional<Consumer<T>> onValueChangedFunction,
-            Optional<Consumer<T>> disposeFunction
+            ChangingValueUpdateConfig<T> updateConfig
     ) {
         this.valueName = valueName;
         this.valueGenerator = valueGenerator;
-        this.useNewValueCheck = useNewValueCheck;
-        this.afterValueChangedFunction = onValueChangedFunction;
-        this.disposeFunction = disposeFunction;
+        this.updateConfig = updateConfig;
 
         if (prePopulateValueImmediately) {
             populateWithLatestValue();
@@ -68,9 +60,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
                     right(generatedValue),
                     latestValueHolder,
                     valueName,
-                    useNewValueCheck,
-                    afterValueChangedFunction,
-                    disposeFunction,
+                    updateConfig,
                     logger
             );
         } catch (RuntimeException e) {
@@ -78,9 +68,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
                     left(e),
                     latestValueHolder,
                     valueName,
-                    useNewValueCheck,
-                    afterValueChangedFunction,
-                    disposeFunction,
+                    updateConfig,
                     logger
             );
         }

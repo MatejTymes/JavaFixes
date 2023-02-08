@@ -1,5 +1,6 @@
 package javafixes.experimental.change;
 
+import javafixes.experimental.change.config.ChangingValueUpdateConfig;
 import javafixes.experimental.change.function.UseNewValueCheck;
 import javafixes.object.Either;
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ public class ChangingValueUtil {
             Either<RuntimeException, T> newValue,
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
-            Optional<UseNewValueCheck> useNewValueCheck,
+            Optional<UseNewValueCheck<T>> useNewValueCheck,
             Optional<Consumer<T>> afterValueChangedFunction,
             Optional<Consumer<T>> disposeFunction,
             Logger logger
@@ -56,10 +57,28 @@ public class ChangingValueUtil {
         return shouldUpdate;
     }
 
+    static <T> boolean handleNewValue(
+            Either<RuntimeException, T> newValue,
+            AtomicReference<VersionedValue<T>> valueHolder,
+            Optional<String> valueName,
+            ChangingValueUpdateConfig updateConfig,
+            Logger logger
+    ) {
+        return handleNewValue(
+                newValue,
+                valueHolder,
+                valueName,
+                updateConfig.useNewValueCheck,
+                updateConfig.afterValueChangedFunction,
+                updateConfig.disposeFunction,
+                logger
+        );
+    }
+
     static <T> boolean shouldUpdate(
             VersionedValue<T> oldValue,
             Either<RuntimeException, T> newValue,
-            Optional<UseNewValueCheck> useNewValueCheck,
+            Optional<UseNewValueCheck<T>> useNewValueCheck,
             Optional<String> valueName,
             Logger logger
     ) {

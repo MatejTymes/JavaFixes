@@ -1,16 +1,15 @@
 package javafixes.experimental.change;
 
-import javafixes.experimental.change.function.UseNewValueCheck;
+import javafixes.experimental.change.config.ChangingValueUpdateConfig;
 import javafixes.object.Either;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static javafixes.experimental.change.ChangingValueUtil.*;
+import static javafixes.experimental.change.ChangingValueUtil.handleNewValue;
 import static javafixes.object.Either.left;
 import static javafixes.object.Either.right;
 
@@ -23,9 +22,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
 
     private final ChangingValue<SourceType> sourceValue;
     private final Function<SourceType, ? extends T> valueMapper;
-    private final Optional<UseNewValueCheck> useNewValueCheck;
-    private final Optional<Consumer<T>> afterValueChangedFunction;
-    private final Optional<Consumer<T>> disposeFunction;
+    private final ChangingValueUpdateConfig<T> updateConfig;
 
     private final AtomicReference<VersionedValue<T>> currentValueHolder = new AtomicReference<>();
     private final AtomicReference<Long> lastUsedSourceChangeVersion = new AtomicReference<>();
@@ -35,16 +32,12 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
             ChangingValue<SourceType> sourceValue,
             Function<SourceType, ? extends T> valueMapper,
             boolean prePopulateValueImmediately,
-            Optional<UseNewValueCheck> useNewValueCheck,
-            Optional<Consumer<T>> afterValueChangedFunction,
-            Optional<Consumer<T>> disposeFunction
+            ChangingValueUpdateConfig<T> updateConfig
     ) {
         this.valueName = valueName;
         this.sourceValue = sourceValue;
         this.valueMapper = valueMapper;
-        this.useNewValueCheck = useNewValueCheck;
-        this.afterValueChangedFunction = afterValueChangedFunction;
-        this.disposeFunction = disposeFunction;
+        this.updateConfig = updateConfig;
 
         if (prePopulateValueImmediately) {
             populateWithLatestValue();
@@ -97,9 +90,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
                         newValue,
                         currentValueHolder,
                         valueName,
-                        useNewValueCheck,
-                        afterValueChangedFunction,
-                        disposeFunction,
+                        updateConfig,
                         logger
                 );
 

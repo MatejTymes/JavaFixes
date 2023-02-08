@@ -1,12 +1,11 @@
 package javafixes.experimental.change;
 
-import javafixes.experimental.change.function.UseNewValueCheck;
+import javafixes.experimental.change.config.ChangingValueUpdateConfig;
 import javafixes.object.Either;
 import org.slf4j.Logger;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 import static javafixes.experimental.change.ChangingValueUtil.handleNewValue;
 import static javafixes.experimental.change.VersionedValue.initialValueVersion;
@@ -19,23 +18,17 @@ public class MutableValue<T> implements ChangingValue<T> {
 
 
     private final Optional<String> valueName;
-    private final Optional<UseNewValueCheck> useNewValueCheck;
-    private final Optional<Consumer<T>> afterValueChangedFunction;
-    private final Optional<Consumer<T>> disposeFunction;
+    private final ChangingValueUpdateConfig<T> updateConfig;
 
     private final AtomicReference<VersionedValue<T>> currentValueHolder = new AtomicReference<>();
 
     public MutableValue(
             Optional<String> valueName,
             Either<RuntimeException, T> initialValue,
-            Optional<UseNewValueCheck> useNewValueCheck,
-            Optional<Consumer<T>> afterValueChangedFunction,
-            Optional<Consumer<T>> disposeFunction
+            ChangingValueUpdateConfig<T> updateConfig
     ) {
         this.valueName = valueName;
-        this.useNewValueCheck = useNewValueCheck;
-        this.afterValueChangedFunction = afterValueChangedFunction;
-        this.disposeFunction = disposeFunction;
+        this.updateConfig = updateConfig;
 
         this.currentValueHolder.set(initialValueVersion(initialValue));
     }
@@ -59,9 +52,9 @@ public class MutableValue<T> implements ChangingValue<T> {
                     newValue,
                     currentValueHolder,
                     valueName,
-                    ignoreDifferenceCheck ? Optional.of(alwaysUseNewValueCheck()) : useNewValueCheck,
-                    afterValueChangedFunction,
-                    disposeFunction,
+                    ignoreDifferenceCheck ? Optional.of(alwaysUseNewValueCheck()) : updateConfig.useNewValueCheck,
+                    updateConfig.afterValueChangedFunction,
+                    updateConfig.disposeFunction,
                     logger
             );
         }
