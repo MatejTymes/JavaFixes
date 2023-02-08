@@ -47,7 +47,12 @@ public class SimpleCachedValue<T> implements CachedChangingValue<T> {
     @Override
     public VersionedValue<T> getVersionedValue() {
         if (System.currentTimeMillis() > lastCachingTimestamp.get() + refreshPeriodInMS) {
-            forceNewValueReCaching();
+            // prevent multiple threads from updating the value on reaching cache eviction threshold
+            synchronized (currentValueHolder) {
+                if (System.currentTimeMillis() > lastCachingTimestamp.get() + refreshPeriodInMS) {
+                    forceNewValueReCaching();
+                }
+            }
         }
 
         return currentValueHolder.get();
