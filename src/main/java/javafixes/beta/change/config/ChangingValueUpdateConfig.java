@@ -1,6 +1,6 @@
-package javafixes.experimental.change.config;
+package javafixes.beta.change.config;
 
-import javafixes.experimental.change.function.UseNewValueCheck;
+import javafixes.beta.change.function.UseNewValueCheck;
 
 import java.util.Optional;
 import java.util.function.Consumer;

@@ -1,13 +1,13 @@
-package javafixes.experimental.change;
+package javafixes.beta.change;
 
-import javafixes.experimental.change.config.ChangingValueUpdateConfig;
+import javafixes.beta.change.config.ChangingValueUpdateConfig;
 import org.slf4j.Logger;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
-import static javafixes.experimental.change.ChangingValueUtil.handleNewValue;
+import static javafixes.beta.change.ChangingValueUtil.handleNewValue;
 import static javafixes.object.Either.left;
 import static javafixes.object.Either.right;
 import static org.slf4j.LoggerFactory.getLogger;

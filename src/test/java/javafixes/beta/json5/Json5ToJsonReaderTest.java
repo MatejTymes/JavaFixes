@@ -1,6 +1,7 @@
-package javafixes.experimental.json5;
+package javafixes.beta.json5;
 
 import com.google.common.io.CharStreams;
+import javafixes.beta.json5.Json5ToJsonReader;
 import org.junit.Test;
 
 import java.io.IOException;

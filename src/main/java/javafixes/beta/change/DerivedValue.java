@@ -1,6 +1,6 @@
-package javafixes.experimental.change;
+package javafixes.beta.change;
 
-import javafixes.experimental.change.config.ChangingValueUpdateConfig;
+import javafixes.beta.change.config.ChangingValueUpdateConfig;
 import javafixes.object.Either;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
-import static javafixes.experimental.change.ChangingValueUtil.handleNewValue;
+import static javafixes.beta.change.ChangingValueUtil.handleNewValue;
 import static javafixes.object.Either.left;
 import static javafixes.object.Either.right;
 

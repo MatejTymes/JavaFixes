@@ -1,4 +1,4 @@
-package javafixes.experimental.change;
+package javafixes.beta.change;
 
 import javafixes.object.DataObject;
 import javafixes.object.Either;

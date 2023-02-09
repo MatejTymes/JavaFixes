@@ -1,4 +1,4 @@
-package javafixes.experimental.json5;
+package javafixes.beta.json5;
 
 import javafixes.collection.LinkedArrayQueue;
 
@@ -8,7 +8,7 @@ import java.io.Reader;
 import java.util.Queue;
 import java.util.Stack;
 
-import static javafixes.experimental.json5.Token.*;
+import static javafixes.beta.json5.Token.*;
 
 // https://spec.json5.org/
 public class Json5ToJsonReader extends Reader {

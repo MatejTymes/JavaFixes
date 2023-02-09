@@ -1,13 +1,13 @@
-package javafixes.experimental.change;
+package javafixes.beta.change;
 
-import javafixes.experimental.change.config.ChangingValueUpdateConfig;
+import javafixes.beta.change.config.ChangingValueUpdateConfig;
 import org.slf4j.Logger;
 
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static javafixes.experimental.change.ChangingValueUtil.handleNewValue;
+import static javafixes.beta.change.ChangingValueUtil.handleNewValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class SimpleCachedValue<T> implements CachedChangingValue<T> {
@@ -47,7 +47,7 @@ public class SimpleCachedValue<T> implements CachedChangingValue<T> {
     @Override
     public VersionedValue<T> getVersionedValue() {
         if (System.currentTimeMillis() > lastCachingTimestamp.get() + refreshPeriodInMS) {
-            // prevent multiple threads from updating the value on reaching cache eviction threshold
+            // prevent multiple threads from updating the value on reaching cache eviction threshold at the same time
             synchronized (currentValueHolder) {
                 if (System.currentTimeMillis() > lastCachingTimestamp.get() + refreshPeriodInMS) {
                     forceNewValueReCaching();
@@ -70,7 +70,7 @@ public class SimpleCachedValue<T> implements CachedChangingValue<T> {
         synchronized (currentValueHolder) {
             VersionedValue<T> newValue = sourceValue.getVersionedValue();
 
-            handleNewValue(
+            ChangingValueUtil.handleNewValue(
                     newValue.value,
                     currentValueHolder,
                     valueName,

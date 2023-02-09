@@ -1,6 +1,6 @@
-package javafixes.experimental.change;
+package javafixes.beta.change;
 
-import javafixes.experimental.change.config.ChangingValueUpdateConfig;
+import javafixes.beta.change.config.ChangingValueUpdateConfig;
 import org.slf4j.Logger;
 
 import java.time.Duration;
@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static javafixes.experimental.change.ChangingValueUtil.handleNewValue;
+import static javafixes.beta.change.ChangingValueUtil.handleNewValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class PeriodicallyReCachedValue<T> implements CachedChangingValue<T> {

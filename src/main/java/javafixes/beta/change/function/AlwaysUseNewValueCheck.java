@@ -1,4 +1,4 @@
-package javafixes.experimental.change.function;
+package javafixes.beta.change.function;
 
 import javafixes.object.Either;
 

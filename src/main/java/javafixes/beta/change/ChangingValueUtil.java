@@ -1,7 +1,8 @@
-package javafixes.experimental.change;
+package javafixes.beta.change;
 
-import javafixes.experimental.change.config.ChangingValueUpdateConfig;
-import javafixes.experimental.change.function.UseNewValueCheck;
+import javafixes.beta.change.config.ChangingValueUpdateConfig;
+import javafixes.beta.change.function.AlwaysUseNewValueCheck;
+import javafixes.beta.change.function.UseNewValueCheck;
 import javafixes.object.Either;
 import org.slf4j.Logger;
 
@@ -9,8 +10,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import static javafixes.experimental.change.function.AlwaysUseNewValueCheck.alwaysUseNewValueCheck;
-import static javafixes.experimental.change.function.UseDifferentValueCheck.equalsBasedChecker;
+import static javafixes.beta.change.function.UseDifferentValueCheck.equalsBasedChecker;
 
 class ChangingValueUtil {
 
@@ -88,7 +88,7 @@ class ChangingValueUtil {
                 newValue,
                 valueHolder,
                 valueName,
-                ignoreDifferenceCheck ? Optional.of(alwaysUseNewValueCheck()) : updateConfig.useNewValueCheck,
+                ignoreDifferenceCheck ? Optional.of(AlwaysUseNewValueCheck.alwaysUseNewValueCheck()) : updateConfig.useNewValueCheck,
                 updateConfig.afterValueChangedFunction,
                 updateConfig.disposeFunction,
                 logger

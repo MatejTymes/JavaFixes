@@ -1,4 +1,4 @@
-package javafixes.experimental.change;
+package javafixes.beta.change;
 
 import java.time.Instant;
 import java.time.ZoneId;

@@ -1,14 +1,14 @@
-package javafixes.experimental.change;
+package javafixes.beta.change;
 
-import javafixes.experimental.change.config.ChangingValueUpdateConfig;
+import javafixes.beta.change.config.ChangingValueUpdateConfig;
 import javafixes.object.Either;
 import org.slf4j.Logger;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static javafixes.experimental.change.ChangingValueUtil.handleNewValue;
-import static javafixes.experimental.change.VersionedValue.initialValueVersion;
+import static javafixes.beta.change.ChangingValueUtil.handleNewValue;
+import static javafixes.beta.change.VersionedValue.initialValueVersion;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MutableValue<T> implements ChangingValue<T> {
@@ -29,7 +29,7 @@ public class MutableValue<T> implements ChangingValue<T> {
         this.valueName = valueName;
         this.updateConfig = updateConfig;
 
-        this.currentValueHolder.set(initialValueVersion(initialValue));
+        this.currentValueHolder.set(VersionedValue.initialValueVersion(initialValue));
     }
 
     @Override
