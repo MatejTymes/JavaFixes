@@ -23,19 +23,14 @@ public class DynamicValue<T> implements ChangingValue<T> {
 
     private final AtomicReference<VersionedValue<T>> latestValueHolder = new AtomicReference<>();
 
-    private DynamicValue(
+    public DynamicValue(
             Optional<String> valueName,
             Supplier<T> valueGenerator,
-            boolean prePopulateValueImmediately,
             ChangingValueUpdateConfig<T> updateConfig
     ) {
         this.valueName = valueName;
         this.valueGenerator = valueGenerator;
         this.updateConfig = updateConfig;
-
-        if (prePopulateValueImmediately) {
-            populateWithLatestValue();
-        }
     }
 
     @Override
