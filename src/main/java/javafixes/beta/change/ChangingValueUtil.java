@@ -2,7 +2,6 @@ package javafixes.beta.change;
 
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
 import javafixes.beta.change.function.ShouldReplaceOldValueCheck;
-import javafixes.object.Either;
 import org.slf4j.Logger;
 
 import java.util.Optional;
@@ -15,7 +14,7 @@ import static javafixes.beta.change.function.ReplaceDifferentOldValue.replaceDif
 class ChangingValueUtil {
 
     static <T> boolean handleNewValue(
-            Either<RuntimeException, T> newValue,
+            FailableValue<T> newValue,
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
             Optional<ShouldReplaceOldValueCheck<T>> shouldReplaceOldValueCheck,
@@ -59,7 +58,7 @@ class ChangingValueUtil {
     }
 
     static <T> boolean handleNewValue(
-            Either<RuntimeException, T> newValue,
+            FailableValue<T> newValue,
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
             ChangingValueUpdateConfig updateConfig,
@@ -77,7 +76,7 @@ class ChangingValueUtil {
     }
 
     static <T> boolean handleNewValue(
-            Either<RuntimeException, T> newValue,
+            FailableValue<T> newValue,
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
             boolean ignoreDifferenceCheck,
@@ -97,7 +96,7 @@ class ChangingValueUtil {
 
     static <T> boolean shouldUpdate(
             VersionedValue<T> oldValue,
-            Either<RuntimeException, T> newValue,
+            FailableValue<T> newValue,
             Optional<ShouldReplaceOldValueCheck<T>> shouldReplaceOldValueCheck,
             Optional<String> valueName,
             Logger logger
@@ -127,7 +126,7 @@ class ChangingValueUtil {
 
     static <T> void setNewValue(
             VersionedValue<T> oldValue,
-            Either<RuntimeException, T> newValue,
+            FailableValue<T> newValue,
             AtomicReference<VersionedValue<T>> valueHolder
     ) {
         if (oldValue == null) {
@@ -138,15 +137,13 @@ class ChangingValueUtil {
     }
 
     static <T> void applyAfterValueChangedFunction(
-            Either<RuntimeException, T> currentValue,
+            FailableValue<T> currentValue,
             Optional<Consumer<T>> afterValueChangedFunction,
             Optional<String> valueName,
             Logger logger
     ) {
         try {
-            afterValueChangedFunction.ifPresent(function -> {
-                currentValue.handleRight(function::accept);
-            });
+            afterValueChangedFunction.ifPresent(currentValue::handleValue);
         } catch (Exception loggableException) {
             try {
                 logger.error(
@@ -167,9 +164,7 @@ class ChangingValueUtil {
     ) {
         if (oldValue != null) {
             try {
-                disposeFunction.ifPresent(function -> {
-                    oldValue.value.handleRight(function::accept);
-                });
+                disposeFunction.ifPresent(oldValue.value::handleValue);
             } catch (Exception loggableException) {
                 try {
                     logger.error(

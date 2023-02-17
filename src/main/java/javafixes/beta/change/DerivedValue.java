@@ -1,7 +1,6 @@
 package javafixes.beta.change;
 
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
-import javafixes.object.Either;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,8 +9,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 import static javafixes.beta.change.ChangingValueUtil.handleNewValue;
-import static javafixes.object.Either.left;
-import static javafixes.object.Either.right;
+import static javafixes.beta.change.FailableValue.wrapFailure;
+import static javafixes.beta.change.FailableValue.wrapValue;
 
 public class DerivedValue<T, SourceType> implements ChangingValue<T> {
 
@@ -21,7 +20,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
     private final Optional<String> valueName;
 
     private final ChangingValue<SourceType> sourceValue;
-    // todo: mtymes - change to Function<Either<RuntimeException, SourceType, ? extends T> valueMapper
+    // todo: mtymes - change to Function<FailableValue<SourceType>, ? extends T> valueMapper
     private final Function<SourceType, ? extends T> valueMapper;
     private final ChangingValueUpdateConfig<T> updateConfig;
 
@@ -64,15 +63,15 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
 
             Long lastUsedSourceVersionNumber = lastUsedSourceChangeVersion.get();
             if (lastUsedSourceVersionNumber == null || lastUsedSourceVersionNumber < currentSourceValue.versionNumber) {
-                Either<RuntimeException, T> newValue;
+                FailableValue<T> newValue;
 
-                if (currentSourceValue.value.isLeft()) {
-                    newValue = left(currentSourceValue.value.getLeft());
+                if (currentSourceValue.value.isFailure()) {
+                    newValue = wrapFailure(currentSourceValue.value.failure());
                 } else {
                     try {
-                        newValue = right(valueMapper.apply(currentSourceValue.value.getRight()));
+                        newValue = wrapValue(valueMapper.apply(currentSourceValue.value.value()));
                     } catch (RuntimeException e) {
-                        newValue = left(e);
+                        newValue = wrapFailure(e);
 
                         try {
                             logger.error(

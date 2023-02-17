@@ -1,13 +1,13 @@
 package javafixes.beta.change;
 
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
-import javafixes.object.Either;
 import org.slf4j.Logger;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static javafixes.beta.change.ChangingValueUtil.handleNewValue;
+import static javafixes.beta.change.VersionedValue.initialValueVersion;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MutableValue<T> implements ChangingValue<T> {
@@ -22,13 +22,13 @@ public class MutableValue<T> implements ChangingValue<T> {
 
     public MutableValue(
             Optional<String> valueName,
-            Either<RuntimeException, T> initialValue,
+            FailableValue<T> initialValue,
             ChangingValueUpdateConfig<T> updateConfig
     ) {
         this.valueName = valueName;
         this.updateConfig = updateConfig;
 
-        this.currentValueHolder.set(VersionedValue.initialValueVersion(initialValue));
+        this.currentValueHolder.set(initialValueVersion(initialValue));
     }
 
     @Override
@@ -42,7 +42,7 @@ public class MutableValue<T> implements ChangingValue<T> {
     }
 
     public boolean updateToNewValue(
-            Either<RuntimeException, T> newValue,
+            FailableValue<T> newValue,
             boolean ignoreDifferenceCheck
     ) {
         synchronized (currentValueHolder) {

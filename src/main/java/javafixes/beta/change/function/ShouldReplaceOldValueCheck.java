@@ -1,9 +1,9 @@
 package javafixes.beta.change.function;
 
-import javafixes.object.Either;
+import javafixes.beta.change.FailableValue;
 
 @FunctionalInterface
 public interface ShouldReplaceOldValueCheck<T> {
 
-    boolean shouldReplaceOldValue(Either<RuntimeException, T> oldValue, Either<RuntimeException, T> newValue);
+    boolean shouldReplaceOldValue(FailableValue<T> oldValue, FailableValue<T> newValue);
 }

@@ -1,6 +1,6 @@
 package javafixes.beta.change.function;
 
-import javafixes.object.Either;
+import javafixes.beta.change.FailableValue;
 
 import java.util.Objects;
 
@@ -13,7 +13,7 @@ public class AlwaysReplaceOldValue<T> implements ShouldReplaceOldValueCheck<T> {
     }
 
     @Override
-    public boolean shouldReplaceOldValue(Either<RuntimeException, T> oldValue, Either<RuntimeException, T> newValue) {
+    public boolean shouldReplaceOldValue(FailableValue<T> oldValue, FailableValue<T> newValue) {
         return true;
     }
 }

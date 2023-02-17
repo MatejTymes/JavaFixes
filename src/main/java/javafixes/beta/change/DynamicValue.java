@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static javafixes.beta.change.ChangingValueUtil.handleNewValue;
-import static javafixes.object.Either.left;
-import static javafixes.object.Either.right;
+import static javafixes.beta.change.FailableValue.wrapFailure;
+import static javafixes.beta.change.FailableValue.wrapValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class DynamicValue<T> implements ChangingValue<T> {
@@ -52,7 +52,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
             T generatedValue = valueGenerator.get();
 
             handleNewValue(
-                    right(generatedValue),
+                    wrapValue(generatedValue),
                     latestValueHolder,
                     valueName,
                     updateConfig,
@@ -60,7 +60,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
             );
         } catch (RuntimeException e) {
             handleNewValue(
-                    left(e),
+                    wrapFailure(e),
                     latestValueHolder,
                     valueName,
                     updateConfig,
