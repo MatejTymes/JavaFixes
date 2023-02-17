@@ -19,9 +19,14 @@ public class VersionedValue<T> extends DataObject implements Value<T> {
         this.versionNumber = versionNumber;
     }
 
+
     @Override
     public T value() {
         return value.value();
+    }
+
+    public FailableValue<T> failableValue() {
+        return value;
     }
 
     public boolean isFailure() {
@@ -50,6 +55,7 @@ public class VersionedValue<T> extends DataObject implements Value<T> {
     ) {
         return initialValueVersion(wrapFailure(exception));
     }
+
 
     VersionedValue<T> nextVersion(
             FailableValue<T> value
