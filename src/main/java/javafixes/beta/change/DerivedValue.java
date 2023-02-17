@@ -21,6 +21,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
     private final Optional<String> valueName;
 
     private final ChangingValue<SourceType> sourceValue;
+    // todo: mtymes - change to Function<Either<RuntimeException, SourceType, ? extends T> valueMapper
     private final Function<SourceType, ? extends T> valueMapper;
     private final ChangingValueUpdateConfig<T> updateConfig;
 

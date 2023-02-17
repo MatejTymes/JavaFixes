@@ -1,21 +1,21 @@
 package javafixes.beta.change.config;
 
-import javafixes.beta.change.function.UseNewValueCheck;
+import javafixes.beta.change.function.ShouldReplaceOldValueCheck;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public class ChangingValueUpdateConfig<T> {
-    public final Optional<UseNewValueCheck<T>> useNewValueCheck;
+    public final Optional<ShouldReplaceOldValueCheck<T>> shouldReplaceOldValueCheck;
     public final Optional<Consumer<T>> afterValueChangedFunction;
     public final Optional<Consumer<T>> disposeFunction;
 
     public ChangingValueUpdateConfig(
-            Optional<UseNewValueCheck<T>> useNewValueCheck,
+            Optional<ShouldReplaceOldValueCheck<T>> shouldReplaceOldValueCheck,
             Optional<Consumer<T>> afterValueChangedFunction,
             Optional<Consumer<T>> disposeFunction
     ) {
-        this.useNewValueCheck = useNewValueCheck;
+        this.shouldReplaceOldValueCheck = shouldReplaceOldValueCheck;
         this.afterValueChangedFunction = afterValueChangedFunction;
         this.disposeFunction = disposeFunction;
     }

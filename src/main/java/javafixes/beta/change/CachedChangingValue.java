@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+// todo: mtymes - is there some way how to unify the implementation of this interface
 public interface CachedChangingValue<T> extends ChangingValue<T> {
 
     void forceNewValueReCaching(boolean ignoreDifferenceCheck);

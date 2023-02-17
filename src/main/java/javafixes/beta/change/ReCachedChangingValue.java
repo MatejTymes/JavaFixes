@@ -10,9 +10,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import static javafixes.beta.change.ChangingValueUtil.handleNewValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class SimpleCachedValue<T> implements CachedChangingValue<T> {
+public class ReCachedChangingValue<T> implements CachedChangingValue<T> {
 
-    private static final Logger logger = getLogger(SimpleCachedValue.class);
+    private static final Logger logger = getLogger(ReCachedChangingValue.class);
 
 
     private final Optional<String> valueName;
@@ -25,7 +25,7 @@ public class SimpleCachedValue<T> implements CachedChangingValue<T> {
     private final AtomicReference<Long> lastCachingTimestamp = new AtomicReference<>();
 
 
-    public SimpleCachedValue(
+    public ReCachedChangingValue(
             Optional<String> valueName,
             ChangingValue<T> sourceValue,
             ChangingValueUpdateConfig<T> updateConfig,
@@ -70,7 +70,7 @@ public class SimpleCachedValue<T> implements CachedChangingValue<T> {
         synchronized (currentValueHolder) {
             VersionedValue<T> newValue = sourceValue.getVersionedValue();
 
-            ChangingValueUtil.handleNewValue(
+            handleNewValue(
                     newValue.value,
                     currentValueHolder,
                     valueName,

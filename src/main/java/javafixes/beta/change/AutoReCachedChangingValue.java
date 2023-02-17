@@ -12,9 +12,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import static javafixes.beta.change.ChangingValueUtil.handleNewValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class PeriodicallyReCachedValue<T> implements CachedChangingValue<T> {
+public class AutoReCachedChangingValue<T> implements CachedChangingValue<T> {
 
-    private static final Logger logger = getLogger(PeriodicallyReCachedValue.class);
+    private static final Logger logger = getLogger(AutoReCachedChangingValue.class);
 
 
     private final Optional<String> valueName;
@@ -24,7 +24,7 @@ public class PeriodicallyReCachedValue<T> implements CachedChangingValue<T> {
     private final AtomicReference<VersionedValue<T>> currentValueHolder = new AtomicReference<>();
     private final AtomicReference<Long> lastCachingTimestamp = new AtomicReference<>();
 
-    public PeriodicallyReCachedValue(
+    public AutoReCachedChangingValue(
             Optional<String> valueName,
             ChangingValue<T> sourceValue,
             ChangingValueUpdateConfig<T> updateConfig,

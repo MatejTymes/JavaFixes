@@ -1,8 +1,7 @@
 package javafixes.beta.change;
 
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
-import javafixes.beta.change.function.AlwaysUseNewValueCheck;
-import javafixes.beta.change.function.UseNewValueCheck;
+import javafixes.beta.change.function.ShouldReplaceOldValueCheck;
 import javafixes.object.Either;
 import org.slf4j.Logger;
 
@@ -10,7 +9,8 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import static javafixes.beta.change.function.UseDifferentValueCheck.equalsBasedChecker;
+import static javafixes.beta.change.function.AlwaysReplaceOldValue.alwaysReplaceOldValue;
+import static javafixes.beta.change.function.ReplaceDifferentOldValue.replaceDifferentOldValue;
 
 class ChangingValueUtil {
 
@@ -18,7 +18,7 @@ class ChangingValueUtil {
             Either<RuntimeException, T> newValue,
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
-            Optional<UseNewValueCheck<T>> useNewValueCheck,
+            Optional<ShouldReplaceOldValueCheck<T>> shouldReplaceOldValueCheck,
             Optional<Consumer<T>> afterValueChangedFunction,
             Optional<Consumer<T>> disposeFunction,
             Logger logger
@@ -28,7 +28,7 @@ class ChangingValueUtil {
         boolean shouldUpdate = shouldUpdate(
                 oldValue,
                 newValue,
-                useNewValueCheck,
+                shouldReplaceOldValueCheck,
                 valueName,
                 logger
         );
@@ -69,7 +69,7 @@ class ChangingValueUtil {
                 newValue,
                 valueHolder,
                 valueName,
-                updateConfig.useNewValueCheck,
+                updateConfig.shouldReplaceOldValueCheck,
                 updateConfig.afterValueChangedFunction,
                 updateConfig.disposeFunction,
                 logger
@@ -88,7 +88,7 @@ class ChangingValueUtil {
                 newValue,
                 valueHolder,
                 valueName,
-                ignoreDifferenceCheck ? Optional.of(AlwaysUseNewValueCheck.alwaysUseNewValueCheck()) : updateConfig.useNewValueCheck,
+                ignoreDifferenceCheck ? Optional.of(alwaysReplaceOldValue()) : updateConfig.shouldReplaceOldValueCheck,
                 updateConfig.afterValueChangedFunction,
                 updateConfig.disposeFunction,
                 logger
@@ -98,7 +98,7 @@ class ChangingValueUtil {
     static <T> boolean shouldUpdate(
             VersionedValue<T> oldValue,
             Either<RuntimeException, T> newValue,
-            Optional<UseNewValueCheck<T>> useNewValueCheck,
+            Optional<ShouldReplaceOldValueCheck<T>> shouldReplaceOldValueCheck,
             Optional<String> valueName,
             Logger logger
     ) {
@@ -107,9 +107,9 @@ class ChangingValueUtil {
             if (oldValue == null) {
                 shouldUpdate = true;
             } else {
-                shouldUpdate = useNewValueCheck
-                        .orElse(equalsBasedChecker())
-                        .useNewValue(oldValue.value, newValue);
+                shouldUpdate = shouldReplaceOldValueCheck
+                        .orElse(replaceDifferentOldValue())
+                        .shouldReplaceOldValue(oldValue.value, newValue);
             }
             return shouldUpdate;
         } catch (Exception loggableException) {

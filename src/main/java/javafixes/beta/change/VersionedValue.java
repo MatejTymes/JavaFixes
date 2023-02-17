@@ -9,7 +9,7 @@ import static javafixes.object.Either.right;
 
 public class VersionedValue<T> extends DataObject implements Value<T> {
 
-    final Either<RuntimeException, T> value;
+    final Either<RuntimeException, T> value; // todo: mtymes - change Either<RuntimeException, T> -> FailableValue<T>
     final long versionNumber;
 
     private VersionedValue(
