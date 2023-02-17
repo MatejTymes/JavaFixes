@@ -3,39 +3,46 @@ package javafixes.beta.change;
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
 import org.slf4j.Logger;
 
+import java.time.Duration;
 import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static javafixes.beta.change.ChangingValueUtil.handleNewValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class SimpleCachedChangingValue<T> implements CachedChangingValue<T> {
+public class AutoReCachedValue<T> implements CachedChangingValue<T> {
 
-    private static final Logger logger = getLogger(SimpleCachedChangingValue.class);
+    private static final Logger logger = getLogger(AutoReCachedValue.class);
 
 
     private final Optional<String> valueName;
     private final ChangingValue<T> sourceValue;
     private final ChangingValueUpdateConfig<T> updateConfig;
 
-
     private final AtomicReference<VersionedValue<T>> currentValueHolder = new AtomicReference<>();
     private final AtomicReference<Long> lastCachingTimestamp = new AtomicReference<>();
 
-
-    public SimpleCachedChangingValue(
+    public AutoReCachedValue(
             Optional<String> valueName,
             ChangingValue<T> sourceValue,
             ChangingValueUpdateConfig<T> updateConfig,
-            boolean prePopulateValueImmediately
+            Duration refreshPeriod,
+            ScheduledExecutorService usingExecutor
     ) {
         this.valueName = valueName;
         this.sourceValue = sourceValue;
         this.updateConfig = updateConfig;
 
-        if (prePopulateValueImmediately) {
-            forceNewValueReCaching();
-        }
+        forceNewValueReCaching();
+
+        usingExecutor.scheduleAtFixedRate(
+                this::forceNewValueReCaching,
+                refreshPeriod.toMillis(),
+                refreshPeriod.toMillis(),
+                TimeUnit.MILLISECONDS
+        );
     }
 
     @Override
@@ -45,18 +52,7 @@ public class SimpleCachedChangingValue<T> implements CachedChangingValue<T> {
 
     @Override
     public VersionedValue<T> getVersionedValue() {
-        VersionedValue<T> value = currentValueHolder.get();
-        if (value == null) {
-            synchronized (currentValueHolder) {
-                // if multiple threads reach this point at the same time, only the first one should force and update
-                value = currentValueHolder.get();
-                if (value == null) {
-                    forceNewValueReCaching();
-                    value = currentValueHolder.get();
-                }
-            }
-        }
-        return value;
+        return currentValueHolder.get();
     }
 
     @Override
