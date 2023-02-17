@@ -26,13 +26,16 @@ public class SimpleCachedChangingValue<T> implements CachedChangingValue<T> {
     public SimpleCachedChangingValue(
             Optional<String> valueName,
             ChangingValue<T> sourceValue,
-            ChangingValueUpdateConfig<T> updateConfig
+            ChangingValueUpdateConfig<T> updateConfig,
+            boolean prePopulateValueImmediately
     ) {
         this.valueName = valueName;
         this.sourceValue = sourceValue;
         this.updateConfig = updateConfig;
 
-        forceNewValueReCaching();
+        if (prePopulateValueImmediately) {
+            forceNewValueReCaching();
+        }
     }
 
     @Override
@@ -42,7 +45,18 @@ public class SimpleCachedChangingValue<T> implements CachedChangingValue<T> {
 
     @Override
     public VersionedValue<T> getVersionedValue() {
-        return currentValueHolder.get();
+        VersionedValue<T> value = currentValueHolder.get();
+        if (value == null) {
+            synchronized (currentValueHolder) {
+                // if multiple threads reach this point at the same time, only the first one should force and update
+                value = currentValueHolder.get();
+                if (value == null) {
+                    forceNewValueReCaching();
+                    value = currentValueHolder.get();
+                }
+            }
+        }
+        return value;
     }
 
     @Override

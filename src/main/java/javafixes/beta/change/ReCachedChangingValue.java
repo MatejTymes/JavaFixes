@@ -29,14 +29,17 @@ public class ReCachedChangingValue<T> implements CachedChangingValue<T> {
             Optional<String> valueName,
             ChangingValue<T> sourceValue,
             ChangingValueUpdateConfig<T> updateConfig,
-            Duration refreshPeriod
+            Duration refreshPeriod,
+            boolean prePopulateValueImmediately
     ) {
         this.valueName = valueName;
         this.sourceValue = sourceValue;
         this.updateConfig = updateConfig;
         this.refreshPeriodInMS = refreshPeriod.toMillis();
 
-        forceNewValueReCaching();
+        if (prePopulateValueImmediately) {
+            forceNewValueReCaching();
+        }
     }
 
     @Override
@@ -46,8 +49,15 @@ public class ReCachedChangingValue<T> implements CachedChangingValue<T> {
 
     @Override
     public VersionedValue<T> getVersionedValue() {
-        if (System.currentTimeMillis() > lastCachingTimestamp.get() + refreshPeriodInMS) {
-            // prevent multiple threads from updating the value on reaching cache eviction threshold at the same time
+        if (currentValueHolder.get() == null) {
+            synchronized (currentValueHolder) {
+                // if multiple threads reach this point at the same time, only the first one should force and update
+                if (currentValueHolder.get() == null) {
+                    forceNewValueReCaching();
+                }
+            }
+        } else if (System.currentTimeMillis() > lastCachingTimestamp.get() + refreshPeriodInMS) {
+            // if multiple threads reach this point at the same time, only the first one should force and update
             synchronized (currentValueHolder) {
                 if (System.currentTimeMillis() > lastCachingTimestamp.get() + refreshPeriodInMS) {
                     forceNewValueReCaching();

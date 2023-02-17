@@ -30,9 +30,9 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
     public DerivedValue(
             Optional<String> valueName,
             ChangingValue<SourceType> sourceValue,
+            ChangingValueUpdateConfig<T> updateConfig,
             Function<SourceType, ? extends T> valueMapper,
-            boolean prePopulateValueImmediately,
-            ChangingValueUpdateConfig<T> updateConfig
+            boolean prePopulateValueImmediately
     ) {
         this.valueName = valueName;
         this.sourceValue = sourceValue;
