@@ -17,12 +17,12 @@ public class FailableValue<T> extends DataObject implements Value<T> {
         this.value = value;
     }
 
-    public static <T> FailableValue<T> wrapFailure(RuntimeException exception) {
-        return new FailableValue<>(left(exception));
-    }
-
     public static <T> FailableValue<T> wrapValue(T value) {
         return new FailableValue<>(right(value));
+    }
+
+    public static <T> FailableValue<T> wrapFailure(RuntimeException exception) {
+        return new FailableValue<>(left(exception));
     }
 
     @Override

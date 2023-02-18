@@ -56,7 +56,7 @@ public class MutableValueBuilder<T> implements ChangingValueBuilder<T> {
         return this;
     }
 
-    public MutableValueBuilder<T> withShouldReplaceOldValueCheck(ShouldReplaceOldValueCheck shouldReplaceOldValueCheck) {
+    public MutableValueBuilder<T> withShouldReplaceOldValueCheck(ShouldReplaceOldValueCheck<T> shouldReplaceOldValueCheck) {
         this.shouldReplaceOldValueCheck = Optional.of(shouldReplaceOldValueCheck);
         return this;
     }

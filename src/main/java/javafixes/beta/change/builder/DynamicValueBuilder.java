@@ -46,7 +46,7 @@ public class DynamicValueBuilder<T> implements ChangingValueBuilder<T> {
         return this;
     }
 
-    public DynamicValueBuilder<T> withShouldReplaceOldValueCheck(ShouldReplaceOldValueCheck shouldReplaceOldValueCheck) {
+    public DynamicValueBuilder<T> withShouldReplaceOldValueCheck(ShouldReplaceOldValueCheck<T> shouldReplaceOldValueCheck) {
         this.shouldReplaceOldValueCheck = Optional.of(shouldReplaceOldValueCheck);
         return this;
     }

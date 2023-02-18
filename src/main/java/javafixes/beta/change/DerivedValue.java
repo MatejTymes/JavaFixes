@@ -20,8 +20,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
     private final Optional<String> valueName;
 
     private final ChangingValue<SourceType> sourceValue;
-    // todo: mtymes - change to Function<FailableValue<SourceType>, ? extends T> valueMapper
-    private final Function<SourceType, ? extends T> valueMapper;
+    private final Function<FailableValue<SourceType>, ? extends T> valueMapper;
     private final ChangingValueUpdateConfig<T> updateConfig;
 
     private final AtomicReference<VersionedValue<T>> currentValueHolder = new AtomicReference<>();
@@ -31,7 +30,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
             Optional<String> valueName,
             ChangingValue<SourceType> sourceValue,
             ChangingValueUpdateConfig<T> updateConfig,
-            Function<SourceType, ? extends T> valueMapper,
+            Function<FailableValue<SourceType>, ? extends T> valueMapper,
             boolean prePopulateValueImmediately
     ) {
         this.valueName = valueName;
@@ -69,7 +68,7 @@ public class DerivedValue<T, SourceType> implements ChangingValue<T> {
                     newValue = wrapFailure(currentSourceValue.value.failure());
                 } else {
                     try {
-                        newValue = wrapValue(valueMapper.apply(currentSourceValue.value.value()));
+                        newValue = wrapValue(valueMapper.apply(currentSourceValue.value));
                     } catch (RuntimeException e) {
                         newValue = wrapFailure(e);
 
