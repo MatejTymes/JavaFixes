@@ -30,7 +30,7 @@ public class DerivedValueBuilder<T, SourceType> implements ChangingValueBuilder<
     }
 
     @Override
-    public DerivedValue<T, SourceType> build() {
+    public DerivedValue<SourceType, T> build() {
         return new DerivedValue<>(
                 valueName,
                 sourceValue,

@@ -4,6 +4,8 @@ import javafixes.beta.change.config.ChangingValueUpdateConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -12,31 +14,31 @@ import static javafixes.beta.change.ChangingValueUtil.handleNewValue;
 import static javafixes.beta.change.FailableValue.wrapFailure;
 import static javafixes.beta.change.FailableValue.wrapValue;
 
-public class DerivedValue<SourceType, OutputType> implements ChangingValue<OutputType> {
+public class DerivedMultiValue<SourceType, OutputType> implements ChangingValue<OutputType> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DerivedValue.class);
+    private static final Logger logger = LoggerFactory.getLogger(DerivedMultiValue.class);
 
     private final Optional<String> valueName;
-    private final ChangingValue<SourceType> sourceValue;
-    private final Function<FailableValue<SourceType>, ? extends OutputType> valueMapper;
+    private final List<ChangingValue<SourceType>> sourceValues;
+    private final Function<List<FailableValue<SourceType>>, ? extends OutputType> valuesMapper;
     private final ChangingValueUpdateConfig<OutputType> updateConfig;
 
     private final AtomicReference<VersionedValue<OutputType>> currentValueHolder = new AtomicReference<>();
-    private final AtomicReference<Long> lastUsedSourceChangeVersion = new AtomicReference<>();
+    private final AtomicReference<List<Long>> lastUsedSourceChangeVersions = new AtomicReference<>();
 
-    public DerivedValue(
+    public DerivedMultiValue(
             Optional<String> valueName,
-            ChangingValue<SourceType> sourceValue,
+            List<ChangingValue<SourceType>> sourceValues,
+            Function<List<FailableValue<SourceType>>, ? extends OutputType> valuesMapper,
             ChangingValueUpdateConfig<OutputType> updateConfig,
-            Function<FailableValue<SourceType>, ? extends OutputType> valueMapper,
-            boolean prePopulateValueImmediately
+            boolean prePopulateImmediately
     ) {
         this.valueName = valueName;
-        this.sourceValue = sourceValue;
-        this.valueMapper = valueMapper;
+        this.sourceValues = new ArrayList<>(sourceValues);
+        this.valuesMapper = valuesMapper;
         this.updateConfig = updateConfig;
 
-        if (prePopulateValueImmediately) {
+        if (prePopulateImmediately) {
             populateWithLatestValue();
         }
     }
@@ -55,14 +57,27 @@ public class DerivedValue<SourceType, OutputType> implements ChangingValue<Outpu
 
     private void populateWithLatestValue() {
         synchronized (currentValueHolder) {
-            VersionedValue<SourceType> currentSourceValue = sourceValue.getVersionedValue();
+            List<Long> lastUsedSourceVersionNumbers = lastUsedSourceChangeVersions.get();
 
-            Long lastUsedSourceVersionNumber = lastUsedSourceChangeVersion.get();
-            if (lastUsedSourceVersionNumber == null || lastUsedSourceVersionNumber < currentSourceValue.versionNumber) {
+            boolean shouldUpdate = false;
+            List<FailableValue<SourceType>> currentSourceValues = new ArrayList<>();
+            List<Long> currentSourceVersionNumbers = new ArrayList<>();
+            for (int i = 0; i < sourceValues.size(); i++) {
+                VersionedValue<SourceType> sourceValue = sourceValues.get(i).getVersionedValue();
+
+                currentSourceValues.add(sourceValue.failableValue());
+                currentSourceVersionNumbers.add(sourceValue.versionNumber);
+
+                if (lastUsedSourceVersionNumbers == null || lastUsedSourceVersionNumbers.get(i) != sourceValue.versionNumber) {
+                    shouldUpdate = true;
+                }
+            }
+
+            if (shouldUpdate) {
                 FailableValue<OutputType> newValue;
 
                 try {
-                    newValue = wrapValue(valueMapper.apply(currentSourceValue.failableValue()));
+                    newValue = wrapValue(valuesMapper.apply(currentSourceValues));
                 } catch (RuntimeException e) {
                     newValue = wrapFailure(e);
 
@@ -70,7 +85,9 @@ public class DerivedValue<SourceType, OutputType> implements ChangingValue<Outpu
                         logger.error(
                                 "Failed to derive value"
                                         + valueName.map(name -> " '" + name + "'").orElse("")
-                                        + sourceValue.name().map(name -> " from '" + name + "'").orElse(""),
+                                        // todo: mtymes - can this be implemented in some sensible way
+//                                        + sourceValue.name().map(name -> " from '" + name + "'").orElse("")
+                                ,
                                 e
                         );
                     } catch (Exception unwantedException) {
@@ -86,7 +103,7 @@ public class DerivedValue<SourceType, OutputType> implements ChangingValue<Outpu
                         logger
                 );
 
-                lastUsedSourceChangeVersion.set(currentSourceValue.versionNumber);
+                lastUsedSourceChangeVersions.set(currentSourceVersionNumbers);
             }
         }
     }
