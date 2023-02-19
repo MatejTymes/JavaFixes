@@ -18,6 +18,7 @@ public class DerivedMultiValue<SourceType, OutputType> implements ChangingValue<
 
     private static final Logger logger = LoggerFactory.getLogger(DerivedMultiValue.class);
 
+
     private final Optional<String> valueName;
     private final List<ChangingValue<SourceType>> sourceValues;
     private final Function<List<FailableValue<SourceType>>, ? extends OutputType> valuesMapper;

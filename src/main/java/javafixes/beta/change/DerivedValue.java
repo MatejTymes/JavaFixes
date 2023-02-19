@@ -16,6 +16,7 @@ public class DerivedValue<SourceType, OutputType> implements ChangingValue<Outpu
 
     private static final Logger logger = LoggerFactory.getLogger(DerivedValue.class);
 
+
     private final Optional<String> valueName;
     private final ChangingValue<SourceType> sourceValue;
     private final Function<FailableValue<SourceType>, ? extends OutputType> valueMapper;
