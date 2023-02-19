@@ -10,27 +10,40 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class DerivedValueBuilder<T, SourceType> implements ChangingValueBuilder<T> {
+public class DerivedValueBuilder<SourceType, OutputType> implements ChangingValueBuilder<OutputType> {
 
     private final ChangingValue<SourceType> sourceValue;
-    private final Function<FailableValue<SourceType>, ? extends T> valueMapper;
+    private final Function<FailableValue<SourceType>, ? extends OutputType> valueMapper;
 
     private Optional<String> valueName;
-    private Optional<ShouldReplaceOldValueCheck<T>> shouldReplaceOldValueCheck;
-    private Optional<Consumer<T>> afterValueChangedFunction;
-    private Optional<Consumer<T>> disposeFunction;
+    private Optional<ShouldReplaceOldValueCheck<OutputType>> shouldReplaceOldValueCheck;
+    private Optional<Consumer<OutputType>> afterValueChangedFunction;
+    private Optional<Consumer<OutputType>> disposeFunction;
     private boolean prePopulateValueImmediately = false;
 
     public DerivedValueBuilder(
             ChangingValue<SourceType> sourceValue,
-            Function<FailableValue<SourceType>, ? extends T> valueMapper
+            Function<FailableValue<SourceType>, ? extends OutputType> valueMapper
     ) {
         this.sourceValue = sourceValue;
         this.valueMapper = valueMapper;
     }
 
+    public static <SourceType, OutputType> DerivedValueBuilder<SourceType, OutputType> derivedValueBuilder(
+            ChangingValue<SourceType> sourceType,
+            Function<FailableValue<SourceType>, ? extends OutputType> valueMapper
+    ) {
+        return new DerivedValueBuilder<>(sourceType, valueMapper);
+    }
+
+    public static <SourceType, OutputType> Function<FailableValue<SourceType>, ? extends OutputType> mappingValue(
+            Function<SourceType, ? extends  OutputType> valueMapper
+    ) {
+        return failableValue -> valueMapper.apply(failableValue.value());
+    }
+
     @Override
-    public DerivedValue<SourceType, T> build() {
+    public DerivedValue<SourceType, OutputType> build() {
         return new DerivedValue<>(
                 valueName,
                 sourceValue,
@@ -44,27 +57,27 @@ public class DerivedValueBuilder<T, SourceType> implements ChangingValueBuilder<
         );
     }
 
-    public DerivedValueBuilder<T, SourceType> withValueName(String valueName) {
+    public DerivedValueBuilder<SourceType, OutputType> withValueName(String valueName) {
         this.valueName = Optional.of(valueName);
         return this;
     }
 
-    public DerivedValueBuilder<T, SourceType> withShouldReplaceOldValueCheck(ShouldReplaceOldValueCheck<T> shouldReplaceOldValueCheck) {
+    public DerivedValueBuilder<SourceType, OutputType> withShouldReplaceOldValueCheck(ShouldReplaceOldValueCheck<OutputType> shouldReplaceOldValueCheck) {
         this.shouldReplaceOldValueCheck = Optional.of(shouldReplaceOldValueCheck);
         return this;
     }
 
-    public DerivedValueBuilder<T, SourceType> withAfterValueChangedFunction(Consumer<T> afterValueChangedFunction) {
+    public DerivedValueBuilder<SourceType, OutputType> withAfterValueChangedFunction(Consumer<OutputType> afterValueChangedFunction) {
         this.afterValueChangedFunction = Optional.of(afterValueChangedFunction);
         return this;
     }
 
-    public DerivedValueBuilder<T, SourceType> withDisposeFunction(Consumer<T> disposeFunction) {
+    public DerivedValueBuilder<SourceType, OutputType> withDisposeFunction(Consumer<OutputType> disposeFunction) {
         this.disposeFunction = Optional.of(disposeFunction);
         return this;
     }
 
-    public DerivedValueBuilder<T, SourceType> withPrePopulateValueImmediately(boolean prePopulateValueImmediately) {
+    public DerivedValueBuilder<SourceType, OutputType> withPrePopulateValueImmediately(boolean prePopulateValueImmediately) {
         this.prePopulateValueImmediately = prePopulateValueImmediately;
         return this;
     }
