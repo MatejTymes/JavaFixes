@@ -27,6 +27,18 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
         this.sourceValue = sourceValue;
     }
 
+    public static <T> ChangingValueBuilder<T> changingValueBuilder(
+            ChangingValue<T> sourceValue
+    ) {
+        return new CachedChangingValueBuilder<>(sourceValue);
+    }
+
+    public static <T> ChangingValueBuilder<T> changingValueBuilder(
+            ChangingValueBuilder<T> sourceValueBuilder
+    ) {
+        return new CachedChangingValueBuilder<>(sourceValueBuilder.build());
+    }
+
     @Override
     public CachedChangingValue<T> build() {
         if (usingExecutor.isPresent()) {
