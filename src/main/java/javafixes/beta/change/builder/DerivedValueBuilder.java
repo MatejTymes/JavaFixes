@@ -15,10 +15,10 @@ public class DerivedValueBuilder<SourceType, OutputType> implements ChangingValu
     private final ChangingValue<SourceType> sourceValue;
     private final Function<FailableValue<SourceType>, ? extends OutputType> valueMapper;
 
-    private Optional<String> valueName;
-    private Optional<ShouldReplaceOldValueCheck<OutputType>> shouldReplaceOldValueCheck;
-    private Optional<Consumer<OutputType>> afterValueChangedFunction;
-    private Optional<Consumer<OutputType>> disposeFunction;
+    private Optional<String> valueName = Optional.empty();
+    private Optional<ShouldReplaceOldValueCheck<OutputType>> shouldReplaceOldValueCheck = Optional.empty();
+    private Optional<Consumer<OutputType>> afterValueChangedFunction = Optional.empty();
+    private Optional<Consumer<OutputType>> disposeFunction = Optional.empty();
     private boolean prePopulateValueImmediately = false;
 
     public DerivedValueBuilder(

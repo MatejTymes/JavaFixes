@@ -20,7 +20,6 @@ public class ReCachedValue<T> implements CachedChangingValue<T> {
     private final ChangingValueUpdateConfig<T> updateConfig;
     private final long refreshPeriodInMS;
 
-
     private final AtomicReference<VersionedValue<T>> currentValueHolder = new AtomicReference<>();
     private final AtomicReference<Long> lastCachingTimestamp = new AtomicReference<>();
 

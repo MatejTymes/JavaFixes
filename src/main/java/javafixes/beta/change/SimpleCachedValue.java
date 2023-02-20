@@ -18,7 +18,6 @@ public class SimpleCachedValue<T> implements CachedChangingValue<T> {
     private final ChangingValue<T> sourceValue;
     private final ChangingValueUpdateConfig<T> updateConfig;
 
-
     private final AtomicReference<VersionedValue<T>> currentValueHolder = new AtomicReference<>();
     private final AtomicReference<Long> lastCachingTimestamp = new AtomicReference<>();
 

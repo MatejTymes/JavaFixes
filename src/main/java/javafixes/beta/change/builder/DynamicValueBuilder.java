@@ -13,10 +13,10 @@ public class DynamicValueBuilder<T> implements ChangingValueBuilder<T> {
 
     private final Supplier<T> valueGenerator;
 
-    private Optional<String> valueName;
-    private Optional<ShouldReplaceOldValueCheck<T>> shouldReplaceOldValueCheck;
-    private Optional<Consumer<T>> afterValueChangedFunction;
-    private Optional<Consumer<T>> disposeFunction;
+    private Optional<String> valueName = Optional.empty();
+    private Optional<ShouldReplaceOldValueCheck<T>> shouldReplaceOldValueCheck = Optional.empty();
+    private Optional<Consumer<T>> afterValueChangedFunction = Optional.empty();
+    private Optional<Consumer<T>> disposeFunction = Optional.empty();
 
     public DynamicValueBuilder(
             Supplier<T> valueGenerator
