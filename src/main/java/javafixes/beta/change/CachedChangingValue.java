@@ -15,9 +15,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import static javafixes.beta.change.ChangingValueHelper.handleNewValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class ACachedChangingValue<T> implements ChangingValue<T> {
+public class CachedChangingValue<T> implements ChangingValue<T> {
 
-    private static final Logger logger = getLogger(ACachedChangingValue.class);
+    private static final Logger logger = getLogger(CachedChangingValue.class);
 
 
     private final Optional<String> valueName;
@@ -30,7 +30,7 @@ public class ACachedChangingValue<T> implements ChangingValue<T> {
     private final AtomicReference<Long> lastRetrievalOfSourceValueTimestamp = new AtomicReference<>();
 
 
-    public ACachedChangingValue(
+    public CachedChangingValue(
             Optional<String> valueName,
             ChangingValue<T> sourceValue,
             ChangingValueUpdateConfig<T> updateConfig,
@@ -50,10 +50,9 @@ public class ACachedChangingValue<T> implements ChangingValue<T> {
 
         if (scheduledReCachingConfig.isPresent()) {
             ScheduledReCachingConfig<T> scheduledConfig = scheduledReCachingConfig.get();
+            ReCacheValueCheck<T> backgroundReCacheCheck = scheduledConfig.reCacheValueInBackgroundCheck.orElseGet(ReCacheValueCheck::alwaysReCacheValue);
             scheduledConfig.useExecutor.scheduleAtFixedRate(
-                    () -> reCacheIfNeeded(
-                            scheduledConfig.reCacheValueInBackgroundCheck.orElseGet(ReCacheValueCheck::alwaysReCacheValue)
-                    ),
+                    () -> reCacheIfNeeded(backgroundReCacheCheck),
                     scheduledConfig.refreshPeriod.toMillis(),
                     scheduledConfig.refreshPeriod.toMillis(),
                     TimeUnit.MILLISECONDS

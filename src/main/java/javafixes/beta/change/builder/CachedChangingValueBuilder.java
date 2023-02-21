@@ -42,8 +42,8 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
     }
 
     @Override
-    public ACachedChangingValue<T> build() {
-        return new ACachedChangingValue<>(
+    public CachedChangingValue<T> build() {
+        return new CachedChangingValue<>(
                 valueName,
                 sourceValue,
                 new ChangingValueUpdateConfig<>(
