@@ -6,6 +6,9 @@ import javafixes.beta.change.function.AlwaysReCacheValue;
 import javafixes.beta.change.function.ReCacheValueCheck;
 import org.slf4j.Logger;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -13,7 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static javafixes.beta.change.ChangingValueHelper.handleNewValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class GenericCachedChangingValue<T> implements CachedChangingValue<T> {
+public class GenericCachedChangingValue<T> implements ChangingValue<T> {
 
     private static final Logger logger = getLogger(GenericCachedChangingValue.class);
 
@@ -71,12 +74,15 @@ public class GenericCachedChangingValue<T> implements CachedChangingValue<T> {
         return currentValueHolder.get();
     }
 
-    @Override
     public long getLastRetrievalOfSourceValueTimestamp() {
         return lastRetrievalOfSourceValueTimestamp.get();
     }
 
-    @Override
+
+    public ZonedDateTime getLastRetrievalOfSourceValueTime(ZoneId zoneId) {
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(getLastRetrievalOfSourceValueTimestamp()), zoneId);
+    }
+
     public void forceNewValueReCaching(
             boolean ignoreDifferenceCheck
     ) {
@@ -94,6 +100,10 @@ public class GenericCachedChangingValue<T> implements CachedChangingValue<T> {
 
             lastRetrievalOfSourceValueTimestamp.set(System.currentTimeMillis());
         }
+    }
+
+    public void forceNewValueReCaching() {
+        forceNewValueReCaching(false);
     }
 
     private void reCacheIfNeeded(
