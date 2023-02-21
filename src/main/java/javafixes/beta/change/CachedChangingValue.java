@@ -45,7 +45,7 @@ public class CachedChangingValue<T> implements ChangingValue<T> {
         this.scheduledReCachingConfig = scheduledReCachingConfig;
 
         if (prePopulateValueImmediately) {
-            forceNewValueReCaching();
+            forceReCaching();
         }
 
         if (scheduledReCachingConfig.isPresent()) {
@@ -81,7 +81,7 @@ public class CachedChangingValue<T> implements ChangingValue<T> {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(getLastRetrievalOfSourceValueTimestamp()), zoneId);
     }
 
-    public void forceNewValueReCaching(
+    public void forceReCaching(
             boolean ignoreDifferenceCheck
     ) {
         synchronized (currentValueHolder) {
@@ -100,8 +100,8 @@ public class CachedChangingValue<T> implements ChangingValue<T> {
         }
     }
 
-    public void forceNewValueReCaching() {
-        forceNewValueReCaching(false);
+    public void forceReCaching() {
+        forceReCaching(false);
     }
 
     private void reCacheIfNeeded(
@@ -114,7 +114,7 @@ public class CachedChangingValue<T> implements ChangingValue<T> {
             synchronized (currentValueHolder) {
                 // if multiple threads reach this point at the same time, only the first one should force and update
                 if (currentValueHolder.get() == null) {
-                    forceNewValueReCaching(true);
+                    forceReCaching(true);
                     didInitializeValue = true;
                 }
             }
@@ -123,7 +123,7 @@ public class CachedChangingValue<T> implements ChangingValue<T> {
         if (!didInitializeValue && reCacheCheck != null) {
             synchronized (currentValueHolder) {
                 if (reCacheCheck.reCacheValueIf(value.failableValue(), lastRetrievalOfSourceValueTimestamp.get())) {
-                    forceNewValueReCaching(false);
+                    forceReCaching(false);
                 }
             }
         }
