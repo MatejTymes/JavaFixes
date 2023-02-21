@@ -12,6 +12,7 @@ import static javafixes.beta.change.ChangingValueHelper.handleNewValue;
 import static javafixes.beta.change.FailableValue.wrapFailure;
 import static javafixes.beta.change.FailableValue.wrapValue;
 
+// todo: mtymes - remove the SourceType generic parameter
 public class DerivedValue<SourceType, OutputType> implements ChangingValue<OutputType> {
 
     private static final Logger logger = LoggerFactory.getLogger(DerivedValue.class);

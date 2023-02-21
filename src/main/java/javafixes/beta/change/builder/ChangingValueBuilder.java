@@ -2,11 +2,13 @@ package javafixes.beta.change.builder;
 
 import javafixes.beta.change.ChangingValue;
 
+import static javafixes.beta.change.builder.CachedValueBuilder.cachedValueBuilder;
+
 public interface ChangingValueBuilder<T> {
 
     ChangingValue<T> build();
 
-    default CachedChangingValueBuilder<T> asCachedValue() {
-        return new CachedChangingValueBuilder<>(this.build());
+    default CachedValueBuilder<T> asCachedValue() {
+        return cachedValueBuilder(this);
     }
 }

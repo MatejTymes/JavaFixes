@@ -14,9 +14,10 @@ import static javafixes.beta.change.ChangingValueHelper.handleNewValue;
 import static javafixes.beta.change.FailableValue.wrapFailure;
 import static javafixes.beta.change.FailableValue.wrapValue;
 
-public class DerivedMultiValue<SourceType, OutputType> implements ChangingValue<OutputType> {
+// todo: mtymes - remove the SourceType generic parameter
+public class DerivedJoinedValue<SourceType, OutputType> implements ChangingValue<OutputType> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DerivedMultiValue.class);
+    private static final Logger logger = LoggerFactory.getLogger(DerivedJoinedValue.class);
 
 
     private final Optional<String> valueName;
@@ -27,7 +28,7 @@ public class DerivedMultiValue<SourceType, OutputType> implements ChangingValue<
     private final AtomicReference<VersionedValue<OutputType>> currentValueHolder = new AtomicReference<>();
     private final AtomicReference<List<Long>> lastUsedSourceChangeVersions = new AtomicReference<>();
 
-    public DerivedMultiValue(
+    public DerivedJoinedValue(
             Optional<String> valueName,
             List<ChangingValue<SourceType>> sourceValues,
             Function<List<FailableValue<SourceType>>, ? extends OutputType> valuesMapper,

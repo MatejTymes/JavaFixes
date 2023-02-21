@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 
-public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
+public class CachedValueBuilder<T> implements ChangingValueBuilder<T> {
 
     private final ChangingValue<T> sourceValue;
 
@@ -23,27 +23,27 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
     public Optional<ScheduledReCachingConfig<T>> scheduledReCachingConfig = Optional.empty();
     private boolean prePopulateValueImmediately = false;
 
-    public CachedChangingValueBuilder(
+    public CachedValueBuilder(
             ChangingValue<T> sourceValue
     ) {
         this.sourceValue = sourceValue;
     }
 
-    public static <T> CachedChangingValueBuilder<T> changingValueBuilder(
+    public static <T> CachedValueBuilder<T> cachedValueBuilder(
             ChangingValue<T> sourceValue
     ) {
-        return new CachedChangingValueBuilder<>(sourceValue);
+        return new CachedValueBuilder<>(sourceValue);
     }
 
-    public static <T> CachedChangingValueBuilder<T> changingValueBuilder(
+    public static <T> CachedValueBuilder<T> cachedValueBuilder(
             ChangingValueBuilder<T> sourceValueBuilder
     ) {
-        return new CachedChangingValueBuilder<>(sourceValueBuilder.build());
+        return new CachedValueBuilder<>(sourceValueBuilder.build());
     }
 
     @Override
-    public CachedChangingValue<T> build() {
-        return new CachedChangingValue<>(
+    public CachedValue<T> build() {
+        return new CachedValue<>(
                 valueName,
                 sourceValue,
                 new ChangingValueUpdateConfig<>(
@@ -57,32 +57,32 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
         );
     }
 
-    public CachedChangingValueBuilder<T> withValueName(String valueName) {
+    public CachedValueBuilder<T> withValueName(String valueName) {
         this.valueName = Optional.of(valueName);
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<? super T> replaceOldValueIf) {
+    public CachedValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<? super T> replaceOldValueIf) {
         this.replaceOldValueIf = Optional.of(replaceOldValueIf);
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withAfterValueChangedFunction(Consumer<? super T> afterValueChangedFunction) {
+    public CachedValueBuilder<T> withAfterValueChangedFunction(Consumer<? super T> afterValueChangedFunction) {
         this.afterValueChangedFunction = Optional.of(afterValueChangedFunction);
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withDisposeFunction(Consumer<? super T> disposeFunction) {
+    public CachedValueBuilder<T> withDisposeFunction(Consumer<? super T> disposeFunction) {
         this.disposeFunction = Optional.of(disposeFunction);
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withReCacheValueOnValueRetrievalIf(ReCacheValueIf<? super T> reCacheValueOnValueRetrievalCheck) {
+    public CachedValueBuilder<T> withReCacheValueOnValueRetrievalIf(ReCacheValueIf<? super T> reCacheValueOnValueRetrievalCheck) {
         this.reCacheValueOnValueRetrievalIf = Optional.of(reCacheValueOnValueRetrievalCheck);
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withScheduledReCaching(
+    public CachedValueBuilder<T> withScheduledReCaching(
             ScheduledExecutorService useExecutor,
             Duration refreshPeriod
     ) {
@@ -94,7 +94,7 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withScheduledReCaching(
+    public CachedValueBuilder<T> withScheduledReCaching(
             ScheduledExecutorService useExecutor,
             Duration refreshPeriod,
             ReCacheValueIf<? super T> reCacheValueInBackgroundIf
@@ -107,7 +107,7 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withPrePopulateValueImmediately(boolean prePopulateValueImmediately) {
+    public CachedValueBuilder<T> withPrePopulateValueImmediately(boolean prePopulateValueImmediately) {
         this.prePopulateValueImmediately = prePopulateValueImmediately;
         return this;
     }
