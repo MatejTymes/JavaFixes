@@ -4,11 +4,11 @@ import javafixes.beta.change.FailableValue;
 
 import java.util.Objects;
 
-public class ReplaceDifferentOldValue<T> implements ShouldReplaceOldValueCheck<T> {
+public class ReplaceDifferentOldValue<T> implements ReplaceOldValueCheck<T> {
 
     private static ReplaceDifferentOldValue<Objects> INSTANCE = new ReplaceDifferentOldValue<>();
 
-    public static <T> ShouldReplaceOldValueCheck<T> replaceDifferentOldValue() {
+    public static <T> ReplaceOldValueCheck<T> replaceDifferentOldValue() {
         return (ReplaceDifferentOldValue) INSTANCE;
     }
 

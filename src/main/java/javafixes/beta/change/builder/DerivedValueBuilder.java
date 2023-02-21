@@ -4,7 +4,7 @@ import javafixes.beta.change.ChangingValue;
 import javafixes.beta.change.DerivedValue;
 import javafixes.beta.change.FailableValue;
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
-import javafixes.beta.change.function.ShouldReplaceOldValueCheck;
+import javafixes.beta.change.function.ReplaceOldValueCheck;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -16,7 +16,7 @@ public class DerivedValueBuilder<SourceType, OutputType> implements ChangingValu
     private final Function<FailableValue<SourceType>, ? extends OutputType> valueMapper;
 
     private Optional<String> valueName = Optional.empty();
-    private Optional<ShouldReplaceOldValueCheck<OutputType>> shouldReplaceOldValueCheck = Optional.empty();
+    private Optional<ReplaceOldValueCheck<OutputType>> shouldReplaceOldValueCheck = Optional.empty();
     private Optional<Consumer<OutputType>> afterValueChangedFunction = Optional.empty();
     private Optional<Consumer<OutputType>> disposeFunction = Optional.empty();
     private boolean prePopulateValueImmediately = false;
@@ -63,8 +63,8 @@ public class DerivedValueBuilder<SourceType, OutputType> implements ChangingValu
         return this;
     }
 
-    public DerivedValueBuilder<SourceType, OutputType> withShouldReplaceOldValueCheck(ShouldReplaceOldValueCheck<OutputType> shouldReplaceOldValueCheck) {
-        this.shouldReplaceOldValueCheck = Optional.of(shouldReplaceOldValueCheck);
+    public DerivedValueBuilder<SourceType, OutputType> withReplaceOldValueCheck(ReplaceOldValueCheck<OutputType> replaceOldValueCheck) {
+        this.shouldReplaceOldValueCheck = Optional.of(replaceOldValueCheck);
         return this;
     }
 

@@ -2,7 +2,7 @@ package javafixes.beta.change.builder;
 
 import javafixes.beta.change.*;
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
-import javafixes.beta.change.function.ShouldReplaceOldValueCheck;
+import javafixes.beta.change.function.ReplaceOldValueCheck;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -14,7 +14,7 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
     private final ChangingValue<T> sourceValue;
 
     private Optional<String> valueName = Optional.empty();
-    private Optional<ShouldReplaceOldValueCheck<T>> shouldReplaceOldValueCheck = Optional.empty();
+    private Optional<ReplaceOldValueCheck<T>> shouldReplaceOldValueCheck = Optional.empty();
     private Optional<Consumer<T>> afterValueChangedFunction = Optional.empty();
     private Optional<Consumer<T>> disposeFunction = Optional.empty();
     private Optional<Duration> refreshPeriod = Optional.empty();
@@ -87,8 +87,8 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withShouldReplaceOldValueCheck(ShouldReplaceOldValueCheck<T> shouldReplaceOldValueCheck) {
-        this.shouldReplaceOldValueCheck = Optional.of(shouldReplaceOldValueCheck);
+    public CachedChangingValueBuilder<T> withReplaceOldValueCheck(ReplaceOldValueCheck<T> replaceOldValueCheck) {
+        this.shouldReplaceOldValueCheck = Optional.of(replaceOldValueCheck);
         return this;
     }
 

@@ -1,7 +1,7 @@
 package javafixes.beta.change;
 
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
-import javafixes.beta.change.function.ShouldReplaceOldValueCheck;
+import javafixes.beta.change.function.ReplaceOldValueCheck;
 import org.slf4j.Logger;
 
 import java.util.Optional;
@@ -17,7 +17,7 @@ class ChangingValueHelper {
             FailableValue<T> newValue,
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
-            Optional<ShouldReplaceOldValueCheck<T>> shouldReplaceOldValueCheck,
+            Optional<ReplaceOldValueCheck<T>> shouldReplaceOldValueCheck,
             Optional<Consumer<T>> afterValueChangedFunction,
             Optional<Consumer<T>> disposeFunction,
             Logger logger
@@ -97,7 +97,7 @@ class ChangingValueHelper {
     static <T> boolean shouldUpdate(
             VersionedValue<T> oldValue,
             FailableValue<T> newValue,
-            Optional<ShouldReplaceOldValueCheck<T>> shouldReplaceOldValueCheck,
+            Optional<ReplaceOldValueCheck<T>> shouldReplaceOldValueCheck,
             Optional<String> valueName,
             Logger logger
     ) {

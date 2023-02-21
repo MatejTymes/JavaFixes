@@ -19,7 +19,7 @@ public class SimpleCachedValue<T> implements CachedChangingValue<T> {
     private final ChangingValueUpdateConfig<T> updateConfig;
 
     private final AtomicReference<VersionedValue<T>> currentValueHolder = new AtomicReference<>();
-    private final AtomicReference<Long> lastCachingTimestamp = new AtomicReference<>();
+    private final AtomicReference<Long> lastRetrievalOfSourceValueTimestamp = new AtomicReference<>();
 
 
     public SimpleCachedValue(
@@ -59,8 +59,8 @@ public class SimpleCachedValue<T> implements CachedChangingValue<T> {
     }
 
     @Override
-    public long getLastCachingTimestamp() {
-        return lastCachingTimestamp.get();
+    public long getLastRetrievalOfSourceValueTimestamp() {
+        return lastRetrievalOfSourceValueTimestamp.get();
     }
 
     @Override
@@ -79,7 +79,7 @@ public class SimpleCachedValue<T> implements CachedChangingValue<T> {
                     logger
             );
 
-            lastCachingTimestamp.set(System.currentTimeMillis());
+            lastRetrievalOfSourceValueTimestamp.set(System.currentTimeMillis());
         }
     }
 }

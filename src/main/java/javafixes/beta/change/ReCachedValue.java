@@ -21,7 +21,7 @@ public class ReCachedValue<T> implements CachedChangingValue<T> {
     private final long refreshPeriodInMS;
 
     private final AtomicReference<VersionedValue<T>> currentValueHolder = new AtomicReference<>();
-    private final AtomicReference<Long> lastCachingTimestamp = new AtomicReference<>();
+    private final AtomicReference<Long> lastRetrievalOfSourceValueTimestamp = new AtomicReference<>();
 
 
     public ReCachedValue(
@@ -55,10 +55,10 @@ public class ReCachedValue<T> implements CachedChangingValue<T> {
                     forceNewValueReCaching();
                 }
             }
-        } else if (System.currentTimeMillis() > lastCachingTimestamp.get() + refreshPeriodInMS) {
+        } else if (System.currentTimeMillis() > lastRetrievalOfSourceValueTimestamp.get() + refreshPeriodInMS) {
             // if multiple threads reach this point at the same time, only the first one should force and update
             synchronized (currentValueHolder) {
-                if (System.currentTimeMillis() > lastCachingTimestamp.get() + refreshPeriodInMS) {
+                if (System.currentTimeMillis() > lastRetrievalOfSourceValueTimestamp.get() + refreshPeriodInMS) {
                     forceNewValueReCaching();
                 }
             }
@@ -68,8 +68,8 @@ public class ReCachedValue<T> implements CachedChangingValue<T> {
     }
 
     @Override
-    public long getLastCachingTimestamp() {
-        return lastCachingTimestamp.get();
+    public long getLastRetrievalOfSourceValueTimestamp() {
+        return lastRetrievalOfSourceValueTimestamp.get();
     }
 
     @Override
@@ -88,7 +88,7 @@ public class ReCachedValue<T> implements CachedChangingValue<T> {
                     logger
             );
 
-            lastCachingTimestamp.set(System.currentTimeMillis());
+            lastRetrievalOfSourceValueTimestamp.set(System.currentTimeMillis());
         }
     }
 }
