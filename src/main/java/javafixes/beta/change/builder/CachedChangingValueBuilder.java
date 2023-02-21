@@ -27,13 +27,13 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
         this.sourceValue = sourceValue;
     }
 
-    public static <T> ChangingValueBuilder<T> changingValueBuilder(
+    public static <T> CachedChangingValueBuilder<T> changingValueBuilder(
             ChangingValue<T> sourceValue
     ) {
         return new CachedChangingValueBuilder<>(sourceValue);
     }
 
-    public static <T> ChangingValueBuilder<T> changingValueBuilder(
+    public static <T> CachedChangingValueBuilder<T> changingValueBuilder(
             ChangingValueBuilder<T> sourceValueBuilder
     ) {
         return new CachedChangingValueBuilder<>(sourceValueBuilder.build());

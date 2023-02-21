@@ -40,13 +40,7 @@ public class DerivedValueBuilder<SourceType, OutputType> implements ChangingValu
             ChangingValueBuilder<SourceType> sourceValueBuilder,
             Function<FailableValue<SourceType>, ? extends OutputType> valueMapper
     ) {
-        return new DerivedValueBuilder<>(sourceValueBuilder.build(), valueMapper);
-    }
-
-    public static <SourceType, OutputType> Function<FailableValue<SourceType>, ? extends OutputType> mappingValue(
-            Function<SourceType, ? extends  OutputType> valueMapper
-    ) {
-        return failableValue -> valueMapper.apply(failableValue.value());
+        return derivedValueBuilder(sourceValueBuilder.build(), valueMapper);
     }
 
     @Override

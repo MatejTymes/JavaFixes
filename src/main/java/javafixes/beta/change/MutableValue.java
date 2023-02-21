@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static javafixes.beta.change.ChangingValueUtil.handleNewValue;
+import static javafixes.beta.change.ChangingValueHelper.handleNewValue;
 import static javafixes.beta.change.VersionedValue.initialValueVersion;
 import static org.slf4j.LoggerFactory.getLogger;
 

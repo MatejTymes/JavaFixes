@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
-import static javafixes.beta.change.ChangingValueUtil.handleNewValue;
+import static javafixes.beta.change.ChangingValueHelper.handleNewValue;
 import static javafixes.beta.change.FailableValue.wrapFailure;
 import static javafixes.beta.change.FailableValue.wrapValue;
 

@@ -7,6 +7,8 @@ import java.time.ZonedDateTime;
 // todo: mtymes - is there some way how to unify the implementation of this interface
 public interface CachedChangingValue<T> extends ChangingValue<T> {
 
+    // todo: mtymes - maybe add option to invalidate the cache
+
     void forceNewValueReCaching(boolean ignoreDifferenceCheck);
 
     default void forceNewValueReCaching() {
@@ -15,7 +17,7 @@ public interface CachedChangingValue<T> extends ChangingValue<T> {
 
     long getLastCachingTimestamp();
 
-    default ZonedDateTime getLastCachingTime(ZoneId zoneId) {
+    default ZonedDateTime getLastCachingTimle(ZoneId zoneId) {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(getLastCachingTimestamp()), zoneId);
     }
 }

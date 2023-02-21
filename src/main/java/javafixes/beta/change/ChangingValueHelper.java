@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 import static javafixes.beta.change.function.AlwaysReplaceOldValue.alwaysReplaceOldValue;
 import static javafixes.beta.change.function.ReplaceDifferentOldValue.replaceDifferentOldValue;
 
-class ChangingValueUtil {
+class ChangingValueHelper {
 
     static <T> boolean handleNewValue(
             FailableValue<T> newValue,

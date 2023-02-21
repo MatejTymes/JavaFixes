@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static javafixes.beta.change.ChangingValueUtil.handleNewValue;
+import static javafixes.beta.change.ChangingValueHelper.handleNewValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class AutoReCachedValue<T> implements CachedChangingValue<T> {
