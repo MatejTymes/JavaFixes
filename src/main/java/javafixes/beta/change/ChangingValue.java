@@ -5,6 +5,7 @@ import javafixes.object.Value;
 
 import java.util.Optional;
 
+// todo: add null check for input parameters
 public interface ChangingValue<T> extends Value<T> {
 
     Optional<String> name();

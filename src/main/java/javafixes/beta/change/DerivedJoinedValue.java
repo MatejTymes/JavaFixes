@@ -14,7 +14,6 @@ import static javafixes.beta.change.ChangingValueHelper.handleNewValue;
 import static javafixes.beta.change.FailableValue.wrapFailure;
 import static javafixes.beta.change.FailableValue.wrapValue;
 
-// todo: mtymes - remove the SourceType generic parameter
 public class DerivedJoinedValue<OutputType> implements ChangingValue<OutputType> {
 
     private static final Logger logger = LoggerFactory.getLogger(DerivedJoinedValue.class);
@@ -30,8 +29,8 @@ public class DerivedJoinedValue<OutputType> implements ChangingValue<OutputType>
 
     public <SourceType> DerivedJoinedValue(
             Optional<String> valueName,
-            List<ChangingValue<SourceType>> sourceValues,
-            Function<List<FailableValue<SourceType>>, ? extends OutputType> valuesMapper,
+            List<ChangingValue<? extends SourceType>> sourceValues,
+            Function<List<FailableValue<? super SourceType>>, ? extends OutputType> valuesMapper,
             ChangingValueUpdateConfig<OutputType> updateConfig,
             boolean prePopulateImmediately
     ) {

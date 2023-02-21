@@ -20,6 +20,7 @@ public class DerivedValue<SourceType, OutputType> implements ChangingValue<Outpu
 
     private final Optional<String> valueName;
     private final ChangingValue<SourceType> sourceValue;
+    // todo: mtymes - change to Function<FailableValue<? super SourceType>, ? extends OutputType>
     private final Function<FailableValue<SourceType>, ? extends OutputType> valueMapper;
     private final ChangingValueUpdateConfig<OutputType> updateConfig;
 
