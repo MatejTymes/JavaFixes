@@ -19,7 +19,7 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
     private Optional<ReplaceOldValueCheck<T>> shouldReplaceOldValueCheck = Optional.empty();
     private Optional<Consumer<T>> afterValueChangedFunction = Optional.empty();
     private Optional<Consumer<T>> disposeFunction = Optional.empty();
-    private Optional<ReCacheValueCheck<T>> reCacheValueOnValueRetrievalCheck = Optional.empty();
+    private Optional<ReCacheValueCheck<? super T>> reCacheValueOnValueRetrievalCheck = Optional.empty();
     public Optional<ScheduledReCachingConfig<T>> scheduledReCachingConfig = Optional.empty();
     private boolean prePopulateValueImmediately = false;
 
@@ -77,7 +77,7 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withReCacheValueOnValueRetrievalCheck(ReCacheValueCheck<T> reCacheValueOnValueRetrievalCheck) {
+    public CachedChangingValueBuilder<T> withReCacheValueOnValueRetrievalCheck(ReCacheValueCheck<? super T> reCacheValueOnValueRetrievalCheck) {
         this.reCacheValueOnValueRetrievalCheck = Optional.of(reCacheValueOnValueRetrievalCheck);
         return this;
     }
@@ -97,7 +97,7 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
     public CachedChangingValueBuilder<T> withScheduledReCaching(
             ScheduledExecutorService useExecutor,
             Duration refreshPeriod,
-            ReCacheValueCheck<T> reCacheValueInBackgroundCheck
+            ReCacheValueCheck<? super T> reCacheValueInBackgroundCheck
     ) {
         this.scheduledReCachingConfig = Optional.of(new ScheduledReCachingConfig<>(
                 useExecutor,

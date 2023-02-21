@@ -23,7 +23,7 @@ public class CachedChangingValue<T> implements ChangingValue<T> {
     private final Optional<String> valueName;
     private final ChangingValue<T> sourceValue;
     private final ChangingValueUpdateConfig<T> updateConfig;
-    private final Optional<ReCacheValueCheck<T>> reCacheValueOnValueRetrievalCheck;
+    private final Optional<ReCacheValueCheck<? super T>> reCacheValueOnValueRetrievalCheck;
     private final Optional<ScheduledReCachingConfig<T>> scheduledReCachingConfig;
 
     private final AtomicReference<VersionedValue<T>> currentValueHolder = new AtomicReference<>();
@@ -34,7 +34,7 @@ public class CachedChangingValue<T> implements ChangingValue<T> {
             Optional<String> valueName,
             ChangingValue<T> sourceValue,
             ChangingValueUpdateConfig<T> updateConfig,
-            Optional<ReCacheValueCheck<T>> reCacheValueOnValueRetrievalCheck,
+            Optional<ReCacheValueCheck<? super T>> reCacheValueOnValueRetrievalCheck,
             Optional<ScheduledReCachingConfig<T>> scheduledReCachingConfig,
             boolean prePopulateValueImmediately
     ) {
@@ -50,7 +50,7 @@ public class CachedChangingValue<T> implements ChangingValue<T> {
 
         if (scheduledReCachingConfig.isPresent()) {
             ScheduledReCachingConfig<T> scheduledConfig = scheduledReCachingConfig.get();
-            ReCacheValueCheck<T> backgroundReCacheCheck = scheduledConfig.reCacheValueInBackgroundCheck.orElseGet(ReCacheValueCheck::alwaysReCacheValue);
+            ReCacheValueCheck<? super T> backgroundReCacheCheck = scheduledConfig.reCacheValueInBackgroundCheck.orElseGet(ReCacheValueCheck::alwaysReCacheValue);
             scheduledConfig.useExecutor.scheduleAtFixedRate(
                     () -> reCacheIfNeeded(backgroundReCacheCheck),
                     scheduledConfig.refreshPeriod.toMillis(),
@@ -105,7 +105,7 @@ public class CachedChangingValue<T> implements ChangingValue<T> {
     }
 
     private void reCacheIfNeeded(
-            ReCacheValueCheck<T> reCacheCheck // nullable
+            ReCacheValueCheck<? super T> reCacheCheck // nullable
     ) {
         VersionedValue<T> value = currentValueHolder.get();
 

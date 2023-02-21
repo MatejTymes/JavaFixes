@@ -9,7 +9,7 @@ public class AlwaysReCacheValue<T> implements ReCacheValueCheck<T> {
     public static AlwaysReCacheValue<Objects> INSTANCE = new AlwaysReCacheValue<>();
 
     @Override
-    public boolean reCacheValue(FailableValue<T> currentValue, long lastRetrievalOfSourceValueTimestamp) {
+    public boolean reCacheValue(FailableValue<? extends T> currentValue, long lastRetrievalOfSourceValueTimestamp) {
         return true;
     }
 }

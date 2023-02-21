@@ -9,12 +9,12 @@ import java.util.concurrent.ScheduledExecutorService;
 public class ScheduledReCachingConfig<T> {
     public final ScheduledExecutorService useExecutor;
     public final Duration refreshPeriod;
-    public final Optional<ReCacheValueCheck<T>> reCacheValueInBackgroundCheck;
+    public final Optional<ReCacheValueCheck<? super T>> reCacheValueInBackgroundCheck;
 
     public ScheduledReCachingConfig(
             ScheduledExecutorService useExecutor,
             Duration refreshPeriod,
-            Optional<ReCacheValueCheck<T>> reCacheValueInBackgroundCheck
+            Optional<ReCacheValueCheck<? super T>> reCacheValueInBackgroundCheck
     ) {
         this.useExecutor = useExecutor;
         this.refreshPeriod = refreshPeriod;

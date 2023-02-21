@@ -6,7 +6,7 @@ import java.time.Duration;
 
 public interface ReCacheValueCheck<T> {
 
-    boolean reCacheValue(FailableValue<T> currentValue, long lastRetrievalOfSourceValueTimestamp);
+    boolean reCacheValue(FailableValue<? extends T> currentValue, long lastRetrievalOfSourceValueTimestamp);
 
     default ReCacheValueCheck<T> or(ReCacheValueCheck<T> anotherCheck) {
         return new AnyOfReCachedValueCheck<>(this, anotherCheck);

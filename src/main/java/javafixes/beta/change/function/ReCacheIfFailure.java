@@ -9,7 +9,7 @@ public class ReCacheIfFailure<T> implements ReCacheValueCheck<T> {
     public static ReCacheIfFailure<Objects> INSTANCE = new ReCacheIfFailure<>();
 
     @Override
-    public boolean reCacheValue(FailableValue<T> currentValue, long lastRetrievalOfSourceValueTimestamp) {
+    public boolean reCacheValue(FailableValue<? extends T> currentValue, long lastRetrievalOfSourceValueTimestamp) {
         return currentValue.isFailure();
     }
 }
