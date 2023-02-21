@@ -4,7 +4,7 @@ import javafixes.beta.change.FailableValue;
 
 import java.time.Duration;
 
-public class ReCacheIfOlderThan<T> implements ReCacheValueCheck<T> {
+public class ReCacheIfOlderThan<T> implements ReCacheValueIf<T> {
 
     public final Duration staleAfterDuration;
 
@@ -15,7 +15,7 @@ public class ReCacheIfOlderThan<T> implements ReCacheValueCheck<T> {
     }
 
     @Override
-    public boolean reCacheValue(FailableValue<? extends T> currentValue, long lastRetrievalOfSourceValueTimestamp) {
+    public boolean reCacheValueIf(FailableValue<? extends T> currentValue, long lastRetrievalOfSourceValueTimestamp) {
         long ageInMS = System.currentTimeMillis() - lastRetrievalOfSourceValueTimestamp;
         return ageInMS > staleAfterDuration.toMillis();
     }

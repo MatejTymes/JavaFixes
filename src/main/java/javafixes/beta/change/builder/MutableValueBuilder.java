@@ -3,7 +3,7 @@ package javafixes.beta.change.builder;
 import javafixes.beta.change.FailableValue;
 import javafixes.beta.change.MutableValue;
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
-import javafixes.beta.change.function.ReplaceOldValueCheck;
+import javafixes.beta.change.function.ReplaceOldValueIf;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -16,7 +16,7 @@ public class MutableValueBuilder<T> implements ChangingValueBuilder<T> {
     private final FailableValue<T> initialValue;
 
     private Optional<String> valueName = Optional.empty();
-    private Optional<ReplaceOldValueCheck<T>> shouldReplaceOldValueCheck = Optional.empty();
+    private Optional<ReplaceOldValueIf<T>> replaceOldValueIf = Optional.empty();
     private Optional<Consumer<T>> afterValueChangedFunction = Optional.empty();
     private Optional<Consumer<T>> disposeFunction = Optional.empty();
 
@@ -44,7 +44,7 @@ public class MutableValueBuilder<T> implements ChangingValueBuilder<T> {
                 valueName,
                 initialValue,
                 new ChangingValueUpdateConfig<>(
-                        shouldReplaceOldValueCheck,
+                        replaceOldValueIf,
                         afterValueChangedFunction,
                         disposeFunction
                 )
@@ -56,8 +56,8 @@ public class MutableValueBuilder<T> implements ChangingValueBuilder<T> {
         return this;
     }
 
-    public MutableValueBuilder<T> withReplaceOldValueCheck(ReplaceOldValueCheck<T> replaceOldValueCheck) {
-        this.shouldReplaceOldValueCheck = Optional.of(replaceOldValueCheck);
+    public MutableValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<T> replaceOldValueIf) {
+        this.replaceOldValueIf = Optional.of(replaceOldValueIf);
         return this;
     }
 

@@ -4,7 +4,7 @@ import javafixes.beta.change.FailableValue;
 
 import java.util.Objects;
 
-public class AlwaysReplaceOldValue<T> implements ReplaceOldValueCheck<T> {
+public class AlwaysReplaceOldValue<T> implements ReplaceOldValueIf<T> {
 
     private static AlwaysReplaceOldValue<Objects> INSTANCE = new AlwaysReplaceOldValue<>();
 
@@ -13,7 +13,7 @@ public class AlwaysReplaceOldValue<T> implements ReplaceOldValueCheck<T> {
     }
 
     @Override
-    public boolean shouldReplaceOldValue(FailableValue<T> oldValue, FailableValue<T> newValue) {
+    public boolean replaceOldValueIf(FailableValue<T> oldValue, FailableValue<T> newValue) {
         return true;
     }
 }

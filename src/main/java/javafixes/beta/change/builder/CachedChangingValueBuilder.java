@@ -3,8 +3,8 @@ package javafixes.beta.change.builder;
 import javafixes.beta.change.*;
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
 import javafixes.beta.change.config.ScheduledReCachingConfig;
-import javafixes.beta.change.function.ReCacheValueCheck;
-import javafixes.beta.change.function.ReplaceOldValueCheck;
+import javafixes.beta.change.function.ReCacheValueIf;
+import javafixes.beta.change.function.ReplaceOldValueIf;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -16,10 +16,10 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
     private final ChangingValue<T> sourceValue;
 
     private Optional<String> valueName = Optional.empty();
-    private Optional<ReplaceOldValueCheck<T>> shouldReplaceOldValueCheck = Optional.empty();
+    private Optional<ReplaceOldValueIf<T>> replaceOldValueIf = Optional.empty();
     private Optional<Consumer<T>> afterValueChangedFunction = Optional.empty();
     private Optional<Consumer<T>> disposeFunction = Optional.empty();
-    private Optional<ReCacheValueCheck<? super T>> reCacheValueOnValueRetrievalCheck = Optional.empty();
+    private Optional<ReCacheValueIf<? super T>> reCacheValueOnValueRetrievalIf = Optional.empty();
     public Optional<ScheduledReCachingConfig<T>> scheduledReCachingConfig = Optional.empty();
     private boolean prePopulateValueImmediately = false;
 
@@ -47,11 +47,11 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
                 valueName,
                 sourceValue,
                 new ChangingValueUpdateConfig<>(
-                        shouldReplaceOldValueCheck,
+                        replaceOldValueIf,
                         afterValueChangedFunction,
                         disposeFunction
                 ),
-                reCacheValueOnValueRetrievalCheck,
+                reCacheValueOnValueRetrievalIf,
                 scheduledReCachingConfig,
                 prePopulateValueImmediately
         );
@@ -62,8 +62,8 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withReplaceOldValueCheck(ReplaceOldValueCheck<T> replaceOldValueCheck) {
-        this.shouldReplaceOldValueCheck = Optional.of(replaceOldValueCheck);
+    public CachedChangingValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<T> replaceOldValueIf) {
+        this.replaceOldValueIf = Optional.of(replaceOldValueIf);
         return this;
     }
 
@@ -77,8 +77,8 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withReCacheValueOnValueRetrievalCheck(ReCacheValueCheck<? super T> reCacheValueOnValueRetrievalCheck) {
-        this.reCacheValueOnValueRetrievalCheck = Optional.of(reCacheValueOnValueRetrievalCheck);
+    public CachedChangingValueBuilder<T> withReCacheValueOnValueRetrievalIf(ReCacheValueIf<? super T> reCacheValueOnValueRetrievalCheck) {
+        this.reCacheValueOnValueRetrievalIf = Optional.of(reCacheValueOnValueRetrievalCheck);
         return this;
     }
 
@@ -97,12 +97,12 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
     public CachedChangingValueBuilder<T> withScheduledReCaching(
             ScheduledExecutorService useExecutor,
             Duration refreshPeriod,
-            ReCacheValueCheck<? super T> reCacheValueInBackgroundCheck
+            ReCacheValueIf<? super T> reCacheValueInBackgroundIf
     ) {
         this.scheduledReCachingConfig = Optional.of(new ScheduledReCachingConfig<>(
                 useExecutor,
                 refreshPeriod,
-                Optional.of(reCacheValueInBackgroundCheck)
+                Optional.of(reCacheValueInBackgroundIf)
         ));
         return this;
     }

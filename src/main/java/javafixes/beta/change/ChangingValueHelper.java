@@ -1,7 +1,7 @@
 package javafixes.beta.change;
 
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
-import javafixes.beta.change.function.ReplaceOldValueCheck;
+import javafixes.beta.change.function.ReplaceOldValueIf;
 import org.slf4j.Logger;
 
 import java.util.Optional;
@@ -17,7 +17,7 @@ class ChangingValueHelper {
             FailableValue<T> newValue,
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
-            Optional<ReplaceOldValueCheck<T>> shouldReplaceOldValueCheck,
+            Optional<ReplaceOldValueIf<T>> replaceOldValueIf,
             Optional<Consumer<T>> afterValueChangedFunction,
             Optional<Consumer<T>> disposeFunction,
             Logger logger
@@ -27,7 +27,7 @@ class ChangingValueHelper {
         boolean shouldUpdate = shouldUpdate(
                 oldValue,
                 newValue,
-                shouldReplaceOldValueCheck,
+                replaceOldValueIf,
                 valueName,
                 logger
         );
@@ -68,7 +68,7 @@ class ChangingValueHelper {
                 newValue,
                 valueHolder,
                 valueName,
-                updateConfig.shouldReplaceOldValueCheck,
+                updateConfig.replaceOldValueIf,
                 updateConfig.afterValueChangedFunction,
                 updateConfig.disposeFunction,
                 logger
@@ -87,7 +87,7 @@ class ChangingValueHelper {
                 newValue,
                 valueHolder,
                 valueName,
-                ignoreDifferenceCheck ? Optional.of(alwaysReplaceOldValue()) : updateConfig.shouldReplaceOldValueCheck,
+                ignoreDifferenceCheck ? Optional.of(alwaysReplaceOldValue()) : updateConfig.replaceOldValueIf,
                 updateConfig.afterValueChangedFunction,
                 updateConfig.disposeFunction,
                 logger
@@ -97,7 +97,7 @@ class ChangingValueHelper {
     static <T> boolean shouldUpdate(
             VersionedValue<T> oldValue,
             FailableValue<T> newValue,
-            Optional<ReplaceOldValueCheck<T>> shouldReplaceOldValueCheck,
+            Optional<ReplaceOldValueIf<T>> replaceOldValueIf,
             Optional<String> valueName,
             Logger logger
     ) {
@@ -106,9 +106,9 @@ class ChangingValueHelper {
             if (oldValue == null) {
                 shouldUpdate = true;
             } else {
-                shouldUpdate = shouldReplaceOldValueCheck
+                shouldUpdate = replaceOldValueIf
                         .orElse(replaceDifferentOldValue())
-                        .shouldReplaceOldValue(oldValue.value, newValue);
+                        .replaceOldValueIf(oldValue.value, newValue);
             }
             return shouldUpdate;
         } catch (Exception loggableException) {

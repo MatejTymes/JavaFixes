@@ -4,15 +4,15 @@ import javafixes.beta.change.FailableValue;
 
 import java.time.Duration;
 
-public interface ReCacheValueCheck<T> {
+public interface ReCacheValueIf<T> {
 
-    boolean reCacheValue(FailableValue<? extends T> currentValue, long lastRetrievalOfSourceValueTimestamp);
+    boolean reCacheValueIf(FailableValue<? extends T> currentValue, long lastRetrievalOfSourceValueTimestamp);
 
-    default ReCacheValueCheck<T> or(ReCacheValueCheck<T> anotherCheck) {
-        return new AnyOfReCachedValueCheck<>(this, anotherCheck);
+    default ReCacheValueIf<T> or(ReCacheValueIf<T> anotherCheck) {
+        return new ReCacheAnyValue<>(this, anotherCheck);
     }
 
-    static <T> ReCacheValueCheck<T> reCacheIfOlderThan(Duration staleAfterDuration) {
+    static <T> ReCacheValueIf<T> reCacheIfOlderThan(Duration staleAfterDuration) {
         return new ReCacheIfOlderThan<>(staleAfterDuration);
     }
 
