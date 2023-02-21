@@ -15,20 +15,20 @@ import static javafixes.beta.change.FailableValue.wrapFailure;
 import static javafixes.beta.change.FailableValue.wrapValue;
 
 // todo: mtymes - remove the SourceType generic parameter
-public class DerivedJoinedValue<SourceType, OutputType> implements ChangingValue<OutputType> {
+public class DerivedJoinedValue<OutputType> implements ChangingValue<OutputType> {
 
     private static final Logger logger = LoggerFactory.getLogger(DerivedJoinedValue.class);
 
 
     private final Optional<String> valueName;
-    private final List<ChangingValue<SourceType>> sourceValues;
-    private final Function<List<FailableValue<SourceType>>, ? extends OutputType> valuesMapper;
+    private final List<ChangingValue> sourceValues;
+    private final Function<List<FailableValue>, ? extends OutputType> valuesMapper;
     private final ChangingValueUpdateConfig<OutputType> updateConfig;
 
     private final AtomicReference<VersionedValue<OutputType>> currentValueHolder = new AtomicReference<>();
     private final AtomicReference<List<Long>> lastUsedSourceChangeVersions = new AtomicReference<>();
 
-    public DerivedJoinedValue(
+    public <SourceType> DerivedJoinedValue(
             Optional<String> valueName,
             List<ChangingValue<SourceType>> sourceValues,
             Function<List<FailableValue<SourceType>>, ? extends OutputType> valuesMapper,
@@ -37,7 +37,7 @@ public class DerivedJoinedValue<SourceType, OutputType> implements ChangingValue
     ) {
         this.valueName = valueName;
         this.sourceValues = new ArrayList<>(sourceValues);
-        this.valuesMapper = valuesMapper;
+        this.valuesMapper = (Function) valuesMapper;
         this.updateConfig = updateConfig;
 
         if (prePopulateImmediately) {
@@ -62,10 +62,10 @@ public class DerivedJoinedValue<SourceType, OutputType> implements ChangingValue
             List<Long> lastUsedSourceVersionNumbers = lastUsedSourceChangeVersions.get();
 
             boolean shouldUpdate = false;
-            List<FailableValue<SourceType>> currentSourceValues = new ArrayList<>();
+            List<FailableValue> currentSourceValues = new ArrayList<>();
             List<Long> currentSourceVersionNumbers = new ArrayList<>();
             for (int i = 0; i < sourceValues.size(); i++) {
-                VersionedValue<SourceType> sourceValue = sourceValues.get(i).getVersionedValue();
+                VersionedValue sourceValue = sourceValues.get(i).getVersionedValue();
 
                 currentSourceValues.add(sourceValue.failableValue());
                 currentSourceVersionNumbers.add(sourceValue.versionNumber);
