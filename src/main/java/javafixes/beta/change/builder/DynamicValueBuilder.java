@@ -14,9 +14,9 @@ public class DynamicValueBuilder<T> implements ChangingValueBuilder<T> {
     private final Supplier<T> valueGenerator;
 
     private Optional<String> valueName = Optional.empty();
-    private Optional<ReplaceOldValueIf<T>> replaceOldValueIf = Optional.empty();
-    private Optional<Consumer<T>> afterValueChangedFunction = Optional.empty();
-    private Optional<Consumer<T>> disposeFunction = Optional.empty();
+    private Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf = Optional.empty();
+    private Optional<Consumer<? super T>> afterValueChangedFunction = Optional.empty();
+    private Optional<Consumer<? super T>> disposeFunction = Optional.empty();
 
     public DynamicValueBuilder(
             Supplier<T> valueGenerator
@@ -46,17 +46,17 @@ public class DynamicValueBuilder<T> implements ChangingValueBuilder<T> {
         return this;
     }
 
-    public DynamicValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<T> replaceOldValueIf) {
+    public DynamicValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<? super T> replaceOldValueIf) {
         this.replaceOldValueIf = Optional.of(replaceOldValueIf);
         return this;
     }
 
-    public DynamicValueBuilder<T> withAfterValueChangedFunction(Consumer<T> afterValueChangedFunction) {
+    public DynamicValueBuilder<T> withAfterValueChangedFunction(Consumer<? super T> afterValueChangedFunction) {
         this.afterValueChangedFunction = Optional.of(afterValueChangedFunction);
         return this;
     }
 
-    public DynamicValueBuilder<T> withDisposeFunction(Consumer<T> disposeFunction) {
+    public DynamicValueBuilder<T> withDisposeFunction(Consumer<? super T> disposeFunction) {
         this.disposeFunction = Optional.of(disposeFunction);
         return this;
     }

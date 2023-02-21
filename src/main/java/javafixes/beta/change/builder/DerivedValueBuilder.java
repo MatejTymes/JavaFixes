@@ -16,9 +16,9 @@ public class DerivedValueBuilder<SourceType, OutputType> implements ChangingValu
     private final Function<FailableValue<SourceType>, ? extends OutputType> valueMapper;
 
     private Optional<String> valueName = Optional.empty();
-    private Optional<ReplaceOldValueIf<OutputType>> replaceOldValueIf = Optional.empty();
-    private Optional<Consumer<OutputType>> afterValueChangedFunction = Optional.empty();
-    private Optional<Consumer<OutputType>> disposeFunction = Optional.empty();
+    private Optional<ReplaceOldValueIf<? super OutputType>> replaceOldValueIf = Optional.empty();
+    private Optional<Consumer<? super OutputType>> afterValueChangedFunction = Optional.empty();
+    private Optional<Consumer<? super OutputType>> disposeFunction = Optional.empty();
     private boolean prePopulateValueImmediately = false;
 
     public DerivedValueBuilder(
@@ -63,17 +63,17 @@ public class DerivedValueBuilder<SourceType, OutputType> implements ChangingValu
         return this;
     }
 
-    public DerivedValueBuilder<SourceType, OutputType> withReplaceOldValueIf(ReplaceOldValueIf<OutputType> replaceOldValueIf) {
+    public DerivedValueBuilder<SourceType, OutputType> withReplaceOldValueIf(ReplaceOldValueIf<? super OutputType> replaceOldValueIf) {
         this.replaceOldValueIf = Optional.of(replaceOldValueIf);
         return this;
     }
 
-    public DerivedValueBuilder<SourceType, OutputType> withAfterValueChangedFunction(Consumer<OutputType> afterValueChangedFunction) {
+    public DerivedValueBuilder<SourceType, OutputType> withAfterValueChangedFunction(Consumer<? super OutputType> afterValueChangedFunction) {
         this.afterValueChangedFunction = Optional.of(afterValueChangedFunction);
         return this;
     }
 
-    public DerivedValueBuilder<SourceType, OutputType> withDisposeFunction(Consumer<OutputType> disposeFunction) {
+    public DerivedValueBuilder<SourceType, OutputType> withDisposeFunction(Consumer<? super OutputType> disposeFunction) {
         this.disposeFunction = Optional.of(disposeFunction);
         return this;
     }

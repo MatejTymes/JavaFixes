@@ -6,14 +6,14 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class ChangingValueUpdateConfig<T> {
-    public final Optional<ReplaceOldValueIf<T>> replaceOldValueIf;
-    public final Optional<Consumer<T>> afterValueChangedFunction;
-    public final Optional<Consumer<T>> disposeFunction;
+    public final Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf;
+    public final Optional<Consumer<? super T>> afterValueChangedFunction;
+    public final Optional<Consumer<? super T>> disposeFunction;
 
     public ChangingValueUpdateConfig(
-            Optional<ReplaceOldValueIf<T>> replaceOldValueIf,
-            Optional<Consumer<T>> afterValueChangedFunction,
-            Optional<Consumer<T>> disposeFunction
+            Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf,
+            Optional<Consumer<? super T>> afterValueChangedFunction,
+            Optional<Consumer<? super T>> disposeFunction
     ) {
         this.replaceOldValueIf = replaceOldValueIf;
         this.afterValueChangedFunction = afterValueChangedFunction;

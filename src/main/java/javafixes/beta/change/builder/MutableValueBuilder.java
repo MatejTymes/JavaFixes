@@ -16,9 +16,9 @@ public class MutableValueBuilder<T> implements ChangingValueBuilder<T> {
     private final FailableValue<T> initialValue;
 
     private Optional<String> valueName = Optional.empty();
-    private Optional<ReplaceOldValueIf<T>> replaceOldValueIf = Optional.empty();
-    private Optional<Consumer<T>> afterValueChangedFunction = Optional.empty();
-    private Optional<Consumer<T>> disposeFunction = Optional.empty();
+    private Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf = Optional.empty();
+    private Optional<Consumer<? super T>> afterValueChangedFunction = Optional.empty();
+    private Optional<Consumer<? super T>> disposeFunction = Optional.empty();
 
     public MutableValueBuilder(
             FailableValue<T> initialValue
@@ -56,17 +56,17 @@ public class MutableValueBuilder<T> implements ChangingValueBuilder<T> {
         return this;
     }
 
-    public MutableValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<T> replaceOldValueIf) {
+    public MutableValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<? super T> replaceOldValueIf) {
         this.replaceOldValueIf = Optional.of(replaceOldValueIf);
         return this;
     }
 
-    public MutableValueBuilder<T> withAfterValueChangedFunction(Consumer<T> afterValueChangedFunction) {
+    public MutableValueBuilder<T> withAfterValueChangedFunction(Consumer<? super T> afterValueChangedFunction) {
         this.afterValueChangedFunction = Optional.of(afterValueChangedFunction);
         return this;
     }
 
-    public MutableValueBuilder<T> withDisposeFunction(Consumer<T> disposeFunction) {
+    public MutableValueBuilder<T> withDisposeFunction(Consumer<? super T> disposeFunction) {
         this.disposeFunction = Optional.of(disposeFunction);
         return this;
     }

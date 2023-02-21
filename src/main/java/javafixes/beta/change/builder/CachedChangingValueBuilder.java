@@ -16,9 +16,9 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
     private final ChangingValue<T> sourceValue;
 
     private Optional<String> valueName = Optional.empty();
-    private Optional<ReplaceOldValueIf<T>> replaceOldValueIf = Optional.empty();
-    private Optional<Consumer<T>> afterValueChangedFunction = Optional.empty();
-    private Optional<Consumer<T>> disposeFunction = Optional.empty();
+    private Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf = Optional.empty();
+    private Optional<Consumer<? super T>> afterValueChangedFunction = Optional.empty();
+    private Optional<Consumer<? super T>> disposeFunction = Optional.empty();
     private Optional<ReCacheValueIf<? super T>> reCacheValueOnValueRetrievalIf = Optional.empty();
     public Optional<ScheduledReCachingConfig<T>> scheduledReCachingConfig = Optional.empty();
     private boolean prePopulateValueImmediately = false;
@@ -62,17 +62,17 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<T> replaceOldValueIf) {
+    public CachedChangingValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<? super T> replaceOldValueIf) {
         this.replaceOldValueIf = Optional.of(replaceOldValueIf);
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withAfterValueChangedFunction(Consumer<T> afterValueChangedFunction) {
+    public CachedChangingValueBuilder<T> withAfterValueChangedFunction(Consumer<? super T> afterValueChangedFunction) {
         this.afterValueChangedFunction = Optional.of(afterValueChangedFunction);
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withDisposeFunction(Consumer<T> disposeFunction) {
+    public CachedChangingValueBuilder<T> withDisposeFunction(Consumer<? super T> disposeFunction) {
         this.disposeFunction = Optional.of(disposeFunction);
         return this;
     }
