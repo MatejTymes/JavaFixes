@@ -4,12 +4,12 @@ import javafixes.beta.change.FailableValue;
 
 import java.util.Objects;
 
-public class AlwaysReCacheValue<T> implements ReCacheValueCheck<T> {
+public class ReCacheIfFailure<T> implements ReCacheValueCheck<T> {
 
-    public static AlwaysReCacheValue<Objects> INSTANCE = new AlwaysReCacheValue<>();
+    public static ReCacheIfFailure<Objects> INSTANCE = new ReCacheIfFailure<>();
 
     @Override
     public boolean reCacheValue(FailableValue<T> currentValue, long lastRetrievalOfSourceValueTimestamp) {
-        return true;
+        return currentValue.isFailure();
     }
 }

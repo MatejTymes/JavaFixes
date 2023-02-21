@@ -2,7 +2,6 @@ package javafixes.beta.change;
 
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
 import javafixes.beta.change.config.ScheduledReCachingConfig;
-import javafixes.beta.change.function.AlwaysReCacheValue;
 import javafixes.beta.change.function.ReCacheValueCheck;
 import org.slf4j.Logger;
 
@@ -16,9 +15,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import static javafixes.beta.change.ChangingValueHelper.handleNewValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class GenericCachedChangingValue<T> implements ChangingValue<T> {
+public class ACachedChangingValue<T> implements ChangingValue<T> {
 
-    private static final Logger logger = getLogger(GenericCachedChangingValue.class);
+    private static final Logger logger = getLogger(ACachedChangingValue.class);
 
 
     private final Optional<String> valueName;
@@ -31,7 +30,7 @@ public class GenericCachedChangingValue<T> implements ChangingValue<T> {
     private final AtomicReference<Long> lastRetrievalOfSourceValueTimestamp = new AtomicReference<>();
 
 
-    public GenericCachedChangingValue(
+    public ACachedChangingValue(
             Optional<String> valueName,
             ChangingValue<T> sourceValue,
             ChangingValueUpdateConfig<T> updateConfig,
@@ -53,7 +52,7 @@ public class GenericCachedChangingValue<T> implements ChangingValue<T> {
             ScheduledReCachingConfig<T> scheduledConfig = scheduledReCachingConfig.get();
             scheduledConfig.useExecutor.scheduleAtFixedRate(
                     () -> reCacheIfNeeded(
-                            scheduledConfig.reCacheValueInBackgroundCheck.orElseGet(AlwaysReCacheValue::alwaysReCacheValue)
+                            scheduledConfig.reCacheValueInBackgroundCheck.orElseGet(ReCacheValueCheck::alwaysReCacheValue)
                     ),
                     scheduledConfig.refreshPeriod.toMillis(),
                     scheduledConfig.refreshPeriod.toMillis(),

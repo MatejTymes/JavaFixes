@@ -2,6 +2,8 @@ package javafixes.beta.change.builder;
 
 import javafixes.beta.change.*;
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
+import javafixes.beta.change.config.ScheduledReCachingConfig;
+import javafixes.beta.change.function.ReCacheValueCheck;
 import javafixes.beta.change.function.ReplaceOldValueCheck;
 
 import java.time.Duration;
@@ -17,8 +19,8 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
     private Optional<ReplaceOldValueCheck<T>> shouldReplaceOldValueCheck = Optional.empty();
     private Optional<Consumer<T>> afterValueChangedFunction = Optional.empty();
     private Optional<Consumer<T>> disposeFunction = Optional.empty();
-    private Optional<Duration> refreshPeriod = Optional.empty();
-    private Optional<ScheduledExecutorService> usingExecutor = Optional.empty();
+    private Optional<ReCacheValueCheck<T>> reCacheValueOnValueRetrievalCheck = Optional.empty();
+    public Optional<ScheduledReCachingConfig<T>> scheduledReCachingConfig = Optional.empty();
     private boolean prePopulateValueImmediately = false;
 
     public CachedChangingValueBuilder(
@@ -40,46 +42,19 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
     }
 
     @Override
-    public CachedChangingValue<T> build() {
-        if (usingExecutor.isPresent()) {
-            if (!refreshPeriod.isPresent()) {
-                throw new IllegalStateException("refreshPeriod must be defined");
-            }
-            return new AutoReCachedValue<>(
-                    valueName,
-                    sourceValue,
-                    new ChangingValueUpdateConfig<>(
-                            shouldReplaceOldValueCheck,
-                            afterValueChangedFunction,
-                            disposeFunction
-                    ),
-                    refreshPeriod.get(),
-                    usingExecutor.get()
-            );
-        } else if (refreshPeriod.isPresent()) {
-            return new ReCachedValue<>(
-                    valueName,
-                    sourceValue,
-                    new ChangingValueUpdateConfig<>(
-                            shouldReplaceOldValueCheck,
-                            afterValueChangedFunction,
-                            disposeFunction
-                    ),
-                    refreshPeriod.get(),
-                    prePopulateValueImmediately
-            );
-        } else {
-            return new SimpleCachedValue<>(
-                    valueName,
-                    sourceValue,
-                    new ChangingValueUpdateConfig<>(
-                            shouldReplaceOldValueCheck,
-                            afterValueChangedFunction,
-                            disposeFunction
-                    ),
-                    prePopulateValueImmediately
-            );
-        }
+    public ACachedChangingValue<T> build() {
+        return new ACachedChangingValue<>(
+                valueName,
+                sourceValue,
+                new ChangingValueUpdateConfig<>(
+                        shouldReplaceOldValueCheck,
+                        afterValueChangedFunction,
+                        disposeFunction
+                ),
+                reCacheValueOnValueRetrievalCheck,
+                scheduledReCachingConfig,
+                prePopulateValueImmediately
+        );
     }
 
     public CachedChangingValueBuilder<T> withValueName(String valueName) {
@@ -102,14 +77,33 @@ public class CachedChangingValueBuilder<T> implements ChangingValueBuilder<T> {
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withRefreshPeriod(Duration refreshPeriod) {
-        this.refreshPeriod = Optional.of(refreshPeriod);
+    public CachedChangingValueBuilder<T> withReCacheValueOnValueRetrievalCheck(ReCacheValueCheck<T> reCacheValueOnValueRetrievalCheck) {
+        this.reCacheValueOnValueRetrievalCheck = Optional.of(reCacheValueOnValueRetrievalCheck);
         return this;
     }
 
-    public CachedChangingValueBuilder<T> withPeriodicBackgroundRefresh(ScheduledExecutorService usingExecutor, Duration refreshPeriod) {
-        this.usingExecutor = Optional.of(usingExecutor);
-        this.refreshPeriod = Optional.of(refreshPeriod);
+    public CachedChangingValueBuilder<T> withScheduledReCaching(
+            ScheduledExecutorService useExecutor,
+            Duration refreshPeriod
+    ) {
+        this.scheduledReCachingConfig = Optional.of(new ScheduledReCachingConfig<>(
+                useExecutor,
+                refreshPeriod,
+                Optional.empty()
+        ));
+        return this;
+    }
+
+    public CachedChangingValueBuilder<T> withScheduledReCaching(
+            ScheduledExecutorService useExecutor,
+            Duration refreshPeriod,
+            ReCacheValueCheck<T> reCacheValueInBackgroundCheck
+    ) {
+        this.scheduledReCachingConfig = Optional.of(new ScheduledReCachingConfig<>(
+                useExecutor,
+                refreshPeriod,
+                Optional.of(reCacheValueInBackgroundCheck)
+        ));
         return this;
     }
 

@@ -14,10 +14,6 @@ public class ReCacheIfOlderThan<T> implements ReCacheValueCheck<T> {
         this.staleAfterDuration = staleAfterDuration;
     }
 
-    public static <T> ReCacheValueCheck<T> reCacheIfOlderThan(Duration staleAfterDuration) {
-        return new ReCacheIfOlderThan<>(staleAfterDuration);
-    }
-
     @Override
     public boolean reCacheValue(FailableValue<T> currentValue, long lastRetrievalOfSourceValueTimestamp) {
         long ageInMS = System.currentTimeMillis() - lastRetrievalOfSourceValueTimestamp;
