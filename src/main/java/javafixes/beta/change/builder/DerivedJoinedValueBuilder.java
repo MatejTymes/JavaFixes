@@ -4,6 +4,7 @@ import javafixes.beta.change.ChangingValue;
 import javafixes.beta.change.DerivedJoinedValue;
 import javafixes.beta.change.FailableValue;
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
+import javafixes.beta.change.function.FailableValueHandler;
 import javafixes.beta.change.function.ReplaceOldValueIf;
 import javafixes.common.function.TriFunction;
 
@@ -89,6 +90,11 @@ public class DerivedJoinedValueBuilder<T> implements ChangingValueBuilder<T> {
 
     public DerivedJoinedValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<? super T> replaceOldValueIf) {
         this.updateConfig = updateConfig.copyWithReplaceOldValueIf((Optional) Optional.of(replaceOldValueIf));
+        return this;
+    }
+
+    public DerivedJoinedValueBuilder<T> withForEachValueFunction(FailableValueHandler<? super T> forEachValueFunction) {
+        this.updateConfig = updateConfig.copyWithForEachValueFunction((Optional) Optional.of(forEachValueFunction));
         return this;
     }
 

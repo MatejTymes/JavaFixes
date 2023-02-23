@@ -1,6 +1,7 @@
 package javafixes.beta.change;
 
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
+import javafixes.beta.change.function.FailableValueHandler;
 import javafixes.beta.change.function.ReplaceOldValueIf;
 import org.slf4j.Logger;
 
@@ -13,11 +14,12 @@ import static javafixes.beta.change.function.ReplaceDifferentOldValue.replaceDif
 
 class ChangingValueHelper {
 
-    static <T> boolean handleNewValue(
+    static <T> boolean handlePotentialNewValue(
             FailableValue<T> newValue,
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
             Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf,
+            Optional<FailableValueHandler<? super T>> forEachValueFunction,
             Optional<Consumer<? super T>> afterValueChangedFunction,
             Optional<Consumer<? super T>> disposeFunction,
             Logger logger
@@ -39,12 +41,21 @@ class ChangingValueHelper {
                     valueHolder
             );
 
-            applyAfterValueChangedFunction(
+            applyForEachValueFunction(
                     newValue,
-                    afterValueChangedFunction,
+                    forEachValueFunction,
                     valueName,
                     logger
             );
+
+            if (oldValue != null) { // todo: mtymes - put this into the apply method
+                applyAfterValueChangedFunction(
+                        newValue,
+                        afterValueChangedFunction,
+                        valueName,
+                        logger
+                );
+            }
 
             applyDisposeFunction(
                     oldValue,
@@ -57,25 +68,26 @@ class ChangingValueHelper {
         return shouldUpdate;
     }
 
-    static <T> boolean handleNewValue(
+    static <T> boolean handlePotentialNewValue(
             FailableValue<T> newValue,
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
             ChangingValueUpdateConfig<? super T> updateConfig,
             Logger logger
     ) {
-        return handleNewValue(
+        return handlePotentialNewValue(
                 newValue,
                 valueHolder,
                 valueName,
                 (Optional) updateConfig.replaceOldValueIf,
+                (Optional) updateConfig.forEachValueFunction,
                 (Optional) updateConfig.afterValueChangedFunction,
                 (Optional) updateConfig.disposeFunction,
                 logger
         );
     }
 
-    static <T> boolean handleNewValue(
+    static <T> boolean handlePotentialNewValue(
             FailableValue<T> newValue,
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
@@ -83,11 +95,12 @@ class ChangingValueHelper {
             ChangingValueUpdateConfig updateConfig,
             Logger logger
     ) {
-        return handleNewValue(
+        return handlePotentialNewValue(
                 newValue,
                 valueHolder,
                 valueName,
                 ignoreDifferenceCheck ? Optional.of(alwaysReplaceOldValue()) : updateConfig.replaceOldValueIf,
+                updateConfig.forEachValueFunction,
                 updateConfig.afterValueChangedFunction,
                 updateConfig.disposeFunction,
                 logger
@@ -136,14 +149,34 @@ class ChangingValueHelper {
         }
     }
 
+    static <T> void applyForEachValueFunction(
+            FailableValue<T> newValue,
+            Optional<FailableValueHandler<? super T>> forEachValueFunction,
+            Optional<String> valueName,
+            Logger logger
+    ) {
+        try {
+            forEachValueFunction.ifPresent(handler -> handler.handle(newValue));
+        } catch (Exception loggableException) {
+            try {
+                logger.error(
+                        "Failed to apply forEachValueFunction to new value" + valueName.map(name -> " for '" + name + "'").orElse(""),
+                        loggableException
+                );
+            } catch (Exception unwantedException) {
+                unwantedException.printStackTrace();
+            }
+        }
+    }
+
     static <T> void applyAfterValueChangedFunction(
-            FailableValue<T> currentValue,
+            FailableValue<T> newValue,
             Optional<Consumer<? super T>> afterValueChangedFunction,
             Optional<String> valueName,
             Logger logger
     ) {
         try {
-            afterValueChangedFunction.ifPresent(currentValue::handleValue);
+            afterValueChangedFunction.ifPresent(function -> function.accept(newValue.value()));
         } catch (Exception loggableException) {
             try {
                 logger.error(

@@ -4,6 +4,7 @@ import javafixes.beta.change.FailableValue;
 
 import java.time.Duration;
 
+@FunctionalInterface
 public interface ReCacheValueIf<T> {
 
     boolean reCacheValueIf(FailableValue<? extends T> currentValue, long lastRetrievalOfSourceValueTimestamp);

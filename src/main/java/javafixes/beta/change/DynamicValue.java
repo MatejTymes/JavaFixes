@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
-import static javafixes.beta.change.ChangingValueHelper.handleNewValue;
+import static javafixes.beta.change.ChangingValueHelper.handlePotentialNewValue;
 import static javafixes.beta.change.FailableValue.wrapFailure;
 import static javafixes.beta.change.FailableValue.wrapValue;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -51,7 +51,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
         try {
             T generatedValue = valueGenerator.get();
 
-            handleNewValue(
+            handlePotentialNewValue(
                     wrapValue(generatedValue),
                     latestValueHolder,
                     valueName,
@@ -59,7 +59,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
                     logger
             );
         } catch (RuntimeException e) {
-            handleNewValue(
+            handlePotentialNewValue(
                     wrapFailure(e),
                     latestValueHolder,
                     valueName,

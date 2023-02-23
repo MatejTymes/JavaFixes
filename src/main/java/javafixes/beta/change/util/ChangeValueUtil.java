@@ -1,11 +1,13 @@
 package javafixes.beta.change.util;
 
 import javafixes.beta.change.FailableValue;
+import javafixes.beta.change.function.FailableValueHandler;
 import javafixes.beta.change.function.ReplaceOldValueIf;
 import javafixes.common.function.TriFunction;
 
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
@@ -22,6 +24,18 @@ public class ChangeValueUtil {
             BiFunction<T, T, Boolean> valueCheck
     ) {
         return (oldValue, newValue) -> valueCheck.apply(oldValue.value(), newValue.value());
+    }
+
+    public static <T> FailableValueHandler<T> handleValue(
+            Consumer<T> consumer
+    ) {
+        return failableValue -> failableValue.handleValue(consumer);
+    }
+
+    public static <T> FailableValueHandler<T> handleFailure(
+            Consumer<RuntimeException> consumer
+    ) {
+        return failableValue -> failableValue.handleFailure(consumer);
     }
 
     public static <T1, T2, OutputType> BiFunction<FailableValue<T1>, FailableValue<T2>, ? extends OutputType> joiningValues(

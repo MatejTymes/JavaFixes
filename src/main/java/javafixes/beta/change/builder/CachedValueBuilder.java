@@ -1,8 +1,10 @@
 package javafixes.beta.change.builder;
 
-import javafixes.beta.change.*;
+import javafixes.beta.change.CachedValue;
+import javafixes.beta.change.ChangingValue;
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
 import javafixes.beta.change.config.ScheduledReCachingConfig;
+import javafixes.beta.change.function.FailableValueHandler;
 import javafixes.beta.change.function.ReCacheValueIf;
 import javafixes.beta.change.function.ReplaceOldValueIf;
 
@@ -58,6 +60,11 @@ public class CachedValueBuilder<T> implements ChangingValueBuilder<T> {
 
     public CachedValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<? super T> replaceOldValueIf) {
         this.updateConfig = updateConfig.copyWithReplaceOldValueIf((Optional) Optional.of(replaceOldValueIf));
+        return this;
+    }
+
+    public CachedValueBuilder<T> withForEachValueFunction(FailableValueHandler<? super T> forEachValueFunction) {
+        this.updateConfig = updateConfig.copyWithForEachValueFunction((Optional) Optional.of(forEachValueFunction));
         return this;
     }
 

@@ -4,6 +4,7 @@ import javafixes.beta.change.ChangingValue;
 import javafixes.beta.change.DerivedValue;
 import javafixes.beta.change.FailableValue;
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
+import javafixes.beta.change.function.FailableValueHandler;
 import javafixes.beta.change.function.ReplaceOldValueIf;
 
 import java.util.Optional;
@@ -59,6 +60,11 @@ public class DerivedValueBuilder<SourceType, OutputType> implements ChangingValu
 
     public DerivedValueBuilder<SourceType, OutputType> withReplaceOldValueIf(ReplaceOldValueIf<? super OutputType> replaceOldValueIf) {
         this.updateConfig = updateConfig.copyWithReplaceOldValueIf((Optional) Optional.of(replaceOldValueIf));
+        return this;
+    }
+
+    public DerivedValueBuilder<SourceType, OutputType> withForEachValueFunction(FailableValueHandler<? super OutputType> forEachValueFunction) {
+        this.updateConfig = updateConfig.copyWithForEachValueFunction((Optional) Optional.of(forEachValueFunction));
         return this;
     }
 

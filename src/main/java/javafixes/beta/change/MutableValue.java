@@ -6,8 +6,7 @@ import org.slf4j.Logger;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static javafixes.beta.change.ChangingValueHelper.handleNewValue;
-import static javafixes.beta.change.VersionedValue.initialValueVersion;
+import static javafixes.beta.change.ChangingValueHelper.handlePotentialNewValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MutableValue<T> implements ChangingValue<T> {
@@ -28,7 +27,14 @@ public class MutableValue<T> implements ChangingValue<T> {
         this.valueName = valueName;
         this.updateConfig = updateConfig;
 
-        this.currentValueHolder.set(initialValueVersion(initialValue));
+        handlePotentialNewValue(
+                initialValue,
+                currentValueHolder,
+                valueName,
+                true,
+                updateConfig,
+                logger
+        );
     }
 
     @Override
@@ -46,7 +52,7 @@ public class MutableValue<T> implements ChangingValue<T> {
             boolean ignoreDifferenceCheck
     ) {
         synchronized (currentValueHolder) {
-            return handleNewValue(
+            return handlePotentialNewValue(
                     newValue,
                     currentValueHolder,
                     valueName,

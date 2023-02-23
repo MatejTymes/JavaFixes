@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
-import static javafixes.beta.change.ChangingValueHelper.handleNewValue;
+import static javafixes.beta.change.ChangingValueHelper.handlePotentialNewValue;
 import static javafixes.beta.change.FailableValue.wrapFailure;
 import static javafixes.beta.change.FailableValue.wrapValue;
 
@@ -96,7 +96,7 @@ public class DerivedJoinedValue<T> implements ChangingValue<T> {
                     }
                 }
 
-                handleNewValue(
+                handlePotentialNewValue(
                         newValue,
                         currentValueHolder,
                         valueName,

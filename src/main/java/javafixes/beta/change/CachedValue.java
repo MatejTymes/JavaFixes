@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static javafixes.beta.change.ChangingValueHelper.handleNewValue;
+import static javafixes.beta.change.ChangingValueHelper.handlePotentialNewValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class CachedValue<T> implements ChangingValue<T> {
@@ -45,7 +45,7 @@ public class CachedValue<T> implements ChangingValue<T> {
         this.scheduledReCachingConfig = scheduledReCachingConfig;
 
         if (prePopulateValueImmediately) {
-            forceReCaching();
+            forceReCaching(true);
         }
 
         if (scheduledReCachingConfig.isPresent()) {
@@ -87,7 +87,7 @@ public class CachedValue<T> implements ChangingValue<T> {
         synchronized (currentValueHolder) {
             VersionedValue<T> newValue = sourceValue.getVersionedValue();
 
-            handleNewValue(
+            handlePotentialNewValue(
                     newValue.value,
                     currentValueHolder,
                     valueName,

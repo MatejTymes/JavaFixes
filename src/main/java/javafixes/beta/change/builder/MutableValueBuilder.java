@@ -3,6 +3,7 @@ package javafixes.beta.change.builder;
 import javafixes.beta.change.FailableValue;
 import javafixes.beta.change.MutableValue;
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
+import javafixes.beta.change.function.FailableValueHandler;
 import javafixes.beta.change.function.ReplaceOldValueIf;
 
 import java.util.Optional;
@@ -52,6 +53,11 @@ public class MutableValueBuilder<T> implements ChangingValueBuilder<T> {
 
     public MutableValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<? super T> replaceOldValueIf) {
         this.updateConfig = updateConfig.copyWithReplaceOldValueIf((Optional) Optional.of(replaceOldValueIf));
+        return this;
+    }
+
+    public MutableValueBuilder<T> withForEachValueFunction(FailableValueHandler<? super T> forEachValueFunction) {
+        this.updateConfig = updateConfig.copyWithForEachValueFunction((Optional) Optional.of(forEachValueFunction));
         return this;
     }
 
