@@ -14,9 +14,7 @@ public class DynamicValueBuilder<T> implements ChangingValueBuilder<T> {
     private final Supplier<T> valueGenerator;
 
     private Optional<String> valueName = Optional.empty();
-    private Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf = Optional.empty();
-    private Optional<Consumer<? super T>> afterValueChangedFunction = Optional.empty();
-    private Optional<Consumer<? super T>> disposeFunction = Optional.empty();
+    private ChangingValueUpdateConfig<? super T> updateConfig = ChangingValueUpdateConfig.DO_NOTHING_ON_UPDATE_CONFIG;
 
     public DynamicValueBuilder(
             Supplier<T> valueGenerator
@@ -33,11 +31,7 @@ public class DynamicValueBuilder<T> implements ChangingValueBuilder<T> {
         return new DynamicValue<>(
                 valueName,
                 valueGenerator,
-                new ChangingValueUpdateConfig<>(
-                        replaceOldValueIf,
-                        afterValueChangedFunction,
-                        disposeFunction
-                )
+                updateConfig
         );
     }
 
@@ -47,17 +41,22 @@ public class DynamicValueBuilder<T> implements ChangingValueBuilder<T> {
     }
 
     public DynamicValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<? super T> replaceOldValueIf) {
-        this.replaceOldValueIf = Optional.of(replaceOldValueIf);
+        this.updateConfig = updateConfig.copyWithReplaceOldValueIf((Optional) Optional.of(replaceOldValueIf));
         return this;
     }
 
     public DynamicValueBuilder<T> withAfterValueChangedFunction(Consumer<? super T> afterValueChangedFunction) {
-        this.afterValueChangedFunction = Optional.of(afterValueChangedFunction);
+        this.updateConfig = updateConfig.copyWithAfterValueChangedFunction((Optional) Optional.of(afterValueChangedFunction));
         return this;
     }
 
     public DynamicValueBuilder<T> withDisposeFunction(Consumer<? super T> disposeFunction) {
-        this.disposeFunction = Optional.of(disposeFunction);
+        this.updateConfig = updateConfig.copyWithDisposeFunction((Optional) Optional.of(disposeFunction));
+        return this;
+    }
+
+    public DynamicValueBuilder<T> withUpdateConfig(ChangingValueUpdateConfig<? super T> updateConfig) {
+        this.updateConfig = updateConfig;
         return this;
     }
 }

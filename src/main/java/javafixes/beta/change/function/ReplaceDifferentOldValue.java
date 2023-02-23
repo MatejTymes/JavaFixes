@@ -13,7 +13,7 @@ public class ReplaceDifferentOldValue<T> implements ReplaceOldValueIf<T> {
     }
 
     @Override
-    public boolean replaceOldValueIf(FailableValue<T> oldValue, FailableValue<T> newValue) {
+    public boolean replaceOldValueIf(FailableValue<? extends T> oldValue, FailableValue<? extends T> newValue) {
         return !Objects.equals(oldValue, newValue);
     }
 }

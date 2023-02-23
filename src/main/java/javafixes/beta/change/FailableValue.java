@@ -46,7 +46,7 @@ public class FailableValue<T> extends DataObject implements Value<T> {
         return value.isRight();
     }
 
-    public void handleValue(Consumer<T> valueHandler) {
+    public void handleValue(Consumer<? super T> valueHandler) {
         value.handleRight(valueHandler::accept);
     }
 

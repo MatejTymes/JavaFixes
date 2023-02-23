@@ -19,14 +19,14 @@ public class DynamicValue<T> implements ChangingValue<T> {
 
     private final Optional<String> valueName;
     private final Supplier<T> valueGenerator;
-    private final ChangingValueUpdateConfig<T> updateConfig;
+    private final ChangingValueUpdateConfig<? super T> updateConfig;
 
     private final AtomicReference<VersionedValue<T>> latestValueHolder = new AtomicReference<>();
 
     public DynamicValue(
             Optional<String> valueName,
             Supplier<T> valueGenerator,
-            ChangingValueUpdateConfig<T> updateConfig
+            ChangingValueUpdateConfig<? super T> updateConfig
     ) {
         this.valueName = valueName;
         this.valueGenerator = valueGenerator;

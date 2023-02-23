@@ -22,9 +22,9 @@ public class CachedValue<T> implements ChangingValue<T> {
 
     private final Optional<String> valueName;
     private final ChangingValue<T> sourceValue;
-    private final ChangingValueUpdateConfig<T> updateConfig;
+    private final ChangingValueUpdateConfig<? super T> updateConfig;
     private final Optional<ReCacheValueIf<? super T>> reCacheValueOnValueRetrievalIf;
-    private final Optional<ScheduledReCachingConfig<T>> scheduledReCachingConfig;
+    private final Optional<ScheduledReCachingConfig<? super T>> scheduledReCachingConfig;
 
     private final AtomicReference<VersionedValue<T>> currentValueHolder = new AtomicReference<>();
     private final AtomicReference<Long> lastRetrievalOfSourceValueTimestamp = new AtomicReference<>();
@@ -33,9 +33,9 @@ public class CachedValue<T> implements ChangingValue<T> {
     public CachedValue(
             Optional<String> valueName,
             ChangingValue<T> sourceValue,
-            ChangingValueUpdateConfig<T> updateConfig,
+            ChangingValueUpdateConfig<? super T> updateConfig,
             Optional<ReCacheValueIf<? super T>> reCacheValueOnValueRetrievalIf,
-            Optional<ScheduledReCachingConfig<T>> scheduledReCachingConfig,
+            Optional<ScheduledReCachingConfig<? super T>> scheduledReCachingConfig,
             boolean prePopulateValueImmediately
     ) {
         this.valueName = valueName;
@@ -49,7 +49,7 @@ public class CachedValue<T> implements ChangingValue<T> {
         }
 
         if (scheduledReCachingConfig.isPresent()) {
-            ScheduledReCachingConfig<T> scheduledConfig = scheduledReCachingConfig.get();
+            ScheduledReCachingConfig<? super T> scheduledConfig = scheduledReCachingConfig.get();
             ReCacheValueIf<? super T> backgroundReCacheCheck = scheduledConfig.reCacheValueInBackgroundIf.orElseGet(ReCacheValueIf::alwaysReCacheValue);
             scheduledConfig.useExecutor.scheduleAtFixedRate(
                     () -> reCacheIfNeeded(backgroundReCacheCheck),

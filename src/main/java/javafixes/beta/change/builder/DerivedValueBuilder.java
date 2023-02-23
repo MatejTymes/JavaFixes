@@ -16,9 +16,7 @@ public class DerivedValueBuilder<SourceType, OutputType> implements ChangingValu
     private final Function<FailableValue<SourceType>, ? extends OutputType> valueMapper;
 
     private Optional<String> valueName = Optional.empty();
-    private Optional<ReplaceOldValueIf<? super OutputType>> replaceOldValueIf = Optional.empty();
-    private Optional<Consumer<? super OutputType>> afterValueChangedFunction = Optional.empty();
-    private Optional<Consumer<? super OutputType>> disposeFunction = Optional.empty();
+    private ChangingValueUpdateConfig<? super OutputType> updateConfig = ChangingValueUpdateConfig.DO_NOTHING_ON_UPDATE_CONFIG;
     private boolean prePopulateValueImmediately = false;
 
     public DerivedValueBuilder(
@@ -48,11 +46,7 @@ public class DerivedValueBuilder<SourceType, OutputType> implements ChangingValu
         return new DerivedValue<>(
                 valueName,
                 sourceValue,
-                new ChangingValueUpdateConfig<>(
-                        replaceOldValueIf,
-                        afterValueChangedFunction,
-                        disposeFunction
-                ),
+                updateConfig,
                 valueMapper,
                 prePopulateValueImmediately
         );
@@ -64,17 +58,22 @@ public class DerivedValueBuilder<SourceType, OutputType> implements ChangingValu
     }
 
     public DerivedValueBuilder<SourceType, OutputType> withReplaceOldValueIf(ReplaceOldValueIf<? super OutputType> replaceOldValueIf) {
-        this.replaceOldValueIf = Optional.of(replaceOldValueIf);
+        this.updateConfig = updateConfig.copyWithReplaceOldValueIf((Optional) Optional.of(replaceOldValueIf));
         return this;
     }
 
     public DerivedValueBuilder<SourceType, OutputType> withAfterValueChangedFunction(Consumer<? super OutputType> afterValueChangedFunction) {
-        this.afterValueChangedFunction = Optional.of(afterValueChangedFunction);
+        this.updateConfig = updateConfig.copyWithAfterValueChangedFunction((Optional) Optional.of(afterValueChangedFunction));
         return this;
     }
 
     public DerivedValueBuilder<SourceType, OutputType> withDisposeFunction(Consumer<? super OutputType> disposeFunction) {
-        this.disposeFunction = Optional.of(disposeFunction);
+        this.updateConfig = updateConfig.copyWithDisposeFunction((Optional) Optional.of(disposeFunction));
+        return this;
+    }
+
+    public DerivedValueBuilder<SourceType, OutputType> withUpdateConfig(ChangingValueUpdateConfig<? super OutputType> updateConfig) {
+        this.updateConfig = updateConfig;
         return this;
     }
 

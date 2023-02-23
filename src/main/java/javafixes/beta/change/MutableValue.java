@@ -16,14 +16,14 @@ public class MutableValue<T> implements ChangingValue<T> {
 
 
     private final Optional<String> valueName;
-    private final ChangingValueUpdateConfig<T> updateConfig;
+    private final ChangingValueUpdateConfig<? super T> updateConfig;
 
     private final AtomicReference<VersionedValue<T>> currentValueHolder = new AtomicReference<>();
 
     public MutableValue(
             Optional<String> valueName,
             FailableValue<T> initialValue,
-            ChangingValueUpdateConfig<T> updateConfig
+            ChangingValueUpdateConfig<? super T> updateConfig
     ) {
         this.valueName = valueName;
         this.updateConfig = updateConfig;

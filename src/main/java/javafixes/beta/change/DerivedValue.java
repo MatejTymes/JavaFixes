@@ -22,7 +22,7 @@ public class DerivedValue<SourceType, OutputType> implements ChangingValue<Outpu
     private final ChangingValue<SourceType> sourceValue;
     // todo: mtymes - change to Function<FailableValue<? super SourceType>, ? extends OutputType>
     private final Function<FailableValue<SourceType>, ? extends OutputType> valueMapper;
-    private final ChangingValueUpdateConfig<OutputType> updateConfig;
+    private final ChangingValueUpdateConfig<? super OutputType> updateConfig;
 
     private final AtomicReference<VersionedValue<OutputType>> currentValueHolder = new AtomicReference<>();
     private final AtomicReference<Long> lastUsedSourceChangeVersion = new AtomicReference<>();
@@ -30,7 +30,7 @@ public class DerivedValue<SourceType, OutputType> implements ChangingValue<Outpu
     public DerivedValue(
             Optional<String> valueName,
             ChangingValue<SourceType> sourceValue,
-            ChangingValueUpdateConfig<OutputType> updateConfig,
+            ChangingValueUpdateConfig<? super OutputType> updateConfig,
             Function<FailableValue<SourceType>, ? extends OutputType> valueMapper,
             boolean prePopulateValueImmediately
     ) {

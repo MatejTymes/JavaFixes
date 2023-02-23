@@ -21,9 +21,7 @@ public class DerivedJoinedValueBuilder<T> implements ChangingValueBuilder<T> {
     private final Function<List<FailableValue<? super Object>>, ? extends T> valuesMapper;
 
     private Optional<String> valueName = Optional.empty();
-    private Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf = Optional.empty();
-    private Optional<Consumer<? super T>> afterValueChangedFunction = Optional.empty();
-    private Optional<Consumer<? super T>> disposeFunction = Optional.empty();
+    private ChangingValueUpdateConfig<? super T> updateConfig = ChangingValueUpdateConfig.DO_NOTHING_ON_UPDATE_CONFIG;
     private boolean prePopulateValueImmediately = false;
 
     public <SourceType> DerivedJoinedValueBuilder(
@@ -79,11 +77,7 @@ public class DerivedJoinedValueBuilder<T> implements ChangingValueBuilder<T> {
                 valueName,
                 sourceValues,
                 valuesMapper,
-                new ChangingValueUpdateConfig<>(
-                        replaceOldValueIf,
-                        afterValueChangedFunction,
-                        disposeFunction
-                ),
+                updateConfig,
                 prePopulateValueImmediately
         );
     }
@@ -94,17 +88,22 @@ public class DerivedJoinedValueBuilder<T> implements ChangingValueBuilder<T> {
     }
 
     public DerivedJoinedValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<? super T> replaceOldValueIf) {
-        this.replaceOldValueIf = Optional.of(replaceOldValueIf);
+        this.updateConfig = updateConfig.copyWithReplaceOldValueIf((Optional) Optional.of(replaceOldValueIf));
         return this;
     }
 
     public DerivedJoinedValueBuilder<T> withAfterValueChangedFunction(Consumer<? super T> afterValueChangedFunction) {
-        this.afterValueChangedFunction = Optional.of(afterValueChangedFunction);
+        this.updateConfig = updateConfig.copyWithAfterValueChangedFunction((Optional) Optional.of(afterValueChangedFunction));
         return this;
     }
 
     public DerivedJoinedValueBuilder<T> withDisposeFunction(Consumer<? super T> disposeFunction) {
-        this.disposeFunction = Optional.of(disposeFunction);
+        this.updateConfig = updateConfig.copyWithDisposeFunction((Optional) Optional.of(disposeFunction));
+        return this;
+    }
+
+    public DerivedJoinedValueBuilder<T> withUpdateConfig(ChangingValueUpdateConfig<? super T> updateConfig) {
+        this.updateConfig = updateConfig;
         return this;
     }
 

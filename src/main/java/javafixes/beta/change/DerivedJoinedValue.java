@@ -14,24 +14,24 @@ import static javafixes.beta.change.ChangingValueHelper.handleNewValue;
 import static javafixes.beta.change.FailableValue.wrapFailure;
 import static javafixes.beta.change.FailableValue.wrapValue;
 
-public class DerivedJoinedValue<OutputType> implements ChangingValue<OutputType> {
+public class DerivedJoinedValue<T> implements ChangingValue<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(DerivedJoinedValue.class);
 
 
     private final Optional<String> valueName;
     private final List<ChangingValue> sourceValues;
-    private final Function<List<FailableValue>, ? extends OutputType> valuesMapper;
-    private final ChangingValueUpdateConfig<OutputType> updateConfig;
+    private final Function<List<FailableValue>, ? extends T> valuesMapper;
+    private final ChangingValueUpdateConfig<? super T> updateConfig;
 
-    private final AtomicReference<VersionedValue<OutputType>> currentValueHolder = new AtomicReference<>();
+    private final AtomicReference<VersionedValue<T>> currentValueHolder = new AtomicReference<>();
     private final AtomicReference<List<Long>> lastUsedSourceChangeVersions = new AtomicReference<>();
 
     public <SourceType> DerivedJoinedValue(
             Optional<String> valueName,
             List<ChangingValue<? extends SourceType>> sourceValues,
-            Function<List<FailableValue<? super SourceType>>, ? extends OutputType> valuesMapper,
-            ChangingValueUpdateConfig<OutputType> updateConfig,
+            Function<List<FailableValue<? super SourceType>>, ? extends T> valuesMapper,
+            ChangingValueUpdateConfig<? super T> updateConfig,
             boolean prePopulateImmediately
     ) {
         this.valueName = valueName;
@@ -50,7 +50,7 @@ public class DerivedJoinedValue<OutputType> implements ChangingValue<OutputType>
     }
 
     @Override
-    public VersionedValue<OutputType> getVersionedValue() {
+    public VersionedValue<T> getVersionedValue() {
         populateWithLatestValue();
 
         return currentValueHolder.get();
@@ -75,7 +75,7 @@ public class DerivedJoinedValue<OutputType> implements ChangingValue<OutputType>
             }
 
             if (shouldUpdate) {
-                FailableValue<OutputType> newValue;
+                FailableValue<T> newValue;
 
                 try {
                     newValue = wrapValue(valuesMapper.apply(currentSourceValues));

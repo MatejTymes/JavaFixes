@@ -5,5 +5,5 @@ import javafixes.beta.change.FailableValue;
 @FunctionalInterface
 public interface ReplaceOldValueIf<T> {
 
-    boolean replaceOldValueIf(FailableValue<T> oldValue, FailableValue<T> newValue);
+    boolean replaceOldValueIf(FailableValue<? extends T> oldValue, FailableValue<? extends T> newValue);
 }

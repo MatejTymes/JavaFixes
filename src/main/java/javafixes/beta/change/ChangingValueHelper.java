@@ -17,9 +17,9 @@ class ChangingValueHelper {
             FailableValue<T> newValue,
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
-            Optional<ReplaceOldValueIf<T>> replaceOldValueIf,
-            Optional<Consumer<T>> afterValueChangedFunction,
-            Optional<Consumer<T>> disposeFunction,
+            Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf,
+            Optional<Consumer<? super T>> afterValueChangedFunction,
+            Optional<Consumer<? super T>> disposeFunction,
             Logger logger
     ) {
         VersionedValue<T> oldValue = valueHolder.get();
@@ -61,16 +61,16 @@ class ChangingValueHelper {
             FailableValue<T> newValue,
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
-            ChangingValueUpdateConfig updateConfig,
+            ChangingValueUpdateConfig<? super T> updateConfig,
             Logger logger
     ) {
         return handleNewValue(
                 newValue,
                 valueHolder,
                 valueName,
-                updateConfig.replaceOldValueIf,
-                updateConfig.afterValueChangedFunction,
-                updateConfig.disposeFunction,
+                (Optional) updateConfig.replaceOldValueIf,
+                (Optional) updateConfig.afterValueChangedFunction,
+                (Optional) updateConfig.disposeFunction,
                 logger
         );
     }
@@ -97,7 +97,7 @@ class ChangingValueHelper {
     static <T> boolean shouldUpdate(
             VersionedValue<T> oldValue,
             FailableValue<T> newValue,
-            Optional<ReplaceOldValueIf<T>> replaceOldValueIf,
+            Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf,
             Optional<String> valueName,
             Logger logger
     ) {
@@ -138,7 +138,7 @@ class ChangingValueHelper {
 
     static <T> void applyAfterValueChangedFunction(
             FailableValue<T> currentValue,
-            Optional<Consumer<T>> afterValueChangedFunction,
+            Optional<Consumer<? super T>> afterValueChangedFunction,
             Optional<String> valueName,
             Logger logger
     ) {
@@ -158,7 +158,7 @@ class ChangingValueHelper {
 
     static <T> void applyDisposeFunction(
             VersionedValue<T> oldValue,
-            Optional<Consumer<T>> disposeFunction,
+            Optional<Consumer<? super T>> disposeFunction,
             Optional<String> valueName,
             Logger logger
     ) {
