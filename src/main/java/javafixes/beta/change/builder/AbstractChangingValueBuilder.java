@@ -1,6 +1,7 @@
 package javafixes.beta.change.builder;
 
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
+import javafixes.beta.change.function.AfterValueChangedHandler;
 import javafixes.beta.change.function.FailableValueHandler;
 import javafixes.beta.change.function.ReplaceOldValueIf;
 
@@ -31,8 +32,8 @@ public abstract class AbstractChangingValueBuilder<T, ThisBuilder extends Changi
         return thisBuilder();
     }
 
-    public ThisBuilder withAfterValueChangedFunction(Consumer<? super T> afterValueChangedFunction) {
-        this.updateConfig = updateConfig.copyWithAfterValueChangedFunction((Consumer) afterValueChangedFunction);
+    public ThisBuilder withAfterValueChangedFunction(AfterValueChangedHandler<? super T> afterValueChangedFunction) {
+        this.updateConfig = updateConfig.copyWithAfterValueChangedFunction((AfterValueChangedHandler) afterValueChangedFunction);
         return thisBuilder();
     }
 

@@ -1,6 +1,7 @@
 package javafixes.beta.change;
 
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
+import javafixes.beta.change.function.AfterValueChangedHandler;
 import javafixes.beta.change.function.FailableValueHandler;
 import javafixes.beta.change.function.ReplaceOldValueIf;
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ class ChangingValueHelper {
             Optional<String> valueName,
             Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf,
             Optional<FailableValueHandler<? super T>> forEachValueFunction,
-            Optional<Consumer<? super T>> afterValueChangedFunction,
+            Optional<AfterValueChangedHandler<? super T>> afterValueChangedFunction,
             Optional<Consumer<? super T>> disposeFunction,
             Logger logger
     ) {
@@ -48,14 +49,13 @@ class ChangingValueHelper {
                     logger
             );
 
-            if (oldValue != null) { // todo: mtymes - put this into the apply method
-                applyAfterValueChangedFunction(
-                        newValue,
-                        afterValueChangedFunction,
-                        valueName,
-                        logger
-                );
-            }
+            applyAfterValueChangedFunction(
+                    oldValue,
+                    newValue,
+                    afterValueChangedFunction,
+                    valueName,
+                    logger
+            );
 
             applyDisposeFunction(
                     oldValue,
@@ -170,21 +170,24 @@ class ChangingValueHelper {
     }
 
     static <T> void applyAfterValueChangedFunction(
+            VersionedValue<T> oldValue,
             FailableValue<T> newValue,
-            Optional<Consumer<? super T>> afterValueChangedFunction,
+            Optional<AfterValueChangedHandler<? super T>> afterValueChangedFunction,
             Optional<String> valueName,
             Logger logger
     ) {
-        try {
-            afterValueChangedFunction.ifPresent(function -> function.accept(newValue.value()));
-        } catch (Exception loggableException) {
+        if (oldValue != null) {
             try {
-                logger.error(
-                        "Failed to apply afterValueChangedFunction to new value" + valueName.map(name -> " for '" + name + "'").orElse(""),
-                        loggableException
-                );
-            } catch (Exception unwantedException) {
-                unwantedException.printStackTrace();
+                afterValueChangedFunction.ifPresent(handler -> handler.afterValueChanged(oldValue.value, newValue));
+            } catch (Exception loggableException) {
+                try {
+                    logger.error(
+                            "Failed to apply afterValueChangedFunction to new value" + valueName.map(name -> " for '" + name + "'").orElse(""),
+                            loggableException
+                    );
+                } catch (Exception unwantedException) {
+                    unwantedException.printStackTrace();
+                }
             }
         }
     }
@@ -195,9 +198,9 @@ class ChangingValueHelper {
             Optional<String> valueName,
             Logger logger
     ) {
-        if (oldValue != null) {
+        if (oldValue != null && oldValue.value.isNotFailure()) {
             try {
-                disposeFunction.ifPresent(oldValue.value::handleValue);
+                disposeFunction.ifPresent(handler -> handler.accept(oldValue.value()));
             } catch (Exception loggableException) {
                 try {
                     logger.error(
