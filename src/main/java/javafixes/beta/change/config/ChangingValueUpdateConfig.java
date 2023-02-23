@@ -49,6 +49,12 @@ public class ChangingValueUpdateConfig<T> {
         );
     }
 
+    public ChangingValueUpdateConfig<T> copyWithReplaceOldValueIf(
+            ReplaceOldValueIf<T> replaceOldValueIf
+    ) {
+        return copyWithReplaceOldValueIf(Optional.of(replaceOldValueIf));
+    }
+
     public ChangingValueUpdateConfig<T> copyWithForEachValueFunction(
             Optional<FailableValueHandler<T>> forEachValueFunction
     ) {
@@ -58,6 +64,12 @@ public class ChangingValueUpdateConfig<T> {
                 this.afterValueChangedFunction,
                 this.disposeFunction
         );
+    }
+
+    public ChangingValueUpdateConfig<T> copyWithForEachValueFunction(
+            FailableValueHandler<T> forEachValueFunction
+    ) {
+        return copyWithForEachValueFunction(Optional.of(forEachValueFunction));
     }
 
     public ChangingValueUpdateConfig<T> copyWithAfterValueChangedFunction(
@@ -71,6 +83,12 @@ public class ChangingValueUpdateConfig<T> {
         );
     }
 
+    public ChangingValueUpdateConfig<T> copyWithAfterValueChangedFunction(
+            Consumer<T> afterValueChangedFunction
+    ) {
+        return copyWithAfterValueChangedFunction(Optional.of(afterValueChangedFunction));
+    }
+
     public ChangingValueUpdateConfig<T> copyWithDisposeFunction(
             Optional<Consumer<T>> disposeFunction
     ) {
@@ -80,5 +98,11 @@ public class ChangingValueUpdateConfig<T> {
                 this.afterValueChangedFunction,
                 disposeFunction
         );
+    }
+
+    public ChangingValueUpdateConfig<T> copyWithDisposeFunction(
+            Consumer<T> disposeFunction
+    ) {
+        return copyWithDisposeFunction(Optional.of(disposeFunction));
     }
 }

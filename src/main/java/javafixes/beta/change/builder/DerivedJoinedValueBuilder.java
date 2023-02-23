@@ -3,26 +3,19 @@ package javafixes.beta.change.builder;
 import javafixes.beta.change.ChangingValue;
 import javafixes.beta.change.DerivedJoinedValue;
 import javafixes.beta.change.FailableValue;
-import javafixes.beta.change.config.ChangingValueUpdateConfig;
-import javafixes.beta.change.function.FailableValueHandler;
-import javafixes.beta.change.function.ReplaceOldValueIf;
 import javafixes.common.function.TriFunction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class DerivedJoinedValueBuilder<T> implements ChangingValueBuilder<T> {
+public class DerivedJoinedValueBuilder<T> extends AbstractChangingValueBuilder<T, DerivedJoinedValueBuilder<T>> {
 
     private final List<ChangingValue<? extends Object>> sourceValues;
     private final Function<List<FailableValue<? super Object>>, ? extends T> valuesMapper;
 
-    private Optional<String> valueName = Optional.empty();
-    private ChangingValueUpdateConfig<? super T> updateConfig = ChangingValueUpdateConfig.DO_NOTHING_ON_UPDATE_CONFIG;
     private boolean prePopulateValueImmediately = false;
 
     public <SourceType> DerivedJoinedValueBuilder(
@@ -83,38 +76,13 @@ public class DerivedJoinedValueBuilder<T> implements ChangingValueBuilder<T> {
         );
     }
 
-    public DerivedJoinedValueBuilder<T> withValueName(String valueName) {
-        this.valueName = Optional.of(valueName);
-        return this;
-    }
-
-    public DerivedJoinedValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<? super T> replaceOldValueIf) {
-        this.updateConfig = updateConfig.copyWithReplaceOldValueIf((Optional) Optional.of(replaceOldValueIf));
-        return this;
-    }
-
-    public DerivedJoinedValueBuilder<T> withForEachValueFunction(FailableValueHandler<? super T> forEachValueFunction) {
-        this.updateConfig = updateConfig.copyWithForEachValueFunction((Optional) Optional.of(forEachValueFunction));
-        return this;
-    }
-
-    public DerivedJoinedValueBuilder<T> withAfterValueChangedFunction(Consumer<? super T> afterValueChangedFunction) {
-        this.updateConfig = updateConfig.copyWithAfterValueChangedFunction((Optional) Optional.of(afterValueChangedFunction));
-        return this;
-    }
-
-    public DerivedJoinedValueBuilder<T> withDisposeFunction(Consumer<? super T> disposeFunction) {
-        this.updateConfig = updateConfig.copyWithDisposeFunction((Optional) Optional.of(disposeFunction));
-        return this;
-    }
-
-    public DerivedJoinedValueBuilder<T> withUpdateConfig(ChangingValueUpdateConfig<? super T> updateConfig) {
-        this.updateConfig = updateConfig;
-        return this;
-    }
-
     public DerivedJoinedValueBuilder<T> withPrePopulateValueImmediately(boolean prePopulateValueImmediately) {
         this.prePopulateValueImmediately = prePopulateValueImmediately;
+        return this;
+    }
+
+    @Override
+    protected DerivedJoinedValueBuilder<T> thisBuilder() {
         return this;
     }
 }

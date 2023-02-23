@@ -2,22 +2,13 @@ package javafixes.beta.change.builder;
 
 import javafixes.beta.change.FailableValue;
 import javafixes.beta.change.MutableValue;
-import javafixes.beta.change.config.ChangingValueUpdateConfig;
-import javafixes.beta.change.function.FailableValueHandler;
-import javafixes.beta.change.function.ReplaceOldValueIf;
-
-import java.util.Optional;
-import java.util.function.Consumer;
 
 import static javafixes.beta.change.FailableValue.wrapFailure;
 import static javafixes.beta.change.FailableValue.wrapValue;
 
-public class MutableValueBuilder<T> implements ChangingValueBuilder<T> {
+public class MutableValueBuilder<T> extends AbstractChangingValueBuilder<T, MutableValueBuilder<T>> {
 
     private final FailableValue<T> initialValue;
-
-    private Optional<String> valueName = Optional.empty();
-    private ChangingValueUpdateConfig<? super T> updateConfig = ChangingValueUpdateConfig.DO_NOTHING_ON_UPDATE_CONFIG;
 
     public MutableValueBuilder(
             FailableValue<T> initialValue
@@ -46,33 +37,8 @@ public class MutableValueBuilder<T> implements ChangingValueBuilder<T> {
         );
     }
 
-    public MutableValueBuilder<T> withValueName(String valueName) {
-        this.valueName = Optional.of(valueName);
-        return this;
-    }
-
-    public MutableValueBuilder<T> withReplaceOldValueIf(ReplaceOldValueIf<? super T> replaceOldValueIf) {
-        this.updateConfig = updateConfig.copyWithReplaceOldValueIf((Optional) Optional.of(replaceOldValueIf));
-        return this;
-    }
-
-    public MutableValueBuilder<T> withForEachValueFunction(FailableValueHandler<? super T> forEachValueFunction) {
-        this.updateConfig = updateConfig.copyWithForEachValueFunction((Optional) Optional.of(forEachValueFunction));
-        return this;
-    }
-
-    public MutableValueBuilder<T> withAfterValueChangedFunction(Consumer<? super T> afterValueChangedFunction) {
-        this.updateConfig = updateConfig.copyWithAfterValueChangedFunction((Optional) Optional.of(afterValueChangedFunction));
-        return this;
-    }
-
-    public MutableValueBuilder<T> withDisposeFunction(Consumer<? super T> disposeFunction) {
-        this.updateConfig = updateConfig.copyWithDisposeFunction((Optional) Optional.of(disposeFunction));
-        return this;
-    }
-
-    public MutableValueBuilder<T> withUpdateConfig(ChangingValueUpdateConfig<? super T> updateConfig) {
-        this.updateConfig = updateConfig;
+    @Override
+    protected MutableValueBuilder<T> thisBuilder() {
         return this;
     }
 }
