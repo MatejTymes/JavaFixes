@@ -29,7 +29,7 @@ public class DerivedJoinedValueBuilder<T> extends AbstractChangingValueBuilder<T
     public static <T1, T2, OutputType> DerivedJoinedValueBuilder<OutputType> joinBuilder(
             ChangingValue<T1> value1,
             ChangingValue<T2> value2,
-            BiFunction<FailableValue<? super T1>, FailableValue<? super T2>, ? extends OutputType> mapFunction
+            BiFunction<FailableValue<T1>, FailableValue<T2>, OutputType> mapFunction
     ) {
         return new DerivedJoinedValueBuilder<>(
                 Arrays.asList(value1, value2),
@@ -45,7 +45,7 @@ public class DerivedJoinedValueBuilder<T> extends AbstractChangingValueBuilder<T
             ChangingValue<T1> value1,
             ChangingValue<T2> value2,
             ChangingValue<T3> value3,
-            TriFunction<FailableValue<? super T1>, FailableValue<? super T2>, FailableValue<? super T3>, ? extends OutputType> mapFunction
+            TriFunction<FailableValue<T1>, FailableValue<T2>, FailableValue<T3>, OutputType> mapFunction
     ) {
         return new DerivedJoinedValueBuilder<>(
                 Arrays.asList(value1, value2, value3),
@@ -60,7 +60,7 @@ public class DerivedJoinedValueBuilder<T> extends AbstractChangingValueBuilder<T
 
     public static <T, OutputType> DerivedJoinedValueBuilder<OutputType> joinBuilder(
             List<ChangingValue<? extends T>> values,
-            Function<List<FailableValue<? super T>>, ? extends OutputType> mapFunction
+            Function<List<FailableValue<? super T>>, OutputType> mapFunction
     ) {
         return new DerivedJoinedValueBuilder<>(values, mapFunction);
     }
