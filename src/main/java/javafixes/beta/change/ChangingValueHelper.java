@@ -20,8 +20,8 @@ class ChangingValueHelper {
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
             Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf,
-            Optional<FailableValueHandler<? super T>> onNewValueFunction,
-            Optional<AfterValueChangedHandler<? super T>> afterValueChangedFunction,
+            Optional<FailableValueHandler<? super T>> eachValueHandler,
+            Optional<AfterValueChangedHandler<? super T>> afterValueChangedHandler,
             Optional<Consumer<? super T>> disposeFunction,
             Logger logger
     ) {
@@ -42,17 +42,17 @@ class ChangingValueHelper {
                     valueHolder
             );
 
-            applyOnNewValueFunction(
+            applyEachValueHandler(
                     newValue,
-                    onNewValueFunction,
+                    eachValueHandler,
                     valueName,
                     logger
             );
 
-            applyAfterValueChangedFunction(
+            applyAfterValueChangedHandler(
                     oldValue,
                     newValue,
-                    afterValueChangedFunction,
+                    afterValueChangedHandler,
                     valueName,
                     logger
             );
@@ -80,8 +80,8 @@ class ChangingValueHelper {
                 valueHolder,
                 valueName,
                 (Optional) updateConfig.replaceOldValueIf,
-                (Optional) updateConfig.onNewValueFunction,
-                (Optional) updateConfig.afterValueChangedFunction,
+                (Optional) updateConfig.eachValueHandler,
+                (Optional) updateConfig.afterValueChangedHandler,
                 (Optional) updateConfig.disposeFunction,
                 logger
         );
@@ -100,8 +100,8 @@ class ChangingValueHelper {
                 valueHolder,
                 valueName,
                 ignoreDifferenceCheck ? Optional.of(alwaysReplaceOldValue()) : updateConfig.replaceOldValueIf,
-                updateConfig.onNewValueFunction,
-                updateConfig.afterValueChangedFunction,
+                updateConfig.eachValueHandler,
+                updateConfig.afterValueChangedHandler,
                 updateConfig.disposeFunction,
                 logger
         );
@@ -149,18 +149,18 @@ class ChangingValueHelper {
         }
     }
 
-    static <T> void applyOnNewValueFunction(
+    static <T> void applyEachValueHandler(
             FailableValue<T> newValue,
-            Optional<FailableValueHandler<? super T>> onNewValueFunction,
+            Optional<FailableValueHandler<? super T>> eachValueHandler,
             Optional<String> valueName,
             Logger logger
     ) {
         try {
-            onNewValueFunction.ifPresent(handler -> handler.handle(newValue));
+            eachValueHandler.ifPresent(handler -> handler.handle(newValue));
         } catch (Exception loggableException) {
             try {
                 logger.error(
-                        "Failed to apply onNewValueFunction to new value" + valueName.map(name -> " for '" + name + "'").orElse(""),
+                        "Failed to apply eachValueHandler to new value" + valueName.map(name -> " for '" + name + "'").orElse(""),
                         loggableException
                 );
             } catch (Exception unwantedException) {
@@ -169,20 +169,20 @@ class ChangingValueHelper {
         }
     }
 
-    static <T> void applyAfterValueChangedFunction(
+    static <T> void applyAfterValueChangedHandler(
             VersionedValue<T> oldValue,
             FailableValue<T> newValue,
-            Optional<AfterValueChangedHandler<? super T>> afterValueChangedFunction,
+            Optional<AfterValueChangedHandler<? super T>> afterValueChangedHandler,
             Optional<String> valueName,
             Logger logger
     ) {
         if (oldValue != null) {
             try {
-                afterValueChangedFunction.ifPresent(handler -> handler.afterValueChanged(oldValue.value, newValue));
+                afterValueChangedHandler.ifPresent(handler -> handler.afterValueChanged(oldValue.value, newValue));
             } catch (Exception loggableException) {
                 try {
                     logger.error(
-                            "Failed to apply afterValueChangedFunction to new value" + valueName.map(name -> " for '" + name + "'").orElse(""),
+                            "Failed to apply afterValueChangedHandler to new value" + valueName.map(name -> " for '" + name + "'").orElse(""),
                             loggableException
                     );
                 } catch (Exception unwantedException) {

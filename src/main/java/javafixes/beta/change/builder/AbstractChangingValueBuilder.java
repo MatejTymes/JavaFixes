@@ -27,13 +27,13 @@ public abstract class AbstractChangingValueBuilder<T, ThisBuilder extends Changi
         return thisBuilder();
     }
 
-    public ThisBuilder withOnNewValueFunction(FailableValueHandler<? super T> onNewValueFunction) {
-        this.updateConfig = updateConfig.copyWithOnNewValueFunction((FailableValueHandler) onNewValueFunction);
+    public ThisBuilder withEachValueHandler(FailableValueHandler<? super T> eachValueHandler) {
+        this.updateConfig = updateConfig.copyWithEachValueHandler((FailableValueHandler) eachValueHandler);
         return thisBuilder();
     }
 
-    public ThisBuilder withAfterValueChangedFunction(AfterValueChangedHandler<? super T> afterValueChangedFunction) {
-        this.updateConfig = updateConfig.copyWithAfterValueChangedFunction((AfterValueChangedHandler) afterValueChangedFunction);
+    public ThisBuilder withAfterValueChangedHandler(AfterValueChangedHandler<? super T> afterValueChangedHandler) {
+        this.updateConfig = updateConfig.copyWithAfterValueChangedHandler((AfterValueChangedHandler) afterValueChangedHandler);
         return thisBuilder();
     }
 
