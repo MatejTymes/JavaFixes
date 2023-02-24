@@ -6,6 +6,8 @@ import javafixes.beta.change.function.ReplaceOldValueIf;
 import javafixes.common.function.TriFunction;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -27,15 +29,31 @@ public class ChangingValueUtil {
     }
 
     public static <T> FailableValueHandler<T> handleValue(
+            BiConsumer<Optional<String>, T> consumer
+    ) {
+        return (valueName, failableValue) -> failableValue.handleValue(
+                value -> consumer.accept(valueName, value)
+        );
+    }
+
+    public static <T> FailableValueHandler<T> handleValue(
             Consumer<T> consumer
     ) {
-        return failableValue -> failableValue.handleValue(consumer);
+        return (valueName, failableValue) -> failableValue.handleValue(consumer);
+    }
+
+    public static <T> FailableValueHandler<T> handleFailure(
+            BiConsumer<Optional<String>, RuntimeException> consumer
+    ) {
+        return (valueName, failableValue) -> failableValue.handleFailure(
+                failure -> consumer.accept(valueName, failure)
+        );
     }
 
     public static <T> FailableValueHandler<T> handleFailure(
             Consumer<RuntimeException> consumer
     ) {
-        return failableValue -> failableValue.handleFailure(consumer);
+        return (valueName, failableValue) -> failableValue.handleFailure(consumer);
     }
 
     public static <T1, T2, OutputType> BiFunction<FailableValue<T1>, FailableValue<T2>, OutputType> joiningValues(

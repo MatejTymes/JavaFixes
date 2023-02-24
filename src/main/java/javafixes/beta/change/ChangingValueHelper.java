@@ -43,9 +43,9 @@ class ChangingValueHelper {
             );
 
             applyEachValueHandler(
+                    valueName,
                     newValue,
                     eachValueHandler,
-                    valueName,
                     logger
             );
 
@@ -150,13 +150,13 @@ class ChangingValueHelper {
     }
 
     static <T> void applyEachValueHandler(
+            Optional<String> valueName,
             FailableValue<T> newValue,
             Optional<FailableValueHandler<? super T>> eachValueHandler,
-            Optional<String> valueName,
             Logger logger
     ) {
         try {
-            eachValueHandler.ifPresent(handler -> handler.handle(newValue));
+            eachValueHandler.ifPresent(handler -> handler.handle(valueName, newValue));
         } catch (Exception loggableException) {
             try {
                 logger.error(
