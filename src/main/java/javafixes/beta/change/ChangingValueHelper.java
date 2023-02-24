@@ -20,7 +20,7 @@ class ChangingValueHelper {
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
             Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf,
-            Optional<FailableValueHandler<? super T>> forEachValueFunction,
+            Optional<FailableValueHandler<? super T>> onNewValueFunction,
             Optional<AfterValueChangedHandler<? super T>> afterValueChangedFunction,
             Optional<Consumer<? super T>> disposeFunction,
             Logger logger
@@ -42,9 +42,9 @@ class ChangingValueHelper {
                     valueHolder
             );
 
-            applyForEachValueFunction(
+            applyOnNewValueFunction(
                     newValue,
-                    forEachValueFunction,
+                    onNewValueFunction,
                     valueName,
                     logger
             );
@@ -80,7 +80,7 @@ class ChangingValueHelper {
                 valueHolder,
                 valueName,
                 (Optional) updateConfig.replaceOldValueIf,
-                (Optional) updateConfig.forEachValueFunction,
+                (Optional) updateConfig.onNewValueFunction,
                 (Optional) updateConfig.afterValueChangedFunction,
                 (Optional) updateConfig.disposeFunction,
                 logger
@@ -100,7 +100,7 @@ class ChangingValueHelper {
                 valueHolder,
                 valueName,
                 ignoreDifferenceCheck ? Optional.of(alwaysReplaceOldValue()) : updateConfig.replaceOldValueIf,
-                updateConfig.forEachValueFunction,
+                updateConfig.onNewValueFunction,
                 updateConfig.afterValueChangedFunction,
                 updateConfig.disposeFunction,
                 logger
@@ -149,18 +149,18 @@ class ChangingValueHelper {
         }
     }
 
-    static <T> void applyForEachValueFunction(
+    static <T> void applyOnNewValueFunction(
             FailableValue<T> newValue,
-            Optional<FailableValueHandler<? super T>> forEachValueFunction,
+            Optional<FailableValueHandler<? super T>> onNewValueFunction,
             Optional<String> valueName,
             Logger logger
     ) {
         try {
-            forEachValueFunction.ifPresent(handler -> handler.handle(newValue));
+            onNewValueFunction.ifPresent(handler -> handler.handle(newValue));
         } catch (Exception loggableException) {
             try {
                 logger.error(
-                        "Failed to apply forEachValueFunction to new value" + valueName.map(name -> " for '" + name + "'").orElse(""),
+                        "Failed to apply onNewValueFunction to new value" + valueName.map(name -> " for '" + name + "'").orElse(""),
                         loggableException
                 );
             } catch (Exception unwantedException) {

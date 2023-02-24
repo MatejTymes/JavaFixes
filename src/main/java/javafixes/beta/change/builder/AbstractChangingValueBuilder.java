@@ -27,8 +27,8 @@ public abstract class AbstractChangingValueBuilder<T, ThisBuilder extends Changi
         return thisBuilder();
     }
 
-    public ThisBuilder withForEachValueFunction(FailableValueHandler<? super T> forEachValueFunction) {
-        this.updateConfig = updateConfig.copyWithForEachValueFunction((FailableValueHandler) forEachValueFunction);
+    public ThisBuilder withOnNewValueFunction(FailableValueHandler<? super T> onNewValueFunction) {
+        this.updateConfig = updateConfig.copyWithOnNewValueFunction((FailableValueHandler) onNewValueFunction);
         return thisBuilder();
     }
 

@@ -13,17 +13,16 @@ public class ChangingValueUpdateConfig<T> {
 
     public final Optional<ReplaceOldValueIf<T>> replaceOldValueIf;
 
-    public final Optional<FailableValueHandler<T>> forEachValueFunction;
+    public final Optional<FailableValueHandler<T>> onNewValueFunction;
     public final Optional<AfterValueChangedHandler<T>> afterValueChangedFunction;
     public final Optional<Consumer<T>> disposeFunction;
 
     public ChangingValueUpdateConfig(
-            Optional<FailableValueHandler<T>> forEachValueFunction,
-            Optional<ReplaceOldValueIf<T>> replaceOldValueIf,
+            Optional<ReplaceOldValueIf<T>> replaceOldValueIf, Optional<FailableValueHandler<T>> onNewValueFunction,
             Optional<AfterValueChangedHandler<T>> afterValueChangedFunction,
             Optional<Consumer<T>> disposeFunction
     ) {
-        this.forEachValueFunction = forEachValueFunction;
+        this.onNewValueFunction = onNewValueFunction;
         this.replaceOldValueIf = replaceOldValueIf;
         this.afterValueChangedFunction = afterValueChangedFunction;
         this.disposeFunction = disposeFunction;
@@ -37,8 +36,8 @@ public class ChangingValueUpdateConfig<T> {
             Optional<ReplaceOldValueIf<T>> replaceOldValueIf
     ) {
         return new ChangingValueUpdateConfig<>(
-                this.forEachValueFunction,
                 replaceOldValueIf,
+                this.onNewValueFunction,
                 this.afterValueChangedFunction,
                 this.disposeFunction
         );
@@ -50,29 +49,29 @@ public class ChangingValueUpdateConfig<T> {
         return copyWithReplaceOldValueIf(Optional.of(replaceOldValueIf));
     }
 
-    public ChangingValueUpdateConfig<T> copyWithForEachValueFunction(
-            Optional<FailableValueHandler<T>> forEachValueFunction
+    public ChangingValueUpdateConfig<T> copyWithOnNewValueFunction(
+            Optional<FailableValueHandler<T>> onNewValueFunction
     ) {
         return new ChangingValueUpdateConfig<>(
-                forEachValueFunction,
                 this.replaceOldValueIf,
+                onNewValueFunction,
                 this.afterValueChangedFunction,
                 this.disposeFunction
         );
     }
 
-    public ChangingValueUpdateConfig<T> copyWithForEachValueFunction(
-            FailableValueHandler<T> forEachValueFunction
+    public ChangingValueUpdateConfig<T> copyWithOnNewValueFunction(
+            FailableValueHandler<T> onNewValueFunction
     ) {
-        return copyWithForEachValueFunction(Optional.of(forEachValueFunction));
+        return copyWithOnNewValueFunction(Optional.of(onNewValueFunction));
     }
 
     public ChangingValueUpdateConfig<T> copyWithAfterValueChangedFunction(
             Optional<AfterValueChangedHandler<T>> afterValueChangedFunction
     ) {
         return new ChangingValueUpdateConfig<>(
-                this.forEachValueFunction,
                 this.replaceOldValueIf,
+                this.onNewValueFunction,
                 afterValueChangedFunction,
                 this.disposeFunction
         );
@@ -88,8 +87,8 @@ public class ChangingValueUpdateConfig<T> {
             Optional<Consumer<T>> disposeFunction
     ) {
         return new ChangingValueUpdateConfig<>(
-                this.forEachValueFunction,
                 this.replaceOldValueIf,
+                this.onNewValueFunction,
                 this.afterValueChangedFunction,
                 disposeFunction
         );
