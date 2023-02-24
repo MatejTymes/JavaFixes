@@ -182,7 +182,7 @@ class ChangingValueHelper {
             } catch (Exception loggableException) {
                 try {
                     logger.error(
-                            "Failed to apply afterValueChangedHandler to new value" + valueName.map(name -> " for '" + name + "'").orElse(""),
+                            "Failed to apply afterValueChangedHandler" + valueName.map(name -> " for '" + name + "'").orElse(""),
                             loggableException
                     );
                 } catch (Exception unwantedException) {
