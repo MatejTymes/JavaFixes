@@ -1,8 +1,9 @@
 package javafixes.beta.change.util;
 
 import javafixes.beta.change.FailableValue;
-import javafixes.beta.change.function.FailableValueHandler;
+import javafixes.beta.change.function.EachValueHandler;
 import javafixes.beta.change.function.ReplaceOldValueIf;
+import javafixes.common.function.TriConsumer;
 import javafixes.common.function.TriFunction;
 
 import java.util.List;
@@ -28,32 +29,124 @@ public class ChangingValueUtil {
         return (oldValue, newValue) -> valueCheck.apply(oldValue.value(), newValue.value());
     }
 
-    public static <T> FailableValueHandler<T> handleValue(
+    public static <T> EachValueHandler<T> handleValue(
+            TriConsumer<Boolean, Optional<String>, T> consumer
+    ) {
+        return (willBeUsed, valueName, failableValue) -> {
+            failableValue.handleValue(value -> consumer.accept(willBeUsed, valueName, value));
+        };
+    }
+
+    public static <T> EachValueHandler<T> handleValue(
+            BiConsumer<Boolean, T> consumer
+    ) {
+        return (willBeUsed, valueName, failableValue) -> {
+            failableValue.handleValue(value -> consumer.accept(willBeUsed, value));
+        };
+    }
+
+    public static <T> EachValueHandler<T> handleUsedValue(
             BiConsumer<Optional<String>, T> consumer
     ) {
-        return (valueName, failableValue) -> failableValue.handleValue(
-                value -> consumer.accept(valueName, value)
-        );
+        return (willBeUsed, valueName, failableValue) -> {
+            if (willBeUsed) {
+                failableValue.handleValue(
+                        value -> consumer.accept(valueName, value)
+                );
+            }
+        };
     }
 
-    public static <T> FailableValueHandler<T> handleValue(
+    public static <T> EachValueHandler<T> handleUsedValue(
             Consumer<T> consumer
     ) {
-        return (valueName, failableValue) -> failableValue.handleValue(consumer);
+        return (willBeUsed, valueName, failableValue) -> {
+            if (willBeUsed) {
+                failableValue.handleValue(consumer);
+            }
+        };
     }
 
-    public static <T> FailableValueHandler<T> handleFailure(
+    public static <T> EachValueHandler<T> handleNOTUsedValue(
+            BiConsumer<Optional<String>, T> consumer
+    ) {
+        return (willBeUsed, valueName, failableValue) -> {
+            if (!willBeUsed) {
+                failableValue.handleValue(
+                        value -> consumer.accept(valueName, value)
+                );
+            }
+        };
+    }
+
+    public static <T> EachValueHandler<T> handleNOTUsedValue(
+            Consumer<T> consumer
+    ) {
+        return (willBeUsed, valueName, failableValue) -> {
+            if (!willBeUsed) {
+                failableValue.handleValue(consumer);
+            }
+        };
+    }
+
+    public static <T> EachValueHandler<T> handleFailure(
+            TriConsumer<Boolean, Optional<String>, RuntimeException> consumer
+    ) {
+        return (willBeUsed, valueName, failableValue) -> {
+            failableValue.handleFailure(failure -> consumer.accept(willBeUsed, valueName, failure));
+        };
+    }
+
+    public static <T> EachValueHandler<T> handleFailure(
+            BiConsumer<Boolean, RuntimeException> consumer
+    ) {
+        return (willBeUsed, valueName, failableValue) -> {
+            failableValue.handleFailure(failure -> consumer.accept(willBeUsed, failure));
+        };
+    }
+
+    public static <T> EachValueHandler<T> handleUsedFailure(
             BiConsumer<Optional<String>, RuntimeException> consumer
     ) {
-        return (valueName, failableValue) -> failableValue.handleFailure(
-                failure -> consumer.accept(valueName, failure)
-        );
+        return (willBeUsed, valueName, failableValue) -> {
+            if (willBeUsed) {
+                failableValue.handleFailure(
+                        failure -> consumer.accept(valueName, failure)
+                );
+            }
+        };
     }
 
-    public static <T> FailableValueHandler<T> handleFailure(
+    public static <T> EachValueHandler<T> handleUsedFailure(
             Consumer<RuntimeException> consumer
     ) {
-        return (valueName, failableValue) -> failableValue.handleFailure(consumer);
+        return (willBeUsed, valueName, failableValue) -> {
+            if (willBeUsed) {
+                failableValue.handleFailure(consumer);
+            }
+        };
+    }
+
+    public static <T> EachValueHandler<T> handleNOTUsedFailure(
+            BiConsumer<Optional<String>, RuntimeException> consumer
+    ) {
+        return (willBeUsed, valueName, failableValue) -> {
+            if (!willBeUsed) {
+                failableValue.handleFailure(
+                        failure -> consumer.accept(valueName, failure)
+                );
+            }
+        };
+    }
+
+    public static <T> EachValueHandler<T> handleNOTUsedFailure(
+            Consumer<RuntimeException> consumer
+    ) {
+        return (willBeUsed, valueName, failableValue) -> {
+            if (!willBeUsed) {
+                failableValue.handleFailure(consumer);
+            }
+        };
     }
 
     public static <T1, T2, OutputType> BiFunction<FailableValue<T1>, FailableValue<T2>, OutputType> joiningValues(

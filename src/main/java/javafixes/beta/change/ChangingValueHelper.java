@@ -2,7 +2,7 @@ package javafixes.beta.change;
 
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
 import javafixes.beta.change.function.AfterValueChangedHandler;
-import javafixes.beta.change.function.FailableValueHandler;
+import javafixes.beta.change.function.EachValueHandler;
 import javafixes.beta.change.function.ReplaceOldValueIf;
 import org.slf4j.Logger;
 
@@ -20,7 +20,7 @@ class ChangingValueHelper {
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
             Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf,
-            Optional<FailableValueHandler<? super T>> eachValueHandler,
+            Optional<EachValueHandler<? super T>> eachValueHandler,
             Optional<AfterValueChangedHandler<? super T>> afterValueChangedHandler,
             Optional<Consumer<? super T>> disposeFunction,
             Logger logger
@@ -35,7 +35,15 @@ class ChangingValueHelper {
                 logger
         );
 
-        if (shouldUpdate) {
+        if (!shouldUpdate) {
+            applyEachValueHandler(
+                    false,
+                    valueName,
+                    newValue,
+                    eachValueHandler,
+                    logger
+            );
+        } else {
             setNewValue(
                     oldValue,
                     newValue,
@@ -43,6 +51,7 @@ class ChangingValueHelper {
             );
 
             applyEachValueHandler(
+                    true,
                     valueName,
                     newValue,
                     eachValueHandler,
@@ -114,16 +123,14 @@ class ChangingValueHelper {
             Optional<String> valueName,
             Logger logger
     ) {
+        if (oldValue == null) {
+            return true;
+        }
+
         try {
-            boolean shouldUpdate;
-            if (oldValue == null) {
-                shouldUpdate = true;
-            } else {
-                shouldUpdate = replaceOldValueIf
-                        .orElse(replaceDifferentOldValue())
-                        .replaceOldValueIf(oldValue.value, newValue);
-            }
-            return shouldUpdate;
+            return replaceOldValueIf
+                    .orElse(replaceDifferentOldValue())
+                    .replaceOldValueIf(oldValue.value, newValue);
         } catch (Exception loggableException) {
             try {
                 logger.error(
@@ -150,21 +157,24 @@ class ChangingValueHelper {
     }
 
     static <T> void applyEachValueHandler(
+            boolean willBeUse,
             Optional<String> valueName,
             FailableValue<T> newValue,
-            Optional<FailableValueHandler<? super T>> eachValueHandler,
+            Optional<EachValueHandler<? super T>> eachValueHandler,
             Logger logger
     ) {
-        try {
-            eachValueHandler.ifPresent(handler -> handler.handle(valueName, newValue));
-        } catch (Exception loggableException) {
+        if (eachValueHandler.isPresent()) {
             try {
-                logger.error(
-                        "Failed to apply eachValueHandler to new value" + valueName.map(name -> " for '" + name + "'").orElse(""),
-                        loggableException
-                );
-            } catch (Exception unwantedException) {
-                unwantedException.printStackTrace();
+                eachValueHandler.get().handleEachValue(willBeUse, valueName, newValue);
+            } catch (Exception loggableException) {
+                try {
+                    logger.error(
+                            "Failed to apply eachValueHandler to new value" + valueName.map(name -> " for '" + name + "'").orElse(""),
+                            loggableException
+                    );
+                } catch (Exception unwantedException) {
+                    unwantedException.printStackTrace();
+                }
             }
         }
     }
@@ -176,9 +186,9 @@ class ChangingValueHelper {
             Optional<String> valueName,
             Logger logger
     ) {
-        if (oldValue != null) {
+        if (oldValue != null && afterValueChangedHandler.isPresent()) {
             try {
-                afterValueChangedHandler.ifPresent(handler -> handler.afterValueChanged(oldValue.value, newValue));
+                afterValueChangedHandler.get().afterValueChanged(oldValue.value, newValue);
             } catch (Exception loggableException) {
                 try {
                     logger.error(
@@ -198,9 +208,9 @@ class ChangingValueHelper {
             Optional<String> valueName,
             Logger logger
     ) {
-        if (oldValue != null && oldValue.value.isNotFailure()) {
+        if (oldValue != null && oldValue.value.isNotFailure() && disposeFunction.isPresent()) {
             try {
-                disposeFunction.ifPresent(handler -> handler.accept(oldValue.value()));
+                disposeFunction.get().accept(oldValue.value());
             } catch (Exception loggableException) {
                 try {
                     logger.error(

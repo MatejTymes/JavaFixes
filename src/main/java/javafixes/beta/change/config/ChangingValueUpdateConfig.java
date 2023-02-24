@@ -1,7 +1,7 @@
 package javafixes.beta.change.config;
 
 import javafixes.beta.change.function.AfterValueChangedHandler;
-import javafixes.beta.change.function.FailableValueHandler;
+import javafixes.beta.change.function.EachValueHandler;
 import javafixes.beta.change.function.ReplaceOldValueIf;
 
 import java.util.Optional;
@@ -13,12 +13,12 @@ public class ChangingValueUpdateConfig<T> {
 
     public final Optional<ReplaceOldValueIf<T>> replaceOldValueIf;
 
-    public final Optional<FailableValueHandler<T>> eachValueHandler;
+    public final Optional<EachValueHandler<T>> eachValueHandler;
     public final Optional<AfterValueChangedHandler<T>> afterValueChangedHandler;
     public final Optional<Consumer<T>> disposeFunction;
 
     public ChangingValueUpdateConfig(
-            Optional<ReplaceOldValueIf<T>> replaceOldValueIf, Optional<FailableValueHandler<T>> eachValueHandler,
+            Optional<ReplaceOldValueIf<T>> replaceOldValueIf, Optional<EachValueHandler<T>> eachValueHandler,
             Optional<AfterValueChangedHandler<T>> afterValueChangedHandler,
             Optional<Consumer<T>> disposeFunction
     ) {
@@ -50,7 +50,7 @@ public class ChangingValueUpdateConfig<T> {
     }
 
     public ChangingValueUpdateConfig<T> copyWithEachValueHandler(
-            Optional<FailableValueHandler<T>> eachValueHandler
+            Optional<EachValueHandler<T>> eachValueHandler
     ) {
         return new ChangingValueUpdateConfig<>(
                 this.replaceOldValueIf,
@@ -61,7 +61,7 @@ public class ChangingValueUpdateConfig<T> {
     }
 
     public ChangingValueUpdateConfig<T> copyWithEachValueHandler(
-            FailableValueHandler<T> eachValueHandler
+            EachValueHandler<T> eachValueHandler
     ) {
         return copyWithEachValueHandler(Optional.of(eachValueHandler));
     }

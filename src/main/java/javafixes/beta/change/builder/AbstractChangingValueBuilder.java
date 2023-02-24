@@ -2,7 +2,7 @@ package javafixes.beta.change.builder;
 
 import javafixes.beta.change.config.ChangingValueUpdateConfig;
 import javafixes.beta.change.function.AfterValueChangedHandler;
-import javafixes.beta.change.function.FailableValueHandler;
+import javafixes.beta.change.function.EachValueHandler;
 import javafixes.beta.change.function.ReplaceOldValueIf;
 
 import java.util.Optional;
@@ -27,8 +27,8 @@ public abstract class AbstractChangingValueBuilder<T, ThisBuilder extends Changi
         return thisBuilder();
     }
 
-    public ThisBuilder withEachValueHandler(FailableValueHandler<? super T> eachValueHandler) {
-        this.updateConfig = updateConfig.copyWithEachValueHandler((FailableValueHandler) eachValueHandler);
+    public ThisBuilder withEachValueHandler(EachValueHandler<? super T> eachValueHandler) {
+        this.updateConfig = updateConfig.copyWithEachValueHandler((EachValueHandler) eachValueHandler);
         return thisBuilder();
     }
 
