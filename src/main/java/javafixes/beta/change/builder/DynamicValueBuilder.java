@@ -24,7 +24,7 @@ public class DynamicValueBuilder<T> extends AbstractChangingValueBuilder<T, Dyna
         return new DynamicValue<>(
                 valueName,
                 valueGenerator,
-                updateConfig
+                updateConfig()
         );
     }
 

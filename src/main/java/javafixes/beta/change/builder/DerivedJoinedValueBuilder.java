@@ -71,7 +71,7 @@ public class DerivedJoinedValueBuilder<T> extends AbstractChangingValueBuilder<T
                 valueName,
                 sourceValues,
                 valuesMapper,
-                updateConfig,
+                updateConfig(),
                 prePopulateValueImmediately
         );
     }

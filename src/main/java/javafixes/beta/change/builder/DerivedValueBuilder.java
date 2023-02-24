@@ -40,7 +40,7 @@ public class DerivedValueBuilder<SourceType, OutputType> extends AbstractChangin
         return new DerivedValue<>(
                 valueName,
                 sourceValue,
-                updateConfig,
+                updateConfig(),
                 valueMapper,
                 prePopulateValueImmediately
         );

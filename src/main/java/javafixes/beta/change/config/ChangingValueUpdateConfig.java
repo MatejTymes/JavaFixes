@@ -11,16 +11,17 @@ public class ChangingValueUpdateConfig<T> {
 
     public static final ChangingValueUpdateConfig<Object> DO_NOTHING_ON_UPDATE_CONFIG = new ChangingValueUpdateConfig<>(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 
-    public final Optional<ReplaceOldValueIf<T>> replaceOldValueIf;
+    public final Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf;
 
-    public final Optional<EachValueHandler<T>> eachValueHandler;
-    public final Optional<AfterValueChangedHandler<T>> afterValueChangedHandler;
-    public final Optional<Consumer<T>> disposeFunction;
+    public final Optional<EachValueHandler<? super T>> eachValueHandler;
+    public final Optional<AfterValueChangedHandler<? super T>> afterValueChangedHandler;
+    public final Optional<Consumer<? super T>> disposeFunction;
 
     public ChangingValueUpdateConfig(
-            Optional<ReplaceOldValueIf<T>> replaceOldValueIf, Optional<EachValueHandler<T>> eachValueHandler,
-            Optional<AfterValueChangedHandler<T>> afterValueChangedHandler,
-            Optional<Consumer<T>> disposeFunction
+            Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf,
+            Optional<EachValueHandler<? super T>> eachValueHandler,
+            Optional<AfterValueChangedHandler<? super T>> afterValueChangedHandler,
+            Optional<Consumer<? super T>> disposeFunction
     ) {
         this.eachValueHandler = eachValueHandler;
         this.replaceOldValueIf = replaceOldValueIf;
@@ -30,73 +31,5 @@ public class ChangingValueUpdateConfig<T> {
 
     public static <T> ChangingValueUpdateConfig<T> doNothingOnUpdateConfig() {
         return (ChangingValueUpdateConfig<T>) DO_NOTHING_ON_UPDATE_CONFIG;
-    }
-
-    public ChangingValueUpdateConfig<T> copyWithReplaceOldValueIf(
-            Optional<ReplaceOldValueIf<T>> replaceOldValueIf
-    ) {
-        return new ChangingValueUpdateConfig<>(
-                replaceOldValueIf,
-                this.eachValueHandler,
-                this.afterValueChangedHandler,
-                this.disposeFunction
-        );
-    }
-
-    public ChangingValueUpdateConfig<T> copyWithReplaceOldValueIf(
-            ReplaceOldValueIf<T> replaceOldValueIf
-    ) {
-        return copyWithReplaceOldValueIf(Optional.of(replaceOldValueIf));
-    }
-
-    public ChangingValueUpdateConfig<T> copyWithEachValueHandler(
-            Optional<EachValueHandler<T>> eachValueHandler
-    ) {
-        return new ChangingValueUpdateConfig<>(
-                this.replaceOldValueIf,
-                eachValueHandler,
-                this.afterValueChangedHandler,
-                this.disposeFunction
-        );
-    }
-
-    public ChangingValueUpdateConfig<T> copyWithEachValueHandler(
-            EachValueHandler<T> eachValueHandler
-    ) {
-        return copyWithEachValueHandler(Optional.of(eachValueHandler));
-    }
-
-    public ChangingValueUpdateConfig<T> copyWithAfterValueChangedHandler(
-            Optional<AfterValueChangedHandler<T>> afterValueChangedHandler
-    ) {
-        return new ChangingValueUpdateConfig<>(
-                this.replaceOldValueIf,
-                this.eachValueHandler,
-                afterValueChangedHandler,
-                this.disposeFunction
-        );
-    }
-
-    public ChangingValueUpdateConfig<T> copyWithAfterValueChangedHandler(
-            AfterValueChangedHandler<T> afterValueChangedHandler
-    ) {
-        return copyWithAfterValueChangedHandler(Optional.of(afterValueChangedHandler));
-    }
-
-    public ChangingValueUpdateConfig<T> copyWithDisposeFunction(
-            Optional<Consumer<T>> disposeFunction
-    ) {
-        return new ChangingValueUpdateConfig<>(
-                this.replaceOldValueIf,
-                this.eachValueHandler,
-                this.afterValueChangedHandler,
-                disposeFunction
-        );
-    }
-
-    public ChangingValueUpdateConfig<T> copyWithDisposeFunction(
-            Consumer<T> disposeFunction
-    ) {
-        return copyWithDisposeFunction(Optional.of(disposeFunction));
     }
 }

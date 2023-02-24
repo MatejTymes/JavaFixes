@@ -33,7 +33,7 @@ public class MutableValueBuilder<T> extends AbstractChangingValueBuilder<T, Muta
         return new MutableValue<>(
                 valueName,
                 initialValue,
-                updateConfig
+                updateConfig()
         );
     }
 

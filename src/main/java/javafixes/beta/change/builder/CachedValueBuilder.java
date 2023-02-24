@@ -40,7 +40,7 @@ public class CachedValueBuilder<T> extends AbstractChangingValueBuilder<T, Cache
         return new CachedValue<>(
                 valueName,
                 sourceValue,
-                updateConfig,
+                updateConfig(),
                 reCacheValueOnValueRetrievalIf,
                 scheduledReCachingConfig,
                 prePopulateValueImmediately

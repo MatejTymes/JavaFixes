@@ -8,13 +8,19 @@ import javafixes.beta.change.function.ReplaceOldValueIf;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static javafixes.beta.change.builder.UpdateConfigBuilder.updateConfigBuilder;
+
 public abstract class AbstractChangingValueBuilder<T, ThisBuilder extends ChangingValueBuilder<T>> implements ChangingValueBuilder<T> {
 
     protected Optional<String> valueName = Optional.empty();
-    protected ChangingValueUpdateConfig<? super T> updateConfig = ChangingValueUpdateConfig.DO_NOTHING_ON_UPDATE_CONFIG;
+    protected UpdateConfigBuilder<T> updateConfigBuilder = updateConfigBuilder();
 
 
     protected abstract ThisBuilder thisBuilder();
+
+    protected ChangingValueUpdateConfig<? super T> updateConfig() {
+        return updateConfigBuilder.build();
+    }
 
 
     public ThisBuilder withValueName(String valueName) {
@@ -23,27 +29,27 @@ public abstract class AbstractChangingValueBuilder<T, ThisBuilder extends Changi
     }
 
     public ThisBuilder withReplaceOldValueIf(ReplaceOldValueIf<? super T> replaceOldValueIf) {
-        this.updateConfig = updateConfig.copyWithReplaceOldValueIf((ReplaceOldValueIf) replaceOldValueIf);
+        this.updateConfigBuilder = updateConfigBuilder.withReplaceOldValueIf(replaceOldValueIf);
         return thisBuilder();
     }
 
     public ThisBuilder withEachValueHandler(EachValueHandler<? super T> eachValueHandler) {
-        this.updateConfig = updateConfig.copyWithEachValueHandler((EachValueHandler) eachValueHandler);
+        this.updateConfigBuilder = updateConfigBuilder.withEachValueHandler(eachValueHandler);
         return thisBuilder();
     }
 
     public ThisBuilder withAfterValueChangedHandler(AfterValueChangedHandler<? super T> afterValueChangedHandler) {
-        this.updateConfig = updateConfig.copyWithAfterValueChangedHandler((AfterValueChangedHandler) afterValueChangedHandler);
+        this.updateConfigBuilder = updateConfigBuilder.withAfterValueChangedHandler(afterValueChangedHandler);
         return thisBuilder();
     }
 
     public ThisBuilder withDisposeFunction(Consumer<? super T> disposeFunction) {
-        this.updateConfig = updateConfig.copyWithDisposeFunction((Consumer) disposeFunction);
+        this.updateConfigBuilder = updateConfigBuilder.withDisposeFunction(disposeFunction);
         return thisBuilder();
     }
 
     public ThisBuilder withUpdateConfig(ChangingValueUpdateConfig<? super T> updateConfig) {
-        this.updateConfig = updateConfig;
+        this.updateConfigBuilder = updateConfigBuilder.withUpdateConfig(updateConfig);
         return thisBuilder();
     }
 }
