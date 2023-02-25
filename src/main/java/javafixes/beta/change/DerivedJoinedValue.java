@@ -56,7 +56,7 @@ public class DerivedJoinedValue<T> implements ChangingValue<T> {
     }
 
     @Override
-    public VersionedValue<T> getVersionedValue() {
+    public VersionedValue<T> versionedValue() {
         populateWithLatestValue();
 
         return currentValueHolder.get();
@@ -70,7 +70,7 @@ public class DerivedJoinedValue<T> implements ChangingValue<T> {
             List<FailableValue> currentSourceValues = new ArrayList<>();
             List<Long> currentSourceVersionNumbers = new ArrayList<>();
             for (int i = 0; i < sourceValues.size(); i++) {
-                VersionedValue sourceValue = sourceValues.get(i).getVersionedValue();
+                VersionedValue sourceValue = sourceValues.get(i).versionedValue();
 
                 currentSourceValues.add(sourceValue.failableValue());
                 currentSourceVersionNumbers.add(sourceValue.versionNumber);

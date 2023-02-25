@@ -56,7 +56,7 @@ public class DerivedValue<SourceType, OutputType> implements ChangingValue<Outpu
     }
 
     @Override
-    public VersionedValue<OutputType> getVersionedValue() {
+    public VersionedValue<OutputType> versionedValue() {
         populateWithLatestValue();
 
         return currentValueHolder.get();
@@ -64,7 +64,7 @@ public class DerivedValue<SourceType, OutputType> implements ChangingValue<Outpu
 
     private void populateWithLatestValue() {
         synchronized (currentValueHolder) {
-            VersionedValue<SourceType> currentSourceValue = sourceValue.getVersionedValue();
+            VersionedValue<SourceType> currentSourceValue = sourceValue.versionedValue();
 
             Long lastUsedSourceVersionNumber = lastUsedSourceChangeVersion.get();
             if (lastUsedSourceVersionNumber == null || lastUsedSourceVersionNumber < currentSourceValue.versionNumber) {

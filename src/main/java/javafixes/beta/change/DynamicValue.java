@@ -44,7 +44,7 @@ public class DynamicValue<T> implements ChangingValue<T> {
     }
 
     @Override
-    public VersionedValue<T> getVersionedValue() {
+    public VersionedValue<T> versionedValue() {
         synchronized (latestValueHolder) {
             populateWithLatestValue();
 

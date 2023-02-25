@@ -73,7 +73,7 @@ public class CachedValue<T> implements ChangingValue<T> {
     }
 
     @Override
-    public VersionedValue<T> getVersionedValue() {
+    public VersionedValue<T> versionedValue() {
         reCacheIfNeeded(reCacheValueOnValueRetrievalIf.orElse(null));
 
         return currentValueHolder.get();
@@ -92,7 +92,7 @@ public class CachedValue<T> implements ChangingValue<T> {
             boolean ignoreDifferenceCheck
     ) {
         synchronized (currentValueHolder) {
-            VersionedValue<T> newValue = sourceValue.getVersionedValue();
+            VersionedValue<T> newValue = sourceValue.versionedValue();
 
             handlePotentialNewValue(
                     newValue.value,
