@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 import static javafixes.beta.change.ChangingValueHelper.handlePotentialNewValue;
 import static javafixes.beta.change.FailableValue.wrapFailure;
 import static javafixes.beta.change.FailableValue.wrapValue;
+import static javafixes.common.Asserts.assertNotNull;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class DynamicValue<T> implements ChangingValue<T> {
@@ -28,6 +29,10 @@ public class DynamicValue<T> implements ChangingValue<T> {
             Supplier<T> valueGenerator,
             ChangingValueUpdateConfig<? super T> updateConfig
     ) {
+        assertNotNull(valueName, "valueName", "DynamicValue");
+        assertNotNull(valueGenerator, "valueGenerator", "DynamicValue");
+        assertNotNull(updateConfig, "updateConfig", "DynamicValue");
+
         this.valueName = valueName;
         this.valueGenerator = valueGenerator;
         this.updateConfig = updateConfig;

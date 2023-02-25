@@ -11,6 +11,7 @@ import java.util.function.Function;
 import static javafixes.beta.change.ChangingValueHelper.handlePotentialNewValue;
 import static javafixes.beta.change.FailableValue.wrapFailure;
 import static javafixes.beta.change.FailableValue.wrapValue;
+import static javafixes.common.Asserts.assertNotNull;
 
 // todo: mtymes - remove the SourceType generic parameter
 public class DerivedValue<SourceType, OutputType> implements ChangingValue<OutputType> {
@@ -34,6 +35,11 @@ public class DerivedValue<SourceType, OutputType> implements ChangingValue<Outpu
             Function<FailableValue<SourceType>, ? extends OutputType> valueMapper,
             boolean prePopulateValueImmediately
     ) {
+        assertNotNull(valueName, "valueName", "DerivedValue");
+        assertNotNull(sourceValue, "sourceValue", "DerivedValue");
+        assertNotNull(updateConfig, "updateConfig", "DerivedValue");
+        assertNotNull(valueMapper, "valueMapper", "DerivedValue");
+
         this.valueName = valueName;
         this.sourceValue = sourceValue;
         this.valueMapper = valueMapper;

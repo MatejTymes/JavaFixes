@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static javafixes.beta.change.ChangingValueHelper.handlePotentialNewValue;
+import static javafixes.common.Asserts.assertNotNull;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class CachedValue<T> implements ChangingValue<T> {
@@ -38,6 +39,12 @@ public class CachedValue<T> implements ChangingValue<T> {
             Optional<ScheduledReCachingConfig<? super T>> scheduledReCachingConfig,
             boolean prePopulateValueImmediately
     ) {
+        assertNotNull(valueName, "valueName", "CachedValue");
+        assertNotNull(sourceValue, "sourceValue", "CachedValue");
+        assertNotNull(updateConfig, "updateConfig", "CachedValue");
+        assertNotNull(reCacheValueOnValueRetrievalIf, "reCacheValueOnValueRetrievalIf", "CachedValue");
+        assertNotNull(scheduledReCachingConfig, "scheduledReCachingConfig", "CachedValue");
+
         this.valueName = valueName;
         this.sourceValue = sourceValue;
         this.updateConfig = updateConfig;

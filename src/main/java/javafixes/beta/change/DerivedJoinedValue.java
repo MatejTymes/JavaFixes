@@ -13,6 +13,7 @@ import java.util.function.Function;
 import static javafixes.beta.change.ChangingValueHelper.handlePotentialNewValue;
 import static javafixes.beta.change.FailableValue.wrapFailure;
 import static javafixes.beta.change.FailableValue.wrapValue;
+import static javafixes.common.Asserts.assertNotNull;
 
 public class DerivedJoinedValue<T> implements ChangingValue<T> {
 
@@ -30,10 +31,15 @@ public class DerivedJoinedValue<T> implements ChangingValue<T> {
     public <SourceType> DerivedJoinedValue(
             Optional<String> valueName,
             List<ChangingValue<? extends SourceType>> sourceValues,
-            Function<List<FailableValue<? super SourceType>>, ? extends T> valuesMapper,
             ChangingValueUpdateConfig<? super T> updateConfig,
+            Function<List<FailableValue<? super SourceType>>, ? extends T> valuesMapper,
             boolean prePopulateImmediately
     ) {
+        assertNotNull(valueName, "valueName", "DerivedJoinedValue");
+        assertNotNull(sourceValues, "sourceValues", "DerivedJoinedValue");
+        assertNotNull(updateConfig, "updateConfig", "DerivedJoinedValue");
+        assertNotNull(valuesMapper, "valuesMapper", "DerivedJoinedValue");
+
         this.valueName = valueName;
         this.sourceValues = new ArrayList<>(sourceValues);
         this.valuesMapper = (Function) valuesMapper;

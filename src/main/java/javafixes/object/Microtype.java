@@ -2,6 +2,8 @@ package javafixes.object;
 
 import java.util.function.Function;
 
+import static javafixes.common.Asserts.assertNotNull;
+
 /**
  * An immutable object that contains a non-null reference to another object.
  * <p>
@@ -28,9 +30,8 @@ public abstract class Microtype<T> implements Value<T> {
      * @throws IllegalArgumentException if {@code null} is passed as input parameter
      */
     protected Microtype(T value) {
-        if (value == null) {
-            throw new IllegalArgumentException("value of a Microtype can't be null");
-        }
+        assertNotNull(value, "value", "Microtype");
+
         this.value = value;
     }
 

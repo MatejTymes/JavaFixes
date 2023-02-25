@@ -5,6 +5,7 @@ import javafixes.object.Value;
 
 import static javafixes.beta.change.FailableValue.wrapFailure;
 import static javafixes.beta.change.FailableValue.wrapValue;
+import static javafixes.common.Asserts.assertNotNull;
 
 public class VersionedValue<T> extends DataObject implements Value<T> {
 
@@ -15,6 +16,8 @@ public class VersionedValue<T> extends DataObject implements Value<T> {
             FailableValue<T> value,
             long versionNumber
     ) {
+        assertNotNull(value, "value", "VersionedValue");
+
         this.value = value;
         this.versionNumber = versionNumber;
     }

@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static javafixes.beta.change.ChangingValueHelper.handlePotentialNewValue;
+import static javafixes.common.Asserts.assertNotNull;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MutableValue<T> implements ChangingValue<T> {
@@ -24,6 +25,10 @@ public class MutableValue<T> implements ChangingValue<T> {
             FailableValue<T> initialValue,
             ChangingValueUpdateConfig<? super T> updateConfig
     ) {
+        assertNotNull(valueName, "valueName", "MutableValue");
+        assertNotNull(initialValue, "initialValue", "MutableValue");
+        assertNotNull(updateConfig, "updateConfig", "MutableValue");
+
         this.valueName = valueName;
         this.updateConfig = updateConfig;
 

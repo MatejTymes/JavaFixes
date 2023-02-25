@@ -6,6 +6,7 @@ import javafixes.object.Value;
 
 import java.util.function.Consumer;
 
+import static javafixes.common.Asserts.assertNotNull;
 import static javafixes.object.Either.left;
 import static javafixes.object.Either.right;
 
@@ -14,6 +15,8 @@ public class FailableValue<T> extends DataObject implements Value<T> {
     private final Either<RuntimeException, T> value;
 
     public FailableValue(Either<RuntimeException, T> value) {
+        assertNotNull(value, "value", "FailableValue");
+
         this.value = value;
     }
 

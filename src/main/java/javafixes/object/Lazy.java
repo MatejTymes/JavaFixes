@@ -3,6 +3,8 @@ package javafixes.object;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
+import static javafixes.common.Asserts.assertNotNull;
+
 /**
  * {@code Lazy} is intended as wrapper for lazily initialized objects.
  * It wraps an initialization method, which is called only once the {@code value()} method is invoked
@@ -30,9 +32,8 @@ public class Lazy<T> implements Value<T> {
      * @throws IllegalArgumentException if {@code null} is passed as input parameter
      */
     public Lazy(Callable<T> valueProvider) {
-        if (valueProvider == null) {
-            throw new IllegalArgumentException("valueProvider of a Lazy can't be null");
-        }
+        assertNotNull(valueProvider, "valueProvider", "Lazy");
+
         this.valueProvider = valueProvider;
     }
 
