@@ -1,11 +1,13 @@
 package javafixes.beta.change.util;
 
+import javafixes.beta.change.ChangingValue;
 import javafixes.beta.change.FailableValue;
 import javafixes.beta.change.function.EachValueHandler;
 import javafixes.beta.change.function.ReplaceOldValueIf;
 import javafixes.common.function.TriConsumer;
 import javafixes.common.function.TriFunction;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -13,9 +15,28 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static java.lang.reflect.Proxy.newProxyInstance;
 import static java.util.stream.Collectors.toList;
 
 public class ChangingValueUtil {
+
+    public static <ProxyInterface, T extends ProxyInterface> ProxyInterface mapToProxyInterface(
+            ChangingValue<T> changingValue,
+            Class<ProxyInterface> proxyInterfaceClass
+    ) {
+        return (ProxyInterface) newProxyInstance(
+                javafixes.object.changing.ChangingValueUtil.class.getClassLoader(),
+                new Class[]{proxyInterfaceClass},
+                (proxy, method, args) -> {
+                    Object value = changingValue.value();
+                    try {
+                        return method.invoke(value, args);
+                    } catch (InvocationTargetException invocationTargetException) {
+                        throw invocationTargetException.getCause();
+                    }
+                }
+        );
+    }
 
     public static <SourceType, OutputType> Function<FailableValue<SourceType>, ? extends OutputType> mappingValue(
             Function<? super SourceType, ? extends OutputType> valueMapper
