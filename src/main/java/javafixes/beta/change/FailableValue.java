@@ -5,6 +5,7 @@ import javafixes.object.Either;
 import javafixes.object.Value;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static javafixes.common.Asserts.assertNotNull;
 import static javafixes.object.Either.left;
@@ -55,5 +56,9 @@ public class FailableValue<T> extends DataObject implements Value<T> {
 
     public void handleFailure(Consumer<RuntimeException> failureHandler) {
         value.handleLeft(failureHandler::accept);
+    }
+
+    public <T2> T2 fold(Function<T, T2> valueMapper, Function<RuntimeException, T2> failureMapper) {
+        return value.fold(failureMapper, valueMapper);
     }
 }
