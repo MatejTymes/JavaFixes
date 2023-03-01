@@ -25,7 +25,7 @@ public class ChangingValueUtil {
             Class<ProxyInterface> proxyInterfaceClass
     ) {
         return (ProxyInterface) newProxyInstance(
-                javafixes.object.changing.ChangingValueUtil.class.getClassLoader(),
+                ChangingValueUtil.class.getClassLoader(),
                 new Class[]{proxyInterfaceClass},
                 (proxy, method, args) -> {
                     Object value = changingValue.value();
