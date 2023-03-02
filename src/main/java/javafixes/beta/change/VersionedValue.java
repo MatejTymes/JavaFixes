@@ -3,6 +3,8 @@ package javafixes.beta.change;
 import javafixes.object.DataObject;
 import javafixes.object.Value;
 
+import java.util.function.Function;
+
 import static javafixes.beta.change.FailableValue.wrapFailure;
 import static javafixes.beta.change.FailableValue.wrapValue;
 import static javafixes.common.Asserts.assertNotNull;
@@ -28,16 +30,20 @@ public class VersionedValue<T> extends DataObject implements Value<T> {
         return value.value();
     }
 
+    public long getVersionNumber() {
+        return versionNumber;
+    }
+
+    public <T2> T2 fold(Function<T, T2> foldValue, Function<RuntimeException, T2> foldFailure) {
+        return value.fold(foldValue, foldFailure);
+    }
+
     public FailableValue<T> failableValue() {
         return value;
     }
 
     public boolean isFailure() {
         return value.isFailure();
-    }
-
-    public long getVersionNumber() {
-        return versionNumber;
     }
 
 

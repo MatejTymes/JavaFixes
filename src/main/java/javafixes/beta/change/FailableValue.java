@@ -58,7 +58,7 @@ public class FailableValue<T> extends DataObject implements Value<T> {
         value.handleLeft(failureHandler::accept);
     }
 
-    public <T2> T2 fold(Function<T, T2> valueMapper, Function<RuntimeException, T2> failureMapper) {
-        return value.fold(failureMapper, valueMapper);
+    public <T2> T2 fold(Function<T, T2> foldValue, Function<RuntimeException, T2> foldFailure) {
+        return value.fold(foldFailure, foldValue);
     }
 }
