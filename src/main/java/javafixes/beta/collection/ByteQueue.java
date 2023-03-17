@@ -107,6 +107,10 @@ public class ByteQueue extends AbstractQueue<Byte> {
         }
     }
 
+    public byte peekAtNextByte() {
+        return first.peek();
+    }
+
 
     class Node {
 
@@ -158,7 +162,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
         }
 
         byte peek() {
-            if (readIndex >= writeIndex) {
+            if (readIndex >= writeIndex && readIndex < values.length - 1) {
                 throw new NoSuchElementException("No additional data");
             }
             int index = readIndex + 1;
