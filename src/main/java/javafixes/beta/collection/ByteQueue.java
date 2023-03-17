@@ -68,17 +68,17 @@ public class ByteQueue extends AbstractQueue<Byte> {
     @Override
     public Byte poll() {
         if (first.hasNext()) {
-            return first.remove();
+            return first.poll();
         } else {
             return null;
         }
     }
 
-    public byte removeNextByte() {
-        return first.remove();
+    public byte pollNextByte() {
+        return first.poll();
     }
 
-    public int removeNextBytes(byte[] bytes, int offset, int length) {
+    public int pollNextBytes(byte[] bytes, int offset, int length) {
         if (length == 0) {
             return hasNext() ? 0 : -1;
         }
@@ -88,7 +88,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
         int remainingLength = length;
         // todo: mtymes - maybe add faster implementation
         while (remainingLength > 0 && hasNext()) {
-            bytes[currentOffset] = removeNextByte();
+            bytes[currentOffset] = pollNextByte();
 
             bytesAdded++;
             currentOffset++;
@@ -142,7 +142,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
             }
         }
 
-        byte remove() {
+        byte poll() {
             if (readIndex >= writeIndex && readIndex < values.length - 1) {
                 throw new NoSuchElementException("No additional data");
             }
@@ -150,7 +150,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
             if (index >= values.length) {
                 if (next != null) {
                     first = next;
-                    return next.remove();
+                    return next.poll();
                 } else {
                     throw new NoSuchElementException("No additional data");
                 }
@@ -247,7 +247,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
 
         @Override
         public byte readNext() {
-            return ByteQueue.this.removeNextByte();
+            return ByteQueue.this.pollNextByte();
         }
 
         // todo: mtymes - maybe add faster implementation for: int readNext(byte[] bytes, int offset, int length)
