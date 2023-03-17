@@ -2,13 +2,13 @@ package javafixes.beta.collection;
 
 import java.util.AbstractQueue;
 import java.util.ConcurrentModificationException;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import static java.lang.Math.min;
 
-// todo: mtymes - add ByteQueueCursor class
-// todo: mtymes - rename to ResizableByteQueue/LinkedArrayByteQueue
+// todo: mtymes - test this
+// todo: mtymes - add javadoc
+// todo: mtymes - maybe rename to ResizableByteQueue/LinkedArrayByteQueue
 public class ByteQueue extends AbstractQueue<Byte> {
 
     private transient Node first;
@@ -26,11 +26,11 @@ public class ByteQueue extends AbstractQueue<Byte> {
     }
 
     @Override
-    public Iterator<Byte> iterator() {
-        return new NodeIterator();
+    public ByteIterator iterator() {
+        return new ByteQueueReader();
     }
 
-    public ByteQueueCursor pollingIterator() {
+    public ByteIterator pollingIterator() {
         return new ByteQueuePoller();
     }
 
@@ -88,7 +88,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
         int remainingLength = length;
         // todo: mtymes - maybe add faster implementation
         while (remainingLength > 0 && hasNext()) {
-            bytes[currentOffset] = remove();
+            bytes[currentOffset] = removeNextByte();
 
             bytesAdded++;
             currentOffset++;
@@ -139,7 +139,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
         }
 
         byte remove() {
-            if (readIndex >= writeIndex) {
+            if (readIndex >= writeIndex && readIndex < values.length - 1) {
                 throw new NoSuchElementException("No additional data");
             }
             int index = ++readIndex;
@@ -152,8 +152,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
                 }
             }
             byte value = values[index];
-            // todo: mtymes - should we clear out the stored value ???
-//            values[index] = 0;
+            values[index] = 0;
             size--;
             return value;
         }
@@ -186,48 +185,16 @@ public class ByteQueue extends AbstractQueue<Byte> {
         }
     }
 
-    // todo: mtymes - merge with ByteQueueReader
-    private class NodeIterator implements Iterator<Byte> {
 
-        private Node node;
-        private int readIndex;
+    public class ByteQueueReader implements ByteIterator {
 
-        private NodeIterator() {
-            this.node = first;
-            this.readIndex = this.node.readIndex;
+        private Node currentNode;
+        private int currentReadIndex;
+
+        private ByteQueueReader() {
+            this.currentNode = first;
+            this.currentReadIndex = currentNode.readIndex;
         }
-
-        @Override
-        public boolean hasNext() {
-            do {
-                if (readIndex < node.values.length - 1) {
-                    return readIndex < node.writeIndex;
-                } else if (node.next == null) {
-                    return false;
-                }
-
-                node = node.next;
-                readIndex = -1;
-            } while (true);
-        }
-
-        @Override
-        public Byte next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException("Has no more values");
-            }
-            if (readIndex < node.readIndex) {
-                throw new ConcurrentModificationException();
-            }
-            return node.values[++readIndex];
-        }
-    }
-
-
-    public class ByteQueueReader implements ByteQueueCursor {
-
-        private Node currentNode = ByteQueue.this.first;
-        private int currentReadIndex = currentNode.readIndex;
 
         @Override
         public boolean hasNext() {
@@ -246,19 +213,17 @@ public class ByteQueue extends AbstractQueue<Byte> {
         }
 
         @Override
-        public Byte next() {
-            return readNext();
-        }
-
-        @Override
         public byte readNext() {
-            if (!hasNext()) {
-                throw new NoSuchElementException("Has no more values");
-            }
-
             do {
                 if (currentReadIndex < currentNode.values.length - 1) {
+                    if (currentReadIndex >= currentNode.writeIndex) {
+                        throw new NoSuchElementException("No additional data");
+                    } else if (currentReadIndex < currentNode.readIndex) {
+                        throw new ConcurrentModificationException("This data has been removed and is no longer available");
+                    }
                     return currentNode.values[++currentReadIndex];
+                } else if (currentNode.next == null) {
+                    throw new NoSuchElementException("No additional data");
                 } else {
                     currentNode = currentNode.next;
                     currentReadIndex = -1;
@@ -266,29 +231,10 @@ public class ByteQueue extends AbstractQueue<Byte> {
             } while (true);
         }
 
-        @Override
-        public int readNext(byte[] bytes, int offset, int length) {
-            if (length == 0) {
-                return hasNext() ? 0 : -1;
-            }
-
-            int bytesAdded = 0;
-            int currentOffset = offset;
-            int remainingLength = length;
-            // todo: mtymes - maybe add faster implementation
-            while (remainingLength > 0 && hasNext()) {
-                bytes[currentOffset] = readNext();
-
-                bytesAdded++;
-                currentOffset++;
-                remainingLength--;
-            }
-
-            return (bytesAdded == 0) ? -1 : bytesAdded;
-        }
+        // todo: mtymes - maybe add faster implementation for: int readNext(byte[] bytes, int offset, int length)
     }
 
-    public class ByteQueuePoller implements ByteQueueCursor {
+    public class ByteQueuePoller implements ByteIterator {
 
         @Override
         public boolean hasNext() {
@@ -296,26 +242,10 @@ public class ByteQueue extends AbstractQueue<Byte> {
         }
 
         @Override
-        public Byte next() {
-            return null;
-        }
-
-        @Override
         public byte readNext() {
             return ByteQueue.this.removeNextByte();
         }
 
-        @Override
-        public int readNext(byte[] bytes, int offset, int length) {
-            return ByteQueue.this.removeNextBytes(bytes, offset, length);
-        }
-    }
-
-    public static interface ByteQueueCursor extends Iterator<Byte> {
-        boolean hasNext();
-
-        byte readNext();
-
-        int readNext(byte[] bytes, int offset, int length);
+        // todo: mtymes - maybe add faster implementation for: int readNext(byte[] bytes, int offset, int length)
     }
 }
