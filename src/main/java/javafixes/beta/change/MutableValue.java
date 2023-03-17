@@ -10,6 +10,13 @@ import static javafixes.beta.change.ChangingValueHelper.handlePotentialNewValue;
 import static javafixes.common.Asserts.assertNotNull;
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * {@code MutableValue} is a wrapper of value that you can replace and whose changes will be propagated
+ * to derived values.
+ *
+ * @param <T> type of wrapped value
+ * @author mtymes
+ */
 public class MutableValue<T> implements ChangingValue<T> {
 
     private static final Logger logger = getLogger(MutableValue.class);
