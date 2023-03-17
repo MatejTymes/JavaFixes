@@ -6,6 +6,7 @@ import java.io.OutputStream;
 
 import static java.lang.Math.min;
 
+// todo: mtymes - replace with: ByteQueueOutputStream, ByteQueueInputStream(boolean removeReadBytes)
 // todo: add into readme
 // todo: javadoc
 // todo: maybe explain internal implementation (LinkedByteArrays)
@@ -193,6 +194,9 @@ public class ByteCollectingOutputStream extends OutputStream {
 
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
+            if (len == 0) {
+                return 0;
+            }
             int actualLen = 0;
             while (len > 0) {
                 int copyNBytes = min(node.writeToIndex - readIndex, len);
