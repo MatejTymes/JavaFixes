@@ -8,7 +8,6 @@ import static java.lang.Math.min;
 
 // todo: mtymes - test this
 // todo: mtymes - add javadoc
-// todo: mtymes - maybe rename to ResizableByteQueue/LinkedArrayByteQueue
 public class ByteQueue extends AbstractQueue<Byte> {
 
     private transient Node first;
