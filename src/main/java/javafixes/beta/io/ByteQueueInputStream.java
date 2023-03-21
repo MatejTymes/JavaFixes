@@ -49,8 +49,11 @@ public class ByteQueueInputStream extends InputStream {
     @Override
     public void close() throws IOException {
         if (!this.isClosed) {
-            super.close();;
-            this.isClosed = true;
+            try {
+                super.close();
+            } finally {
+                this.isClosed = true;
+            }
         }
     }
 

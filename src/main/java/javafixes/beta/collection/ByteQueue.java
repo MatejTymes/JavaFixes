@@ -15,7 +15,9 @@ public class ByteQueue extends AbstractQueue<Byte> {
 
     private transient int size = 0;
 
-    public ByteQueue(int arraySize) {
+    public ByteQueue(
+            int arraySize // todo: mtymes - check that this can't be 0 or smaller
+    ) {
         this.first = new Node(arraySize);
         this.last = this.first;
     }
