@@ -20,4 +20,11 @@ public class ScheduledReCachingConfig<T> {
         this.refreshPeriod = refreshPeriod;
         this.reCacheValueInBackgroundIf = reCacheValueInBackgroundIf;
     }
+
+    public ScheduledReCachingConfig(
+            ScheduledExecutorService useExecutor,
+            Duration refreshPeriod
+    ) {
+        this(useExecutor, refreshPeriod, Optional.empty());
+    }
 }
