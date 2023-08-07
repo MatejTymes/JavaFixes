@@ -12,6 +12,9 @@ import static javafixes.common.Asserts.assertGreaterThanZero;
 // todo: mtymes - add javadoc
 public class ByteQueue extends AbstractQueue<Byte> {
 
+    // todo: mtymes - currently peeking is not greatly guarded by concurrency - do we want it like that
+    // todo: mtymes - add methods: toByteArray(): byte[] & fillByteArray(byte[] bytes, int offset, int length): int
+
     private transient final Object writeLock = new Object();
     private transient final Object pollLock = new Object();
 
@@ -140,7 +143,26 @@ public class ByteQueue extends AbstractQueue<Byte> {
 
     public byte pollNextByte() {
         synchronized (pollLock) {
-            return first.poll();
+            Node firstNode = first;
+            do {
+                if (firstNode.readIndex >= firstNode.writeIndex && firstNode.readIndex < firstNode.values.length - 1) {
+                    throw new NoSuchElementException("No additional data");
+                }
+                int index = ++firstNode.readIndex;
+                if (index >= firstNode.values.length) {
+                    firstNode.readIndex = firstNode.values.length;
+                    if (firstNode.next == null) {
+                        throw new NoSuchElementException("No additional data");
+                    } else {
+                        first = firstNode.next;
+                        firstNode = firstNode.next;
+                    }
+                } else {
+                    byte value = firstNode.values[index];
+                    size.decrementAndGet();
+                    return value;
+                }
+            } while(true);
         }
     }
 
@@ -153,8 +175,8 @@ public class ByteQueue extends AbstractQueue<Byte> {
             int bytesAdded = 0;
             int currentOffset = offset;
             int remainingLength = length;
-            // todo: mtymes - maybe add faster implementation
             while (remainingLength > 0 && hasNext()) {
+                // todo: mtymes - currently way too slow - speedup
                 bytes[currentOffset] = pollNextByte();
 
                 bytesAdded++;
@@ -245,28 +267,28 @@ public class ByteQueue extends AbstractQueue<Byte> {
 //            }
 //        }
 
-        byte poll() {
-            if (readIndex >= writeIndex && readIndex < values.length - 1) {
-                throw new NoSuchElementException("No additional data");
-            }
-            int index = ++readIndex;
-            if (index >= values.length) {
-                readIndex = values.length;
-                if (next == null) {
-                    throw new NoSuchElementException("No additional data");
-                } else {
-                    if (this == first) {
-                        first = next;
-                    }
-                    return next.poll();
-                }
-            } else {
-                byte value = values[index];
-                values[index] = 0;
-                size.decrementAndGet();
-                return value;
-            }
-        }
+//        byte poll() {
+//            if (readIndex >= writeIndex && readIndex < values.length - 1) {
+//                throw new NoSuchElementException("No additional data");
+//            }
+//            int index = ++readIndex;
+//            if (index >= values.length) {
+//                readIndex = values.length;
+//                if (next == null) {
+//                    throw new NoSuchElementException("No additional data");
+//                } else {
+//                    if (this == first) {
+//                        first = next;
+//                    }
+//                    return next.poll();
+//                }
+//            } else {
+//                byte value = values[index];
+//                values[index] = 0;
+//                size.decrementAndGet();
+//                return value;
+//            }
+//        }
 
         byte peek() {
             if (readIndex >= writeIndex && readIndex < values.length - 1) {

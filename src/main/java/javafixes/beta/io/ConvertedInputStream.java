@@ -28,14 +28,23 @@ public class ConvertedInputStream extends InputStream {
     public ConvertedInputStream(
             InputStream sourceInputStream,
             ConverterProvider converterProvider,
-            int fetchBytesBatchSize
+            int fetchBytesBatchSize,
+            int internalQueuePageSize
     ) throws IOException {
         assertGreaterThanZero(fetchBytesBatchSize, "fetchBytesBatchSize");
 
         this.sourceInputStream = sourceInputStream;
-        this.byteQueue = new ByteQueue(4 * 1024);
+        this.byteQueue = new ByteQueue(internalQueuePageSize);
         this.convertingOutputStream = converterProvider.provideConverter(new ByteQueueOutputStream(byteQueue));
         this.fetchBytesBatchSize = fetchBytesBatchSize;
+    }
+
+    public ConvertedInputStream(
+            InputStream sourceInputStream,
+            ConverterProvider converterProvider,
+            int fetchBytesBatchSize
+    ) throws IOException {
+        this(sourceInputStream, converterProvider, fetchBytesBatchSize, 4 * 1024);
     }
 
     public ConvertedInputStream(
