@@ -12,11 +12,11 @@ import static javafixes.common.Asserts.assertGreaterThanZero;
 // todo: mtymes - add javadoc
 public class ByteQueue extends AbstractQueue<Byte> {
 
-    // todo: mtymes - add poll lock (no need for peeking)
     private transient final Object writeLock = new Object();
+    private transient final Object pollLock = new Object();
 
-    private transient Node first; // todo: mtymes - change into AtomicReference
-    private transient Node last; // todo: mtymes - change into AtomicReference
+    private transient Node first;
+    private transient Node last;
 
     private transient final AtomicInteger size = new AtomicInteger(0);
 
@@ -129,41 +129,47 @@ public class ByteQueue extends AbstractQueue<Byte> {
 
     @Override
     public Byte poll() {
-        if (hasNext()) {
-            return first.poll();
-        } else {
-            return null;
+        synchronized (pollLock) {
+            if (hasNext()) {
+                return pollNextByte();
+            } else {
+                return null;
+            }
         }
     }
 
     public byte pollNextByte() {
-        return first.poll();
+        synchronized (pollLock) {
+            return first.poll();
+        }
     }
 
     public int pollNextBytes(byte[] bytes, int offset, int length) {
-        if (length == 0) {
-            return hasNext() ? 0 : -1;
+        synchronized (pollLock) {
+            if (length == 0) {
+                return hasNext() ? 0 : -1;
+            }
+
+            int bytesAdded = 0;
+            int currentOffset = offset;
+            int remainingLength = length;
+            // todo: mtymes - maybe add faster implementation
+            while (remainingLength > 0 && hasNext()) {
+                bytes[currentOffset] = pollNextByte();
+
+                bytesAdded++;
+                currentOffset++;
+                remainingLength--;
+            }
+
+            return (bytesAdded == 0) ? -1 : bytesAdded;
         }
-
-        int bytesAdded = 0;
-        int currentOffset = offset;
-        int remainingLength = length;
-        // todo: mtymes - maybe add faster implementation
-        while (remainingLength > 0 && hasNext()) {
-            bytes[currentOffset] = pollNextByte();
-
-            bytesAdded++;
-            currentOffset++;
-            remainingLength--;
-        }
-
-        return (bytesAdded == 0) ? -1 : bytesAdded;
     }
 
     @Override
     public Byte peek() {
         if (hasNext()) {
-            return first.peek();
+            return peekAtNextByte();
         } else {
             return null;
         }
@@ -180,7 +186,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
         int readIndex = -1;
         final byte[] values;
 
-        Node next = null; // todo: mtymes - change into AtomicReference
+        Node next = null;
 
         private Node(int size) {
             values = new byte[size];
