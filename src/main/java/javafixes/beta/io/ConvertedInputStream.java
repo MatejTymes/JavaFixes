@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import static javafixes.common.Asserts.assertGreaterThanZero;
+
 // todo: mtymes - test this
 // todo: mtymes - add javadoc
 public class ConvertedInputStream extends InputStream {
@@ -26,10 +28,12 @@ public class ConvertedInputStream extends InputStream {
     public ConvertedInputStream(
             InputStream sourceInputStream,
             ConverterProvider converterProvider,
-            int fetchBytesBatchSize // todo: mtymes - check that this can't be 0 or smaller
+            int fetchBytesBatchSize
     ) throws IOException {
+        assertGreaterThanZero(fetchBytesBatchSize, "fetchBytesBatchSize");
+
         this.sourceInputStream = sourceInputStream;
-        this.byteQueue = new ByteQueue(2 * 1024);
+        this.byteQueue = new ByteQueue(4 * 1024);
         this.convertingOutputStream = converterProvider.provideConverter(new ByteQueueOutputStream(byteQueue));
         this.fetchBytesBatchSize = fetchBytesBatchSize;
     }
@@ -59,6 +63,16 @@ public class ConvertedInputStream extends InputStream {
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         ensureIsNotClosed();
+
+        if (len == 0) {
+            while (byteQueue.isEmpty()) {
+                if (isInputStreamFullyRead) {
+                    return -1;
+                }
+                processMoreBytes();
+            }
+            return 0;
+        }
 
         int allReadBytesCount = 0;
 

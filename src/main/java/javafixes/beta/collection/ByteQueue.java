@@ -3,6 +3,7 @@ package javafixes.beta.collection;
 import java.util.AbstractQueue;
 import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Math.min;
 import static javafixes.common.Asserts.assertGreaterThanZero;
@@ -17,7 +18,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
     private transient Node first; // todo: mtymes - change into AtomicReference
     private transient Node last; // todo: mtymes - change into AtomicReference
 
-    private transient int size = 0; // todo: mtymes - change into AtomicReference
+    private transient final AtomicInteger size = new AtomicInteger(0);
 
     public ByteQueue(
             int arraySize
@@ -60,7 +61,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
 
     @Override
     public int size() {
-        return size;
+        return size.get();
     }
 
     @Override
@@ -77,7 +78,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
                 if (nextWriteIndex < lastNode.values.length) {
                     lastNode.values[nextWriteIndex] = value;
                     lastNode.writeIndex++;
-                    size++;
+                    size.incrementAndGet();
                     return;
                 } else {
                     if (lastNode.next == null) {
@@ -103,7 +104,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
                     System.arraycopy(bytes, offset, lastNode.values, writeIndex + 1, writeNBytes);
 
                     lastNode.writeIndex += writeNBytes;
-                    size += writeNBytes;
+                    size.addAndGet(writeNBytes);
 
                     offset += writeNBytes;
                     length -= writeNBytes;
@@ -256,7 +257,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
             } else {
                 byte value = values[index];
                 values[index] = 0;
-                size--;
+                size.decrementAndGet();
                 return value;
             }
         }
