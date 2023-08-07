@@ -98,13 +98,13 @@ public class ByteQueue extends AbstractQueue<Byte> {
         synchronized (writeLock) {
             Node lastNode = last;
             while (length > 0) {
-                int writeIndex = lastNode.writeIndex;
-                int arrayLength = lastNode.values.length;
+                int prevWriteIndex = lastNode.writeIndex;
+                int lastArrayIndex = lastNode.values.length - 1;
 
-                if (writeIndex < arrayLength - 1) {
-                    int writeNBytes = min(length, arrayLength - 1 - writeIndex);
+                if (prevWriteIndex < lastArrayIndex) {
+                    int writeNBytes = min(length, lastArrayIndex - prevWriteIndex);
 
-                    System.arraycopy(bytes, offset, lastNode.values, writeIndex + 1, writeNBytes);
+                    System.arraycopy(bytes, offset, lastNode.values, prevWriteIndex + 1, writeNBytes);
 
                     lastNode.writeIndex += writeNBytes;
                     size.addAndGet(writeNBytes);
@@ -145,12 +145,14 @@ public class ByteQueue extends AbstractQueue<Byte> {
         synchronized (pollLock) {
             Node firstNode = first;
             do {
-                if (firstNode.readIndex >= firstNode.writeIndex && firstNode.readIndex < firstNode.values.length - 1) {
+                int prevReadIndex = firstNode.readIndex;
+                int lastArrayIndex = firstNode.values.length - 1;
+                if (prevReadIndex >= firstNode.writeIndex && prevReadIndex < lastArrayIndex) {
                     throw new NoSuchElementException("No additional data");
                 }
-                int index = ++firstNode.readIndex;
-                if (index >= firstNode.values.length) {
-                    firstNode.readIndex = firstNode.values.length;
+                int nextReadIndex = ++firstNode.readIndex;
+                if (nextReadIndex >= firstNode.values.length) {
+                    firstNode.readIndex = lastArrayIndex;
                     if (firstNode.next == null) {
                         throw new NoSuchElementException("No additional data");
                     } else {
@@ -158,11 +160,11 @@ public class ByteQueue extends AbstractQueue<Byte> {
                         firstNode = firstNode.next;
                     }
                 } else {
-                    byte value = firstNode.values[index];
+                    byte value = firstNode.values[nextReadIndex];
                     size.decrementAndGet();
                     return value;
                 }
-            } while(true);
+            } while (true);
         }
     }
 
@@ -176,11 +178,11 @@ public class ByteQueue extends AbstractQueue<Byte> {
 
             Node firstNode = first;
             while (length > 0) {
-                int readIndex = firstNode.readIndex;
-                int writeIndex = firstNode.writeIndex;
+                int prevReadIndex = firstNode.readIndex;
                 int lastArrayIndex = firstNode.values.length - 1;
+                int writeIndex = firstNode.writeIndex;
 
-                if (readIndex >= lastArrayIndex) {
+                if (prevReadIndex >= lastArrayIndex) {
                     if (firstNode.next != null) {
                         first = firstNode.next;
                         firstNode = firstNode.next;
@@ -188,12 +190,12 @@ public class ByteQueue extends AbstractQueue<Byte> {
                     } else {
                         break;
                     }
-                } else if (readIndex >= writeIndex) {
+                } else if (prevReadIndex >= writeIndex) {
                     break;
                 } else {
-                    int readNBytes = min(length, min(lastArrayIndex, writeIndex) - readIndex);
+                    int readNBytes = min(length, min(lastArrayIndex, writeIndex) - prevReadIndex);
 
-                    System.arraycopy(firstNode.values, readIndex + 1, bytes, offset, readNBytes);
+                    System.arraycopy(firstNode.values, prevReadIndex + 1, bytes, offset, readNBytes);
 
                     firstNode.readIndex += readNBytes;
                     size.addAndGet(-readNBytes);
@@ -204,17 +206,6 @@ public class ByteQueue extends AbstractQueue<Byte> {
                     length -= readNBytes;
                 }
             }
-
-//            int currentOffset = offset;
-//            int remainingLength = length;
-//            while (remainingLength > 0 && hasNext()) {
-//                // todo: mtymes - currently way too slow - speedup
-//                bytes[currentOffset] = pollNextByte();
-//
-//                bytesAdded++;
-//                currentOffset++;
-//                remainingLength--;
-//            }
 
             return (bytesAdded == 0) ? -1 : bytesAdded;
         }
@@ -230,130 +221,36 @@ public class ByteQueue extends AbstractQueue<Byte> {
     }
 
     public byte peekAtNextByte() {
-        return first.peek();
+        Node firstNode = first;
+        do {
+            int prevReadIndex = firstNode.readIndex;
+            int lastArrayIndex = firstNode.values.length - 1;
+            int writeIndex = firstNode.writeIndex;
+
+            if (prevReadIndex >= writeIndex && prevReadIndex < lastArrayIndex) {
+                throw new NoSuchElementException("No additional data");
+            }
+
+            if (prevReadIndex >= lastArrayIndex) {
+                firstNode = firstNode.next;
+            } else {
+                return firstNode.values[prevReadIndex + 1];
+            }
+        } while (true);
     }
 
 
     class Node {
 
-        int writeIndex = -1;
-        int readIndex = -1;
+        int writeIndex = -1; // todo: mtymes - change to volatile ???
+        int readIndex = -1; // todo: mtymes - change to volatile ???
         final byte[] values;
 
-        Node next = null;
+        Node next = null; // todo: mtymes - change to volatile ???
 
         private Node(int size) {
             values = new byte[size];
         }
-
-//        int size() {
-//            return min(writeIndex, values.length - 1) - min(readIndex, values.length - 1);
-//        }
-
-//        void add(byte value) {
-//            int nextWriteIndex = writeIndex + 1;
-//            if (nextWriteIndex < values.length) {
-//                values[nextWriteIndex] = value;
-//                writeIndex++;
-//                size++;
-//            } else {
-//                if (next == null) {
-//                    next = new Node(values.length);
-//                    last = next;
-//                }
-//                next.add(value);
-//            }
-//        }
-
-//        void add(byte[] bytes, int offset, int length) {
-//            Node lastNode = this;
-//            while (length > 0) {
-//                int writeIndex = lastNode.writeIndex;
-//                int arrayLength = lastNode.values.length;
-//
-//                if (writeIndex < arrayLength - 1) {
-//                    int writeNBytes = min(length, arrayLength - 1 - writeIndex);
-//
-//                    System.arraycopy(bytes, offset, lastNode.values, writeIndex + 1, writeNBytes);
-//
-//                    lastNode.writeIndex += writeNBytes;
-//                    size += writeNBytes;
-//
-//                    offset += writeNBytes;
-//                    length -= writeNBytes;
-//
-//                    if (length > 0) {
-//                        if (lastNode.next == null) {
-//                            lastNode.next = new Node(values.length);
-//                            last = lastNode.next;
-//                        }
-//                        lastNode = lastNode.next;
-//                    }
-//                } else {
-//                    if (lastNode.next == null) {
-//                        lastNode.next = new Node(values.length);
-//                        last = lastNode.next;
-//                    }
-//                    lastNode = lastNode.next;
-//                }
-//            }
-//        }
-
-//        byte poll() {
-//            if (readIndex >= writeIndex && readIndex < values.length - 1) {
-//                throw new NoSuchElementException("No additional data");
-//            }
-//            int index = ++readIndex;
-//            if (index >= values.length) {
-//                readIndex = values.length;
-//                if (next == null) {
-//                    throw new NoSuchElementException("No additional data");
-//                } else {
-//                    if (this == first) {
-//                        first = next;
-//                    }
-//                    return next.poll();
-//                }
-//            } else {
-//                byte value = values[index];
-//                values[index] = 0;
-//                size.decrementAndGet();
-//                return value;
-//            }
-//        }
-
-        byte peek() {
-            if (readIndex >= writeIndex && readIndex < values.length - 1) {
-                throw new NoSuchElementException("No additional data");
-            }
-            int index = readIndex + 1;
-            if (index >= values.length) {
-                readIndex = values.length;
-                if (next == null) {
-                    throw new NoSuchElementException("No additional data");
-                } else {
-                    if (this == first) {
-                        first = next;
-                    }
-                    return next.peek();
-                }
-            } else {
-                return values[index];
-            }
-        }
-
-//        boolean hasNext() {
-//            if (readIndex < values.length - 1) {
-//                return readIndex < writeIndex;
-//            } else if (next != null) {
-//                if (this == first) {
-//                    first = next;
-//                }
-//                return next.hasNext();
-//            } else {
-//                return false;
-//            }
-//        }
     }
 
 
