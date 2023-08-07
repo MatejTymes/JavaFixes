@@ -63,10 +63,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
     }
 
     public void add(byte[] bytes, int offset, int length) {
-        for (int i = 0; i < length; i++) {
-            last.add(bytes[offset]);
-            offset++;
-        }
+        last.add(bytes, offset, length);
     }
 
     @Override
@@ -128,22 +125,56 @@ public class ByteQueue extends AbstractQueue<Byte> {
             values = new byte[size];
         }
 
-        int size() {
-            return min(writeIndex, values.length - 1) - min(readIndex, values.length - 1);
-        }
+//        int size() {
+//            return min(writeIndex, values.length - 1) - min(readIndex, values.length - 1);
+//        }
 
         void add(byte value) {
-            int index = ++writeIndex;
-            if (index >= values.length) {
-                writeIndex = values.length;
+            int nextWriteIndex = writeIndex + 1;
+            if (nextWriteIndex < values.length) {
+                values[nextWriteIndex] = value;
+                writeIndex++;
+                size++;
+            } else {
                 if (next == null) {
                     next = new Node(values.length);
                     last = next;
                 }
                 next.add(value);
-            } else {
-                values[index] = value;
-                size++;
+            }
+        }
+
+        void add(byte[] bytes, int offset, int length) {
+            Node lastNode = this;
+            while (length > 0) {
+                int writeIndex = lastNode.writeIndex;
+                int arrayLength = lastNode.values.length;
+
+                if (writeIndex < arrayLength - 1) {
+                    int writeNBytes = min(length, arrayLength - 1 - writeIndex);
+
+                    System.arraycopy(bytes, offset, lastNode.values, writeIndex + 1, writeNBytes);
+
+                    lastNode.writeIndex += writeNBytes;
+                    size += writeNBytes;
+
+                    offset += writeNBytes;
+                    length -= writeNBytes;
+
+                    if (length > 0) {
+                        if (lastNode.next == null) {
+                            lastNode.next = new Node(values.length);
+                            last = lastNode.next;
+                        }
+                        lastNode = lastNode.next;
+                    }
+                } else {
+                    if (lastNode.next == null) {
+                        lastNode.next = new Node(values.length);
+                        last = lastNode.next;
+                    }
+                    lastNode = lastNode.next;
+                }
             }
         }
 
