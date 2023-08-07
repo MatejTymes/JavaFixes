@@ -11,10 +11,10 @@ import static javafixes.common.Asserts.assertGreaterThanZero;
 // todo: mtymes - add javadoc
 public class ByteQueue extends AbstractQueue<Byte> {
 
-    private transient Node first;
-    private transient Node last;
+    private transient Node first; // todo: mtymes - change into AtomicReference
+    private transient Node last; // todo: mtymes - change into AtomicReference
 
-    private transient int size = 0;
+    private transient int size = 0; // todo: mtymes - change into AtomicReference
 
     public ByteQueue(
             int arraySize
@@ -40,11 +40,18 @@ public class ByteQueue extends AbstractQueue<Byte> {
 
     @Override
     public boolean isEmpty() {
-        return !first.hasNext();
+        return !hasNext();
     }
 
     public boolean hasNext() {
-        return first.hasNext();
+        if (first.readIndex < first.values.length - 1) {
+            return first.readIndex < first.writeIndex;
+        } else if (first.next != null) {
+            first = first.next;
+            return first.next.hasNext();
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -54,16 +61,61 @@ public class ByteQueue extends AbstractQueue<Byte> {
 
     @Override
     public boolean offer(Byte value) {
-        last.add(value);
+        add(value);
         return true;
     }
 
     public void add(byte value) {
-        last.add(value);
+        Node lastNode = last;
+        do {
+            int nextWriteIndex = lastNode.writeIndex + 1;
+            if (nextWriteIndex < lastNode.values.length) {
+                lastNode.values[nextWriteIndex] = value;
+                lastNode.writeIndex++;
+                size++;
+                return;
+            } else {
+                if (lastNode.next == null) {
+                    lastNode.next = new Node(lastNode.values.length);
+                    last = lastNode.next;
+                }
+                lastNode = lastNode.next;
+            }
+        } while (true);
     }
 
     public void add(byte[] bytes, int offset, int length) {
-        last.add(bytes, offset, length);
+        Node lastNode = last;
+        while (length > 0) {
+            int writeIndex = lastNode.writeIndex;
+            int arrayLength = lastNode.values.length;
+
+            if (writeIndex < arrayLength - 1) {
+                int writeNBytes = min(length, arrayLength - 1 - writeIndex);
+
+                System.arraycopy(bytes, offset, lastNode.values, writeIndex + 1, writeNBytes);
+
+                lastNode.writeIndex += writeNBytes;
+                size += writeNBytes;
+
+                offset += writeNBytes;
+                length -= writeNBytes;
+
+                if (length > 0) {
+                    if (lastNode.next == null) {
+                        lastNode.next = new Node(last.values.length);
+                        last = lastNode.next;
+                    }
+                    lastNode = lastNode.next;
+                }
+            } else {
+                if (lastNode.next == null) {
+                    lastNode.next = new Node(last.values.length);
+                    last = lastNode.next;
+                }
+                lastNode = lastNode.next;
+            }
+        }
     }
 
     @Override
@@ -119,7 +171,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
         int readIndex = -1;
         final byte[] values;
 
-        Node next = null;
+        Node next = null; // todo: mtymes - change into AtomicReference
 
         private Node(int size) {
             values = new byte[size];
@@ -129,54 +181,54 @@ public class ByteQueue extends AbstractQueue<Byte> {
 //            return min(writeIndex, values.length - 1) - min(readIndex, values.length - 1);
 //        }
 
-        void add(byte value) {
-            int nextWriteIndex = writeIndex + 1;
-            if (nextWriteIndex < values.length) {
-                values[nextWriteIndex] = value;
-                writeIndex++;
-                size++;
-            } else {
-                if (next == null) {
-                    next = new Node(values.length);
-                    last = next;
-                }
-                next.add(value);
-            }
-        }
+//        void add(byte value) {
+//            int nextWriteIndex = writeIndex + 1;
+//            if (nextWriteIndex < values.length) {
+//                values[nextWriteIndex] = value;
+//                writeIndex++;
+//                size++;
+//            } else {
+//                if (next == null) {
+//                    next = new Node(values.length);
+//                    last = next;
+//                }
+//                next.add(value);
+//            }
+//        }
 
-        void add(byte[] bytes, int offset, int length) {
-            Node lastNode = this;
-            while (length > 0) {
-                int writeIndex = lastNode.writeIndex;
-                int arrayLength = lastNode.values.length;
-
-                if (writeIndex < arrayLength - 1) {
-                    int writeNBytes = min(length, arrayLength - 1 - writeIndex);
-
-                    System.arraycopy(bytes, offset, lastNode.values, writeIndex + 1, writeNBytes);
-
-                    lastNode.writeIndex += writeNBytes;
-                    size += writeNBytes;
-
-                    offset += writeNBytes;
-                    length -= writeNBytes;
-
-                    if (length > 0) {
-                        if (lastNode.next == null) {
-                            lastNode.next = new Node(values.length);
-                            last = lastNode.next;
-                        }
-                        lastNode = lastNode.next;
-                    }
-                } else {
-                    if (lastNode.next == null) {
-                        lastNode.next = new Node(values.length);
-                        last = lastNode.next;
-                    }
-                    lastNode = lastNode.next;
-                }
-            }
-        }
+//        void add(byte[] bytes, int offset, int length) {
+//            Node lastNode = this;
+//            while (length > 0) {
+//                int writeIndex = lastNode.writeIndex;
+//                int arrayLength = lastNode.values.length;
+//
+//                if (writeIndex < arrayLength - 1) {
+//                    int writeNBytes = min(length, arrayLength - 1 - writeIndex);
+//
+//                    System.arraycopy(bytes, offset, lastNode.values, writeIndex + 1, writeNBytes);
+//
+//                    lastNode.writeIndex += writeNBytes;
+//                    size += writeNBytes;
+//
+//                    offset += writeNBytes;
+//                    length -= writeNBytes;
+//
+//                    if (length > 0) {
+//                        if (lastNode.next == null) {
+//                            lastNode.next = new Node(values.length);
+//                            last = lastNode.next;
+//                        }
+//                        lastNode = lastNode.next;
+//                    }
+//                } else {
+//                    if (lastNode.next == null) {
+//                        lastNode.next = new Node(values.length);
+//                        last = lastNode.next;
+//                    }
+//                    lastNode = lastNode.next;
+//                }
+//            }
+//        }
 
         byte poll() {
             if (readIndex >= writeIndex && readIndex < values.length - 1) {
@@ -294,6 +346,9 @@ public class ByteQueue extends AbstractQueue<Byte> {
             return ByteQueue.this.pollNextByte();
         }
 
-        // todo: mtymes - maybe add faster implementation for: int readNext(byte[] bytes, int offset, int length)
+        @Override
+        public int readNext(byte[] bytes, int offset, int length) {
+            return ByteQueue.this.pollNextBytes(bytes, offset, length);
+        }
     }
 }
