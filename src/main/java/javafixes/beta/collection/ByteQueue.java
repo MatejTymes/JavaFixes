@@ -154,17 +154,20 @@ public class ByteQueue extends AbstractQueue<Byte> {
             int index = ++readIndex;
             if (index >= values.length) {
                 readIndex = values.length;
-                if (next != null) {
-                    first = next;
-                    return next.poll(); // todo: do this in a loop instead
-                } else {
+                if (next == null) {
                     throw new NoSuchElementException("No additional data");
+                } else {
+                    if (this == first) {
+                        first = next;
+                    }
+                    return next.poll();
                 }
+            } else {
+                byte value = values[index];
+                values[index] = 0;
+                size--;
+                return value;
             }
-            byte value = values[index];
-            values[index] = 0;
-            size--;
-            return value;
         }
 
         byte peek() {
@@ -174,21 +177,26 @@ public class ByteQueue extends AbstractQueue<Byte> {
             int index = readIndex + 1;
             if (index >= values.length) {
                 readIndex = values.length;
-                if (next != null) {
-                    first = next;
-                    return next.peek(); // todo: do this in a loop instead
-                } else {
+                if (next == null) {
                     throw new NoSuchElementException("No additional data");
+                } else {
+                    if (this == first) {
+                        first = next;
+                    }
+                    return next.peek();
                 }
+            } else {
+                return values[index];
             }
-
-            return values[index];
         }
 
         boolean hasNext() {
             if (readIndex < values.length - 1) {
                 return readIndex < writeIndex;
             } else if (next != null) {
+                if (this == first) {
+                    first = next;
+                }
                 return next.hasNext();
             } else {
                 return false;
