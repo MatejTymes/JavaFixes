@@ -11,6 +11,9 @@ import static javafixes.common.Asserts.assertGreaterThanZero;
 // todo: mtymes - add javadoc
 public class ByteQueue extends AbstractQueue<Byte> {
 
+    // todo: mtymes - add poll lock (no need for peeking)
+    private transient final Object writeLock = new Object();
+
     private transient Node first; // todo: mtymes - change into AtomicReference
     private transient Node last; // todo: mtymes - change into AtomicReference
 
@@ -44,14 +47,15 @@ public class ByteQueue extends AbstractQueue<Byte> {
     }
 
     public boolean hasNext() {
-        if (first.readIndex < first.values.length - 1) {
-            return first.readIndex < first.writeIndex;
-        } else if (first.next != null) {
-            first = first.next;
-            return first.next.hasNext();
-        } else {
-            return false;
-        }
+        do {
+            if (first.readIndex < first.values.length - 1) {
+                return first.readIndex < first.writeIndex;
+            } else if (first.next != null) {
+                first = first.next;
+            } else {
+                return false;
+            }
+        } while (true);
     }
 
     @Override
@@ -66,61 +70,65 @@ public class ByteQueue extends AbstractQueue<Byte> {
     }
 
     public void add(byte value) {
-        Node lastNode = last;
-        do {
-            int nextWriteIndex = lastNode.writeIndex + 1;
-            if (nextWriteIndex < lastNode.values.length) {
-                lastNode.values[nextWriteIndex] = value;
-                lastNode.writeIndex++;
-                size++;
-                return;
-            } else {
-                if (lastNode.next == null) {
-                    lastNode.next = new Node(lastNode.values.length);
-                    last = lastNode.next;
+        synchronized (writeLock) {
+            Node lastNode = last;
+            do {
+                int nextWriteIndex = lastNode.writeIndex + 1;
+                if (nextWriteIndex < lastNode.values.length) {
+                    lastNode.values[nextWriteIndex] = value;
+                    lastNode.writeIndex++;
+                    size++;
+                    return;
+                } else {
+                    if (lastNode.next == null) {
+                        lastNode.next = new Node(lastNode.values.length);
+                        last = lastNode.next;
+                    }
+                    lastNode = lastNode.next;
                 }
-                lastNode = lastNode.next;
-            }
-        } while (true);
+            } while (true);
+        }
     }
 
     public void add(byte[] bytes, int offset, int length) {
-        Node lastNode = last;
-        while (length > 0) {
-            int writeIndex = lastNode.writeIndex;
-            int arrayLength = lastNode.values.length;
+        synchronized (writeLock) {
+            Node lastNode = last;
+            while (length > 0) {
+                int writeIndex = lastNode.writeIndex;
+                int arrayLength = lastNode.values.length;
 
-            if (writeIndex < arrayLength - 1) {
-                int writeNBytes = min(length, arrayLength - 1 - writeIndex);
+                if (writeIndex < arrayLength - 1) {
+                    int writeNBytes = min(length, arrayLength - 1 - writeIndex);
 
-                System.arraycopy(bytes, offset, lastNode.values, writeIndex + 1, writeNBytes);
+                    System.arraycopy(bytes, offset, lastNode.values, writeIndex + 1, writeNBytes);
 
-                lastNode.writeIndex += writeNBytes;
-                size += writeNBytes;
+                    lastNode.writeIndex += writeNBytes;
+                    size += writeNBytes;
 
-                offset += writeNBytes;
-                length -= writeNBytes;
+                    offset += writeNBytes;
+                    length -= writeNBytes;
 
-                if (length > 0) {
+                    if (length > 0) {
+                        if (lastNode.next == null) {
+                            lastNode.next = new Node(last.values.length);
+                            last = lastNode.next;
+                        }
+                        lastNode = lastNode.next;
+                    }
+                } else {
                     if (lastNode.next == null) {
                         lastNode.next = new Node(last.values.length);
                         last = lastNode.next;
                     }
                     lastNode = lastNode.next;
                 }
-            } else {
-                if (lastNode.next == null) {
-                    lastNode.next = new Node(last.values.length);
-                    last = lastNode.next;
-                }
-                lastNode = lastNode.next;
             }
         }
     }
 
     @Override
     public Byte poll() {
-        if (first.hasNext()) {
+        if (hasNext()) {
             return first.poll();
         } else {
             return null;
@@ -153,7 +161,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
 
     @Override
     public Byte peek() {
-        if (first.hasNext()) {
+        if (hasNext()) {
             return first.peek();
         } else {
             return null;
@@ -273,18 +281,18 @@ public class ByteQueue extends AbstractQueue<Byte> {
             }
         }
 
-        boolean hasNext() {
-            if (readIndex < values.length - 1) {
-                return readIndex < writeIndex;
-            } else if (next != null) {
-                if (this == first) {
-                    first = next;
-                }
-                return next.hasNext();
-            } else {
-                return false;
-            }
-        }
+//        boolean hasNext() {
+//            if (readIndex < values.length - 1) {
+//                return readIndex < writeIndex;
+//            } else if (next != null) {
+//                if (this == first) {
+//                    first = next;
+//                }
+//                return next.hasNext();
+//            } else {
+//                return false;
+//            }
+//        }
     }
 
 
