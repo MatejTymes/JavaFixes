@@ -29,6 +29,7 @@ public class ByteQueueInputStream extends InputStream {
         if (!iterator.hasNext()) {
             return -1;
         }
+
         return iterator.readNext() & 0xFF;
     }
 
