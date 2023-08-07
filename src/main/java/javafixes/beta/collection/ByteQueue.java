@@ -173,16 +173,48 @@ public class ByteQueue extends AbstractQueue<Byte> {
             }
 
             int bytesAdded = 0;
-            int currentOffset = offset;
-            int remainingLength = length;
-            while (remainingLength > 0 && hasNext()) {
-                // todo: mtymes - currently way too slow - speedup
-                bytes[currentOffset] = pollNextByte();
 
-                bytesAdded++;
-                currentOffset++;
-                remainingLength--;
+            Node firstNode = first;
+            while (length > 0) {
+                int readIndex = firstNode.readIndex;
+                int writeIndex = firstNode.writeIndex;
+                int lastArrayIndex = firstNode.values.length - 1;
+
+                if (readIndex >= lastArrayIndex) {
+                    if (firstNode.next != null) {
+                        first = firstNode.next;
+                        firstNode = firstNode.next;
+                        continue;
+                    } else {
+                        break;
+                    }
+                } else if (readIndex >= writeIndex) {
+                    break;
+                } else {
+                    int readNBytes = min(length, min(lastArrayIndex, writeIndex) - readIndex);
+
+                    System.arraycopy(firstNode.values, readIndex + 1, bytes, offset, readNBytes);
+
+                    firstNode.readIndex += readNBytes;
+                    size.addAndGet(-readNBytes);
+
+                    bytesAdded += readNBytes;
+
+                    offset += readNBytes;
+                    length -= readNBytes;
+                }
             }
+
+//            int currentOffset = offset;
+//            int remainingLength = length;
+//            while (remainingLength > 0 && hasNext()) {
+//                // todo: mtymes - currently way too slow - speedup
+//                bytes[currentOffset] = pollNextByte();
+//
+//                bytesAdded++;
+//                currentOffset++;
+//                remainingLength--;
+//            }
 
             return (bytesAdded == 0) ? -1 : bytesAdded;
         }
