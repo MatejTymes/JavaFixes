@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static javafixes.object.changing.ChangingValueHelper.handlePotentialNewValue;
 import static javafixes.common.Asserts.assertNotNull;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -119,7 +118,7 @@ public class CachedValue<T> implements ChangingValue<T> {
         boolean didInitializeValue = false;
         if (value == null) {
             synchronized (currentValueHolder) {
-                // if multiple threads reach this point at the same time, only the first one should force and update
+                // if multiple threads reach this point at the same time, only the first one should force an update
                 if (currentValueHolder.get() == null) {
                     forceReCaching(true);
                     didInitializeValue = true;

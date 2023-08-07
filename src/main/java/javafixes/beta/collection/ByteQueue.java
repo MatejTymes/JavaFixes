@@ -5,6 +5,7 @@ import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 
 import static java.lang.Math.min;
+import static javafixes.common.Asserts.assertGreaterThanZero;
 
 // todo: mtymes - test this
 // todo: mtymes - add javadoc
@@ -16,8 +17,10 @@ public class ByteQueue extends AbstractQueue<Byte> {
     private transient int size = 0;
 
     public ByteQueue(
-            int arraySize // todo: mtymes - check that this can't be 0 or smaller
+            int arraySize
     ) {
+        assertGreaterThanZero(arraySize, "arraySize");
+
         this.first = new Node(arraySize);
         this.last = this.first;
     }
@@ -132,6 +135,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
         void add(byte value) {
             int index = ++writeIndex;
             if (index >= values.length) {
+                writeIndex = values.length;
                 if (next == null) {
                     next = new Node(values.length);
                     last = next;
@@ -149,9 +153,10 @@ public class ByteQueue extends AbstractQueue<Byte> {
             }
             int index = ++readIndex;
             if (index >= values.length) {
+                readIndex = values.length;
                 if (next != null) {
                     first = next;
-                    return next.poll();
+                    return next.poll(); // todo: do this in a loop instead
                 } else {
                     throw new NoSuchElementException("No additional data");
                 }
@@ -168,9 +173,10 @@ public class ByteQueue extends AbstractQueue<Byte> {
             }
             int index = readIndex + 1;
             if (index >= values.length) {
+                readIndex = values.length;
                 if (next != null) {
                     first = next;
-                    return next.peek();
+                    return next.peek(); // todo: do this in a loop instead
                 } else {
                     throw new NoSuchElementException("No additional data");
                 }
@@ -203,17 +209,15 @@ public class ByteQueue extends AbstractQueue<Byte> {
 
         @Override
         public boolean hasNext() {
-            Node node = currentNode;
-            int readIndex = currentReadIndex;
             do {
-                if (readIndex < node.values.length - 1) {
-                    return readIndex < node.writeIndex;
-                } else if (node.next == null) {
+                if (currentReadIndex < currentNode.values.length - 1) {
+                    return currentReadIndex < currentNode.writeIndex;
+                } else if (currentNode.next == null) {
                     return false;
                 }
 
-                node = node.next;
-                readIndex = -1;
+                currentNode = currentNode.next;
+                currentReadIndex = -1;
             } while (true);
         }
 

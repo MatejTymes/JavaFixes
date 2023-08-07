@@ -13,4 +13,10 @@ public class Asserts {
             throw new IllegalArgumentException("'" + argumentName + "' of a " + objectType + " can't be null");
         }
     }
+
+    public static void assertGreaterThanZero(int value, String argumentName) {
+        if (value <= 0) {
+            throw new IllegalArgumentException("'" + argumentName + "' must be greater than zero but was '" + value + "' instead");
+        }
+    }
 }
