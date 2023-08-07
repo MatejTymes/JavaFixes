@@ -195,6 +195,9 @@ public class ByteCollectingOutputStream extends OutputStream {
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
             if (len == 0) {
+                if (readIndex == node.writeToIndex) {
+                    return -1;
+                }
                 return 0;
             }
             int actualLen = 0;
