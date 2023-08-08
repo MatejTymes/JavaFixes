@@ -1,5 +1,6 @@
-package javafixes.beta.collection;
+package javafixes.collection;
 
+import javafixes.collection.ByteQueue;
 import org.junit.Test;
 
 import static java.util.UUID.randomUUID;

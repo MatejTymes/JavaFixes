@@ -1,4 +1,4 @@
-package javafixes.beta.collection;
+package javafixes.collection;
 
 import java.util.AbstractQueue;
 import java.util.NoSuchElementException;

@@ -1,4 +1,6 @@
-package javafixes.math;
+package javafixes.math.exception;
+
+import javafixes.math.Decimal;
 
 public class UnsupportedDecimalTypeException extends RuntimeException {
 

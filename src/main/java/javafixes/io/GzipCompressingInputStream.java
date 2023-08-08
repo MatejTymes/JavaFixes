@@ -1,4 +1,4 @@
-package javafixes.beta.io;
+package javafixes.io;
 
 import java.io.IOException;
 import java.io.InputStream;

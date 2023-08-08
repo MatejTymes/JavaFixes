@@ -1,7 +1,7 @@
-package javafixes.beta.io;
+package javafixes.io;
 
-import javafixes.beta.collection.ByteIterator;
-import javafixes.beta.collection.ByteQueue;
+import javafixes.collection.ByteIterator;
+import javafixes.collection.ByteQueue;
 
 import java.io.IOException;
 import java.io.InputStream;
