@@ -40,21 +40,21 @@ public class ByteQueueOutputStream extends OutputStream {
     public void write(int b) throws IOException {
         ensureIsNotClosed();
 
-        byteQueue.add((byte) b);
+        byteQueue.addNext((byte) b);
     }
 
     @Override
     public void write(byte[] b) throws IOException {
         ensureIsNotClosed();
 
-        byteQueue.add(b);
+        byteQueue.addNext(b);
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
         ensureIsNotClosed();
 
-        byteQueue.add(b, off, len);
+        byteQueue.addNext(b, off, len);
     }
 
     @Override

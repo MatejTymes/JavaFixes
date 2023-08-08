@@ -1,4 +1,4 @@
-package javafixes.io;
+package javafixes.deprecated.io;
 
 import java.io.IOException;
 import java.io.InputStream;

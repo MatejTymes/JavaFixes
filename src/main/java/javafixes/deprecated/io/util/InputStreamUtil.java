@@ -1,4 +1,4 @@
-package javafixes.io;
+package javafixes.deprecated.io.util;
 
 import java.io.*;
 import java.util.UUID;
@@ -7,10 +7,15 @@ import static java.io.File.createTempFile;
 
 // todo: mtymes - who still uses this ??? - remove
 
-// todo: add gzipping
 // todo: test this
 public class InputStreamUtil {
 
+    /**
+     * Reads the input value InputStream and stores its content into a temp file.
+     * @param inputStream
+     * @return
+     * @throws IOException
+     */
     public static InputStream toTempFileInputStream(InputStream inputStream) throws IOException {
         File file = writeIntoTempFile(inputStream);
         try {

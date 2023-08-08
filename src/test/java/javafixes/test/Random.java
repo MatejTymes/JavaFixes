@@ -20,12 +20,8 @@ public class Random {
         return pickRandomValue(true, false);
     }
 
-    @SafeVarargs
-    public static <T extends Enum<T>> T randomEnum(Class<T> enumClass, Function<T, Boolean>... validityConditions) {
-        return generateValidValue(
-                () -> pickRandomValue(enumClass.getEnumConstants()),
-                validityConditions
-        );
+    public static byte randomByte() {
+        return (byte) randomInt(-128, 128);
     }
 
     @SafeVarargs
@@ -90,6 +86,14 @@ public class Random {
 
     public static BigDecimal randomBigDecimal() {
         return new BigDecimal(randomBigInteger(), randomInt(-100, 100));
+    }
+
+    @SafeVarargs
+    public static <T extends Enum<T>> T randomEnum(Class<T> enumClass, Function<T, Boolean>... validityConditions) {
+        return generateValidValue(
+                () -> pickRandomValue(enumClass.getEnumConstants()),
+                validityConditions
+        );
     }
 
     public static String randomUUIDString() {

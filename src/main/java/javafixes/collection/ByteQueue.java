@@ -69,11 +69,11 @@ public class ByteQueue extends AbstractQueue<Byte> {
 
     @Override
     public boolean offer(Byte value) {
-        add(value);
+        addNext(value);
         return true;
     }
 
-    public void add(byte value) {
+    public void addNext(byte value) {
         synchronized (writeLock) {
             Node lastNode = last;
             do {
@@ -94,11 +94,11 @@ public class ByteQueue extends AbstractQueue<Byte> {
         }
     }
 
-    public void add(byte[] bytes) {
-        add(bytes, 0, bytes.length);
+    public void addNext(byte[] bytes) {
+        addNext(bytes, 0, bytes.length);
     }
 
-    public void add(byte[] bytes, int offset, int length) {
+    public void addNext(byte[] bytes, int offset, int length) {
         synchronized (writeLock) {
             Node lastNode = last;
             while (length > 0) {

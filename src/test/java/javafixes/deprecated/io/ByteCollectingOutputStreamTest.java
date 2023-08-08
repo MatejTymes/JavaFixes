@@ -1,4 +1,4 @@
-package javafixes.io;
+package javafixes.deprecated.io;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;

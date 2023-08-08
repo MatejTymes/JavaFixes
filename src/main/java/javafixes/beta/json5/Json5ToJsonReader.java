@@ -17,13 +17,14 @@ public class Json5ToJsonReader extends Reader {
 
     private final PushbackReader json5Reader;
 
-    private Queue<Character> buffer = new LinkedArrayQueue<>();
+    private final Queue<Character> buffer;
     private boolean finished = false;
 
     public Json5ToJsonReader(Reader json5Reader) {
         this.json5Reader = json5Reader instanceof PushbackReader
                 ? (PushbackReader) json5Reader
                 : new PushbackReader(json5Reader);
+        this.buffer = new LinkedArrayQueue<>(1024);
     }
 
     @Override
