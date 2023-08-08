@@ -3,6 +3,7 @@ package javafixes.beta.io;
 import javafixes.beta.collection.ByteQueue;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 // todo: mtymes - test this
@@ -17,6 +18,22 @@ public class ByteQueueOutputStream extends OutputStream {
     ) {
         this.byteQueue = byteQueue;
         this.isClosed = false;
+    }
+
+    public InputStream toInputStream() {
+        return toPeekingInputStream();
+    }
+
+    public InputStream toPeekingInputStream() {
+        return toInputStream(false);
+    }
+
+    public InputStream toPollingInputStream() {
+        return toInputStream(true);
+    }
+
+    public InputStream toInputStream(boolean removeReadBytesFromQueue) {
+        return new ByteQueueInputStream(byteQueue, removeReadBytesFromQueue);
     }
 
     @Override

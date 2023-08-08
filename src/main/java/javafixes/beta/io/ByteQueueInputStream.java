@@ -14,12 +14,20 @@ public class ByteQueueInputStream extends InputStream {
     private boolean isClosed;
 
     public ByteQueueInputStream(
+            ByteIterator iterator
+    ) {
+        this.iterator = iterator;
+    }
+
+    public ByteQueueInputStream(
             ByteQueue byteQueue,
             boolean removeReadBytesFromQueue
     ) {
-        this.iterator = removeReadBytesFromQueue
-                ? byteQueue.pollingIterator()
-                : byteQueue.iterator();
+        this(
+                removeReadBytesFromQueue
+                        ? byteQueue.pollingIterator()
+                        : byteQueue.iterator()
+        );
     }
 
     @Override
