@@ -164,6 +164,10 @@ public class ByteQueue extends AbstractQueue<Byte> {
         }
     }
 
+    public int pollNextBytes(byte[] bytes) {
+        return pollNextBytes(bytes, 0, bytes.length);
+    }
+
     public int pollNextBytes(byte[] bytes, int offset, int length) {
         synchronized (pollLock) {
             if (length == 0) {
@@ -235,19 +239,28 @@ public class ByteQueue extends AbstractQueue<Byte> {
         } while (true);
     }
 
+    public int peekAtNextBytes(byte[] bytes) {
+        return peekAtNextBytes(bytes, 0, bytes.length);
+    }
+
+    public int peekAtNextBytes(byte[] bytes, int offset, int length) {
+        ByteQueueReader reader = new ByteQueueReader();
+        return reader.readNext(bytes, offset, length);
+    }
+
     public byte[] toByteArray() {
         int arrayLength;
-        ByteQueueReader byteQueueReader;
+        ByteQueueReader reader;
 
         synchronized (pollLock) {
             synchronized (writeLock) {
-                byteQueueReader = new ByteQueueReader();
+                reader = new ByteQueueReader();
                 arrayLength = size();
             }
         }
 
         byte[] bytes = new byte[arrayLength];
-        byteQueueReader.readNext(bytes, 0, arrayLength);
+        reader.readNext(bytes, 0, arrayLength);
 
         return bytes;
     }
