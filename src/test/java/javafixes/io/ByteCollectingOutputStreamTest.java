@@ -53,15 +53,19 @@ public class ByteCollectingOutputStreamTest {
 //    @Test
 //    @Ignore
 //    public void performanceCheck() throws Exception{
-//        ByteCollectingOutputStream stream = new ByteCollectingOutputStream(1024);
+//        ByteCollectingOutputStream stream = new ByteCollectingOutputStream();
 ////        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+////        ByteQueueOutputStream stream = new ByteQueueOutputStream(new ByteQueue());
 //
 //        byte[] bytes = new byte[1024];
 //        SecureRandom random = new SecureRandom();
 //        random.nextBytes(bytes);
 //
 //        long startTime = System.currentTimeMillis();
-//        for (int i = 0; i < 1024 * 128; i++) {
+//        for (int i = 0; i < 1024 * 1024; i++) {
+////            if (i % 1024 == 0) {
+////                System.out.println(i);
+////            }
 //            stream.write(bytes, 0, bytes.length);;
 //        }
 //        long duration = System.currentTimeMillis() - startTime;

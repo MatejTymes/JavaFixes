@@ -30,7 +30,7 @@ public class ByteQueueOutputStream extends OutputStream {
     public void write(byte[] b) throws IOException {
         ensureIsNotClosed();
 
-        byteQueue.add(b, 0, b.length);
+        byteQueue.add(b);
     }
 
     @Override

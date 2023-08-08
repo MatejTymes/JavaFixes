@@ -66,7 +66,7 @@ public class ConvertedInputStream extends InputStream {
             processMoreBytes();
         }
 
-        return byteQueue.pollNextByte() & 0xFF;
+        return byteQueue.pollNext() & 0xFF;
     }
 
     @Override
@@ -95,7 +95,7 @@ public class ConvertedInputStream extends InputStream {
                 processMoreBytes();
             }
 
-            int readBytesCount = byteQueue.pollNextBytes(b, off + allReadBytesCount, len - allReadBytesCount);
+            int readBytesCount = byteQueue.pollNext(b, off + allReadBytesCount, len - allReadBytesCount);
             if (readBytesCount == -1) {
                 break outer;
             } else {

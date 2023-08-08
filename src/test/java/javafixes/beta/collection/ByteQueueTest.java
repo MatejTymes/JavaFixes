@@ -30,7 +30,7 @@ public class ByteQueueTest {
 
         byte[] newBytes = new byte[originalBytes.length];
 
-        int bytesRead = queue.pollNextBytes(newBytes, 0, originalBytes.length);
+        int bytesRead = queue.pollNext(newBytes, 0, originalBytes.length);
         assertThat(bytesRead, equalTo(originalBytes.length));
         assertThat(queue.isEmpty(), is(true));
         assertThat(queue.hasNext(), is(false));
