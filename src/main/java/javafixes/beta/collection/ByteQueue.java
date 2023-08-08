@@ -1,7 +1,6 @@
 package javafixes.beta.collection;
 
 import java.util.AbstractQueue;
-import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -11,8 +10,6 @@ import static javafixes.common.Asserts.assertGreaterThanZero;
 // todo: mtymes - test this
 // todo: mtymes - add javadoc
 public class ByteQueue extends AbstractQueue<Byte> {
-
-    // todo: mtymes - add methods: toByteArray(): byte[] & fillByteArray(byte[] bytes, int offset, int length): int
 
     private transient final Object writeLock = new Object();
     private transient final Object pollLock = new Object();
@@ -238,6 +235,22 @@ public class ByteQueue extends AbstractQueue<Byte> {
         } while (true);
     }
 
+    public byte[] toByteArray() {
+        int arrayLength;
+        ByteQueueReader byteQueueReader;
+
+        synchronized (pollLock) {
+            synchronized (writeLock) {
+                byteQueueReader = new ByteQueueReader();
+                arrayLength = size();
+            }
+        }
+
+        byte[] bytes = new byte[arrayLength];
+        byteQueueReader.readNext(bytes, 0, arrayLength);
+
+        return bytes;
+    }
 
     class Node {
 
@@ -255,46 +268,83 @@ public class ByteQueue extends AbstractQueue<Byte> {
 
     public class ByteQueueReader implements ByteIterator {
 
-        private Node currentNode;
-        private int currentReadIndex;
+        private Node node;
+        private int prevReadIndex;
 
         private ByteQueueReader() {
-            this.currentNode = first;
-            this.currentReadIndex = currentNode.readIndex;
+            this.node = first;
+            this.prevReadIndex = node.readIndex;
         }
 
         @Override
         public boolean hasNext() {
             do {
-                if (currentReadIndex < currentNode.values.length - 1) {
-                    return currentReadIndex < currentNode.writeIndex;
-                } else if (currentNode.next == null) {
+                if (prevReadIndex < node.values.length - 1) {
+                    return prevReadIndex < node.writeIndex;
+                } else if (node.next == null) {
                     return false;
                 }
 
-                currentNode = currentNode.next;
-                currentReadIndex = -1;
+                node = node.next;
+                prevReadIndex = -1;
             } while (true);
         }
 
         @Override
         public byte readNext() {
             do {
-                if (currentReadIndex < currentNode.values.length - 1) {
-                    if (currentReadIndex >= currentNode.writeIndex) {
+                if (prevReadIndex < node.values.length - 1) {
+                    if (prevReadIndex >= node.writeIndex) {
                         throw new NoSuchElementException("No additional data");
                     }
-                    return currentNode.values[++currentReadIndex];
-                } else if (currentNode.next == null) {
+                    return node.values[++prevReadIndex];
+                } else if (node.next == null) {
                     throw new NoSuchElementException("No additional data");
                 } else {
-                    currentNode = currentNode.next;
-                    currentReadIndex = -1;
+                    node = node.next;
+                    prevReadIndex = -1;
                 }
             } while (true);
         }
 
-        // todo: mtymes - maybe add faster implementation for: int readNext(byte[] bytes, int offset, int length)
+        @Override
+        public int readNext(byte[] bytes, int offset, int length) {
+            if (length == 0) {
+                return hasNext() ? 0 : -1;
+            }
+
+            int bytesAdded = 0;
+
+            while (length > 0) {
+                int lastArrayIndex = node.values.length - 1;
+                int writeIndex = node.writeIndex;
+
+                if (prevReadIndex >= lastArrayIndex) {
+                    if (node.next != null) {
+                        node = node.next;
+                        prevReadIndex = -1;
+                        continue;
+                    } else {
+                        break;
+                    }
+                } else if (prevReadIndex >= writeIndex) {
+                    break;
+                } else {
+                    int readNBytes = min(length, min(lastArrayIndex, writeIndex) - prevReadIndex);
+
+                    System.arraycopy(node.values, prevReadIndex + 1, bytes, offset, readNBytes);
+
+                    prevReadIndex += readNBytes;
+
+                    bytesAdded += readNBytes;
+
+                    offset += readNBytes;
+                    length -= readNBytes;
+                }
+            }
+
+            return (bytesAdded == 0) ? -1 : bytesAdded;
+        }
     }
 
     public class ByteQueuePoller implements ByteIterator {
