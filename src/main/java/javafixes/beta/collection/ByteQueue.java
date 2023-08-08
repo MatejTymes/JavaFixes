@@ -12,7 +12,6 @@ import static javafixes.common.Asserts.assertGreaterThanZero;
 // todo: mtymes - add javadoc
 public class ByteQueue extends AbstractQueue<Byte> {
 
-    // todo: mtymes - currently peeking is not greatly guarded by concurrency - do we want it like that
     // todo: mtymes - add methods: toByteArray(): byte[] & fillByteArray(byte[] bytes, int offset, int length): int
 
     private transient final Object writeLock = new Object();
@@ -284,8 +283,6 @@ public class ByteQueue extends AbstractQueue<Byte> {
                 if (currentReadIndex < currentNode.values.length - 1) {
                     if (currentReadIndex >= currentNode.writeIndex) {
                         throw new NoSuchElementException("No additional data");
-                    } else if (currentReadIndex < currentNode.readIndex) {
-                        throw new ConcurrentModificationException("This data has been removed and is no longer available");
                     }
                     return currentNode.values[++currentReadIndex];
                 } else if (currentNode.next == null) {
