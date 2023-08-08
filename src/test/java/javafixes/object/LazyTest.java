@@ -1,5 +1,6 @@
 package javafixes.object;
 
+import javafixes.common.exception.InitializationFailedException;
 import javafixes.concurrency.Runner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +15,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.UUID.randomUUID;
-import static javafixes.collection.CollectionUtil.newList;
+import static javafixes.collection.util.CollectionUtil.newList;
 import static javafixes.concurrency.Runner.runner;
 import static javafixes.test.Random.pickRandomValue;
 import static javafixes.test.Random.randomInt;

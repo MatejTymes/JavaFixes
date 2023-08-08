@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import java.util.Set;
 import java.util.function.Function;
 
-import static javafixes.collection.CollectionUtil.newSet;
+import static javafixes.collection.util.CollectionUtil.newSet;
 
 @FunctionalInterface
 public interface Condition<T> extends Function<T, Boolean> {

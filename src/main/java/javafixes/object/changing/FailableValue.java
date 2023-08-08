@@ -7,7 +7,7 @@ import javafixes.object.Value;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static javafixes.common.Asserts.assertNotNull;
+import static javafixes.common.util.AssertUtil.assertNotNull;
 import static javafixes.object.Either.left;
 import static javafixes.object.Either.right;
 

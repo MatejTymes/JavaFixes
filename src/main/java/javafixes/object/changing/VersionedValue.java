@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 import static javafixes.object.changing.FailableValue.wrapFailure;
 import static javafixes.object.changing.FailableValue.wrapValue;
-import static javafixes.common.Asserts.assertNotNull;
+import static javafixes.common.util.AssertUtil.assertNotNull;
 
 public class VersionedValue<T> extends DataObject implements Value<T> {
 

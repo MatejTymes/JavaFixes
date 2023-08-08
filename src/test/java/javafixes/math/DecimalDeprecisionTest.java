@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.math.RoundingMode;
 import java.util.List;
 
-import static javafixes.collection.CollectionUtil.newList;
+import static javafixes.collection.util.CollectionUtil.newList;
 import static javafixes.math.Decimal.d;
 import static javafixes.math.Decimal.decimal;
 import static javafixes.test.Condition.*;

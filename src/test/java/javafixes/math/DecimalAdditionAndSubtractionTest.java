@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import java.math.BigInteger;
 
-import static javafixes.collection.CollectionUtil.newList;
+import static javafixes.collection.util.CollectionUtil.newList;
 import static javafixes.math.Decimal.d;
 import static javafixes.test.Condition.*;
 import static javafixes.test.Random.*;

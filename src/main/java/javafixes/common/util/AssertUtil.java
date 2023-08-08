@@ -1,6 +1,6 @@
-package javafixes.common;
+package javafixes.common.util;
 
-public class Asserts {
+public class AssertUtil {
 
     public static void assertNotNull(Object value, String argumentName) {
         if (value == null) {

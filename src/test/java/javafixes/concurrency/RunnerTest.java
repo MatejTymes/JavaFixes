@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-import static javafixes.collection.CollectionUtil.newList;
+import static javafixes.collection.util.CollectionUtil.newList;
 import static javafixes.test.Random.randomLong;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;

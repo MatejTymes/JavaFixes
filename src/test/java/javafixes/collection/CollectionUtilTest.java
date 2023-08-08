@@ -1,5 +1,6 @@
 package javafixes.collection;
 
+import javafixes.collection.util.CollectionUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;

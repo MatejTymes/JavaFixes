@@ -1,9 +1,11 @@
 package javafixes.object;
 
+import javafixes.common.exception.InitializationFailedException;
+
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
-import static javafixes.common.Asserts.assertNotNull;
+import static javafixes.common.util.AssertUtil.assertNotNull;
 
 /**
  * {@code Lazy} is intended as wrapper for lazily initialized objects.

@@ -1,17 +1,17 @@
-package javafixes.io;
+package javafixes.common;
 
-import javafixes.common.StreamUtil;
+import javafixes.common.util.StreamUtil;
 import org.junit.Test;
 
 import java.util.Iterator;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
-import static javafixes.collection.CollectionUtil.newList;
+import static javafixes.collection.util.CollectionUtil.newList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class InputStreamUtilTest {
+public class StreamUtilTest {
 
     @Test
     public void shouldCreateStreamFromIterable() {

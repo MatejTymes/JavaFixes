@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static javafixes.object.changing.ChangingValueHelper.handlePotentialNewValue;
-import static javafixes.common.Asserts.assertNotNull;
+import static javafixes.common.util.AssertUtil.assertNotNull;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class DynamicValue<T> implements ChangingValue<T> {

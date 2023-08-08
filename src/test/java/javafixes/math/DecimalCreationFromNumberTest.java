@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 import static java.lang.Math.pow;
-import static javafixes.collection.CollectionUtil.newList;
+import static javafixes.collection.util.CollectionUtil.newList;
 import static javafixes.test.Condition.*;
 import static javafixes.test.Random.*;
 import static org.hamcrest.Matchers.equalTo;

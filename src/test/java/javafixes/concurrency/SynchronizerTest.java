@@ -1,5 +1,6 @@
 package javafixes.concurrency;
 
+import javafixes.common.exception.WrappedException;
 import javafixes.common.function.Task;
 import org.junit.Test;
 
@@ -12,7 +13,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.UUID.randomUUID;
-import static javafixes.collection.CollectionUtil.newList;
+import static javafixes.collection.util.CollectionUtil.newList;
 import static javafixes.concurrency.Runner.runner;
 import static javafixes.test.Random.*;
 import static org.hamcrest.Matchers.*;

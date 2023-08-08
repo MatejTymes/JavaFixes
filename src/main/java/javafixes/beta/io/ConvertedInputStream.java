@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static javafixes.common.Asserts.assertGreaterThanZero;
+import static javafixes.common.util.AssertUtil.assertGreaterThanZero;
 
 // todo: mtymes - test this
 // todo: mtymes - add javadoc

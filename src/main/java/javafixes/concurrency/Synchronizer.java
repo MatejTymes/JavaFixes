@@ -1,5 +1,6 @@
 package javafixes.concurrency;
 
+import javafixes.common.exception.WrappedException;
 import javafixes.common.function.Task;
 import javafixes.object.Tuple;
 

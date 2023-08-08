@@ -1,6 +1,6 @@
-package javafixes.object;
+package javafixes.common.exception;
 
-// todo: move into common.exception
+// todo: mtymes - add javadoc
 public class InitializationFailedException extends RuntimeException {
 
     public InitializationFailedException(String message, Throwable cause) {

@@ -2,7 +2,7 @@ package javafixes.object;
 
 import java.util.function.Function;
 
-import static javafixes.common.Asserts.assertNotNull;
+import static javafixes.common.util.AssertUtil.assertNotNull;
 
 /**
  * An immutable object that contains a non-null reference to another object.

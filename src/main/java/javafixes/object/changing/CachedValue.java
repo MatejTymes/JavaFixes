@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static javafixes.common.Asserts.assertNotNull;
+import static javafixes.common.util.AssertUtil.assertNotNull;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class CachedValue<T> implements ChangingValue<T> {
