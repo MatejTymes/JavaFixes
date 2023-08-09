@@ -20,11 +20,11 @@ public class ByteQueue extends AbstractQueue<Byte> {
     private transient final AtomicInteger size = new AtomicInteger(0);
 
     public ByteQueue(
-            int arraySize
+            int pageSize
     ) {
-        assertGreaterThanZero(arraySize, "arraySize");
+        assertGreaterThanZero(pageSize, "pageSize");
 
-        this.first = new Node(arraySize);
+        this.first = new Node(pageSize);
         this.last = this.first;
     }
 
@@ -151,7 +151,9 @@ public class ByteQueue extends AbstractQueue<Byte> {
             do {
                 int prevReadIndex = firstNode.readIndex;
                 int lastArrayIndex = firstNode.values.length - 1;
-                if (prevReadIndex >= firstNode.writeIndex && prevReadIndex < lastArrayIndex) {
+                int writeIndex = firstNode.writeIndex;
+
+                if (prevReadIndex >= writeIndex && prevReadIndex < lastArrayIndex) {
                     throw new NoSuchElementException("No additional data");
                 }
                 int nextReadIndex = ++firstNode.readIndex;
@@ -240,7 +242,11 @@ public class ByteQueue extends AbstractQueue<Byte> {
             }
 
             if (prevReadIndex >= lastArrayIndex) {
-                firstNode = firstNode.next;
+                if (firstNode.next == null) {
+                    throw new NoSuchElementException("No additional data");
+                } else {
+                    firstNode = firstNode.next;
+                }
             } else {
                 return firstNode.values[prevReadIndex + 1];
             }
@@ -273,13 +279,26 @@ public class ByteQueue extends AbstractQueue<Byte> {
         return bytes;
     }
 
-    class Node {
+    public byte[] pollAllBytes() {
+        synchronized (pollLock) {
+            synchronized (writeLock) {
+                int arrayLength = size();
 
-        int writeIndex = -1; // todo: mtymes - change to volatile ???
-        int readIndex = -1; // todo: mtymes - change to volatile ???
+                byte[] bytes = new byte[arrayLength];
+                pollNext(bytes, 0, arrayLength);
+
+                return bytes;
+            }
+        }
+    }
+
+    static class Node {
+
+        volatile int writeIndex = -1;
+        volatile int readIndex = -1;
         final byte[] values;
 
-        Node next = null; // todo: mtymes - change to volatile ???
+        Node next = null;
 
         private Node(int size) {
             values = new byte[size];

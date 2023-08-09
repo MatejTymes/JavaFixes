@@ -24,6 +24,18 @@ public class Random {
         return (byte) randomInt(-128, 128);
     }
 
+    public static byte[] randomByteArray(int size) {
+        byte[] bytes = new byte[size];
+        for (int i = 0; i < size; i++) {
+            bytes[i] = randomByte();
+        }
+        return bytes;
+    }
+
+    public static byte[] randomByteArray() {
+        return randomByteArray(randomInt(1, 64));
+    }
+
     @SafeVarargs
     public static int randomInt(int from, int to, Function<Integer, Boolean>... validityConditions) {
         return generateValidValue(

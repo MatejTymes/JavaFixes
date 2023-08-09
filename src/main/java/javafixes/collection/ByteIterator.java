@@ -12,6 +12,10 @@ public interface ByteIterator extends Iterator<Byte> {
 
     byte readNext();
 
+    default int readNext(byte[] bytes) {
+        return readNext(bytes, 0, bytes.length);
+    }
+
     default int readNext(byte[] bytes, int offset, int length) {
         if (length == 0) {
             return hasNext() ? 0 : -1;
