@@ -281,7 +281,7 @@ In all the cases where multiple items have to be collected just so they can be i
 
 ### ByteQueue
 
-Memory efficient and performant Queue for collecting and retrieving bytes. Great if you want to process upfront undefined amount or big  
+Memory efficient and performant Queue for collecting and retrieving bytes. Great if you want to process upfront undefined amount or big batch of bytes.  
 
 ```Java
     ByteQueue queue = new ByteQueue(); // or new ByteQueue(pageSize); - default page size is 4kb (each time a page is filled a new one is created)
