@@ -254,6 +254,90 @@ public class ByteQueueTest {
                     }
                     assertAreEqual(bytes, expectedByteArray);
                 }
+            },
+            (queue, expectedBytes) -> {
+                System.out.println("queue.pollingIterator().readNext()");
+                if (expectedBytes.isEmpty()) {
+                    try {
+                        queue.pollingIterator().readNext();
+                        fail("expected NoSuchElementException");
+                    } catch (NoSuchElementException expectedException) {
+                        assertThat(expectedException.getMessage(), equalTo("No additional data"));
+                    }
+                } else {
+                    assertThat(queue.pollingIterator().readNext(), equalTo(expectedBytes.remove(0)));
+                }
+            },
+            (queue, expectedBytes) -> {
+                System.out.println("queue.pollingIterator().readNext(noBytes)");
+                byte[] noBytes = {};
+                if (expectedBytes.isEmpty()) {
+                    assertThat(queue.pollingIterator().readNext(noBytes), equalTo(-1));
+                } else {
+                    assertThat(queue.pollingIterator().readNext(noBytes), equalTo(0));
+                }
+            },
+            (queue, expectedBytes) -> {
+                System.out.println("queue.pollingIterator().readNext(bytes)");
+                byte[] bytes = randomByteArray();
+
+                if (expectedBytes.isEmpty()) {
+                    assertThat(queue.pollingIterator().readNext(bytes), equalTo(-1));
+                } else {
+                    int copiedBytesCount = min(bytes.length, expectedBytes.size());
+
+                    byte[] expectedByteArray = copy(bytes);
+                    assertThat(queue.pollingIterator().readNext(bytes), equalTo(copiedBytesCount));
+                    for (int i = 0; i < copiedBytesCount; i++) {
+                        expectedByteArray[i] = expectedBytes.remove(0);
+                    }
+                    assertAreEqual(bytes, expectedByteArray);
+                }
+            },
+            (queue, expectedBytes) -> {
+                System.out.println("queue.pollingIterator().readNext(noBytes, 0, 0)");
+                byte[] noBytes = {};
+                if (expectedBytes.isEmpty()) {
+                    assertThat(queue.pollingIterator().readNext(noBytes, 0, 0), equalTo(-1));
+                } else {
+                    assertThat(queue.pollingIterator().readNext(noBytes, 0, 0), equalTo(0));
+                }
+            },
+            (queue, expectedBytes) -> {
+                System.out.println("queue.pollingIterator().readNext(bytes, 0, bytes.length)");
+                byte[] bytes = randomByteArray();
+
+                if (expectedBytes.isEmpty()) {
+                    assertThat(queue.pollingIterator().readNext(bytes, 0, bytes.length), equalTo(-1));
+                } else {
+                    int copiedBytesCount = min(bytes.length, expectedBytes.size());
+
+                    byte[] expectedByteArray = copy(bytes);
+                    assertThat(queue.pollingIterator().readNext(bytes, 0, bytes.length), equalTo(copiedBytesCount));
+                    for (int i = 0; i < copiedBytesCount; i++) {
+                        expectedByteArray[i] = expectedBytes.remove(0);
+                    }
+                    assertAreEqual(bytes, expectedByteArray);
+                }
+            },
+            (queue, expectedBytes) -> {
+                System.out.println("queue.pollingIterator().readNext(bytes, offset, length)");
+                byte[] bytes = randomByteArray();
+                int offset = randomOffset(bytes);
+                int length = randomLength(bytes, offset);
+
+                if (expectedBytes.isEmpty()) {
+                    assertThat(queue.pollingIterator().readNext(bytes, offset, length), equalTo(-1));
+                } else {
+                    int copiedBytesCount = min(length, expectedBytes.size());
+
+                    byte[] expectedByteArray = copy(bytes);
+                    assertThat(queue.pollingIterator().readNext(bytes, offset, length), equalTo(copiedBytesCount));
+                    for (int i = 0; i < copiedBytesCount; i++) {
+                        expectedByteArray[i + offset] = expectedBytes.remove(0);
+                    }
+                    assertAreEqual(bytes, expectedByteArray);
+                }
             }
     );
 
@@ -300,33 +384,37 @@ public class ByteQueueTest {
         }
     }
 
-    @Test
-    public void shouldCollectAndRetrieveBytes() throws Exception {
-        ByteQueue queue = new ByteQueue(randomInt(1, 20));
-
-        assertQueueSize(queue, 0);
-
-        String originalText = "This is a random string " + randomUUID() + " with some random " + randomUUID() + " values in it";
-        String charsetName = "UTF-8";
-
-        byte[] originalBytes = originalText.getBytes(charsetName);
-        queue.addNext(originalBytes, 0, originalBytes.length);
-
-        assertQueueSize(queue, originalBytes.length);
-
-        byte[] newBytes = new byte[originalBytes.length];
-
-        int bytesRead = queue.pollNext(newBytes, 0, originalBytes.length);
-        assertThat(bytesRead, equalTo(originalBytes.length));
-        assertQueueSize(queue, 0);
-
-        assertThat(new String(newBytes, charsetName), equalTo(originalText));
-    }
+//    @Test
+//    public void shouldCollectAndRetrieveBytes() throws Exception {
+//        ByteQueue queue = new ByteQueue(randomInt(1, 20));
+//
+//        assertQueueSize(queue, 0);
+//
+//        String originalText = "This is a random string " + randomUUID() + " with some random " + randomUUID() + " values in it";
+//        String charsetName = "UTF-8";
+//
+//        byte[] originalBytes = originalText.getBytes(charsetName);
+//        queue.addNext(originalBytes, 0, originalBytes.length);
+//
+//        assertQueueSize(queue, originalBytes.length);
+//
+//        byte[] newBytes = new byte[originalBytes.length];
+//
+//        int bytesRead = queue.pollNext(newBytes, 0, originalBytes.length);
+//        assertThat(bytesRead, equalTo(originalBytes.length));
+//        assertQueueSize(queue, 0);
+//
+//        assertThat(new String(newBytes, charsetName), equalTo(originalText));
+//    }
 
     private void assertQueueSize(ByteQueue queue, int expectedSize) {
         assertThat(queue.isEmpty(), is(expectedSize <= 0));
         assertThat(queue.hasNext(), is(expectedSize > 0));
         assertThat(queue.size(), equalTo(expectedSize));
+
+        assertThat(queue.iterator().hasNext(), is(expectedSize > 0));
+        assertThat(queue.pollingIterator().hasNext(), is(expectedSize > 0));
+        assertThat(queue.peekingIterator().hasNext(), is(expectedSize > 0));
     }
 
     private void assertQueueContent(ByteQueue queue, List<Byte> expectedBytes) {

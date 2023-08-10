@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static java.lang.Math.min;
 import static javafixes.common.util.AssertUtil.assertGreaterThanZero;
 
-// todo: mtymes - test this
 // todo: mtymes - add javadoc
 public class ByteQueue extends AbstractQueue<Byte> {
 
