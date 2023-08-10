@@ -311,17 +311,17 @@ Memory efficient and performant Queue for collecting and retrieving bytes. Great
     // streams through all bytes and removes them from Queue as they are being read
     ByteIterator pollingIterator = queue.pollingIterator();
     while(pollingIterator.hasNext()) {
-    byte singleByte = pollingIterator.readNext();
-
-    // or
-    byte[] byteArray =  ... ;
-    int removedByteCount = pollingIterator.readNext(byteArray);
-
-    // or
-    byte[] byteArray =  ... ;
-    int offset = ... ;
-    int length = ... ;
-    int removedByteCount = pollingIterator.readNext(byteArray);
+        byte singleByte = pollingIterator.readNext();
+    
+        // or
+        byte[] byteArray =  ... ;
+        int removedByteCount = pollingIterator.readNext(byteArray);
+    
+        // or
+        byte[] byteArray =  ... ;
+        int offset = ... ;
+        int length = ... ;
+        int removedByteCount = pollingIterator.readNext(byteArray);
     }
 
     byte readByte = queue.pollNext();
@@ -340,17 +340,17 @@ Memory efficient and performant Queue for collecting and retrieving bytes. Great
     // allows you to stream through all bytes without removing them from queue
     ByteIterator peekingIterator = queue.peekingIterator(); // or queue.iterator() is peeking as well
     while(peekingIterator.hasNext()) {
-    byte singleByte = peekingIterator.readNext();
-
-    // or
-    byte[] byteArray =  ... ;
-    int readBytesCount = peekingIterator.readNext(byteArray);
-
-    // or
-    byte[] byteArray =  ... ;
-    int offset = ... ;
-    int length = ... ;
-    int readBytesCount = peekingIterator.readNext(byteArray);
+        byte singleByte = peekingIterator.readNext();
+    
+        // or
+        byte[] byteArray =  ... ;
+        int readBytesCount = peekingIterator.readNext(byteArray);
+    
+        // or
+        byte[] byteArray =  ... ;
+        int offset = ... ;
+        int length = ... ;
+        int readBytesCount = peekingIterator.readNext(byteArray);
     }
 
     // these operations always look at the first byte/s - even on subsequent calls
