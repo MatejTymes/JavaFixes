@@ -1,13 +1,14 @@
 package javafixes.collection;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 // todo: mtymes - add javadoc
 
 /**
- * A byte related enhancement of Iterator interface that allows to retrieve the bytes
- * without the need for boxing/conversion into Byte class.
- * It also provides functionality for batch retrieval of bytes.
+ * A byte related enhancement of Iterator interface. In addition to the common functionality
+ * it adds ability to retrieve the bytes without the need for boxing/conversion into Byte class.
+ * as well as provides functionality for batch retrieval of bytes.
 
  * @author mtymes
  */
@@ -18,7 +19,12 @@ public interface ByteIterator extends Iterator<Byte> {
         return readNext();
     }
 
-    byte readNext();
+    /**
+     * Returns the next {@code byte} in the iteration
+     * @return the next {@code byte} in the iteration
+     * @throws NoSuchElementException if the iteration has no more bytes
+     */
+    byte readNext() throws NoSuchElementException;
 
     default int readNext(byte[] bytes) {
         return readNext(bytes, 0, bytes.length);
