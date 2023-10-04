@@ -1,5 +1,7 @@
 package javafixes.concurrency;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,7 +17,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  *
  * @author mtymes
  */
-public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo, AutoCloseable {
+public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo, Closeable {
 
     private final AtomicBoolean wasShutdownTriggered = new AtomicBoolean(false);
     private final AtomicInteger failedToStart = new AtomicInteger(0);
@@ -189,7 +191,7 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo, Aut
      * @see ExecutorService#shutdownNow()
      */
     @Override
-    public void close() throws Exception {
+    public void close() throws IOException {
         shutdownNow();
     }
 

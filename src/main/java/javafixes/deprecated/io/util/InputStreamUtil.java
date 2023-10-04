@@ -59,7 +59,7 @@ public class InputStreamUtil {
         }
     }
 
-    private static class DeleteOnCloseFileInputStream extends InputStream implements AutoCloseable {
+    private static class DeleteOnCloseFileInputStream extends InputStream implements Closeable {
 
         private final File file;
         private final FileInputStream wrappedStream;
