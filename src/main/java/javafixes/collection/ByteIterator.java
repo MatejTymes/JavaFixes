@@ -3,6 +3,14 @@ package javafixes.collection;
 import java.util.Iterator;
 
 // todo: mtymes - add javadoc
+
+/**
+ * A byte related enhancement of Iterator interface that allows to retrieve the bytes
+ * without the need for boxing/conversion into Byte class.
+ * It also provides functionality for batch retrieval of bytes.
+
+ * @author mtymes
+ */
 public interface ByteIterator extends Iterator<Byte> {
 
     @Override
