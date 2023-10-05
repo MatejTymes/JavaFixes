@@ -330,7 +330,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
         }
 
         @Override
-        public byte readNext() {
+        public byte readNext() throws NoSuchElementException {
             do {
                 if (prevReadIndex < node.values.length - 1) {
                     if (prevReadIndex >= node.writeIndex) {
@@ -347,7 +347,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
         }
 
         @Override
-        public int readNext(byte[] bytes, int offset, int length) {
+        public int readNext(byte[] buffer, int offset, int length) {
             if (length == 0) {
                 return hasNext() ? 0 : -1;
             }
@@ -371,7 +371,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
                 } else {
                     int readNBytes = min(length, min(lastArrayIndex, writeIndex) - prevReadIndex);
 
-                    System.arraycopy(node.values, prevReadIndex + 1, bytes, offset, readNBytes);
+                    System.arraycopy(node.values, prevReadIndex + 1, buffer, offset, readNBytes);
 
                     prevReadIndex += readNBytes;
 
@@ -394,13 +394,13 @@ public class ByteQueue extends AbstractQueue<Byte> {
         }
 
         @Override
-        public byte readNext() {
+        public byte readNext() throws NoSuchElementException {
             return ByteQueue.this.pollNext();
         }
 
         @Override
-        public int readNext(byte[] bytes, int offset, int length) {
-            return ByteQueue.this.pollNext(bytes, offset, length);
+        public int readNext(byte[] buffer, int offset, int length) {
+            return ByteQueue.this.pollNext(buffer, offset, length);
         }
     }
 }
