@@ -14,8 +14,8 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
 
     private transient int size = 0;
 
-    public LinkedArrayQueue(int arraySize) {
-        this.first = new Node(arraySize);
+    public LinkedArrayQueue(int pageSize) {
+        this.first = new Node(pageSize);
         this.last = this.first;
     }
 
@@ -42,6 +42,10 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
     @Override
     public int size() {
         return size;
+    }
+
+    public int pageSize() {
+        return first.values.length;
     }
 
     @Override
