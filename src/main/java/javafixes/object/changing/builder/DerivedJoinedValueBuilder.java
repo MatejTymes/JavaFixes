@@ -1,9 +1,9 @@
 package javafixes.object.changing.builder;
 
+import javafixes.common.function.TriFunction;
 import javafixes.object.changing.ChangingValue;
 import javafixes.object.changing.DerivedJoinedValue;
 import javafixes.object.changing.FailableValue;
-import javafixes.common.function.TriFunction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +25,7 @@ public class DerivedJoinedValueBuilder<T> extends AbstractChangingValueBuilder<T
         this.sourceValues = new ArrayList<>(sourceValues);
         this.valuesMapper = (Function) valuesMapper;
     }
+
 
     public static <T1, T2, OutputType> DerivedJoinedValueBuilder<OutputType> joinBuilder(
             ChangingValue<T1> value1,
@@ -64,6 +65,32 @@ public class DerivedJoinedValueBuilder<T> extends AbstractChangingValueBuilder<T
     ) {
         return new DerivedJoinedValueBuilder<>(values, mapFunction);
     }
+
+
+    public static <T1, T2, OutputType> DerivedJoinedValue<OutputType> join(
+            ChangingValue<T1> value1,
+            ChangingValue<T2> value2,
+            BiFunction<FailableValue<T1>, FailableValue<T2>, OutputType> mapFunction
+    ) {
+        return joinBuilder(value1, value2, mapFunction).build();
+    }
+
+    public static <T1, T2, T3, OutputType> DerivedJoinedValue<OutputType> join(
+            ChangingValue<T1> value1,
+            ChangingValue<T2> value2,
+            ChangingValue<T3> value3,
+            TriFunction<FailableValue<T1>, FailableValue<T2>, FailableValue<T3>, OutputType> mapFunction
+    ) {
+        return joinBuilder(value1, value2, value3, mapFunction).build();
+    }
+
+    public static <T, OutputType> DerivedJoinedValue<OutputType> join(
+            List<ChangingValue<? extends T>> values,
+            Function<List<FailableValue<? super T>>, OutputType> mapFunction
+    ) {
+        return joinBuilder(values, mapFunction).build();
+    }
+
 
     @Override
     public DerivedJoinedValue<T> build() {

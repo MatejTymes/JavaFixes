@@ -23,6 +23,7 @@ public class CachedValueBuilder<T> extends AbstractChangingValueBuilder<T, Cache
         this.sourceValue = sourceValue;
     }
 
+
     public static <T> CachedValueBuilder<T> cachedValueBuilder(
             ChangingValue<T> sourceValue
     ) {
@@ -34,6 +35,20 @@ public class CachedValueBuilder<T> extends AbstractChangingValueBuilder<T, Cache
     ) {
         return new CachedValueBuilder<>(sourceValueBuilder.build());
     }
+
+
+    public static <T> CachedValue<T> cachedValue(
+            ChangingValue<T> sourceValue
+    ) {
+        return cachedValueBuilder(sourceValue).build();
+    }
+
+    public static <T> CachedValue<T> cachedValue(
+            ChangingValueBuilder<T> sourceValueBuilder
+    ) {
+        return cachedValueBuilder(sourceValueBuilder).build();
+    }
+
 
     @Override
     public CachedValue<T> build() {

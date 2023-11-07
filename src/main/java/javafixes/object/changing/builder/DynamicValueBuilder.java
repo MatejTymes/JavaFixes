@@ -15,9 +15,19 @@ public class DynamicValueBuilder<T> extends AbstractChangingValueBuilder<T, Dyna
         this.valueGenerator = valueGenerator;
     }
 
-    public static <T> DynamicValueBuilder<T> dynamicValueBuilder(Supplier<T> valueGenerator) {
+    public static <T> DynamicValueBuilder<T> dynamicValueBuilder(
+            Supplier<T> valueGenerator
+    ) {
         return new DynamicValueBuilder<>(valueGenerator);
     }
+
+
+    public static <T> DynamicValue<T> dynamicValue(
+            Supplier<T> valueGenerator
+    ) {
+        return dynamicValueBuilder(valueGenerator).build();
+    }
+
 
     @Override
     public DynamicValue<T> build() {

@@ -21,6 +21,7 @@ public class DerivedValueBuilder<SourceType, OutputType> extends AbstractChangin
         this.valueMapper = valueMapper;
     }
 
+
     public static <SourceType, OutputType> DerivedValueBuilder<SourceType, OutputType> derivedValueBuilder(
             ChangingValue<SourceType> sourceValue,
             Function<FailableValue<SourceType>, ? extends OutputType> valueMapper
@@ -34,6 +35,24 @@ public class DerivedValueBuilder<SourceType, OutputType> extends AbstractChangin
     ) {
         return derivedValueBuilder(sourceValueBuilder.build(), valueMapper);
     }
+
+
+    public static <SourceType, OutputType> DerivedValue<SourceType, OutputType> derivedValue(
+            ChangingValue<SourceType> sourceValue,
+            Function<FailableValue<SourceType>, ? extends OutputType> valueMapper
+    ) {
+        DerivedValueBuilder<SourceType, OutputType> builder = derivedValueBuilder(sourceValue, valueMapper);
+        return builder.build();
+    }
+
+    public static <SourceType, OutputType> DerivedValue<SourceType, OutputType> derivedValue(
+            ChangingValueBuilder<SourceType> sourceValueBuilder,
+            Function<FailableValue<SourceType>, ? extends OutputType> valueMapper
+    ) {
+        DerivedValueBuilder<SourceType, OutputType> builder = derivedValueBuilder(sourceValueBuilder, valueMapper);
+        return builder.build();
+    }
+
 
     @Override
     public DerivedValue<SourceType, OutputType> build() {
