@@ -66,6 +66,10 @@ public class ByteQueue extends AbstractQueue<Byte> {
         return size.get();
     }
 
+    public int pageSize() {
+        return first.values.length;
+    }
+
     @Override
     public boolean offer(Byte value) {
         addNext(value);

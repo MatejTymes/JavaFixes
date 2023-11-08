@@ -3,6 +3,7 @@ package javafixes.collection;
 import java.util.*;
 
 import static java.lang.Math.min;
+import static javafixes.common.util.AssertUtil.assertGreaterThanZero;
 
 // todo: mtymes - put into README.md
 // todo: mtymes - test this
@@ -15,6 +16,8 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
     private transient int size = 0;
 
     public LinkedArrayQueue(int pageSize) {
+        assertGreaterThanZero(pageSize, "pageSize");
+
         this.first = new Node(pageSize);
         this.last = this.first;
     }
