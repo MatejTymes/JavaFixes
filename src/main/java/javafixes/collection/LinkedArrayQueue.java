@@ -15,7 +15,9 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
 
     private transient int size = 0;
 
-    public LinkedArrayQueue(int pageSize) {
+    public LinkedArrayQueue(
+            int pageSize
+    ) {
         assertGreaterThanZero(pageSize, "pageSize");
 
         this.first = new Node(pageSize);
@@ -28,13 +30,25 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return new NodeIterator();
+        return peekingIterator();
     }
 
     // todo: pollNIterable - partition
 
+    public Iterator<T> peekingIterator() {
+        return new PeekingIterator();
+    }
+
     public Iterator<T> pollingIterator() {
         return new PollingIterator();
+    }
+
+    public Iterable<T> asPeekingIterable() {
+        return this::peekingIterator;
+    }
+
+    public Iterable<T> asPollingIterable() {
+        return this::pollingIterator;
     }
 
     @Override
@@ -164,12 +178,12 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
         }
     }
 
-    private class NodeIterator implements Iterator<T> {
+    private class PeekingIterator implements Iterator<T> {
 
         private Node node;
         private int readIndex;
 
-        private NodeIterator() {
+        private PeekingIterator() {
             this.node = first;
             this.readIndex = this.node.readIndex;
         }

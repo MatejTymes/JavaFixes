@@ -8,7 +8,7 @@ import static java.lang.Math.min;
 import static javafixes.common.util.AssertUtil.assertGreaterThanZero;
 
 // todo: mtymes - add javadoc
-public class ByteQueue extends AbstractQueue<Byte> {
+public class ByteQueue extends AbstractQueue<Byte> implements ByteIterable {
 
     private transient final Object writeLock = new Object();
     private transient final Object pollLock = new Object();
@@ -42,6 +42,14 @@ public class ByteQueue extends AbstractQueue<Byte> {
 
     public ByteIterator pollingIterator() {
         return new ByteQueuePoller();
+    }
+
+    public ByteIterable asPeekingIterable() {
+        return this::peekingIterator;
+    }
+
+    public ByteIterable asPollingIterable() {
+        return this::pollingIterator;
     }
 
     @Override
@@ -309,7 +317,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
     }
 
 
-    public class ByteQueueReader implements ByteIterator {
+    private class ByteQueueReader implements ByteIterator {
 
         private Node node;
         private int prevReadIndex;
@@ -390,7 +398,7 @@ public class ByteQueue extends AbstractQueue<Byte> {
         }
     }
 
-    public class ByteQueuePoller implements ByteIterator {
+    private class ByteQueuePoller implements ByteIterator {
 
         @Override
         public boolean hasNext() {
