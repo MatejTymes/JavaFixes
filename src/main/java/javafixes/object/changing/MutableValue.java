@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static javafixes.object.changing.ChangingValueHelper.handlePotentialNewValue;
 import static javafixes.common.util.AssertUtil.assertNotNull;
+import static javafixes.object.changing.FailableValue.wrapValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -59,7 +60,7 @@ public class MutableValue<T> implements ChangingValue<T> {
         return currentValueHolder.get();
     }
 
-    public boolean updateToNewValue(
+    public boolean updateValue(
             FailableValue<T> newValue,
             boolean ignoreDifferenceCheck
     ) {
@@ -73,5 +74,17 @@ public class MutableValue<T> implements ChangingValue<T> {
                     logger
             );
         }
+    }
+
+    public boolean updateValue(
+            FailableValue<T> newValue
+    ) {
+        return updateValue(newValue, false);
+    }
+
+    public boolean updateValue(
+            T newValue
+    ) {
+        return updateValue(wrapValue(newValue), false);
     }
 }
