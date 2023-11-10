@@ -26,7 +26,7 @@ public class ByteQueueInputStream extends InputStream {
         this(
                 removeReadBytesFromQueue
                         ? byteQueue.pollingIterator()
-                        : byteQueue.iterator()
+                        : byteQueue.peekingIterator()
         );
     }
 

@@ -20,8 +20,8 @@ public class ByteQueueOutputStream extends OutputStream {
         this.isClosed = false;
     }
 
-    public InputStream toInputStream() {
-        return toPeekingInputStream();
+    public ByteQueueOutputStream() {
+        this(new ByteQueue());
     }
 
     public InputStream toPeekingInputStream() {
