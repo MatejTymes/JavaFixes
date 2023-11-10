@@ -38,7 +38,7 @@ public class ChangingValueUtil {
         );
     }
 
-    public static <SourceType, OutputType> Function<FailableValue<SourceType>, ? extends OutputType> mappingValue(
+    public static <SourceType, OutputType> Function<FailableValue<SourceType>, OutputType> mappingValue(
             Function<? super SourceType, ? extends OutputType> valueMapper
     ) {
         return failableValue -> valueMapper.apply(failableValue.value());
