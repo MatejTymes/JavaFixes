@@ -28,6 +28,11 @@ public abstract class AbstractChangingValueBuilder<T, ThisBuilder extends Changi
         return thisBuilder();
     }
 
+    public ThisBuilder withValueName(Optional<String> valueName) {
+        this.valueName = valueName;
+        return thisBuilder();
+    }
+
     public ThisBuilder withReplaceOldValueIf(ReplaceOldValueIf<? super T> replaceOldValueIf) {
         this.updateConfigBuilder = updateConfigBuilder.withReplaceOldValueIf(replaceOldValueIf);
         return thisBuilder();
