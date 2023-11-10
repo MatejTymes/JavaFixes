@@ -30,10 +30,50 @@ public  class UpdateConfigBuilder<T> {
         return this;
     }
 
+    public UpdateConfigBuilder<T> withNoReplaceOldValueIf() {
+        this.updateConfig = new ChangingValueUpdateConfig<>(
+                Optional.empty(),
+                updateConfig.eachValueHandler,
+                updateConfig.afterValueChangedHandler,
+                updateConfig.disposeFunction
+        );
+        return this;
+    }
+
+    public UpdateConfigBuilder<T> withReplaceOldValueIf(Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf) {
+        this.updateConfig = new ChangingValueUpdateConfig<>(
+                replaceOldValueIf,
+                updateConfig.eachValueHandler,
+                updateConfig.afterValueChangedHandler,
+                updateConfig.disposeFunction
+        );
+        return this;
+    }
+
     public UpdateConfigBuilder<T> withEachValueHandler(EachValueHandler<? super T> eachValueHandler) {
         this.updateConfig = new ChangingValueUpdateConfig<>(
                 updateConfig.replaceOldValueIf,
                 Optional.of(eachValueHandler),
+                updateConfig.afterValueChangedHandler,
+                updateConfig.disposeFunction
+        );
+        return this;
+    }
+
+    public UpdateConfigBuilder<T> withNoEachValueHandler() {
+        this.updateConfig = new ChangingValueUpdateConfig<>(
+                updateConfig.replaceOldValueIf,
+                Optional.empty(),
+                updateConfig.afterValueChangedHandler,
+                updateConfig.disposeFunction
+        );
+        return this;
+    }
+
+    public UpdateConfigBuilder<T> withEachValueHandler(Optional<EachValueHandler<? super T>> eachValueHandler) {
+        this.updateConfig = new ChangingValueUpdateConfig<>(
+                updateConfig.replaceOldValueIf,
+                eachValueHandler,
                 updateConfig.afterValueChangedHandler,
                 updateConfig.disposeFunction
         );
@@ -50,12 +90,52 @@ public  class UpdateConfigBuilder<T> {
         return this;
     }
 
+    public UpdateConfigBuilder<T> withNotAfterValueChangedHandler() {
+        this.updateConfig = new ChangingValueUpdateConfig<>(
+                updateConfig.replaceOldValueIf,
+                updateConfig.eachValueHandler,
+                Optional.empty(),
+                updateConfig.disposeFunction
+        );
+        return this;
+    }
+
+    public UpdateConfigBuilder<T> withAfterValueChangedHandler(Optional<AfterValueChangedHandler<? super T>> afterValueChangedHandler) {
+        this.updateConfig = new ChangingValueUpdateConfig<>(
+                updateConfig.replaceOldValueIf,
+                updateConfig.eachValueHandler,
+                afterValueChangedHandler,
+                updateConfig.disposeFunction
+        );
+        return this;
+    }
+
     public UpdateConfigBuilder<T> withDisposeFunction(Consumer<? super T> disposeFunction) {
         this.updateConfig = new ChangingValueUpdateConfig<>(
                 updateConfig.replaceOldValueIf,
                 updateConfig.eachValueHandler,
                 updateConfig.afterValueChangedHandler,
                 Optional.of(disposeFunction)
+        );
+        return this;
+    }
+
+    public UpdateConfigBuilder<T> withNoDisposeFunction() {
+        this.updateConfig = new ChangingValueUpdateConfig<>(
+                updateConfig.replaceOldValueIf,
+                updateConfig.eachValueHandler,
+                updateConfig.afterValueChangedHandler,
+                Optional.empty()
+        );
+        return this;
+    }
+
+    public UpdateConfigBuilder<T> withDisposeFunction(Optional<Consumer<? super T>> disposeFunction) {
+        this.updateConfig = new ChangingValueUpdateConfig<>(
+                updateConfig.replaceOldValueIf,
+                updateConfig.eachValueHandler,
+                updateConfig.afterValueChangedHandler,
+                disposeFunction
         );
         return this;
     }

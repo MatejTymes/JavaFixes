@@ -28,6 +28,11 @@ public abstract class AbstractChangingValueBuilder<T, ThisBuilder extends Changi
         return thisBuilder();
     }
 
+    public ThisBuilder withNoValueName(String valueName) {
+        this.valueName = Optional.empty();
+        return thisBuilder();
+    }
+
     public ThisBuilder withValueName(Optional<String> valueName) {
         this.valueName = valueName;
         return thisBuilder();
@@ -38,7 +43,17 @@ public abstract class AbstractChangingValueBuilder<T, ThisBuilder extends Changi
         return thisBuilder();
     }
 
+    public ThisBuilder withReplaceOldValueIf(Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf) {
+        this.updateConfigBuilder = updateConfigBuilder.withReplaceOldValueIf(replaceOldValueIf);
+        return thisBuilder();
+    }
+
     public ThisBuilder withEachValueHandler(EachValueHandler<? super T> eachValueHandler) {
+        this.updateConfigBuilder = updateConfigBuilder.withEachValueHandler(eachValueHandler);
+        return thisBuilder();
+    }
+
+    public ThisBuilder withEachValueHandler(Optional<EachValueHandler<? super T>> eachValueHandler) {
         this.updateConfigBuilder = updateConfigBuilder.withEachValueHandler(eachValueHandler);
         return thisBuilder();
     }
@@ -48,7 +63,17 @@ public abstract class AbstractChangingValueBuilder<T, ThisBuilder extends Changi
         return thisBuilder();
     }
 
+    public ThisBuilder withAfterValueChangedHandler(Optional<AfterValueChangedHandler<? super T>> afterValueChangedHandler) {
+        this.updateConfigBuilder = updateConfigBuilder.withAfterValueChangedHandler(afterValueChangedHandler);
+        return thisBuilder();
+    }
+
     public ThisBuilder withDisposeFunction(Consumer<? super T> disposeFunction) {
+        this.updateConfigBuilder = updateConfigBuilder.withDisposeFunction(disposeFunction);
+        return thisBuilder();
+    }
+
+    public ThisBuilder withDisposeFunction(Optional<Consumer<? super T>> disposeFunction) {
         this.updateConfigBuilder = updateConfigBuilder.withDisposeFunction(disposeFunction);
         return thisBuilder();
     }
