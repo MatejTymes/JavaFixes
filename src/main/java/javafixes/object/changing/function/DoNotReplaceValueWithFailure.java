@@ -19,8 +19,8 @@ public class DoNotReplaceValueWithFailure<T> implements ReplaceOldValueIf<T> {
     @Override
     public boolean replaceOldValueIf(FailableValue<? extends T> oldValue, FailableValue<? extends T> newValue) {
         if (newValue.isFailure() && oldValue.isNotFailure()) {
-            return otherwiseCheck.replaceOldValueIf(oldValue, newValue);
+            return false;
         }
-        return true;
+        return otherwiseCheck.replaceOldValueIf(oldValue, newValue);
     }
 }
