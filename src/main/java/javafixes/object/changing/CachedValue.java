@@ -2,7 +2,7 @@ package javafixes.object.changing;
 
 import javafixes.object.changing.config.ChangingValueUpdateConfig;
 import javafixes.object.changing.config.ScheduledReCachingConfig;
-import javafixes.object.changing.function.ReCacheValueIf;
+import javafixes.object.changing.function.recaching.ReCacheValueIf;
 import org.slf4j.Logger;
 
 import java.time.Instant;

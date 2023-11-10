@@ -1,4 +1,4 @@
-package javafixes.object.changing.function;
+package javafixes.object.changing.function.recaching;
 
 import javafixes.object.changing.FailableValue;
 
@@ -12,6 +12,7 @@ public interface ReCacheValueIf<T> {
     default ReCacheValueIf<T> or(ReCacheValueIf<T> anotherCheck) {
         return new ReCacheAnyValue<>(this, anotherCheck);
     }
+
 
     static <T> ReCacheValueIf<T> reCacheIfOlderThan(Duration staleAfterDuration) {
         return new ReCacheIfOlderThan<>(staleAfterDuration);

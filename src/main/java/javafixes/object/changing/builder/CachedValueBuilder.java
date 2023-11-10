@@ -3,7 +3,7 @@ package javafixes.object.changing.builder;
 import javafixes.object.changing.CachedValue;
 import javafixes.object.changing.ChangingValue;
 import javafixes.object.changing.config.ScheduledReCachingConfig;
-import javafixes.object.changing.function.ReCacheValueIf;
+import javafixes.object.changing.function.recaching.ReCacheValueIf;
 
 import java.time.Duration;
 import java.util.Optional;

@@ -3,15 +3,15 @@ package javafixes.object.changing;
 import javafixes.object.changing.config.ChangingValueUpdateConfig;
 import javafixes.object.changing.function.AfterValueChangedHandler;
 import javafixes.object.changing.function.EachValueHandler;
-import javafixes.object.changing.function.ReplaceOldValueIf;
-import javafixes.object.changing.function.AlwaysReplaceOldValue;
+import javafixes.object.changing.function.replacement.ReplaceOldValueIf;
 import org.slf4j.Logger;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import static javafixes.object.changing.function.ReplaceDifferentOldValue.replaceDifferentOldValue;
+import static javafixes.object.changing.function.replacement.ReplaceOldValueIf.alwaysReplaceOldValue;
+import static javafixes.object.changing.function.replacement.ReplaceOldValueIf.replaceNonEqualOldValue;
 
 class ChangingValueHelper {
 
@@ -108,7 +108,7 @@ class ChangingValueHelper {
                 newValue,
                 valueHolder,
                 valueName,
-                ignoreDifferenceCheck ? Optional.of(AlwaysReplaceOldValue.alwaysReplaceOldValue()) : updateConfig.replaceOldValueIf,
+                ignoreDifferenceCheck ? Optional.of(alwaysReplaceOldValue()) : updateConfig.replaceOldValueIf,
                 updateConfig.eachValueHandler,
                 updateConfig.afterValueChangedHandler,
                 updateConfig.disposeFunction,
@@ -129,7 +129,7 @@ class ChangingValueHelper {
 
         try {
             return replaceOldValueIf
-                    .orElse(replaceDifferentOldValue())
+                    .orElse(replaceNonEqualOldValue())
                     .replaceOldValueIf(oldValue.value, newValue);
         } catch (Exception loggableException) {
             try {

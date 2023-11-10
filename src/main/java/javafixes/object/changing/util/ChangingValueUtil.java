@@ -3,7 +3,7 @@ package javafixes.object.changing.util;
 import javafixes.object.changing.ChangingValue;
 import javafixes.object.changing.FailableValue;
 import javafixes.object.changing.function.EachValueHandler;
-import javafixes.object.changing.function.ReplaceOldValueIf;
+import javafixes.object.changing.function.replacement.ReplaceOldValueIf;
 import javafixes.common.function.TriConsumer;
 import javafixes.common.function.TriFunction;
 

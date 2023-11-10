@@ -1,4 +1,4 @@
-package javafixes.object.changing.function;
+package javafixes.object.changing.function.recaching;
 
 import javafixes.object.changing.FailableValue;
 

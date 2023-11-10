@@ -3,7 +3,7 @@ package javafixes.object.changing.builder;
 import javafixes.object.changing.config.ChangingValueUpdateConfig;
 import javafixes.object.changing.function.AfterValueChangedHandler;
 import javafixes.object.changing.function.EachValueHandler;
-import javafixes.object.changing.function.ReplaceOldValueIf;
+import javafixes.object.changing.function.replacement.ReplaceOldValueIf;
 
 import java.util.Optional;
 import java.util.function.Consumer;

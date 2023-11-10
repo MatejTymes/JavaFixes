@@ -1,6 +1,6 @@
 package javafixes.object.changing.config;
 
-import javafixes.object.changing.function.ReCacheValueIf;
+import javafixes.object.changing.function.recaching.ReCacheValueIf;
 
 import java.time.Duration;
 import java.util.Optional;

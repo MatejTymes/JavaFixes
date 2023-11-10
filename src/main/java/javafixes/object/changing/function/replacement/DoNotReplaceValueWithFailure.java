@@ -1,4 +1,4 @@
-package javafixes.object.changing.function;
+package javafixes.object.changing.function.replacement;
 
 import javafixes.object.changing.FailableValue;
 
@@ -8,12 +8,6 @@ public class DoNotReplaceValueWithFailure<T> implements ReplaceOldValueIf<T> {
 
     public DoNotReplaceValueWithFailure(ReplaceOldValueIf<T> otherwiseCheck) {
         this.otherwiseCheck = otherwiseCheck;
-    }
-
-    public static <T> DoNotReplaceValueWithFailure<T> doNotReplaceValueWithFailureBut(
-            ReplaceOldValueIf<T> otherwiseCheck
-    ) {
-        return new DoNotReplaceValueWithFailure<>(otherwiseCheck);
     }
 
     @Override
