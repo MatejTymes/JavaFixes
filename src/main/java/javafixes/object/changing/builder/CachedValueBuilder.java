@@ -81,11 +81,40 @@ public class CachedValueBuilder<T> extends AbstractChangingValueBuilder<T, Cache
 
     public CachedValueBuilder<T> withScheduledReCaching(
             ScheduledExecutorService useExecutor,
+            Duration initialDelay,
+            Duration refreshPeriod
+    ) {
+        this.scheduledReCachingConfig = Optional.of(new ScheduledReCachingConfig<>(
+                useExecutor,
+                Optional.of(initialDelay),
+                refreshPeriod,
+                Optional.empty()
+        ));
+        return this;
+    }
+
+    public CachedValueBuilder<T> withScheduledReCaching(
+            ScheduledExecutorService useExecutor,
             Duration refreshPeriod,
             ReCacheValueIf<? super T> reCacheValueInBackgroundIf
     ) {
         this.scheduledReCachingConfig = Optional.of(new ScheduledReCachingConfig<>(
                 useExecutor,
+                refreshPeriod,
+                Optional.of(reCacheValueInBackgroundIf)
+        ));
+        return this;
+    }
+
+    public CachedValueBuilder<T> withScheduledReCaching(
+            ScheduledExecutorService useExecutor,
+            Duration initialDelay,
+            Duration refreshPeriod,
+            ReCacheValueIf<? super T> reCacheValueInBackgroundIf
+    ) {
+        this.scheduledReCachingConfig = Optional.of(new ScheduledReCachingConfig<>(
+                useExecutor,
+                Optional.of(initialDelay),
                 refreshPeriod,
                 Optional.of(reCacheValueInBackgroundIf)
         ));

@@ -59,7 +59,7 @@ public class CachedValue<T> implements ChangingValue<T> {
             ReCacheValueIf<? super T> backgroundReCacheCheck = scheduledConfig.reCacheValueInBackgroundIf.orElseGet(ReCacheValueIf::alwaysReCacheValue);
             scheduledConfig.useExecutor.scheduleAtFixedRate(
                     () -> reCacheIfNeeded(backgroundReCacheCheck),
-                    scheduledConfig.refreshPeriod.toMillis(),
+                    scheduledConfig.initialDelay.orElseGet(() -> scheduledConfig.refreshPeriod).toMillis(),
                     scheduledConfig.refreshPeriod.toMillis(),
                     TimeUnit.MILLISECONDS
             );

@@ -7,6 +7,8 @@ import javafixes.object.changing.function.replacement.ReplaceOldValueIf;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static javafixes.common.util.AssertUtil.assertNotNull;
+
 public class ChangingValueUpdateConfig<T> {
 
     public static final ChangingValueUpdateConfig<Object> DO_NOTHING_ON_UPDATE_CONFIG = new ChangingValueUpdateConfig<>(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
@@ -23,6 +25,11 @@ public class ChangingValueUpdateConfig<T> {
             Optional<AfterValueChangedHandler<? super T>> afterValueChangedHandler,
             Optional<Consumer<? super T>> disposeFunction
     ) {
+        assertNotNull(replaceOldValueIf, "replaceOldValueIf", "ChangingValueUpdateConfig");
+        assertNotNull(eachValueHandler, "eachValueHandler", "ChangingValueUpdateConfig");
+        assertNotNull(afterValueChangedHandler, "afterValueChangedHandler", "ChangingValueUpdateConfig");
+        assertNotNull(disposeFunction, "disposeFunction", "ChangingValueUpdateConfig");
+
         this.eachValueHandler = eachValueHandler;
         this.replaceOldValueIf = replaceOldValueIf;
         this.afterValueChangedHandler = afterValueChangedHandler;

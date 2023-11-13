@@ -4,6 +4,8 @@ import javafixes.object.changing.FailableValue;
 
 import java.time.Duration;
 
+import static javafixes.common.util.AssertUtil.assertNotNull;
+
 public class ReCacheIfOlderThan<T> implements ReCacheValueIf<T> {
 
     public final Duration staleAfterDuration;
@@ -11,6 +13,8 @@ public class ReCacheIfOlderThan<T> implements ReCacheValueIf<T> {
     public ReCacheIfOlderThan(
             Duration staleAfterDuration
     ) {
+        assertNotNull(staleAfterDuration, "staleAfterDuration", "ReCacheIfOlderThan");
+
         this.staleAfterDuration = staleAfterDuration;
     }
 
