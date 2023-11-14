@@ -1,17 +1,17 @@
 package javafixes.object.changing;
 
 import javafixes.object.changing.config.ChangingValueUpdateConfig;
-import javafixes.object.changing.function.AfterValueChangedHandler;
-import javafixes.object.changing.function.EachValueHandler;
-import javafixes.object.changing.function.replacement.ReplaceOldValueIf;
+import javafixes.object.changing.function.valueHandler.AfterValueChangedHandler;
+import javafixes.object.changing.function.valueHandler.EachValueHandler;
+import javafixes.object.changing.function.replacement.ValueReplacementRule;
 import org.slf4j.Logger;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import static javafixes.object.changing.function.replacement.ReplaceOldValueIf.alwaysReplaceOldValue;
-import static javafixes.object.changing.function.replacement.ReplaceOldValueIf.replaceNonEqualOldValue;
+import static javafixes.object.changing.function.replacement.ValueReplacementRule.alwaysReplaceOldValue;
+import static javafixes.object.changing.function.replacement.ValueReplacementRule.replaceNonEqualOldValue;
 
 class ChangingValueHelper {
 
@@ -19,7 +19,7 @@ class ChangingValueHelper {
             FailableValue<T> newValue,
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
-            Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf,
+            Optional<ValueReplacementRule<? super T>> valueReplacementRule,
             Optional<EachValueHandler<? super T>> eachValueHandler,
             Optional<AfterValueChangedHandler<? super T>> afterValueChangedHandler,
             Optional<Consumer<? super T>> disposeFunction,
@@ -30,7 +30,7 @@ class ChangingValueHelper {
         boolean shouldUpdate = shouldUpdate(
                 oldValue,
                 newValue,
-                replaceOldValueIf,
+                valueReplacementRule,
                 valueName,
                 logger
         );
@@ -88,7 +88,7 @@ class ChangingValueHelper {
                 newValue,
                 valueHolder,
                 valueName,
-                (Optional) updateConfig.replaceOldValueIf,
+                (Optional) updateConfig.valueReplacementRule,
                 (Optional) updateConfig.eachValueHandler,
                 (Optional) updateConfig.afterValueChangedHandler,
                 (Optional) updateConfig.disposeFunction,
@@ -108,7 +108,7 @@ class ChangingValueHelper {
                 newValue,
                 valueHolder,
                 valueName,
-                ignoreDifferenceCheck ? Optional.of(alwaysReplaceOldValue()) : updateConfig.replaceOldValueIf,
+                ignoreDifferenceCheck ? Optional.of(alwaysReplaceOldValue()) : updateConfig.valueReplacementRule,
                 updateConfig.eachValueHandler,
                 updateConfig.afterValueChangedHandler,
                 updateConfig.disposeFunction,
@@ -119,7 +119,7 @@ class ChangingValueHelper {
     static <T> boolean shouldUpdate(
             VersionedValue<T> oldValue,
             FailableValue<T> newValue,
-            Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf,
+            Optional<ValueReplacementRule<? super T>> valueReplacementRule,
             Optional<String> valueName,
             Logger logger
     ) {
@@ -128,9 +128,9 @@ class ChangingValueHelper {
         }
 
         try {
-            return replaceOldValueIf
+            return valueReplacementRule
                     .orElse(replaceNonEqualOldValue())
-                    .replaceOldValueIf(oldValue.value, newValue);
+                    .shouldReplaceOldValue(oldValue.value, newValue);
         } catch (Exception loggableException) {
             try {
                 logger.error(

@@ -4,21 +4,21 @@ import javafixes.object.changing.FailableValue;
 
 import static javafixes.common.util.AssertUtil.assertNotNull;
 
-public class DoNotReplaceValueWithFailure<T> implements ReplaceOldValueIf<T> {
+public class DoNotReplaceValueWithFailureRule<T> implements ValueReplacementRule<T> {
 
-    private final ReplaceOldValueIf<T> otherwiseCheck;
+    private final ValueReplacementRule<T> otherwiseCheck;
 
-    public DoNotReplaceValueWithFailure(ReplaceOldValueIf<T> otherwiseCheck) {
+    public DoNotReplaceValueWithFailureRule(ValueReplacementRule<T> otherwiseCheck) {
         assertNotNull(otherwiseCheck, "otherwiseCheck", "DoNotReplaceValueWithFailure");
 
         this.otherwiseCheck = otherwiseCheck;
     }
 
     @Override
-    public boolean replaceOldValueIf(FailableValue<? extends T> oldValue, FailableValue<? extends T> newValue) {
+    public boolean shouldReplaceOldValue(FailableValue<? extends T> oldValue, FailableValue<? extends T> newValue) {
         if (newValue.isFailure() && oldValue.isNotFailure()) {
             return false;
         }
-        return otherwiseCheck.replaceOldValueIf(oldValue, newValue);
+        return otherwiseCheck.shouldReplaceOldValue(oldValue, newValue);
     }
 }

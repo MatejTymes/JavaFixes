@@ -1,9 +1,9 @@
 package javafixes.object.changing.builder;
 
 import javafixes.object.changing.config.ChangingValueUpdateConfig;
-import javafixes.object.changing.function.AfterValueChangedHandler;
-import javafixes.object.changing.function.EachValueHandler;
-import javafixes.object.changing.function.replacement.ReplaceOldValueIf;
+import javafixes.object.changing.function.valueHandler.AfterValueChangedHandler;
+import javafixes.object.changing.function.valueHandler.EachValueHandler;
+import javafixes.object.changing.function.replacement.ValueReplacementRule;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -38,16 +38,17 @@ public abstract class AbstractChangingValueBuilder<T, ThisBuilder extends Changi
         return thisBuilder();
     }
 
-    public ThisBuilder withReplaceOldValueIf(ReplaceOldValueIf<? super T> replaceOldValueIf) {
-        this.updateConfigBuilder = updateConfigBuilder.withReplaceOldValueIf(replaceOldValueIf);
+    public ThisBuilder withValueReplacementRule(ValueReplacementRule<? super T> valueReplacementRule) {
+        this.updateConfigBuilder = updateConfigBuilder.withValueReplacementRule(valueReplacementRule);
         return thisBuilder();
     }
 
-    public ThisBuilder withReplaceOldValueIf(Optional<ReplaceOldValueIf<? super T>> replaceOldValueIf) {
-        this.updateConfigBuilder = updateConfigBuilder.withReplaceOldValueIf(replaceOldValueIf);
+    public ThisBuilder withValueReplacementRule(Optional<ValueReplacementRule<? super T>> valueReplacementRule) {
+        this.updateConfigBuilder = updateConfigBuilder.withValueReplacementRule(valueReplacementRule);
         return thisBuilder();
     }
 
+    // todo: mtymes - with EachPotentialValueHandler
     public ThisBuilder withEachValueHandler(EachValueHandler<? super T> eachValueHandler) {
         this.updateConfigBuilder = updateConfigBuilder.withEachValueHandler(eachValueHandler);
         return thisBuilder();
@@ -58,6 +59,7 @@ public abstract class AbstractChangingValueBuilder<T, ThisBuilder extends Changi
         return thisBuilder();
     }
 
+    // todo: mtymes - with AfterReplacedPreviousValueHandler
     public ThisBuilder withAfterValueChangedHandler(AfterValueChangedHandler<? super T> afterValueChangedHandler) {
         this.updateConfigBuilder = updateConfigBuilder.withAfterValueChangedHandler(afterValueChangedHandler);
         return thisBuilder();

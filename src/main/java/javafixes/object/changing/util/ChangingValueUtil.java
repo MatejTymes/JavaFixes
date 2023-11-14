@@ -2,8 +2,8 @@ package javafixes.object.changing.util;
 
 import javafixes.object.changing.ChangingValue;
 import javafixes.object.changing.FailableValue;
-import javafixes.object.changing.function.EachValueHandler;
-import javafixes.object.changing.function.replacement.ReplaceOldValueIf;
+import javafixes.object.changing.function.valueHandler.EachValueHandler;
+import javafixes.object.changing.function.replacement.ValueReplacementRule;
 import javafixes.common.function.TriConsumer;
 import javafixes.common.function.TriFunction;
 
@@ -44,7 +44,7 @@ public class ChangingValueUtil {
         return failableValue -> valueMapper.apply(failableValue.value());
     }
 
-    public static <T> ReplaceOldValueIf<T> comparingValues(
+    public static <T> ValueReplacementRule<T> comparingValues(
             BiFunction<T, T, Boolean> valueCheck
     ) {
         return (oldValue, newValue) -> valueCheck.apply(oldValue.value(), newValue.value());
