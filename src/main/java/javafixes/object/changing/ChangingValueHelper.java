@@ -1,7 +1,7 @@
 package javafixes.object.changing;
 
 import javafixes.object.changing.config.ChangingValueUpdateConfig;
-import javafixes.object.changing.function.valueHandler.AfterValueChangedHandler;
+import javafixes.object.changing.function.valueHandler.AfterReplacedPreviousValueHandler;
 import javafixes.object.changing.function.valueHandler.EachPotentialValueHandler;
 import javafixes.object.changing.function.replacement.ValueReplacementRule;
 import org.slf4j.Logger;
@@ -21,7 +21,7 @@ class ChangingValueHelper {
             Optional<String> valueName,
             Optional<ValueReplacementRule<? super T>> valueReplacementRule,
             Optional<EachPotentialValueHandler<? super T>> eachPotentialValueHandler,
-            Optional<AfterValueChangedHandler<? super T>> afterValueChangedHandler,
+            Optional<AfterReplacedPreviousValueHandler<? super T>> afterReplacedPreviousValueHandler,
             Optional<Consumer<? super T>> disposeFunction,
             Logger logger
     ) {
@@ -58,10 +58,10 @@ class ChangingValueHelper {
                     logger
             );
 
-            applyAfterValueChangedHandler(
+            applyAfterReplacedPreviousValueHandler(
                     oldValue,
                     newValue,
-                    afterValueChangedHandler,
+                    afterReplacedPreviousValueHandler,
                     valueName,
                     logger
             );
@@ -90,7 +90,7 @@ class ChangingValueHelper {
                 valueName,
                 (Optional) updateConfig.valueReplacementRule,
                 (Optional) updateConfig.eachPotentialValueHandler,
-                (Optional) updateConfig.afterValueChangedHandler,
+                (Optional) updateConfig.afterReplacedPreviousValueHandler,
                 (Optional) updateConfig.disposeFunction,
                 logger
         );
@@ -110,7 +110,7 @@ class ChangingValueHelper {
                 valueName,
                 ignoreDifferenceCheck ? Optional.of(alwaysReplaceOldValue()) : updateConfig.valueReplacementRule,
                 updateConfig.eachPotentialValueHandler,
-                updateConfig.afterValueChangedHandler,
+                updateConfig.afterReplacedPreviousValueHandler,
                 updateConfig.disposeFunction,
                 logger
         );
@@ -179,20 +179,20 @@ class ChangingValueHelper {
         }
     }
 
-    static <T> void applyAfterValueChangedHandler(
+    static <T> void applyAfterReplacedPreviousValueHandler(
             VersionedValue<T> oldValue,
             FailableValue<T> newValue,
-            Optional<AfterValueChangedHandler<? super T>> afterValueChangedHandler,
+            Optional<AfterReplacedPreviousValueHandler<? super T>> afterReplacedPreviousValueHandler,
             Optional<String> valueName,
             Logger logger
     ) {
-        if (oldValue != null && afterValueChangedHandler.isPresent()) {
+        if (oldValue != null && afterReplacedPreviousValueHandler.isPresent()) {
             try {
-                afterValueChangedHandler.get().afterValueChanged(oldValue.value, newValue);
+                afterReplacedPreviousValueHandler.get().afterValueChanged(oldValue.value, newValue);
             } catch (Exception loggableException) {
                 try {
                     logger.error(
-                            "Failed to apply afterValueChangedHandler" + valueName.map(name -> " for '" + name + "'").orElse(""),
+                            "Failed to apply afterReplacedPreviousValueHandler" + valueName.map(name -> " for '" + name + "'").orElse(""),
                             loggableException
                     );
                 } catch (Exception unwantedException) {

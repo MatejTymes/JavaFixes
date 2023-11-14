@@ -1,7 +1,7 @@
 package javafixes.object.changing.builder;
 
 import javafixes.object.changing.config.ChangingValueUpdateConfig;
-import javafixes.object.changing.function.valueHandler.AfterValueChangedHandler;
+import javafixes.object.changing.function.valueHandler.AfterReplacedPreviousValueHandler;
 import javafixes.object.changing.function.valueHandler.EachPotentialValueHandler;
 import javafixes.object.changing.function.replacement.ValueReplacementRule;
 
@@ -58,14 +58,13 @@ public abstract class AbstractChangingValueBuilder<T, ThisBuilder extends Changi
         return thisBuilder();
     }
 
-    // todo: mtymes - with AfterReplacedPreviousValueHandler
-    public ThisBuilder withAfterValueChangedHandler(AfterValueChangedHandler<? super T> afterValueChangedHandler) {
-        this.updateConfigBuilder = updateConfigBuilder.withAfterValueChangedHandler(afterValueChangedHandler);
+    public ThisBuilder withAfterReplacedPreviousValueHandler(AfterReplacedPreviousValueHandler<? super T> afterReplacedPreviousValueHandler) {
+        this.updateConfigBuilder = updateConfigBuilder.withAfterReplacedPreviousValueHandler(afterReplacedPreviousValueHandler);
         return thisBuilder();
     }
 
-    public ThisBuilder withAfterValueChangedHandler(Optional<AfterValueChangedHandler<? super T>> afterValueChangedHandler) {
-        this.updateConfigBuilder = updateConfigBuilder.withAfterValueChangedHandler(afterValueChangedHandler);
+    public ThisBuilder withAfterReplacedPreviousValueHandler(Optional<AfterReplacedPreviousValueHandler<? super T>> afterReplacedPreviousValueHandler) {
+        this.updateConfigBuilder = updateConfigBuilder.withAfterReplacedPreviousValueHandler(afterReplacedPreviousValueHandler);
         return thisBuilder();
     }
 
