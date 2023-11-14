@@ -1,18 +1,12 @@
 package javafixes.object.changing.util;
 
+import javafixes.common.function.TriFunction;
 import javafixes.object.changing.ChangingValue;
 import javafixes.object.changing.FailableValue;
-import javafixes.object.changing.function.valueHandler.EachValueHandler;
-import javafixes.object.changing.function.replacement.ValueReplacementRule;
-import javafixes.common.function.TriConsumer;
-import javafixes.common.function.TriFunction;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static java.lang.reflect.Proxy.newProxyInstance;
@@ -42,12 +36,6 @@ public class ChangingValueUtil {
             Function<? super SourceType, ? extends OutputType> valueMapper
     ) {
         return failableValue -> valueMapper.apply(failableValue.value());
-    }
-
-    public static <T> ValueReplacementRule<T> comparingValues(
-            BiFunction<T, T, Boolean> valueCheck
-    ) {
-        return (oldValue, newValue) -> valueCheck.apply(oldValue.value(), newValue.value());
     }
 
     public static <T1, T2, OutputType> BiFunction<FailableValue<T1>, FailableValue<T2>, OutputType> joiningValues(

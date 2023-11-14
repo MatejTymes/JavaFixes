@@ -18,7 +18,7 @@ public class VersionedValue<T> extends DataObject implements Value<T> {
             FailableValue<T> value,
             long versionNumber
     ) {
-        assertNotNull(value, "value", "VersionedValue");
+        assertNotNull(value, "value", this.getClass());
 
         this.value = value;
         this.versionNumber = versionNumber;

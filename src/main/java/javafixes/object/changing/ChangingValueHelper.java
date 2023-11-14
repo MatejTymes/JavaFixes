@@ -2,7 +2,7 @@ package javafixes.object.changing;
 
 import javafixes.object.changing.config.ChangingValueUpdateConfig;
 import javafixes.object.changing.function.valueHandler.AfterValueChangedHandler;
-import javafixes.object.changing.function.valueHandler.EachValueHandler;
+import javafixes.object.changing.function.valueHandler.EachPotentialValueHandler;
 import javafixes.object.changing.function.replacement.ValueReplacementRule;
 import org.slf4j.Logger;
 
@@ -20,7 +20,7 @@ class ChangingValueHelper {
             AtomicReference<VersionedValue<T>> valueHolder,
             Optional<String> valueName,
             Optional<ValueReplacementRule<? super T>> valueReplacementRule,
-            Optional<EachValueHandler<? super T>> eachValueHandler,
+            Optional<EachPotentialValueHandler<? super T>> eachPotentialValueHandler,
             Optional<AfterValueChangedHandler<? super T>> afterValueChangedHandler,
             Optional<Consumer<? super T>> disposeFunction,
             Logger logger
@@ -36,11 +36,11 @@ class ChangingValueHelper {
         );
 
         if (!shouldUpdate) {
-            applyEachValueHandler(
+            applyEachPotentialValueHandler(
                     false,
                     valueName,
                     newValue,
-                    eachValueHandler,
+                    eachPotentialValueHandler,
                     logger
             );
         } else {
@@ -50,11 +50,11 @@ class ChangingValueHelper {
                     valueHolder
             );
 
-            applyEachValueHandler(
+            applyEachPotentialValueHandler(
                     true,
                     valueName,
                     newValue,
-                    eachValueHandler,
+                    eachPotentialValueHandler,
                     logger
             );
 
@@ -89,7 +89,7 @@ class ChangingValueHelper {
                 valueHolder,
                 valueName,
                 (Optional) updateConfig.valueReplacementRule,
-                (Optional) updateConfig.eachValueHandler,
+                (Optional) updateConfig.eachPotentialValueHandler,
                 (Optional) updateConfig.afterValueChangedHandler,
                 (Optional) updateConfig.disposeFunction,
                 logger
@@ -109,7 +109,7 @@ class ChangingValueHelper {
                 valueHolder,
                 valueName,
                 ignoreDifferenceCheck ? Optional.of(alwaysReplaceOldValue()) : updateConfig.valueReplacementRule,
-                updateConfig.eachValueHandler,
+                updateConfig.eachPotentialValueHandler,
                 updateConfig.afterValueChangedHandler,
                 updateConfig.disposeFunction,
                 logger
@@ -156,20 +156,20 @@ class ChangingValueHelper {
         }
     }
 
-    static <T> void applyEachValueHandler(
+    static <T> void applyEachPotentialValueHandler(
             boolean willBeUse,
             Optional<String> valueName,
             FailableValue<T> newValue,
-            Optional<EachValueHandler<? super T>> eachValueHandler,
+            Optional<EachPotentialValueHandler<? super T>> eachPotentialValueHandler,
             Logger logger
     ) {
-        if (eachValueHandler.isPresent()) {
+        if (eachPotentialValueHandler.isPresent()) {
             try {
-                eachValueHandler.get().handleEachValue(willBeUse, valueName, newValue);
+                eachPotentialValueHandler.get().handlePotentialValue(willBeUse, valueName, newValue);
             } catch (Exception loggableException) {
                 try {
                     logger.error(
-                            "Failed to apply eachValueHandler to new value" + valueName.map(name -> " for '" + name + "'").orElse(""),
+                            "Failed to apply eachPotentialValueHandler to new value" + valueName.map(name -> " for '" + name + "'").orElse(""),
                             loggableException
                     );
                 } catch (Exception unwantedException) {

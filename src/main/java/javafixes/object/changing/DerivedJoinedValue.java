@@ -35,10 +35,10 @@ public class DerivedJoinedValue<T> implements ChangingValue<T> {
             Function<List<FailableValue<? super SourceType>>, ? extends T> valuesMapper,
             boolean prePopulateImmediately
     ) {
-        assertNotNull(valueName, "valueName", "DerivedJoinedValue");
-        assertNotNull(sourceValues, "sourceValues", "DerivedJoinedValue");
-        assertNotNull(updateConfig, "updateConfig", "DerivedJoinedValue");
-        assertNotNull(valuesMapper, "valuesMapper", "DerivedJoinedValue");
+        assertNotNull(valueName, "valueName", this.getClass());
+        assertNotNull(sourceValues, "sourceValues", this.getClass());
+        assertNotNull(updateConfig, "updateConfig", this.getClass());
+        assertNotNull(valuesMapper, "valuesMapper", this.getClass());
 
         this.valueName = valueName;
         this.sourceValues = new ArrayList<>(sourceValues);

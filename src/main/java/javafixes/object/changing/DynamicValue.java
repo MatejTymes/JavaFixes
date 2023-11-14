@@ -27,9 +27,9 @@ public class DynamicValue<T> implements ChangingValue<T> {
             Supplier<T> valueGenerator,
             ChangingValueUpdateConfig<? super T> updateConfig
     ) {
-        assertNotNull(valueName, "valueName", "DynamicValue");
-        assertNotNull(valueGenerator, "valueGenerator", "DynamicValue");
-        assertNotNull(updateConfig, "updateConfig", "DynamicValue");
+        assertNotNull(valueName, "valueName", this.getClass());
+        assertNotNull(valueGenerator, "valueGenerator", this.getClass());
+        assertNotNull(updateConfig, "updateConfig", this.getClass());
 
         this.valueName = valueName;
         this.valueGenerator = valueGenerator;

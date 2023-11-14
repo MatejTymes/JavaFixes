@@ -34,7 +34,7 @@ public class Lazy<T> implements Value<T> {
      * @throws IllegalArgumentException if {@code null} is passed as input parameter
      */
     public Lazy(Callable<T> valueProvider) {
-        assertNotNull(valueProvider, "valueProvider", "Lazy");
+        assertNotNull(valueProvider, "valueProvider", this.getClass());
 
         this.valueProvider = valueProvider;
     }

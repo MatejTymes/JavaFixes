@@ -30,7 +30,7 @@ public abstract class Microtype<T> implements Value<T> {
      * @throws IllegalArgumentException if {@code null} is passed as input parameter
      */
     protected Microtype(T value) {
-        assertNotNull(value, "value", "Microtype");
+        assertNotNull(value, "value", this.getClass());
 
         this.value = value;
     }

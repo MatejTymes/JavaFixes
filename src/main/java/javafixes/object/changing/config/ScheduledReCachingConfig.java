@@ -20,10 +20,10 @@ public class ScheduledReCachingConfig<T> {
             Duration refreshPeriod,
             Optional<ReCacheValueIf<? super T>> reCacheValueInBackgroundIf
     ) {
-        assertNotNull(useExecutor, "useExecutor", "ScheduledReCachingConfig");
-        assertNotNull(initialDelay, "initialDelay", "ScheduledReCachingConfig");
-        assertNotNull(refreshPeriod, "refreshPeriod", "ScheduledReCachingConfig");
-        assertNotNull(reCacheValueInBackgroundIf, "reCacheValueInBackgroundIf", "ScheduledReCachingConfig");
+        assertNotNull(useExecutor, "useExecutor", this.getClass());
+        assertNotNull(initialDelay, "initialDelay", this.getClass());
+        assertNotNull(refreshPeriod, "refreshPeriod", this.getClass());
+        assertNotNull(reCacheValueInBackgroundIf, "reCacheValueInBackgroundIf", this.getClass());
 
 
         this.useExecutor = useExecutor;

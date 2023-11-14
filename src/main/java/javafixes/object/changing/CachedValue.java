@@ -38,11 +38,11 @@ public class CachedValue<T> implements ChangingValue<T> {
             Optional<ScheduledReCachingConfig<? super T>> scheduledReCachingConfig,
             boolean prePopulateValueImmediately
     ) {
-        assertNotNull(valueName, "valueName", "CachedValue");
-        assertNotNull(sourceValue, "sourceValue", "CachedValue");
-        assertNotNull(updateConfig, "updateConfig", "CachedValue");
-        assertNotNull(reCacheValueOnValueRetrievalIf, "reCacheValueOnValueRetrievalIf", "CachedValue");
-        assertNotNull(scheduledReCachingConfig, "scheduledReCachingConfig", "CachedValue");
+        assertNotNull(valueName, "valueName", this.getClass());
+        assertNotNull(sourceValue, "sourceValue", this.getClass());
+        assertNotNull(updateConfig, "updateConfig", this.getClass());
+        assertNotNull(reCacheValueOnValueRetrievalIf, "reCacheValueOnValueRetrievalIf", this.getClass());
+        assertNotNull(scheduledReCachingConfig, "scheduledReCachingConfig", this.getClass());
 
         this.valueName = valueName;
         this.sourceValue = sourceValue;

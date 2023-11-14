@@ -35,10 +35,10 @@ public class DerivedValue<SourceType, OutputType> implements ChangingValue<Outpu
             Function<FailableValue<SourceType>, ? extends OutputType> valueMapper,
             boolean prePopulateValueImmediately
     ) {
-        assertNotNull(valueName, "valueName", "DerivedValue");
-        assertNotNull(sourceValue, "sourceValue", "DerivedValue");
-        assertNotNull(updateConfig, "updateConfig", "DerivedValue");
-        assertNotNull(valueMapper, "valueMapper", "DerivedValue");
+        assertNotNull(valueName, "valueName", this.getClass());
+        assertNotNull(sourceValue, "sourceValue", this.getClass());
+        assertNotNull(updateConfig, "updateConfig", this.getClass());
+        assertNotNull(valueMapper, "valueMapper", this.getClass());
 
         this.valueName = valueName;
         this.sourceValue = sourceValue;

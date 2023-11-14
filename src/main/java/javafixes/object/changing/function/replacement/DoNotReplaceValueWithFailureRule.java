@@ -9,7 +9,7 @@ public class DoNotReplaceValueWithFailureRule<T> implements ValueReplacementRule
     private final ValueReplacementRule<T> otherwiseCheck;
 
     public DoNotReplaceValueWithFailureRule(ValueReplacementRule<T> otherwiseCheck) {
-        assertNotNull(otherwiseCheck, "otherwiseCheck", "DoNotReplaceValueWithFailure");
+        assertNotNull(otherwiseCheck, "otherwiseCheck", this.getClass());
 
         this.otherwiseCheck = otherwiseCheck;
     }

@@ -2,7 +2,7 @@ package javafixes.object.changing.builder;
 
 import javafixes.object.changing.config.ChangingValueUpdateConfig;
 import javafixes.object.changing.function.valueHandler.AfterValueChangedHandler;
-import javafixes.object.changing.function.valueHandler.EachValueHandler;
+import javafixes.object.changing.function.valueHandler.EachPotentialValueHandler;
 import javafixes.object.changing.function.replacement.ValueReplacementRule;
 
 import java.util.Optional;
@@ -48,14 +48,13 @@ public abstract class AbstractChangingValueBuilder<T, ThisBuilder extends Changi
         return thisBuilder();
     }
 
-    // todo: mtymes - with EachPotentialValueHandler
-    public ThisBuilder withEachValueHandler(EachValueHandler<? super T> eachValueHandler) {
-        this.updateConfigBuilder = updateConfigBuilder.withEachValueHandler(eachValueHandler);
+    public ThisBuilder withEachPotentialValueHandler(EachPotentialValueHandler<? super T> eachPotentialValueHandler) {
+        this.updateConfigBuilder = updateConfigBuilder.withEachPotentialValueHandler(eachPotentialValueHandler);
         return thisBuilder();
     }
 
-    public ThisBuilder withEachValueHandler(Optional<EachValueHandler<? super T>> eachValueHandler) {
-        this.updateConfigBuilder = updateConfigBuilder.withEachValueHandler(eachValueHandler);
+    public ThisBuilder withEachPotentialValueHandler(Optional<EachPotentialValueHandler<? super T>> eachPotentialValueHandler) {
+        this.updateConfigBuilder = updateConfigBuilder.withEachPotentialValueHandler(eachPotentialValueHandler);
         return thisBuilder();
     }
 

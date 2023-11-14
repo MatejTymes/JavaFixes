@@ -16,7 +16,7 @@ public class FailableValue<T> extends DataObject implements Value<T> {
     private final Either<RuntimeException, T> value;
 
     public FailableValue(Either<RuntimeException, T> value) {
-        assertNotNull(value, "value", "FailableValue");
+        assertNotNull(value, "value", this.getClass());
 
         this.value = value;
     }

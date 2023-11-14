@@ -10,19 +10,19 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 @FunctionalInterface
-public interface EachValueHandler<T> {
+public interface EachPotentialValueHandler<T> {
 
-    void handleEachValue(boolean willBeUsed, Optional<String> valueName, FailableValue<? extends T> value);
+    void handlePotentialValue(boolean willBeUsed, Optional<String> valueName, FailableValue<? extends T> value);
 
-    default EachValueHandler<T> and(EachValueHandler<T> anotherHandler) {
-        List<EachValueHandler<T>> handlers = new ArrayList<>();
+    default EachPotentialValueHandler<T> and(EachPotentialValueHandler<T> anotherHandler) {
+        List<EachPotentialValueHandler<T>> handlers = new ArrayList<>();
         handlers.add(this);
         handlers.add(anotherHandler);
-        return new CompositeEachValueHandler<>(handlers);
+        return new CompositeEachPotentialValueHandler<>(handlers);
     }
 
 
-    static <T> EachValueHandler<T> handleValue(
+    static <T> EachPotentialValueHandler<T> handleValue(
             TriConsumer<Boolean, Optional<String>, T> consumer
     ) {
         return (willBeUsed, valueName, failableValue) -> {
@@ -30,7 +30,7 @@ public interface EachValueHandler<T> {
         };
     }
 
-    static <T> EachValueHandler<T> handleValue(
+    static <T> EachPotentialValueHandler<T> handleValue(
             BiConsumer<Boolean, T> consumer
     ) {
         return (willBeUsed, valueName, failableValue) -> {
@@ -38,7 +38,7 @@ public interface EachValueHandler<T> {
         };
     }
 
-    static <T> EachValueHandler<T> handleUsedValue(
+    static <T> EachPotentialValueHandler<T> handleUsedValue(
             BiConsumer<Optional<String>, T> consumer
     ) {
         return (willBeUsed, valueName, failableValue) -> {
@@ -50,7 +50,7 @@ public interface EachValueHandler<T> {
         };
     }
 
-    static <T> EachValueHandler<T> handleUsedValue(
+    static <T> EachPotentialValueHandler<T> handleUsedValue(
             Consumer<T> consumer
     ) {
         return (willBeUsed, valueName, failableValue) -> {
@@ -60,7 +60,7 @@ public interface EachValueHandler<T> {
         };
     }
 
-    static <T> EachValueHandler<T> handleNOTUsedValue(
+    static <T> EachPotentialValueHandler<T> handleNOTUsedValue(
             BiConsumer<Optional<String>, T> consumer
     ) {
         return (willBeUsed, valueName, failableValue) -> {
@@ -72,7 +72,7 @@ public interface EachValueHandler<T> {
         };
     }
 
-    static <T> EachValueHandler<T> handleNOTUsedValue(
+    static <T> EachPotentialValueHandler<T> handleNOTUsedValue(
             Consumer<T> consumer
     ) {
         return (willBeUsed, valueName, failableValue) -> {
@@ -82,7 +82,7 @@ public interface EachValueHandler<T> {
         };
     }
 
-    static <T> EachValueHandler<T> handleFailure(
+    static <T> EachPotentialValueHandler<T> handleFailure(
             TriConsumer<Boolean, Optional<String>, RuntimeException> consumer
     ) {
         return (willBeUsed, valueName, failableValue) -> {
@@ -90,7 +90,7 @@ public interface EachValueHandler<T> {
         };
     }
 
-    static <T> EachValueHandler<T> handleFailure(
+    static <T> EachPotentialValueHandler<T> handleFailure(
             BiConsumer<Boolean, RuntimeException> consumer
     ) {
         return (willBeUsed, valueName, failableValue) -> {
@@ -98,7 +98,7 @@ public interface EachValueHandler<T> {
         };
     }
 
-    static <T> EachValueHandler<T> handleUsedFailure(
+    static <T> EachPotentialValueHandler<T> handleUsedFailure(
             BiConsumer<Optional<String>, RuntimeException> consumer
     ) {
         return (willBeUsed, valueName, failableValue) -> {
@@ -110,7 +110,7 @@ public interface EachValueHandler<T> {
         };
     }
 
-    static <T> EachValueHandler<T> handleUsedFailure(
+    static <T> EachPotentialValueHandler<T> handleUsedFailure(
             Consumer<RuntimeException> consumer
     ) {
         return (willBeUsed, valueName, failableValue) -> {
@@ -120,7 +120,7 @@ public interface EachValueHandler<T> {
         };
     }
 
-    static <T> EachValueHandler<T> handleNOTUsedFailure(
+    static <T> EachPotentialValueHandler<T> handleNOTUsedFailure(
             BiConsumer<Optional<String>, RuntimeException> consumer
     ) {
         return (willBeUsed, valueName, failableValue) -> {
@@ -132,7 +132,7 @@ public interface EachValueHandler<T> {
         };
     }
 
-    static <T> EachValueHandler<T> handleNOTUsedFailure(
+    static <T> EachPotentialValueHandler<T> handleNOTUsedFailure(
             Consumer<RuntimeException> consumer
     ) {
         return (willBeUsed, valueName, failableValue) -> {

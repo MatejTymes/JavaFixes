@@ -33,9 +33,9 @@ public class MutableValue<T> implements ChangingValue<T> {
             FailableValue<T> initialValue,
             ChangingValueUpdateConfig<? super T> updateConfig
     ) {
-        assertNotNull(valueName, "valueName", "MutableValue");
-        assertNotNull(initialValue, "initialValue", "MutableValue");
-        assertNotNull(updateConfig, "updateConfig", "MutableValue");
+        assertNotNull(valueName, "valueName", this.getClass());
+        assertNotNull(initialValue, "initialValue", this.getClass());
+        assertNotNull(updateConfig, "updateConfig", this.getClass());
 
         this.valueName = valueName;
         this.updateConfig = updateConfig;

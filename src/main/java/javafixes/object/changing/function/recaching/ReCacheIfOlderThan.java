@@ -13,7 +13,7 @@ public class ReCacheIfOlderThan<T> implements ReCacheValueIf<T> {
     public ReCacheIfOlderThan(
             Duration staleAfterDuration
     ) {
-        assertNotNull(staleAfterDuration, "staleAfterDuration", "ReCacheIfOlderThan");
+        assertNotNull(staleAfterDuration, "staleAfterDuration", this.getClass());
 
         this.staleAfterDuration = staleAfterDuration;
     }

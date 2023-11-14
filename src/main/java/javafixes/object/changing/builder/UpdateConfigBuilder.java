@@ -2,7 +2,7 @@ package javafixes.object.changing.builder;
 
 import javafixes.object.changing.config.ChangingValueUpdateConfig;
 import javafixes.object.changing.function.valueHandler.AfterValueChangedHandler;
-import javafixes.object.changing.function.valueHandler.EachValueHandler;
+import javafixes.object.changing.function.valueHandler.EachPotentialValueHandler;
 import javafixes.object.changing.function.replacement.ValueReplacementRule;
 
 import java.util.Optional;
@@ -23,17 +23,17 @@ public  class UpdateConfigBuilder<T> {
     public UpdateConfigBuilder<T> withValueReplacementRule(ValueReplacementRule<? super T> valueReplacementRule) {
         this.updateConfig = new ChangingValueUpdateConfig<>(
                 Optional.of(valueReplacementRule),
-                updateConfig.eachValueHandler,
+                updateConfig.eachPotentialValueHandler,
                 updateConfig.afterValueChangedHandler,
                 updateConfig.disposeFunction
         );
         return this;
     }
 
-    public UpdateConfigBuilder<T> withNoValueReplacementRule() {
+    public UpdateConfigBuilder<T> withNOValueReplacementRule() {
         this.updateConfig = new ChangingValueUpdateConfig<>(
                 Optional.empty(),
-                updateConfig.eachValueHandler,
+                updateConfig.eachPotentialValueHandler,
                 updateConfig.afterValueChangedHandler,
                 updateConfig.disposeFunction
         );
@@ -43,24 +43,24 @@ public  class UpdateConfigBuilder<T> {
     public UpdateConfigBuilder<T> withValueReplacementRule(Optional<ValueReplacementRule<? super T>> valueReplacementRule) {
         this.updateConfig = new ChangingValueUpdateConfig<>(
                 valueReplacementRule,
-                updateConfig.eachValueHandler,
+                updateConfig.eachPotentialValueHandler,
                 updateConfig.afterValueChangedHandler,
                 updateConfig.disposeFunction
         );
         return this;
     }
 
-    public UpdateConfigBuilder<T> withEachValueHandler(EachValueHandler<? super T> eachValueHandler) {
+    public UpdateConfigBuilder<T> withEachPotentialValueHandler(EachPotentialValueHandler<? super T> eachPotentialValueHandler) {
         this.updateConfig = new ChangingValueUpdateConfig<>(
                 updateConfig.valueReplacementRule,
-                Optional.of(eachValueHandler),
+                Optional.of(eachPotentialValueHandler),
                 updateConfig.afterValueChangedHandler,
                 updateConfig.disposeFunction
         );
         return this;
     }
 
-    public UpdateConfigBuilder<T> withNoEachValueHandler() {
+    public UpdateConfigBuilder<T> withNOEachPotentialValueHandler() {
         this.updateConfig = new ChangingValueUpdateConfig<>(
                 updateConfig.valueReplacementRule,
                 Optional.empty(),
@@ -70,10 +70,10 @@ public  class UpdateConfigBuilder<T> {
         return this;
     }
 
-    public UpdateConfigBuilder<T> withEachValueHandler(Optional<EachValueHandler<? super T>> eachValueHandler) {
+    public UpdateConfigBuilder<T> withEachPotentialValueHandler(Optional<EachPotentialValueHandler<? super T>> eachPotentialValueHandler) {
         this.updateConfig = new ChangingValueUpdateConfig<>(
                 updateConfig.valueReplacementRule,
-                eachValueHandler,
+                eachPotentialValueHandler,
                 updateConfig.afterValueChangedHandler,
                 updateConfig.disposeFunction
         );
@@ -83,17 +83,17 @@ public  class UpdateConfigBuilder<T> {
     public UpdateConfigBuilder<T> withAfterValueChangedHandler(AfterValueChangedHandler<? super T> afterValueChangedHandler) {
         this.updateConfig = new ChangingValueUpdateConfig<>(
                 updateConfig.valueReplacementRule,
-                updateConfig.eachValueHandler,
+                updateConfig.eachPotentialValueHandler,
                 Optional.of(afterValueChangedHandler),
                 updateConfig.disposeFunction
         );
         return this;
     }
 
-    public UpdateConfigBuilder<T> withNotAfterValueChangedHandler() {
+    public UpdateConfigBuilder<T> withNOAfterValueChangedHandler() {
         this.updateConfig = new ChangingValueUpdateConfig<>(
                 updateConfig.valueReplacementRule,
-                updateConfig.eachValueHandler,
+                updateConfig.eachPotentialValueHandler,
                 Optional.empty(),
                 updateConfig.disposeFunction
         );
@@ -103,7 +103,7 @@ public  class UpdateConfigBuilder<T> {
     public UpdateConfigBuilder<T> withAfterValueChangedHandler(Optional<AfterValueChangedHandler<? super T>> afterValueChangedHandler) {
         this.updateConfig = new ChangingValueUpdateConfig<>(
                 updateConfig.valueReplacementRule,
-                updateConfig.eachValueHandler,
+                updateConfig.eachPotentialValueHandler,
                 afterValueChangedHandler,
                 updateConfig.disposeFunction
         );
@@ -113,7 +113,7 @@ public  class UpdateConfigBuilder<T> {
     public UpdateConfigBuilder<T> withDisposeFunction(Consumer<? super T> disposeFunction) {
         this.updateConfig = new ChangingValueUpdateConfig<>(
                 updateConfig.valueReplacementRule,
-                updateConfig.eachValueHandler,
+                updateConfig.eachPotentialValueHandler,
                 updateConfig.afterValueChangedHandler,
                 Optional.of(disposeFunction)
         );
@@ -123,7 +123,7 @@ public  class UpdateConfigBuilder<T> {
     public UpdateConfigBuilder<T> withNoDisposeFunction() {
         this.updateConfig = new ChangingValueUpdateConfig<>(
                 updateConfig.valueReplacementRule,
-                updateConfig.eachValueHandler,
+                updateConfig.eachPotentialValueHandler,
                 updateConfig.afterValueChangedHandler,
                 Optional.empty()
         );
@@ -133,7 +133,7 @@ public  class UpdateConfigBuilder<T> {
     public UpdateConfigBuilder<T> withDisposeFunction(Optional<Consumer<? super T>> disposeFunction) {
         this.updateConfig = new ChangingValueUpdateConfig<>(
                 updateConfig.valueReplacementRule,
-                updateConfig.eachValueHandler,
+                updateConfig.eachPotentialValueHandler,
                 updateConfig.afterValueChangedHandler,
                 disposeFunction
         );
