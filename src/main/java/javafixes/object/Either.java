@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static javafixes.common.util.AssertUtil.assertNotNull;
+
 /**
  * {@link Either} can wrap value of one of 2 types defined as {@link Left Left} or {@link Right Right}.
  * This is an unbiased implementation where both left and right side have the same methods and neither one is preferred.
@@ -218,6 +220,8 @@ public abstract class Either<L, R> extends DataObject implements Value<Object> {
         private final R value;
 
         private Right(R value) {
+            assertNotNull(value, "value", this.getClass());
+
             this.value = value;
         }
 
@@ -332,6 +336,8 @@ public abstract class Either<L, R> extends DataObject implements Value<Object> {
         private final L value;
 
         private Left(L value) {
+            assertNotNull(value, "value", this.getClass());
+
             this.value = value;
         }
 
