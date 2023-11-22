@@ -273,7 +273,7 @@ public class ByteQueue extends AbstractQueue<Byte> implements ByteIterable {
         return reader.readNext(bytes, offset, length);
     }
 
-    public byte[] toByteArray() {
+    public byte[] peekAtAllBytes() {
         int arrayLength;
         ByteQueueReader reader;
 

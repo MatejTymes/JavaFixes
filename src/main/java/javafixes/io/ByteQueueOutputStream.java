@@ -36,6 +36,10 @@ public class ByteQueueOutputStream extends OutputStream {
         return new ByteQueueInputStream(byteQueue, removeReadBytesFromQueue);
     }
 
+    public ByteQueue getByteQueue() {
+        return byteQueue;
+    }
+
     @Override
     public void write(int b) throws IOException {
         ensureIsNotClosed();

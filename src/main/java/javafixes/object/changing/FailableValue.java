@@ -38,7 +38,7 @@ public class FailableValue<T> extends DataObject implements Value<T> {
 
     public RuntimeException failure() {
         return value
-                .ifRightThrow(value -> new IllegalStateException("This value is not a failure instead it contains"))
+                .ifRightThrow(value -> new IllegalStateException("This value is not a failure instead it contains: " + value))
                 .getLeft();
     }
 
