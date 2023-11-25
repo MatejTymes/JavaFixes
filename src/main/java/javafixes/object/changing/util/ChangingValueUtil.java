@@ -1,6 +1,7 @@
 package javafixes.object.changing.util;
 
 import javafixes.common.function.TriFunction;
+import javafixes.common.function.ValueMapper;
 import javafixes.object.changing.ChangingValue;
 import javafixes.object.changing.FailableValue;
 
@@ -36,6 +37,12 @@ public class ChangingValueUtil {
             Function<? super SourceType, ? extends OutputType> valueMapper
     ) {
         return failableValue -> valueMapper.apply(failableValue.value());
+    }
+
+    public static <SourceType, OutputType> Function<FailableValue<SourceType>, OutputType> mappingValue(
+            ValueMapper<? super SourceType, ? extends OutputType, ? extends RuntimeException> valueMapper
+    ) {
+        return failableValue -> valueMapper.map(failableValue.value());
     }
 
     public static <T1, T2, OutputType> BiFunction<FailableValue<T1>, FailableValue<T2>, OutputType> joiningValues(

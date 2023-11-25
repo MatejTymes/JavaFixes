@@ -3,8 +3,13 @@ package javafixes.object.changing;
 import javafixes.common.function.ValueHandler;
 import javafixes.common.function.ValueMapper;
 import javafixes.object.Value;
+import javafixes.object.changing.builder.DerivedValueBuilder;
 
 import java.util.Optional;
+import java.util.function.Function;
+
+import static javafixes.object.changing.builder.DerivedValueBuilder.derivedValue;
+import static javafixes.object.changing.builder.DerivedValueBuilder.derivedValueBuilder;
 
 /**
  * {@code ChangingValue} is intended as wrapper of value that could change over time and whose changes should propagate
@@ -81,4 +86,34 @@ public interface ChangingValue<T> extends Value<T> {
     default <E extends Throwable> void forCurrentValue(ValueHandler<? super T, ? extends E> valueHandler) throws E {
         valueHandler.handle(value());
     }
+
+    // map functions
+
+    default <T2> DerivedValue<T, T2> map(
+            Function<FailableValue<T>, ? extends T2> valueMapper
+    ) {
+        return derivedValue(this, valueMapper);
+    }
+
+    default <T2> DerivedValue<T, T2> map(
+            ValueMapper<? super T, ? extends T2, ? extends RuntimeException> valueMapper
+    ) {
+        return derivedValue(this, valueMapper);
+    }
+
+    default <T2> DerivedValueBuilder<T, T2> mapBuilder(
+            Function<FailableValue<T>, ? extends T2> valueMapper
+    ) {
+        return derivedValueBuilder(this, valueMapper);
+    }
+
+    default <T2> DerivedValueBuilder<T, T2> mapBuilder(
+            ValueMapper<? super T, ? extends T2, ? extends RuntimeException> valueMapper
+    ) {
+        return derivedValueBuilder(this, valueMapper);
+    }
+
+    // todo: mtymes - join functions
+
+    // todo: mtymes - cache functions
 }
