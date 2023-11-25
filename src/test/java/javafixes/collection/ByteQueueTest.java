@@ -418,7 +418,7 @@ public class ByteQueueTest {
     }
 
     private void assertQueueContent(ByteQueue queue, List<Byte> expectedBytes) {
-        byte[] actualBytes = queue.toByteArray();
+        byte[] actualBytes = queue.peekAtAllBytes();
         assertAreEqual(actualBytes, expectedBytes);
 
         actualBytes = new byte[queue.size()];

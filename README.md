@@ -230,46 +230,56 @@ Immutable Two / Three values holder. Each `Tuple` / `Triple` extends `DataObject
 
 If you have a value that changes over time and want to have derived values that reflects these changes, you could use this hierarchy of classes. (great if you have a config that changes during runtime, e.g.: db connection, memcached location)
 ```Java
+    ConnectionDetails originalConnectionDetails = dbADetails();
+
     // mutable wrapper of connection details
     MutableValue<ConnectionDetails> connectionDetails = mutableValue(
-            originalConnectionDetails
+        originalConnectionDetails
     );
 
 
     // database connection derived from connection details
     // each time connection details change this wrapper will create/refer to a new connection
-    ChangingValue<DbConnection> dbConnection = connectionDetails.map(
-                details -> connectTo(details)
+    ChangingValue<DbConnection> dbConnection = connectionDetails.mapValueBuilder(
+            details -> connectTo(details)
         )
         // and use this to dispose old connection if new one will be created
         .withDisposeFunction(
-                connection -> releaseConnection(connection)
+            connection -> releaseConnection(connection)
         )
         // and call this when value changes
-        .withOnValueChangedFunction(
-                value -> System.out.println("we have a new connection"),
-                true // and apply it to current value
-        );
+        .withEachPotentialValueHandler(
+            handleUsedValue(value -> System.out.println("we have a new connection"))
+        )
+        .build();
 
-    
-    // this will be executed on original connection
-    DbItem dbItem = dbConnection.mapToValue(
-            db -> db.loadItem(itemId)
-    );
-    dbConnection.forCurrentValue(
-            db -> db.delete(itemId)
+
+    // simple mapping - fetching database table using current connection
+    ChangingValue<DbTable> usersTable = dbConnection.mapValue(
+        connection -> connection.getDbTable("users")
     );
 
-    
+
+    // this will be executed on initial database connection 
+    int recordCount = usersTable.mapCurrentValue(
+        table -> table.getRecordsCount()
+    );
+    usersTable.forCurrentValue(
+        table -> table.deleteRecord("agent Smith")
+    );
+
+
+    ConnectionDetails newConnectionDetails = dbBDetails();
+
     // update of connection details
     connectionDetails.updateValue(
-            newConnectionDetails
+        newConnectionDetails
     );
 
-    
-    // this will be executed on new database connection
-    DbItem dbItem2 = dbConnection.mapToValue(
-            db -> db.loadItem(itemId2)
+
+    // usersTable now refers to the new database connection and gets its records count instead
+    int recordCount2 = usersTable.mapCurrentValue(
+        table -> table.getRecordsCount()
     );
 ```
 

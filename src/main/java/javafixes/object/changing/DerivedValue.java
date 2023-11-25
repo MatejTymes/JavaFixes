@@ -1,6 +1,7 @@
 package javafixes.object.changing;
 
 import javafixes.object.changing.config.ChangingValueUpdateConfig;
+import javafixes.object.changing.function.mapping.FailableValueMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,7 @@ public class DerivedValue<SourceType, OutputType> implements ChangingValue<Outpu
     private final Optional<String> valueName;
     private final ChangingValue<SourceType> sourceValue;
     // todo: mtymes - change to Function<FailableValue<? super SourceType>, ? extends OutputType>
-    private final Function<FailableValue<SourceType>, ? extends OutputType> valueMapper;
+    private final FailableValueMapper<SourceType, ? extends OutputType> valueMapper;
     private final ChangingValueUpdateConfig<? super OutputType> updateConfig;
 
     private final AtomicReference<VersionedValue<OutputType>> currentValueHolder = new AtomicReference<>();
@@ -32,7 +33,7 @@ public class DerivedValue<SourceType, OutputType> implements ChangingValue<Outpu
             Optional<String> valueName,
             ChangingValue<SourceType> sourceValue,
             ChangingValueUpdateConfig<? super OutputType> updateConfig,
-            Function<FailableValue<SourceType>, ? extends OutputType> valueMapper,
+            FailableValueMapper<SourceType, ? extends OutputType> valueMapper,
             boolean prePopulateValueImmediately
     ) {
         assertNotNull(valueName, "valueName", this.getClass());
@@ -71,7 +72,7 @@ public class DerivedValue<SourceType, OutputType> implements ChangingValue<Outpu
                 FailableValue<OutputType> newValue;
 
                 try {
-                    newValue = wrapValue(valueMapper.apply(currentSourceValue.failableValue()));
+                    newValue = wrapValue(valueMapper.map(currentSourceValue.failableValue()));
                 } catch (RuntimeException e) {
                     newValue = wrapFailure(e);
 

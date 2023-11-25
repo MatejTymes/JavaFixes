@@ -33,18 +33,6 @@ public class ChangingValueUtil {
         );
     }
 
-    public static <SourceType, OutputType> Function<FailableValue<SourceType>, OutputType> mappingValue(
-            Function<? super SourceType, ? extends OutputType> valueMapper
-    ) {
-        return failableValue -> valueMapper.apply(failableValue.value());
-    }
-
-    public static <SourceType, OutputType> Function<FailableValue<SourceType>, OutputType> mappingValue(
-            ValueMapper<? super SourceType, ? extends OutputType, ? extends RuntimeException> valueMapper
-    ) {
-        return failableValue -> valueMapper.map(failableValue.value());
-    }
-
     public static <T1, T2, OutputType> BiFunction<FailableValue<T1>, FailableValue<T2>, OutputType> joiningValues(
             BiFunction<? super T1, ? super T2, ? extends OutputType> valuesMapper
     ) {
