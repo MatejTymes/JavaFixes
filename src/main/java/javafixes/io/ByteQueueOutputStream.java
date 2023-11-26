@@ -8,6 +8,8 @@ import java.io.OutputStream;
 
 // todo: mtymes - test this
 // todo: mtymes - add javadoc
+// todo: mtymes - add method ByteCollectingOutputStream.writeTo(OutputStream os) ???
+// todo: mtymes - should we generate InputStream only when the stream is closed ???
 public class ByteQueueOutputStream extends OutputStream {
 
     private final ByteQueue byteQueue;

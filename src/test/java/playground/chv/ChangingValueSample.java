@@ -6,7 +6,7 @@ import javafixes.object.changing.MutableValue;
 import static javafixes.object.changing.builder.MutableValueBuilder.mutableValue;
 import static javafixes.object.changing.function.valueHandler.EachPotentialValueHandler.handleUsedValue;
 
-public class ChVDemo {
+public class ChangingValueSample {
 
     private class ConnectionDetails {
     }

@@ -1,4 +1,4 @@
-package javafixes.collection;
+package playground.chv;
 
 public class ByteQueueSample {
 
@@ -86,7 +86,7 @@ public class ByteQueueSample {
 //
 //        // getting back a byte array (use only when streaming trough data is not possible as it creates additional byte array)
 //
-//        byte[] allReadBytes = queue.toByteArray();
+//        byte[] allReadBytes = queue.peekAtAllBytes();
 //
 //        byte[] allRemovedBytes = queue.pollAllBytes();
     }

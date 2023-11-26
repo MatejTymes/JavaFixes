@@ -377,42 +377,41 @@ Memory efficient and performant Queue for collecting and retrieving bytes. Great
 
     // getting back a byte array (use only when streaming trough data is not possible as it creates additional byte array)
 
-    byte[] allReadBytes = queue.toByteArray();
+    byte[] allReadBytes = queue.peekAtAllBytes();
 
     byte[] allRemovedBytes = queue.pollAllBytes();
 ```
 
 ## IO
 
-### ByteCollectingOutputStream
+### ByteQueueOutputStream
 
 There are currently 2 issues with `ByteArrayOutputStream`.
 * collected data can't be directly transformed into InputStream
 * each time the wrapped byte buffer has to be increased it creates another byte array and has to copy whole data again - which can be costly (from memory and performance point of view for big files)
 
-`ByteCollectingOutputStream` doesn't have to copy data when byte buffer has to be expanded. Instead it just adds one additional small byte buffer to a linked list (by default size of buffer is 4kb).
-Also once closed it can be transformed into an `InputStream` (without need to copy the bytes), byte array or just copy the collected content into another `OutputStream`.
-Also if transformed into `InputStream` and the `ByteCollectingOutputStream` is not referenced anymore all byte buffers that have been read are eligible for garbage collection (so the memory footprint decreases as the data is being read).
+`ByteQueueOutputStream` doesn't have to copy data when byte buffer has to be expanded. Instead, it just adds one additional small byte buffer to a linked list (by default size of buffer is 4kb).
+Also it can be transformed into an `InputStream` (without need to copy the bytes) or you can get the underlying `ByteQueue` and access the underlying bytes directly.
 
 ```Java
-    ByteCollectingOutputStream bcoStream = new ByteCollectingOutputStream();
+    ByteQueueOutputStream bqoStream = new ByteQueueOutputStream(); // you can pass in your preferred ByteQueue as well
     
     // fill with bytes, e.g.:
-    bcoStream.write(text.getBytes(charsetName));
-    bcoStream.write(singleByte);
+    bqoStream.write(text.getBytes(charsetName));
+    bqoStream.write(singleByte);
     ...
     stream.close();
 
     
-    InputStream collectedBytesStream = bcoStream.toInputStream(); // no additional memory is allocated for collected bytes
+    InputStream collectedBytesStream = bqoStream.toInputStream(removeReadBytesFromQueueBoolean); // no additional memory is allocated for collected bytes
 
-    byte[] collectedBytes = bcoStream.toByteArray();
-    
-    bcoStream.writeTo(someOtherOutputStream);
+    ByteQueue byteQueue = bqoStream.getByteQueue(); // get the underlying ByteQueue
+    byte[] allBytesButStillKeptInTheQueue = byteQueue.peekAtAllBytes();
+    byte[] allBytesButRemovedFromTheQueue = byteQueue.pollAllBytes();
 ```
 
 just for comparison, when collecting data (in jdk15) we need:
-| data size | ByteArrayOutputStream       | ByteCollectingOutputStream  |
+| data size | ByteArrayOutputStream       | ByteQueueOutputStream       |
 |-----------|-----------------------------|-----------------------------|
 |  1024 MB  | 2.00 seconds / 2192 MB heap | 1.18 seconds / 1067 MB heap |
 |   512 MB  | 1.10 seconds / 1155 MB heap | 0.66 seconds /  535 MB heap |
