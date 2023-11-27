@@ -3,12 +3,14 @@ package javafixes.object.changing;
 import javafixes.common.function.ValueHandler;
 import javafixes.common.function.ValueMapper;
 import javafixes.object.Value;
+import javafixes.object.changing.builder.CachedValueBuilder;
 import javafixes.object.changing.builder.DerivedValueBuilder;
 import javafixes.object.changing.function.mapping.FailableValueMapper;
 
 import java.util.Optional;
 import java.util.function.Function;
 
+import static javafixes.object.changing.builder.CachedValueBuilder.cachedValueBuilder;
 import static javafixes.object.changing.builder.DerivedValueBuilder.derivedValue;
 import static javafixes.object.changing.builder.DerivedValueBuilder.derivedValueBuilder;
 
@@ -108,5 +110,7 @@ public interface ChangingValue<T> extends Value<T> {
 
     // todo: mtymes - join functions
 
-    // todo: mtymes - cache functions
+    default CachedValueBuilder<T> cacheBuilder() {
+        return cachedValueBuilder(this);
+    }
 }

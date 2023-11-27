@@ -230,11 +230,9 @@ Immutable Two / Three values holder. Each `Tuple` / `Triple` extends `DataObject
 
 If you have a value that changes over time and want to have derived values that reflects these changes, you could use this hierarchy of classes. (great if you have a config that changes during runtime, e.g.: db connection, memcached location)
 ```Java
-    ConnectionDetails originalConnectionDetails = dbADetails();
-
     // mutable wrapper of connection details
     MutableValue<ConnectionDetails> connectionDetails = mutableValue(
-        originalConnectionDetails
+        originalConnectionDetails()
     );
 
 
@@ -269,15 +267,13 @@ If you have a value that changes over time and want to have derived values that 
     );
 
 
-    ConnectionDetails newConnectionDetails = dbBDetails();
-
     // update of connection details
     connectionDetails.updateValue(
-        newConnectionDetails
+        newConnectionDetails()
     );
 
 
-    // usersTable now refers to the new database connection and gets its records count instead
+    // table in NEW/updated connection is used to get the records count instead
     int recordCount2 = usersTable.mapCurrentValue(
         table -> table.getRecordsCount()
     );
