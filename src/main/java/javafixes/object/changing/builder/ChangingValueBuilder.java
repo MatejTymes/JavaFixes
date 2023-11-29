@@ -8,7 +8,7 @@ public interface ChangingValueBuilder<T> {
 
     ChangingValue<T> build();
 
-    default CachedValueBuilder<T> asCachedValue() {
+    default CachedValueBuilder<T> cacheBuilder() {
         return cachedValueBuilder(this);
     }
 }

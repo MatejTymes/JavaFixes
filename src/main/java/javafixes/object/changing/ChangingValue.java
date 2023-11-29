@@ -1,18 +1,22 @@
 package javafixes.object.changing;
 
+import javafixes.common.function.TriFunction;
 import javafixes.common.function.ValueHandler;
 import javafixes.common.function.ValueMapper;
 import javafixes.object.Value;
 import javafixes.object.changing.builder.CachedValueBuilder;
+import javafixes.object.changing.builder.DerivedJoinedValueBuilder;
 import javafixes.object.changing.builder.DerivedValueBuilder;
 import javafixes.object.changing.function.mapping.FailableValueMapper;
 
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static javafixes.object.changing.builder.CachedValueBuilder.cachedValueBuilder;
 import static javafixes.object.changing.builder.DerivedValueBuilder.derivedValue;
 import static javafixes.object.changing.builder.DerivedValueBuilder.derivedValueBuilder;
+import static javafixes.object.changing.util.ChangingValueUtil.joiningValues;
 
 /**
  * {@code ChangingValue} is intended as wrapper of value that could change over time and whose changes should propagate
@@ -108,7 +112,71 @@ public interface ChangingValue<T> extends Value<T> {
         return derivedValueBuilder(this, FailableValueMapper.value(valueMapper));
     }
 
-    // todo: mtymes - join functions
+    // join functions
+
+    // todo: mtymes - add more then 3 values join functions
+
+    default <T2, OutputType> DerivedJoinedValue<OutputType> join(
+            ChangingValue<T2> value2,
+            BiFunction<FailableValue<T>, FailableValue<T2>, OutputType> mapFunction
+    ) {
+        return DerivedJoinedValueBuilder.join(this, value2, mapFunction);
+    }
+
+    default <T2, T3, OutputType> DerivedJoinedValue<OutputType> join(
+            ChangingValue<T2> value2,
+            ChangingValue<T3> value3,
+            TriFunction<FailableValue<T>, FailableValue<T2>, FailableValue<T3>, OutputType> mapFunction
+    ) {
+        return DerivedJoinedValueBuilder.join(this, value2, value3, mapFunction);
+    }
+
+    default <T2, OutputType> DerivedJoinedValue<OutputType> joinValues(
+            ChangingValue<T2> value2,
+            BiFunction<T, T2, OutputType> mapFunction
+    ) {
+        return DerivedJoinedValueBuilder.join(this, value2, joiningValues(mapFunction));
+    }
+
+    default <T2, T3, OutputType> DerivedJoinedValue<OutputType> joinValues(
+            ChangingValue<T2> value2,
+            ChangingValue<T3> value3,
+            TriFunction<T, T2, T3, OutputType> mapFunction
+    ) {
+        return DerivedJoinedValueBuilder.join(this, value2, value3, joiningValues(mapFunction));
+    }
+
+    default <T2, OutputType> DerivedJoinedValueBuilder<OutputType> joinBuilder(
+            ChangingValue<T2> value2,
+            BiFunction<FailableValue<T>, FailableValue<T2>, OutputType> mapFunction
+    ) {
+        return DerivedJoinedValueBuilder.joinBuilder(this, value2, mapFunction);
+    }
+
+    default <T2, T3, OutputType> DerivedJoinedValueBuilder<OutputType> joinBuilder(
+            ChangingValue<T2> value2,
+            ChangingValue<T3> value3,
+            TriFunction<FailableValue<T>, FailableValue<T2>, FailableValue<T3>, OutputType> mapFunction
+    ) {
+        return DerivedJoinedValueBuilder.joinBuilder(this, value2, value3, mapFunction);
+    }
+
+    default <T2, OutputType> DerivedJoinedValueBuilder<OutputType> joinValuesBuilder(
+            ChangingValue<T2> value2,
+            BiFunction<T, T2, OutputType> mapFunction
+    ) {
+        return DerivedJoinedValueBuilder.joinBuilder(this, value2, joiningValues(mapFunction));
+    }
+
+    default <T2, T3, OutputType> DerivedJoinedValueBuilder<OutputType> joinValuesBuilder(
+            ChangingValue<T2> value2,
+            ChangingValue<T3> value3,
+            TriFunction<T, T2, T3, OutputType> mapFunction
+    ) {
+        return DerivedJoinedValueBuilder.joinBuilder(this, value2, value3, joiningValues(mapFunction));
+    }
+
+    // cache functions
 
     default CachedValueBuilder<T> cacheBuilder() {
         return cachedValueBuilder(this);
