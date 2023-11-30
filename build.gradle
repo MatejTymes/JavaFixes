@@ -11,7 +11,7 @@ repositories {
 group = "com.github.matejtymes"
 archivesBaseName = "javafixes"
 // todo: add changelog
-// version number meaning: majorIncompatibility.minorIncompatibility.newFeature.fixOrInternalRefactorOrInternalUpdate
+// version number meaning: majorRewrite.newFeature.minorRefactor.fixOrInternalRefactorOrInternalUpdate
 version = "1.4.1.0-SNAPSHOT"
 //version = "1.4.0.0"
 
