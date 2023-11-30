@@ -114,8 +114,6 @@ public interface ChangingValue<T> extends Value<T> {
 
     // join functions
 
-    // todo: mtymes - add more then 3 values join functions
-
     default <T2, OutputType> DerivedJoinedValue<OutputType> join(
             ChangingValue<T2> value2,
             BiFunction<FailableValue<T>, FailableValue<T2>, OutputType> mapFunction
