@@ -70,6 +70,8 @@ public interface ChangingValue<T> extends Value<T> {
         return versionedValue().failableValue();
     }
 
+    // current functions
+
     default <T2, E extends Throwable> T2 mapCurrent(ValueMapper<FailableValue<T>, ? extends T2, E> valueMapper) throws E {
         return valueMapper.map(failableValue());
     }
