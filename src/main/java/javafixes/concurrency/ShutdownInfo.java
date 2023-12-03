@@ -11,7 +11,7 @@ import java.util.concurrent.Executor;
 public interface ShutdownInfo {
 
     /**
-     * @return provides information if a shutdown signal has been send to underlying {@link Executor}
+     * @return provides information if a shutdown signal has been sent to underlying {@link Executor}
      */
     boolean wasShutdownTriggered();
 }

@@ -70,6 +70,10 @@ public interface ChangingValue<T> extends Value<T> {
         return versionedValue().failableValue();
     }
 
+    default <T2, E extends Throwable> T2 mapCurrent(ValueMapper<FailableValue<T>, ? extends T2, E> valueMapper) throws E {
+        return valueMapper.map(failableValue());
+    }
+
     /**
      * Generates a value using the current {@code ChangingValue}'s wrapped value
      *
@@ -81,6 +85,11 @@ public interface ChangingValue<T> extends Value<T> {
      */
     default <T2, E extends Throwable> T2 mapCurrentValue(ValueMapper<? super T, ? extends T2, E> valueMapper) throws E {
         return valueMapper.map(value());
+    }
+
+    // todo: mtymes - add forCurrent(...)
+    default <E extends Throwable> void forCurrent(ValueHandler<FailableValue<T>, ? extends E> valueHandler) throws E {
+        valueHandler.handle(failableValue());
     }
 
     /**
