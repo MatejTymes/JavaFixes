@@ -122,18 +122,58 @@ public interface ChangingValue<T> extends Value<T> {
 
     // map functions
 
+    /**
+     * Creates a derived {@code ChangingValue} of type {@code DerivedValue}.
+     * The derived value provides the outcome of {@code valueMapper} applied to the latest wrapped {@code FailableValue}.
+     * Call to this operation does not change the state of this {@code ChangingValue}.
+     *
+     * @param valueMapper function to map the wrapped value into a new one
+     * @param <T2>        the type of value wrapped by the {@code DerivedValue}
+     * @return new {@code DerivedValue} that provides a value derived from this {@code ChangingValue}
+     */
     default <T2> DerivedValue<T, T2> map(FailableValueMapper<T, T2> valueMapper) {
         return derivedValue(this, valueMapper);
     }
 
+    /**
+     * Creates a derived {@code ChangingValue} of type {@code DerivedValue}.
+     * The derived value provides the outcome of {@code valueMapper} applied to the latest wrapped value.
+     * In case this {@code ChangingValue} doesn't wrap expected value of type {@code T} but a failure/{@code RuntimeException}
+     * instead, this {@code RuntimeException} will be propagated as a wrapped value of the newly generated {@code DerivedValue}.
+     * Call to this operation does not change the state of this {@code ChangingValue}.
+     *
+     * @param valueMapper function to map the wrapped value into a new one
+     * @param <T2>        the type of value wrapped by the {@code DerivedValue}
+     * @return new {@code DerivedValue} that provides a value derived from this {@code ChangingValue}
+     */
     default <T2> DerivedValue<T, T2> mapValue(Function<? super T, ? extends T2> valueMapper) {
         return derivedValue(this, FailableValueMapper.value(valueMapper));
     }
 
+    /**
+     * Creates a builder of derived {@code ChangingValue} of type {@code DerivedValueBuilder}.
+     * The builder applies the {@code valueMapper} to the latest wrapped {@code FailableValue}.
+     * Call to this operation does not change the state of this {@code ChangingValue}.
+     *
+     * @param valueMapper function to map the wrapped value into a new one
+     * @param <T2>        the type of value wrapped by the build {@code DerivedValue}
+     * @return new {@code DerivedValueBuilder} that provides a value derived from this {@code ChangingValue}
+     */
     default <T2> DerivedValueBuilder<T, T2> mapBuilder(FailableValueMapper<T, T2> valueMapper) {
         return derivedValueBuilder(this, valueMapper);
     }
 
+    /**
+     * Creates a builder of derived {@code ChangingValue} of type {@code DerivedValueBuilder}.
+     * The builder applies the {@code valueMapper} to the latest wrapped value.
+     * In case this {@code ChangingValue} doesn't wrap expected value of type {@code T} but a failure/{@code RuntimeException}
+     * instead, this {@code RuntimeException} will be propagated as a wrapped value of the newly generated {@code DerivedValue}.
+     * Call to this operation does not change the state of this {@code ChangingValue}.
+     *
+     * @param valueMapper function to map the wrapped value into a new one
+     * @param <T2>        the type of value wrapped by the build {@code DerivedValue}
+     * @return new {@code DerivedValueBuilder} that provides a value derived from this {@code ChangingValue}
+     */
     default <T2> DerivedValueBuilder<T, T2> mapValueBuilder(Function<? super T, ? extends T2> valueMapper) {
         return derivedValueBuilder(this, FailableValueMapper.value(valueMapper));
     }
