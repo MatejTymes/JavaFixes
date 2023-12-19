@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static javafixes.common.util.AssertUtil.assertNotNull;
+import static javafixes.object.changing.ChangingValueHelper.handlePotentialNewValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class CachedValue<T> implements ChangingValue<T> {
@@ -93,7 +94,7 @@ public class CachedValue<T> implements ChangingValue<T> {
         synchronized (currentValueHolder) {
             VersionedValue<T> newValue = sourceValue.versionedValue();
 
-            ChangingValueHelper.handlePotentialNewValue(
+            handlePotentialNewValue(
                     newValue.value,
                     currentValueHolder,
                     valueName,

@@ -180,6 +180,17 @@ public interface ChangingValue<T> extends Value<T> {
 
     // join functions
 
+    /**
+     * Creates a derived {@code ChangingValue} of type {@code DerivedJoinedValue} by aggregating this {@code ChangingValue} with one another {@code ChangingValue}.
+     * The derived value provides the outcome of {@code mapFunction} to the latest set of wrapped {@code FailableValue}s.
+     * Call to this operation does not change the state of this or the other provided {@code ChangingValue}.
+     *
+     * @param value2 second {@code ChangingValue} that goes into the mapFunction
+     * @param mapFunction function to map wrapped values into a new one
+     * @return new {@code DerivedJoinedValue} that provides a value derived from supplied {@code ChangingValue}s
+     * @param <T2> type of the second {@code ChangingValue} that goes into the mapFunction
+     * @param <OutputType> the type of value wrapped by the {@code DerivedJoinedValue}
+     */
     default <T2, OutputType> DerivedJoinedValue<OutputType> join(
             ChangingValue<T2> value2,
             BiFunction<FailableValue<T>, FailableValue<T2>, OutputType> mapFunction
@@ -187,6 +198,19 @@ public interface ChangingValue<T> extends Value<T> {
         return DerivedJoinedValueBuilder.join(this, value2, mapFunction);
     }
 
+    /**
+     * Creates a derived {@code ChangingValue} of type {@code DerivedJoinedValue} by aggregating this {@code ChangingValue} with two other {@code ChangingValue}s.
+     * The derived value provides the outcome of {@code mapFunction} to the latest set of wrapped {@code FailableValue}s.
+     * Call to this operation does not change the state of this or the other provided {@code ChangingValue}s.
+     *
+     * @param value2 second {@code ChangingValue} that goes into the mapFunction
+     * @param value3 third {@code ChangingValue} that goes into the mapFunction
+     * @param mapFunction function to map wrapped values into a new one
+     * @return new {@code DerivedJoinedValue} that provides a value derived from supplied {@code ChangingValue}s
+     * @param <T2> type of the second {@code ChangingValue} that goes into the mapFunction
+     * @param <T3> type of the third {@code ChangingValue} that goes into the mapFunction
+     * @param <OutputType> the type of value wrapped by the {@code DerivedJoinedValue}
+     */
     default <T2, T3, OutputType> DerivedJoinedValue<OutputType> join(
             ChangingValue<T2> value2,
             ChangingValue<T3> value3,
