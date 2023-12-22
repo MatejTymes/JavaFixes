@@ -131,7 +131,7 @@ public interface ChangingValue<T> extends Value<T> {
      * @param <T2>        the type of value wrapped by the {@code DerivedValue}
      * @return new {@code DerivedValue} that provides a value derived from this {@code ChangingValue}
      */
-    default <T2> DerivedValue<T, T2> map(FailableValueMapper<T, T2> valueMapper) {
+    default <T2> DerivedValue<T2> map(FailableValueMapper<T, T2> valueMapper) {
         return derivedValue(this, valueMapper);
     }
 
@@ -146,7 +146,7 @@ public interface ChangingValue<T> extends Value<T> {
      * @param <T2>        the type of value wrapped by the {@code DerivedValue}
      * @return new {@code DerivedValue} that provides a value derived from this {@code ChangingValue}
      */
-    default <T2> DerivedValue<T, T2> mapValue(Function<? super T, ? extends T2> valueMapper) {
+    default <T2> DerivedValue<T2> mapValue(Function<? super T, ? extends T2> valueMapper) {
         return derivedValue(this, FailableValueMapper.value(valueMapper));
     }
 
@@ -159,7 +159,7 @@ public interface ChangingValue<T> extends Value<T> {
      * @param <T2>        the type of value wrapped by the build {@code DerivedValue}
      * @return new {@code DerivedValueBuilder} that provides a value derived from this {@code ChangingValue}
      */
-    default <T2> DerivedValueBuilder<T, T2> mapBuilder(FailableValueMapper<T, T2> valueMapper) {
+    default <T2> DerivedValueBuilder<T2> mapBuilder(FailableValueMapper<T, T2> valueMapper) {
         return derivedValueBuilder(this, valueMapper);
     }
 
@@ -174,7 +174,7 @@ public interface ChangingValue<T> extends Value<T> {
      * @param <T2>        the type of value wrapped by the build {@code DerivedValue}
      * @return new {@code DerivedValueBuilder} that provides a value derived from this {@code ChangingValue}
      */
-    default <T2> DerivedValueBuilder<T, T2> mapValueBuilder(Function<? super T, ? extends T2> valueMapper) {
+    default <T2> DerivedValueBuilder<T2> mapValueBuilder(Function<? super T, ? extends T2> valueMapper) {
         return derivedValueBuilder(this, FailableValueMapper.value(valueMapper));
     }
 

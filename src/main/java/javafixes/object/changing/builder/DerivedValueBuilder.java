@@ -4,14 +4,14 @@ import javafixes.object.changing.ChangingValue;
 import javafixes.object.changing.DerivedValue;
 import javafixes.object.changing.function.mapping.FailableValueMapper;
 
-public class DerivedValueBuilder<SourceType, OutputType> extends AbstractChangingValueBuilder<OutputType, DerivedValueBuilder<SourceType, OutputType>> {
+public class DerivedValueBuilder<OutputType> extends AbstractChangingValueBuilder<OutputType, DerivedValueBuilder<OutputType>> {
 
-    private final ChangingValue<SourceType> sourceValue;
-    private final FailableValueMapper<SourceType, ? extends OutputType> valueMapper;
+    private final ChangingValue<?> sourceValue;
+    private final FailableValueMapper<?, ? extends OutputType> valueMapper;
 
     private boolean prePopulateValueImmediately = false;
 
-    public DerivedValueBuilder(
+    public <SourceType> DerivedValueBuilder(
             ChangingValue<SourceType> sourceValue,
             FailableValueMapper<SourceType, ? extends OutputType> valueMapper
     ) {
@@ -20,14 +20,14 @@ public class DerivedValueBuilder<SourceType, OutputType> extends AbstractChangin
     }
 
 
-    public static <SourceType, OutputType> DerivedValueBuilder<SourceType, OutputType> derivedValueBuilder(
+    public static <SourceType, OutputType> DerivedValueBuilder<OutputType> derivedValueBuilder(
             ChangingValue<SourceType> sourceValue,
             FailableValueMapper<SourceType, ? extends OutputType> valueMapper
     ) {
         return new DerivedValueBuilder<>(sourceValue, valueMapper);
     }
 
-    public static <SourceType, OutputType> DerivedValueBuilder<SourceType, OutputType> derivedValueBuilder(
+    public static <SourceType, OutputType> DerivedValueBuilder<OutputType> derivedValueBuilder(
             ChangingValueBuilder<SourceType> sourceValueBuilder,
             FailableValueMapper<SourceType, ? extends OutputType> valueMapper
     ) {
@@ -35,41 +35,41 @@ public class DerivedValueBuilder<SourceType, OutputType> extends AbstractChangin
     }
 
 
-    public static <SourceType, OutputType> DerivedValue<SourceType, OutputType> derivedValue(
+    public static <SourceType, OutputType> DerivedValue<OutputType> derivedValue(
             ChangingValue<SourceType> sourceValue,
             FailableValueMapper<SourceType, ? extends OutputType> valueMapper
     ) {
-        DerivedValueBuilder<SourceType, OutputType> builder = derivedValueBuilder(sourceValue, valueMapper);
+        DerivedValueBuilder<OutputType> builder = derivedValueBuilder(sourceValue, valueMapper);
         return builder.build();
     }
 
-    public static <SourceType, OutputType> DerivedValue<SourceType, OutputType> derivedValue(
+    public static <SourceType, OutputType> DerivedValue<OutputType> derivedValue(
             ChangingValueBuilder<SourceType> sourceValueBuilder,
             FailableValueMapper<SourceType, ? extends OutputType> valueMapper
     ) {
-        DerivedValueBuilder<SourceType, OutputType> builder = derivedValueBuilder(sourceValueBuilder, valueMapper);
+        DerivedValueBuilder<OutputType> builder = derivedValueBuilder(sourceValueBuilder, valueMapper);
         return builder.build();
     }
 
 
     @Override
-    public DerivedValue<SourceType, OutputType> build() {
+    public DerivedValue<OutputType> build() {
         return new DerivedValue<>(
                 valueName,
-                sourceValue,
+                (ChangingValue<Object>) sourceValue,
                 updateConfig(),
-                valueMapper,
+                (FailableValueMapper<Object, ? extends OutputType>) valueMapper,
                 prePopulateValueImmediately
         );
     }
 
-    public DerivedValueBuilder<SourceType, OutputType> withPrePopulateValueImmediately(boolean prePopulateValueImmediately) {
+    public DerivedValueBuilder<OutputType> withPrePopulateValueImmediately(boolean prePopulateValueImmediately) {
         this.prePopulateValueImmediately = prePopulateValueImmediately;
         return this;
     }
 
     @Override
-    protected DerivedValueBuilder<SourceType, OutputType> thisBuilder() {
+    protected DerivedValueBuilder<OutputType> thisBuilder() {
         return this;
     }
 }

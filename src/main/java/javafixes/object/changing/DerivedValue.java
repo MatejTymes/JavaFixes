@@ -14,22 +14,21 @@ import static javafixes.object.changing.FailableValue.wrapFailure;
 import static javafixes.object.changing.FailableValue.wrapValue;
 import static javafixes.common.util.AssertUtil.assertNotNull;
 
-// todo: mtymes - remove the SourceType generic parameter
-public class DerivedValue<SourceType, OutputType> implements ChangingValue<OutputType> {
+public class DerivedValue<OutputType> implements ChangingValue<OutputType> {
 
     private static final Logger logger = LoggerFactory.getLogger(DerivedValue.class);
 
 
     private final Optional<String> valueName;
-    private final ChangingValue<SourceType> sourceValue;
+    private final ChangingValue<?> sourceValue;
     // todo: mtymes - change to Function<FailableValue<? super SourceType>, ? extends OutputType>
-    private final FailableValueMapper<SourceType, ? extends OutputType> valueMapper;
+    private final FailableValueMapper<?, ? extends OutputType> valueMapper;
     private final ChangingValueUpdateConfig<? super OutputType> updateConfig;
 
     private final AtomicReference<VersionedValue<OutputType>> currentValueHolder = new AtomicReference<>();
     private final AtomicReference<Long> lastUsedSourceChangeVersion = new AtomicReference<>();
 
-    public DerivedValue(
+    public <SourceType> DerivedValue(
             Optional<String> valueName,
             ChangingValue<SourceType> sourceValue,
             ChangingValueUpdateConfig<? super OutputType> updateConfig,
@@ -65,14 +64,14 @@ public class DerivedValue<SourceType, OutputType> implements ChangingValue<Outpu
 
     private void populateWithLatestValue() {
         synchronized (currentValueHolder) {
-            VersionedValue<SourceType> currentSourceValue = sourceValue.versionedValue();
+            VersionedValue currentSourceValue = sourceValue.versionedValue();
 
             Long lastUsedSourceVersionNumber = lastUsedSourceChangeVersion.get();
             if (lastUsedSourceVersionNumber == null || lastUsedSourceVersionNumber < currentSourceValue.versionNumber) {
                 FailableValue<OutputType> newValue;
 
                 try {
-                    newValue = wrapValue(valueMapper.map(currentSourceValue.failableValue()));
+                    newValue = wrapValue((OutputType) valueMapper.map(currentSourceValue.failableValue()));
                 } catch (RuntimeException e) {
                     newValue = wrapFailure(e);
 
