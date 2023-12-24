@@ -83,6 +83,13 @@ public class MutableValue<T> implements ChangingValue<T> {
     }
 
     public boolean updateValue(
+            T newValue,
+            boolean ignoreDifferenceCheck
+    ) {
+        return updateValue(wrapValue(newValue), ignoreDifferenceCheck);
+    }
+
+    public boolean updateValue(
             T newValue
     ) {
         return updateValue(wrapValue(newValue), false);
