@@ -20,7 +20,7 @@ public class Tuple<A, B> extends DataObject {
     public final B b;
 
     /**
-     * Constructor of {@code Tuple} with two values to wrap
+     * Constructor of {@link Tuple} with two values to wrap
      *
      * @param a first value
      * @param b second value
@@ -31,13 +31,13 @@ public class Tuple<A, B> extends DataObject {
     }
 
     /**
-     * Factory method to create {@code Tuple}.
+     * Factory method to create {@link Tuple}.
      *
      * @param a   first value
      * @param b   second value
      * @param <A> first value type
      * @param <B> second value type
-     * @return new {@code Tuple}
+     * @return new {@link Tuple}
      */
     public static <A, B> Tuple<A, B> tuple(A a, B b) {
         return new Tuple<>(a, b);
@@ -80,7 +80,7 @@ public class Tuple<A, B> extends DataObject {
     }
 
     /**
-     * Maps wrapped values using a provided {@code BiFunction}
+     * Maps wrapped values using a provided {@link BiFunction}
      *
      * @param mapper function to map wrapped values
      * @param <C>    the type of generated value

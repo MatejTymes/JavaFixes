@@ -7,7 +7,7 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  * A synchronization aid that allows one or more threads to wait until
  * a set of operations being performed in other threads completes.
  * <p>
- * <p>A {@code ReusableCountLatch} is initialized with a given <em>count</em>.
+ * <p>A {@link ReusableCountLatch} is initialized with a given <em>count</em>.
  * The {@link #waitTillZero} methods block until the current count reaches
  * zero due to invocations of the {@link #decrement} method, after which
  * all waiting threads are released. If zero has been reached any subsequent
@@ -16,15 +16,15 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  * any subsequent thread calling the {@link #waitTillZero} method will be block
  * again until another zero is reached.
  * <p>
- * <p>{@code ReusableCountLatch} provides more versatility than
+ * <p>{@link ReusableCountLatch} provides more versatility than
  * {@link java.util.concurrent.CountDownLatch CountDownLatch} as the count
  * doesn't have to be known upfront and you can reuse this class as many times
  * as you want to.
  * It is also better than a {@link java.util.concurrent.Phaser Phaser} whose count
- * is limited to 65_535. {@code ReusableCountLatch} instead can count up to
+ * is limited to 65_535. {@link ReusableCountLatch} instead can count up to
  * 2_147_483_647 (2^31-1).
  * <p>
- * <p>Great use case for {@code ReusableCountLatch} is when you wait for tasks on
+ * <p>Great use case for {@link ReusableCountLatch} is when you wait for tasks on
  * other threads to finish, but these tasks could trigger more tasks and it is
  * not know upfront how many will be triggered in total. To simplify this scenario even further
  * take a look at our implementations of {@link javafixes.concurrency.Runner Runner}
@@ -38,7 +38,7 @@ public class ReusableCountLatch {
     private final Sync sync;
 
     /**
-     * Constructs a {@code ReusableCountLatch} initialized with the given count.
+     * Constructs a {@link ReusableCountLatch} initialized with the given count.
      *
      * @param initialCount the number of times {@link #decrement} must be invoked before threads can pass
      *                     through {@link #waitTillZero}. For each additional call of the {@link #increment}
@@ -53,7 +53,7 @@ public class ReusableCountLatch {
     }
 
     /**
-     * Constructs a {@code ReusableCountLatch} with initial count set to 0.
+     * Constructs a {@link ReusableCountLatch} with initial count set to 0.
      */
     public ReusableCountLatch() {
         this(0);

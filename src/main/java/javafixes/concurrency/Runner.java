@@ -32,10 +32,10 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo, Clo
     }
 
     /**
-     * Factory method to create a {@code Runner}.
+     * Factory method to create a {@link Runner}.
      *
      * @param threadCount number of executor threads
-     * @return new {@code Runner}
+     * @return new {@link Runner}
      */
     public static Runner runner(int threadCount) {
         return new Runner(threadCount);
@@ -162,7 +162,7 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo, Clo
     /**
      * Sends a shutdown signal to the runner.
      *
-     * @return this {@code Runner} instance
+     * @return this {@link Runner} instance
      * @see ExecutorService#shutdown()
      */
     public Runner shutdown() {
@@ -174,7 +174,7 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo, Clo
     /**
      * Sends a shutdownNow signal to the runner.
      *
-     * @return this {@code Runner} instance
+     * @return this {@link Runner} instance
      * @see ExecutorService#shutdownNow()
      */
     // todo: fix specific case where an task is removed without ever started (and because of this doesn't goes into numberOfDrainedTasks)
@@ -196,10 +196,10 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo, Clo
     }
 
     /**
-     * Returns {@code true} if any shutdown operation has been called on this {@code Runner}.
-     * In this case the {@code Runner} won't accept any new tasks for execution.
+     * Returns {@code true} if any shutdown operation has been called on this {@link Runner}.
+     * In this case the {@link Runner} won't accept any new tasks for execution.
      *
-     * @return {@code true} if shutdown on the {@code Runner} has been triggered
+     * @return {@code true} if shutdown on the {@link Runner} has been triggered
      */
     @Override
     public boolean wasShutdownTriggered() {
@@ -213,8 +213,8 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo, Clo
      *
      * @param timeout the maximum time to wait
      * @param unit    the time unit of the timeout argument
-     * @return this {@code Runner} instance
-     * @throws RuntimeException wrapping an {@code InterruptedException} if interrupted while waiting
+     * @return this {@link Runner} instance
+     * @throws RuntimeException wrapping an {@link InterruptedException} if interrupted while waiting
      */
     public Runner awaitTermination(long timeout, TimeUnit unit) {
         try {
@@ -230,8 +230,8 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo, Clo
      *
      * @param timeout the maximum time to wait
      * @param unit    the time unit of the timeout argument
-     * @return this {@code Runner} instance
-     * @throws RuntimeException wrapping an {@code InterruptedException} if interrupted while waiting
+     * @return this {@link Runner} instance
+     * @throws RuntimeException wrapping an {@link InterruptedException} if interrupted while waiting
      */
     public Runner shutdownAndAwaitTermination(long timeout, TimeUnit unit) {
         return shutdown().awaitTermination(timeout, unit);
@@ -241,8 +241,8 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo, Clo
      * Calls {@link #shutdown()} and {@link #awaitTermination(long, TimeUnit)} methods in sequence
      * where the timeout is set to 5 seconds.
      *
-     * @return this {@code Runner} instance
-     * @throws RuntimeException wrapping an {@code InterruptedException} if interrupted while waiting
+     * @return this {@link Runner} instance
+     * @throws RuntimeException wrapping an {@link InterruptedException} if interrupted while waiting
      */
     public Runner shutdownAndAwaitTermination() {
         return shutdownAndAwaitTermination(5, SECONDS);
@@ -253,8 +253,8 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo, Clo
      *
      * @param timeout the maximum time to wait
      * @param unit    the time unit of the timeout argument
-     * @return this {@code Runner} instance
-     * @throws RuntimeException wrapping an {@code InterruptedException} if interrupted while waiting
+     * @return this {@link Runner} instance
+     * @throws RuntimeException wrapping an {@link InterruptedException} if interrupted while waiting
      */
     public Runner shutdownNowAndAwaitTermination(long timeout, TimeUnit unit) {
         return shutdownNow().awaitTermination(timeout, unit);
@@ -264,8 +264,8 @@ public class Runner extends MonitoringTaskSubmitter implements ShutdownInfo, Clo
      * Calls {@link #shutdownNow()} and {@link #awaitTermination(long, TimeUnit)} methods in sequence
      * where the timeout is set to 5 seconds.
      *
-     * @return this {@code Runner} instance
-     * @throws RuntimeException wrapping an {@code InterruptedException} if interrupted while waiting
+     * @return this {@link Runner} instance
+     * @throws RuntimeException wrapping an {@link InterruptedException} if interrupted while waiting
      */
     public Runner shutdownNowAndAwaitTermination() {
         return shutdownNowAndAwaitTermination(5, SECONDS);

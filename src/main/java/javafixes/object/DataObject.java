@@ -6,7 +6,7 @@ import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToStrin
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 /**
- * {@code DataObject} is intended as a base class for domain objects.
+ * {@link DataObject} is intended as a base class for domain objects.
  * It adds reflection based methods {@code equals()}, {@code hashCode()}
  * and {@code toString()} so your domain classes can be more readable.
  *

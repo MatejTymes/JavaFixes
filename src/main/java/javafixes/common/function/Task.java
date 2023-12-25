@@ -7,10 +7,10 @@ import javafixes.concurrency.Runner;
  * A task that has no result and may throw an exception.
  * Implementors define a single method with no arguments called {@code run}.
  * <p>
- * <p>The {@code Task} interface is similar to {@link Runnable},
+ * <p>The {@link Task} interface is similar to {@link Runnable},
  * in that both are designed for classes whose instances are potentially
  * executed by another thread.
- * A {@code Runnable} however can not throw a checked exception.
+ * A {@link Runnable} however can not throw a checked exception.
  * <p>
  * <p>The class is intended to be use with custom executor wrappers {@link Runner} and {@link MonitoringTaskSubmitter}.
  *

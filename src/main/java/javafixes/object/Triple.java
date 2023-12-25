@@ -22,7 +22,7 @@ public class Triple<A, B, C> extends DataObject {
     public final C c;
 
     /**
-     * Constructor of {@code Triple} with three values to wrap
+     * Constructor of {@link Triple} with three values to wrap
      *
      * @param a first value
      * @param b second value
@@ -35,7 +35,7 @@ public class Triple<A, B, C> extends DataObject {
     }
 
     /**
-     * Factory method to create {@code Triple}.
+     * Factory method to create {@link Triple}.
      *
      * @param a   first value
      * @param b   second value
@@ -43,7 +43,7 @@ public class Triple<A, B, C> extends DataObject {
      * @param <A> first value type
      * @param <B> second value type
      * @param <C> third value type
-     * @return new {@code Triple}
+     * @return new {@link Triple}
      */
     public static <A, B, C> Triple<A, B, C> triple(A a, B b, C c) {
         return new Triple<>(a, b, c);
@@ -104,7 +104,7 @@ public class Triple<A, B, C> extends DataObject {
     }
 
     /**
-     * Maps wrapped values using a provided {@code TriFunction}
+     * Maps wrapped values using a provided {@link TriFunction}
      *
      * @param mapper function to map wrapped values
      * @param <D>    the type of generated value

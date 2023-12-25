@@ -23,10 +23,10 @@ public abstract class Microtype<T> implements Value<T> {
     private final T value;
 
     /**
-     * Constructor of {@code Microtype} initialized with value to wrap
+     * Constructor of {@link Microtype} initialized with value to wrap
      *
      * @param value value that should be wrapped and will be accessible from
-     *              created {@code Microtype} instance
+     *              created {@link Microtype} instance
      * @throws IllegalArgumentException if {@code null} is passed as input parameter
      */
     protected Microtype(T value) {
@@ -55,7 +55,7 @@ public abstract class Microtype<T> implements Value<T> {
     }
 
     /**
-     * Maps wrapped value using the provided {@code Function}.
+     * Maps wrapped value using the provided {@link Function}.
      *
      * @param mapper function to map the wrapped value
      * @param <T2>   the type of generated value

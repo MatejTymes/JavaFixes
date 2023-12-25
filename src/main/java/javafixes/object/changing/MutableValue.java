@@ -12,7 +12,7 @@ import static javafixes.object.changing.FailableValue.wrapValue;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * {@code MutableValue} is a wrapper of value that you can replace and whose changes will be propagated
+ * {@link MutableValue} is a wrapper of value that you can replace and whose changes will be propagated
  * to derived values.
  *
  * @param <T> type of wrapped value
