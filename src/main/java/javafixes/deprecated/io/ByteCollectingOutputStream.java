@@ -10,6 +10,7 @@ import static java.lang.Math.min;
 // todo: add into readme
 // todo: javadoc
 // todo: maybe explain internal implementation (LinkedByteArrays)
+@Deprecated // todo: mtymes - will be removed in next version
 public class ByteCollectingOutputStream extends OutputStream {
 
     private transient final Object lock = new Object();

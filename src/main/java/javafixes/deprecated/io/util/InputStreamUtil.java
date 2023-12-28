@@ -8,6 +8,7 @@ import static java.io.File.createTempFile;
 // todo: mtymes - who still uses this ??? - remove
 
 // todo: test this
+@Deprecated // todo: mtymes - will be removed in next version
 public class InputStreamUtil {
 
     /**
