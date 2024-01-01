@@ -141,4 +141,7 @@ public interface EachPotentialValueHandler<T> {
             }
         };
     }
+
+    // todo: mtymes - add handleUsed
+    // todo: mtymes - add handleNOTUsed
 }
