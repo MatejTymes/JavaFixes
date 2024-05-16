@@ -5,7 +5,7 @@ import java.util.function.BiFunction;
 /**
  * Immutable holder of two values. Both values can have different type and can be {@code null}.
  * It implements methods {@code equals()}, {@code hashCode()} and {@code toString()}
- * <p>
+ * <p></p>
  * <p>It's useful when if you would like to have a composite return value from a method or as
  * a composite key to a map.
  *

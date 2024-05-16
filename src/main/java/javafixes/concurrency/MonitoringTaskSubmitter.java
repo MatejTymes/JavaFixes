@@ -215,9 +215,9 @@ public class MonitoringTaskSubmitter {
     /**
      * Causes the current thread to wait until there are no unfinished tasks,
      * unless the thread is {@linkplain Thread#interrupt interrupted}.
-     * <p>
+     * <p></p>
      * <p>If the current count of to be finished tasks is zero then this method returns immediately.
-     * <p>
+     * <p></p>
      * <p>If the current count is greater than zero then the current
      * thread becomes disabled for thread scheduling purposes and lies
      * dormant until one of two things happen:
@@ -225,7 +225,7 @@ public class MonitoringTaskSubmitter {
      * <li>The count reaches zero due to completion of all to be finished tasks or
      * <li>Some other thread {@linkplain Thread#interrupt interrupts} the current thread.
      * </ul>
-     * <p>
+     * <p></p>
      * <p>If the current thread:
      * <ul>
      * <li>has its interrupted status set on entry to this method; or
@@ -250,9 +250,9 @@ public class MonitoringTaskSubmitter {
     /**
      * Causes the current thread to wait until there are no unfinished tasks,
      * unless the thread is {@linkplain Thread#interrupt interrupted}.
-     * <p>
+     * <p></p>
      * <p>If the current count of to be finished tasks is zero then this method returns immediately.
-     * <p>
+     * <p></p>
      * <p>If the current count is greater than zero then the current
      * thread becomes disabled for thread scheduling purposes and lies
      * dormant until one of two things happen:
@@ -260,9 +260,9 @@ public class MonitoringTaskSubmitter {
      * <li>The count reaches zero due to completion of all to be finished tasks or
      * <li>Some other thread {@linkplain Thread#interrupt interrupts} the current thread.
      * </ul>
-     * <p>
+     * <p></p>
      * <p>If the count reaches zero then the method returns with the value {@code true}.
-     * <p>
+     * <p></p>
      * <p>If the current thread:
      * <ul>
      * <li>has its interrupted status set on entry to this method; or
@@ -270,7 +270,7 @@ public class MonitoringTaskSubmitter {
      * </ul>
      * then {@link RuntimeException} wrapping an {@link InterruptedException} is thrown
      * and the current thread's interrupted status is cleared.
-     * <p>
+     * <p></p>
      * <p>If the specified waiting time elapses then the value {@code false}
      * is returned.  If the time is less than or equal to zero, the method
      * will not wait at all.

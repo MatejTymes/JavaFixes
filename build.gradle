@@ -12,8 +12,8 @@ group = "com.github.matejtymes"
 archivesBaseName = "javafixes"
 // todo: add changelog
 // version number meaning: majorRewrite.newFeature.minorRefactor.fixOrInternalRefactorOrInternalUpdate
-version = "1.4.2.0-SNAPSHOT"
-//version = "1.4.1.0"
+//version = "1.4.2.0-SNAPSHOT"
+version = "1.4.2.0"
 
 dependencies {
 

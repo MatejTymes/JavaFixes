@@ -7,12 +7,12 @@ import java.util.concurrent.Executor;
 /**
  * A task that has no result and may throw an exception.
  * Implementors define a single method called {@code run} with {@link ShutdownInfo} as an argument.
- * <p>
+ * <p></p>
  * <p>The {@link ShutdownAwareTask} interface is similar to {@link Task},
  * in that both are designed for classes whose instances are potentially executed by another thread.
  * A {@link ShutdownAwareTask} however has an input argument {@link ShutdownInfo} which can be asked
  * if underlying {@link Executor} has received a shutdown signal.
- * <p>
+ * <p></p>
  * <p>The class is intended to be use with custom executor wrapper {@link Runner}.
  *
  * @see Runner

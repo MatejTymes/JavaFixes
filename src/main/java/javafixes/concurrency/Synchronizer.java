@@ -31,6 +31,7 @@ public class Synchronizer<K> {
      *
      * @param key value should be used for synchronization/locking purposes
      * @param action action that should be executed
+     * @param <T> actions response value type
      *
      * @throws WrappedException any exception thrown from the provided {@code action} is wrapped into a {@link WrappedException}
      *
@@ -61,6 +62,7 @@ public class Synchronizer<K> {
      * @param time the maximum time to wait for the lock
      * @param unit the time unit of the {@code time} argument
      * @param action action that should be executed
+     * @param <T> actions response value type
      *
      * @throws TimeoutException if we can't acquire lock within the defined time
      * @throws InterruptedException if the current thread is interrupted before acquiring the lock

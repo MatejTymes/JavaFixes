@@ -6,9 +6,9 @@ import static javafixes.common.util.AssertUtil.assertNotNull;
 
 /**
  * An immutable object that contains a non-null reference to another object.
- * <p>
+ * <p></p>
  * <p>It implements {@code equals()}, {@code hashCode()} and {@code toString()} methods
- * <p>
+ * <p></p>
  * <p>Main purpose of this class is to be able to wrap simple types and add them a class name,
  * to make the code more readable.
  * So instead of using String you could use AccountNumber that extends Microtype&lt;String&gt;

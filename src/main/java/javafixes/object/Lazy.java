@@ -44,6 +44,7 @@ public class Lazy<T> implements Value<T> {
      *
      * @param valueProvider initialization method
      * @return {@link Lazy} value
+     * @param <T> value type
      */
     public static <T> Lazy<T> lazy(Callable<T> valueProvider) {
         return new Lazy<>(valueProvider);
