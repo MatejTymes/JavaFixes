@@ -101,6 +101,38 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
         }
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof LinkedArrayQueue)) {
+            return false;
+        }
+
+        Iterator<T> thisIt = this.peekingIterator();
+        Iterator<?> otherIt = ((LinkedArrayQueue<?>) other).peekingIterator();
+        while (thisIt.hasNext() && otherIt.hasNext()) {
+            T thisValue = thisIt.next();
+            Object otherValue = otherIt.next();
+            if (!Objects.equals(thisValue, otherValue)) {
+                return false;
+            }
+        }
+        return !(thisIt.hasNext() || otherIt.hasNext());
+    }
+
+    @Override
+    public int hashCode() {
+        int hashCode = 1;
+        Iterator<T> iter = this.peekingIterator();
+        while (iter.hasNext()) {
+            T value = iter.next();
+            hashCode = 31 * hashCode + (value == null ? 0 : value.hashCode());
+        }
+        return hashCode;
+    }
+
     private class Node {
 
         int writeIndex = -1;
@@ -233,17 +265,26 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
 
     // todo: mtymes - remove
 //    public static void main(String[] args) {
-//        LinkedArrayQueue<String> values = new LinkedArrayQueue<>();
-//        values.add("Hello");
-//        values.add("World");
-//        values.add("!");
+//        LinkedArrayQueue<String> values1 = new LinkedArrayQueue<>();
+//        values1.add("Hello");
+//        values1.add("World");
+//        values1.add("!");
 //
-//        System.out.println("values = " + values);
-//        Iterator<String> pollingIterator = values.pollingIterator();
+//        LinkedArrayQueue<String> values2 = new LinkedArrayQueue<>();
+//        values2.add("Hello");
+//        values2.add("World");
+//        values2.add("!");
+//
+//        System.out.println("values1.equals(values2) = " + values1.equals(values2));
+//        System.out.println("values1.hashCode() = " + values1.hashCode());
+//        System.out.println("values2.hashCode() = " + values2.hashCode());
+//
+//        System.out.println("values = " + values1);
+//        Iterator<String> pollingIterator = values1.pollingIterator();
 //        while (pollingIterator.hasNext()) {
 //            System.out.println("- " + pollingIterator.next());
 //        }
-//        System.out.println("values = " + values);
+//        System.out.println("values = " + values1);
 //    }
 
     // todo: mtymes - remove
