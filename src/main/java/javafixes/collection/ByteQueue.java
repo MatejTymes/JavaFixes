@@ -303,6 +303,52 @@ public class ByteQueue extends AbstractQueue<Byte> implements ByteIterable {
         }
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof ByteQueue)) {
+            return false;
+        }
+
+        ByteIterator thisIter = this.peekingIterator();
+        ByteIterator otherIter = ((ByteQueue) other).peekingIterator();
+        int cacheSize = 256;
+        byte[] thisBytes = new byte[cacheSize];
+        byte[] otherBytes = new byte[cacheSize];
+        while (thisIter.hasNext() && otherIter.hasNext()) {
+            int thisSize = thisIter.readNext(thisBytes);
+            int otherSize = otherIter.readNext(otherBytes);
+            if (thisSize != otherSize) {
+                return false;
+            }
+            for (int i = 0; i < thisSize; i++) {
+                if (thisBytes[i] != otherBytes[i]) {
+                    return false;
+                }
+            }
+        }
+
+        return !(thisIter.hasNext() || otherIter.hasNext());
+    }
+
+    @Override
+    public int hashCode() {
+        int hashCode = 1;
+
+        ByteIterator iter = this.peekingIterator();
+        byte[] bytes = new byte[256];
+        while (iter.hasNext()) {
+            int size = iter.readNext(bytes);
+            for (int i = 0; i < size; i++) {
+                hashCode = 31 * hashCode + bytes[i];
+            }
+        }
+
+        return hashCode;
+    }
+
     static class Node {
 
         volatile int writeIndex = -1;

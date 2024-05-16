@@ -110,26 +110,29 @@ public class LinkedArrayQueue<T> extends AbstractQueue<T> {
             return false;
         }
 
-        Iterator<T> thisIt = this.peekingIterator();
-        Iterator<?> otherIt = ((LinkedArrayQueue<?>) other).peekingIterator();
-        while (thisIt.hasNext() && otherIt.hasNext()) {
-            T thisValue = thisIt.next();
-            Object otherValue = otherIt.next();
+        Iterator<T> thisIter = this.peekingIterator();
+        Iterator<?> otherIter = ((LinkedArrayQueue<?>) other).peekingIterator();
+        while (thisIter.hasNext() && otherIter.hasNext()) {
+            T thisValue = thisIter.next();
+            Object otherValue = otherIter.next();
             if (!Objects.equals(thisValue, otherValue)) {
                 return false;
             }
         }
-        return !(thisIt.hasNext() || otherIt.hasNext());
+
+        return !(thisIter.hasNext() || otherIter.hasNext());
     }
 
     @Override
     public int hashCode() {
         int hashCode = 1;
+
         Iterator<T> iter = this.peekingIterator();
         while (iter.hasNext()) {
             T value = iter.next();
             hashCode = 31 * hashCode + (value == null ? 0 : value.hashCode());
         }
+
         return hashCode;
     }
 
