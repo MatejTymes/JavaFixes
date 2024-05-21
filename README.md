@@ -327,7 +327,7 @@ Memory efficient and performant Queue for collecting and retrieving bytes. Great
         byte[] byteArray =  ... ;
         int offset = ... ;
         int length = ... ;
-        int removedByteCount = pollingIterator.readNext(byteArray);
+        int removedByteCount = pollingIterator.readNext(byteArray, offset, length);
     }
 
     byte readByte = queue.pollNext();
@@ -356,7 +356,7 @@ Memory efficient and performant Queue for collecting and retrieving bytes. Great
         byte[] byteArray =  ... ;
         int offset = ... ;
         int length = ... ;
-        int readBytesCount = peekingIterator.readNext(byteArray);
+        int readBytesCount = peekingIterator.readNext(byteArray, offset, length);
     }
 
     // these operations always look at the first byte/s - even on subsequent calls
@@ -380,14 +380,14 @@ Memory efficient and performant Queue for collecting and retrieving bytes. Great
 
 ## IO
 
-### ByteQueueOutputStream
+### ByteQueueOutputStream & ByteQueueInputStream
 
 There are currently 2 issues with `ByteArrayOutputStream`.
 * collected data can't be directly transformed into InputStream
 * each time the wrapped byte buffer has to be increased it creates another byte array and has to copy whole data again - which can be costly (from memory and performance point of view for big files)
 
-`ByteQueueOutputStream` doesn't have to copy data when byte buffer has to be expanded. Instead, it just adds one additional small byte buffer to a linked list (by default size of buffer is 4kb).
-Also it can be transformed into an `InputStream` (without need to copy the bytes) or you can get the underlying `ByteQueue` and access the underlying bytes directly.
+`ByteQueueOutputStream` is implemented as a wrapper around `ByteQueue` which maintains a linked list of byte arrays (by default size of buffer is 4kb).
+Also it can be transformed into an peeking (will keep read bytes) or polling (will remove read bytes) `InputStream` of type `ByteQueueInputStream` (without need to copy the bytes) or you can get the underlying `ByteQueue` and access the underlying bytes directly.
 
 ```Java
     ByteQueueOutputStream bqoStream = new ByteQueueOutputStream(); // you can pass in your preferred ByteQueue as well
@@ -400,10 +400,14 @@ Also it can be transformed into an `InputStream` (without need to copy the bytes
 
     
     InputStream collectedBytesStream = bqoStream.toInputStream(removeReadBytesFromQueueBoolean); // no additional memory is allocated for collected bytes
+    // or = bqoStream.toPeekingInputStream() - will not remove read bytes (so can provide multiple input streams over and over again
+    // or = bqoStream.toPollingInputStream() - will remove read bytes
+    // or = new ByteQueueInputStream(bqoStream.getByteQueue(), removeReadBytesFromQueue)
 
     ByteQueue byteQueue = bqoStream.getByteQueue(); // get the underlying ByteQueue
     byte[] allBytesButStillKeptInTheQueue = byteQueue.peekAtAllBytes();
     byte[] allBytesButRemovedFromTheQueue = byteQueue.pollAllBytes();
+    
 ```
 
 just for comparison, when collecting data (in jdk15) we need:
