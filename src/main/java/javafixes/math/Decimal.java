@@ -569,6 +569,8 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public Decimal div(Decimal value, Precision precisionToUse, RoundingMode roundingMode) throws ArithmeticException, IllegalArgumentException {
+        // todo: mtymes - optimaze of from long to long value
+
         if (value.isZero()) {
             throw new ArithmeticException("Division by zero not allowed");
         } else if (this.isZero()) {
@@ -621,6 +623,8 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
     }
 
     public Decimal div(Decimal value, Scale scaleToUse, RoundingMode roundingMode) throws ArithmeticException, IllegalArgumentException {
+        // todo: mtymes - optimaze of from long to long value
+
         if (value.isZero()) {
             throw new ArithmeticException("Division by zero not allowed");
         } else if (this.isZero()) {
@@ -695,6 +699,8 @@ public abstract class Decimal extends Number implements Comparable<Decimal> {
                 throw new ArithmeticException(format("Scale underflow - can't calculate power of '%d' as it would resolve into non-integer scale '%d'", n, resultScale));
             }
         }
+
+        // todo: mtymes - optimaze of from long to long value
 
         return decimal(
                 unscaledValueAsBigInteger().pow(n),
