@@ -2,6 +2,8 @@ package javafixes.collection.util;
 
 import java.util.*;
 
+import static java.util.Collections.*;
+
 // todo: add javadoc
 public class CollectionUtil {
 
@@ -25,7 +27,20 @@ public class CollectionUtil {
         }
         return list;
     }
-    
+
+    @SafeVarargs
+    public static <T> List<T> unmodifiableListCopy(T... values) {
+        return unmodifiableList(newList(values));
+    }
+
+    public static <T> List<T> unmodifiableListCopy(Iterable<T> values) {
+        return unmodifiableList(newList(values));
+    }
+
+    public static <T> List<T> unmodifiableListCopy(Iterator<T> values) {
+        return unmodifiableList(newList(values));
+    }
+
     @SafeVarargs
     public static <T> HashSet<T> newSet(T... values) {
         HashSet<T> set = new HashSet<T>(values.length);
@@ -46,7 +61,20 @@ public class CollectionUtil {
         }
         return set;
     }
-    
+
+    @SafeVarargs
+    public static <T> Set<T> unmodifiableSetCopy(T... values) {
+        return unmodifiableSet(newSet(values));
+    }
+
+    public static <T> Set<T> unmodifiableSetCopy(Iterable<T> values) {
+        return unmodifiableSet(newSet(values));
+    }
+
+    public static <T> Set<T> unmodifiableSetCopy(Iterator<T> values) {
+        return unmodifiableSet(newSet(values));
+    }
+
     @SafeVarargs
     public static <T> LinkedHashSet<T> newLinkedSet(T... values) {
         LinkedHashSet<T> set = new LinkedHashSet<T>(values.length);
@@ -66,5 +94,26 @@ public class CollectionUtil {
             set.add(values.next());
         }
         return set;
+    }
+
+    @SafeVarargs
+    public static <T> Set<T> unmodifiableLinkedSetCopy(T... values) {
+        return unmodifiableSet(newLinkedSet(values));
+    }
+
+    public static <T> Set<T> unmodifiableLinkedSetCopy(Iterable<T> values) {
+        return unmodifiableSet(newLinkedSet(values));
+    }
+
+    public static <T> Set<T> unmodifiableLinkedSetCopy(Iterator<T> values) {
+        return unmodifiableSet(newLinkedSet(values));
+    }
+
+    public static <K, V> Map<K, V> unmodifiableMapCopy(Map<K, V> values) {
+        return unmodifiableMap(new HashMap<>(values));
+    }
+
+    public static <K, V> Map<K, V> unmodifiableLinkedMapCopy(Map<K, V> values) {
+        return unmodifiableMap(new LinkedHashMap<>(values));
     }
 }

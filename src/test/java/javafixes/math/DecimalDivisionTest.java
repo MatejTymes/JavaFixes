@@ -17,8 +17,8 @@ import static javafixes.math.Scale.scale;
 import static javafixes.test.Condition.notDivisibleBy10;
 import static javafixes.test.Condition.notFitIntoLong;
 import static javafixes.test.Random.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class DecimalDivisionTest {
