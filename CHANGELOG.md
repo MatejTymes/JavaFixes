@@ -1,12 +1,12 @@
 ### 1.4.3.0
 - CollectionUtil: added .unmodifiableListCopy(...), .unmodifiableSetCopy(...), .unmodifiableLinkedSetCopy(...), .unmodifiableMapCopy(...), .unmodifiableLinkedMapCopy(...)
 
-### 1.4.2.0
+### 1.4.2.0 - 2024-05-18
 - ByteQueue & LinkedArrayQueue: added .equals(...) and .hashCode()
 - removed ByteCollectingOutputStream
 - javadoc updates
 
-### 1.4.1.0
+### 1.4.1.0 - 2023-12-28
 - Collections & IO
   - ByteQueue: renamed .toByteArray() -> .peekAtAllBytes()
   - deprecated: ByteCollectingOutputStream, InputStreamUtil
@@ -25,7 +25,7 @@
   - ChangingValueUtil: removed .mappingValue(...)
 - javadoc updates
 
-### 1.4.0.0
+### 1.4.0.0 - 2023-11-19
 - ChangingValue - implementation of new feature
 - Collections & IO
   - added byte streaming and queuing functionality via new classes: ByteQueueInputStream, ByteQueueOutputStream, ConvertedInputStream, GzipCompressingInputStream, ByteIterable, ByteIterator, ByteQueue
@@ -39,3 +39,7 @@
   - Decimal now uses new exception UnsupportedDecimalTypeException
 - Common
   - added: SmartComparable
+
+### 1.3.7.1 - 2021-05-25
+
+TODO: provide older history
