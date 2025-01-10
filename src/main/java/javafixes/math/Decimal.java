@@ -1,6 +1,7 @@
 package javafixes.math;
 
 import javafixes.math.exception.UnsupportedDecimalTypeException;
+import javafixes.object.SmartComparable;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -18,7 +19,7 @@ import static javafixes.math.PowerUtil.*;
 
 // todo: add javadoc, formatter
 // todo: maybe add custom serialization
-public abstract class Decimal extends Number implements Comparable<Decimal> {
+public abstract class Decimal extends Number implements SmartComparable<Decimal> {
 
     private static final Precision DEFAULT_PRECISION = Precision._34_SIGNIFICANT_DIGITS;
     private static final RoundingMode DEFAULT_ROUNDING = RoundingMode.HALF_UP;

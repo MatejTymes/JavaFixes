@@ -1,9 +1,13 @@
 ### 1.4.3.0 - TBR
-- CollectionUtil: added .unmodifiableListCopy(...), .unmodifiableSetCopy(...), .unmodifiableLinkedSetCopy(...), .unmodifiableMapCopy(...), .unmodifiableLinkedMapCopy(...)
+- Collections
+  - CollectionUtil: added .unmodifiableListCopy(...), .unmodifiableSetCopy(...), .unmodifiableLinkedSetCopy(...), .unmodifiableMapCopy(...), .unmodifiableLinkedMapCopy(...)
+- Math
+  - Decimal implements SmartComparable
 
 ### 1.4.2.0 - 2024-05-18
-- ByteQueue & LinkedArrayQueue: added .equals(...) and .hashCode()
-- removed ByteCollectingOutputStream
+- Collections & IO
+  - ByteQueue & LinkedArrayQueue: added .equals(...) and .hashCode()
+  - removed ByteCollectingOutputStream
 - javadoc updates
 
 ### 1.4.1.0 - 2023-12-28
@@ -26,7 +30,7 @@
 - javadoc updates
 
 ### 1.4.0.0 - 2023-11-19
-- ChangingValue - implementation of new feature
+- ChangingValue - complete reimplementation
 - Collections & IO
   - added byte streaming and queuing functionality via new classes: ByteQueueInputStream, ByteQueueOutputStream, ConvertedInputStream, GzipCompressingInputStream, ByteIterable, ByteIterator, ByteQueue
   - LinkedArrayQueue: added ability to poll as well as peek
@@ -41,5 +45,10 @@
   - added: SmartComparable
 
 ### 1.3.7.1 - 2021-05-25
+- ChangingValue classes - renamed .onValueSetFunction -> .onValueChangedFunction
+
+### 1.3.6.1 - 2021-05-25
+- DerivedValue, DynamicValue, MutableValue - added: .onValueSetFunction
+
 
 TODO: provide older history
