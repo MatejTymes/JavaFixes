@@ -50,5 +50,7 @@
 ### 1.3.6.1 - 2021-05-25
 - DerivedValue, DynamicValue, MutableValue - added: .onValueSetFunction
 
+### 1.3.6 - 2021-05-21
+- TODO: add
 
 TODO: provide older history
